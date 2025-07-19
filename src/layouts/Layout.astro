@@ -1,0 +1,108 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="C00lnerd STEM Tutoring and Simulations" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title} | C00lnerd</title>
+	</head>
+	<body>
+		<header class="site-header">
+			<nav>
+				<div class="logo">
+					<a href="/">C00lnerd</a>
+				</div>
+				<ul class="nav-links">
+					<li><a href="/">Home</a></li>
+					<li><a href="/simulations">Simulations</a></li>
+					<li><a href="/tutorials">Tutorials</a></li>
+					<li><a href="/about">About</a></li>
+				</ul>
+			</nav>
+		</header>
+		<main>
+			<slot />
+		</main>
+		<footer>
+			<p>&copy; {new Date().getFullYear()} C00lnerd. All rights reserved.</p>
+		</footer>
+		<style is:global>
+			:root {
+				--accent: #007bff;
+				--accent-dark: #0056b3;
+				--black: #13151a;
+				--gray: #4a4a4a;
+				--gray-light: #f5f5f5;
+			}
+			html {
+				font-family: system-ui, sans-serif;
+				background: #ffffff;
+				background-size: 224px;
+			}
+			body {
+				margin: 0;
+				padding: 0;
+				min-height: 100vh;
+				display: flex;
+				flex-direction: column;
+			}
+			main {
+				flex: 1;
+				padding: 1rem;
+				width: 100%;
+				max-width: 1200px;
+				margin: 0 auto;
+				box-sizing: border-box;
+			}
+			.site-header {
+				background: var(--gray-light);
+				padding: 1rem;
+				box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+			}
+			.site-header nav {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				max-width: 1200px;
+				margin: 0 auto;
+			}
+			.logo a {
+				font-size: 1.5rem;
+				font-weight: bold;
+				color: var(--accent);
+				text-decoration: none;
+			}
+			.nav-links {
+				display: flex;
+				gap: 2rem;
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.nav-links a {
+				color: var(--gray);
+				text-decoration: none;
+				transition: color 0.2s;
+			}
+			.nav-links a:hover {
+				color: var(--accent);
+			}
+			footer {
+				background: var(--gray-light);
+				padding: 1rem;
+				text-align: center;
+				color: var(--gray);
+			}
+		</style>
+	</body>
+</html>

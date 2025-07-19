@@ -1,0 +1,276 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Define categories and their simulations
+type Simulation = {
+	title: string;
+	url: string;
+	description: string;
+	preview?: string;
+	previewAlt?: string;
+};
+
+type Category = {
+	name: string;
+	description: string;
+	simulations: Simulation[];
+};
+
+const categories: Category[] = [
+	{
+		name: "Interactive Physics Simulations",
+		description: "Explore physics concepts through interactive simulations. These simulations allow you to experiment with various physics phenomena in real-time.",
+		simulations: [
+			{ 
+				title: "Earth Simulation", 
+				url: "/simulations/interactive/earth.html", 
+				description: "Explore Earth's physics and orbital mechanics",
+				preview: "/images/previews/earth-preview.png",
+				previewAlt: "Preview of Earth orbital simulation"
+			},
+			{ 
+				title: "Newton's Cradle", 
+				url: "/simulations/interactive/newtons-cradle.html", 
+				description: "Visualize momentum and energy transfer",
+				preview: "/images/previews/newtons-cradle-preview.png",
+				previewAlt: "Preview of Newton's Cradle simulation"
+			},
+			{ 
+				title: "Collision Simulator", 
+				url: "/simulations/interactive/collision-sim-v4.html", 
+				description: "Study elastic and inelastic collisions",
+				preview: "/images/previews/collision-preview.png",
+				previewAlt: "Preview of collision simulation"
+			},
+			{ 
+				title: "N-Body Simulation", 
+				url: "/simulations/interactive/N_Body_simulation.html", 
+				description: "Observe gravitational interactions between multiple bodies",
+				preview: "/images/previews/n-body-preview.png",
+				previewAlt: "Preview of N-Body gravitational simulation"
+			},
+			{ 
+				title: "Magnetic Field Simulator", 
+				url: "/simulations/interactive/Magnetic-field-sim.html", 
+				description: "Visualize magnetic field lines and interactions",
+				preview: "/images/previews/magnetic-preview.png",
+				previewAlt: "Preview of magnetic field simulation"
+			},
+			{ 
+				title: "Chaos Theory Demo", 
+				url: "/simulations/interactive/chaos.html", 
+				description: "Explore chaos theory and dynamic systems",
+				preview: "/images/previews/chaos-preview.png",
+				previewAlt: "Preview of chaos theory demonstration"
+			},
+			{ 
+				title: "Electric Charges", 
+				url: "/simulations/interactive/charges.html", 
+				description: "Experiment with electric charges and fields",
+				preview: "/images/previews/charges-preview.png",
+				previewAlt: "Preview of electric charges simulation"
+			},
+			{ 
+				title: "FFT Simulation", 
+				url: "/simulations/interactive/FFT_Simulation_full.html", 
+				description: "Explore Fourier transforms and signal processing",
+				preview: "/images/previews/fft-preview.png",
+				previewAlt: "Preview of FFT signal processing simulation"
+			},
+			{ 
+				title: "Chemistry Equation Balancer", 
+				url: "/simulations/interactive/chemistry-balancer/index.html", 
+				description: "Learn to balance chemical equations with step-by-step guidance",
+				preview: "/images/previews/chemistry-preview.png",
+				previewAlt: "Preview of Chemistry Equation Balancer"
+			}
+		]
+	},
+	{
+		name: "Math Challenges",
+		description: "Test your mathematical problem-solving skills with these interactive challenges.",
+		simulations: [
+			{ 
+				title: "Game of 24 Solver", 
+				url: "/simulations/interactive/game-of-24-solver.html", 
+				description: "Practice arithmetic skills with the Game of 24",
+				preview: "/images/previews/game-24-preview.png",
+				previewAlt: "Preview of Game of 24 solver"
+			}
+		]
+	},
+	{
+		name: "Physical Science Class Resources",
+		description: "Interactive quizzes and resources for Physical Science students. Work through the modules in order for the best learning experience.",
+		simulations: [
+			{ title: "Physical Science Module 1", url: "/simulations/module1_quiz.html", description: "Interactive quiz for Module 1" },
+			{ title: "Physical Science Module 2", url: "/simulations/module2_quiz.html", description: "Interactive quiz for Module 2" },
+			{ title: "Physical Science Module 3", url: "/simulations/module3_quiz.html", description: "Interactive quiz for Module 3" },
+			{ title: "Physical Science Module 4", url: "/simulations/module4_quiz.html", description: "Interactive quiz for Module 4" },
+			{ title: "Physical Science Module 5", url: "/simulations/module5_quiz.html", description: "Interactive quiz for Module 5" },
+			{ title: "Physical Science Module 6", url: "/simulations/module6_quiz.html", description: "Interactive quiz for Module 6" },
+			{ title: "Physical Science Module 7", url: "/simulations/module7_quiz.html", description: "Interactive quiz for Module 7" },
+			{ title: "Physical Science Module 8", url: "/simulations/module8_quiz.html", description: "Interactive quiz for Module 8" }
+		]
+	}
+];
+---
+
+<Layout title="Simulations">
+	<div class="simulations-container">
+		<h1>Interactive Simulations & Quizzes</h1>
+		<p class="intro">Explore our collection of interactive science simulations and quizzes. These tools are designed to help you better understand physical science concepts through hands-on learning.</p>
+		
+		{categories.map(category => (
+			<div class="category-section">
+				<h2 class="category-title">{category.name}</h2>
+				<p class="category-description">{category.description}</p>
+				
+				<div class="simulations-grid">
+					{category.simulations.map(simulation => (
+						<div class="simulation-card">
+						{category.name !== "Physical Science Class Resources" && (
+							simulation.preview ? (
+								<img 
+									src={simulation.preview} 
+									alt={simulation.previewAlt || `Preview of ${simulation.title}`}
+									class="preview-image"
+									onerror="this.classList.add('placeholder'); this.alt='Preview coming soon'"
+								/>
+							) : (
+								<div class="preview-image placeholder">Preview coming soon</div>
+							)
+						)}
+						<div class="card-content">
+							<h3>{simulation.title}</h3>
+							<p>{simulation.description}</p>
+							<a href={simulation.url} target="_blank" class="launch-btn">Launch {category.name === "Physical Science Class Resources" ? "Quiz" : "Simulation"}</a>
+						</div>
+					</div>
+					))}
+				</div>
+			</div>
+		))}
+	</div>
+
+	<style>
+		.simulations-container {
+			max-width: 1200px;
+			margin: 0 auto;
+			padding: 2rem;
+		}
+
+		h1 {
+			text-align: center;
+			margin: 2rem 0;
+			color: var(--accent);
+		}
+
+		.intro {
+			text-align: center;
+			max-width: 800px;
+			margin: 0 auto 3rem auto;
+			color: var(--gray);
+			line-height: 1.6;
+		}
+
+		.category-section {
+			margin: 4rem 0;
+			padding: 2rem;
+			background: var(--gray-light);
+			border-radius: 1rem;
+		}
+
+		.category-title {
+			font-size: 2rem;
+			color: var(--accent);
+			margin: 0 0 1rem 0;
+		}
+
+		.category-description {
+			color: var(--gray);
+			margin-bottom: 2rem;
+			line-height: 1.6;
+			max-width: 800px;
+		}
+
+		.simulations-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 2rem;
+		}
+
+		.simulation-card {
+			background: white;
+			border-radius: 0.5rem;
+			box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+			transition: transform 0.2s;
+			text-align: center;
+			overflow: hidden;
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* Special styling for quiz cards without previews */
+		.category-section:last-child .simulation-card {
+			padding-top: 1.5rem;
+		}
+
+		.simulation-card:hover {
+			transform: translateY(-4px);
+			box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+		}
+
+		.preview-image {
+			width: 100%;
+			height: 200px;
+			object-fit: cover;
+			border-top-left-radius: 0.5rem;
+			border-top-right-radius: 0.5rem;
+		}
+
+		.preview-image.placeholder {
+			background: var(--gray-light);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: var(--gray);
+			font-size: 0.875rem;
+		}
+
+		.card-content {
+			padding: 1.5rem;
+			flex-grow: 1;
+			display: flex;
+			flex-direction: column;
+		}
+
+		.simulation-card h3 {
+			color: var(--accent);
+			margin: 0 0 1rem 0;
+			font-size: 1.5rem;
+		}
+
+		.simulation-card p {
+			color: var(--gray);
+			margin: 0 0 1.5rem 0;
+			line-height: 1.5;
+			flex-grow: 1;
+		}
+
+		.launch-btn {
+			display: inline-block;
+			padding: 0.8rem 1.5rem;
+			background-color: var(--accent);
+			color: white;
+			text-decoration: none;
+			border-radius: 0.25rem;
+			transition: background-color 0.2s;
+			margin-top: auto;
+		}
+
+		.launch-btn:hover {
+			background-color: var(--accent-dark);
+		}
+	</style>
+</Layout>

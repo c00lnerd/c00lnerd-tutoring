@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Physical Science Module 2 Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .email-input {
+            margin: 20px 0;
+        }
+        .question {
+            margin: 20px 0;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .option {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .option:hover {
+            background-color: #f0f0f0;
+        }
+        .option.selected {
+            background-color: #e0e0e0;
+        }
+        .option.correct {
+            background-color: #c8e6c9;
+            border-color: #4caf50;
+        }
+        .option.incorrect {
+            background-color: #ffcdd2;
+            border-color: #f44336;
+        }
+        .reference {
+            font-style: italic;
+            color: #666;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+        }
+        #next {
+            display: none;
+        }
+        .incorrect-answers {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .wrong-answer {
+            color: #f44336;
+        }
+        .right-answer {
+            color: #4caf50;
+        }
+        .property-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .property-table th, .property-table td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .property-table th {
+            background-color: #f5f5f5;
+        }
+        .checkbox-cell {
+            text-align: center;
+        }
+        .checkbox-input {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <h1>Physical Science Module 2 Quiz</h1>
+    
+    <div class="email-input">
+        <label for="student-email">Enter your email:</label>
+        <input type="email" id="student-email" required>
+        <button onclick="startQuiz()">Start Quiz</button>
+    </div>
+
+    <div id="quiz" style="display: none;">
+        <div id="question-container"></div>
+        <button id="submit">Submit Answer</button>
+        <button id="next">Next Question</button>
+    </div>
+
+    <script>
+        (function() {
+            emailjs.init('la6DVzxI7W2gVEkX6');
+        })();
+
+        let currentQuestion = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let answered = false;
+        let incorrectAnswers = [];
+        let shuffledOptions = [];
+        let studentEmail = '';
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            selectedAnswer = null;
+            answered = false;
+            incorrectAnswers = [];
+            shuffledOptions = [];
+        }
+
+        function startQuiz() {
+            studentEmail = document.getElementById('student-email').value;
+            if (!studentEmail || !studentEmail.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            resetQuiz();
+            document.querySelector('.email-input').style.display = 'none';
+            document.getElementById('quiz').style.display = 'block';
+            displayQuestion();
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex > 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        const questions = [
+            {
+                question: "What is matter?",
+                options: [
+                    "Anything that takes up space and has mass",
+                    "Only solids and liquids",
+                    "Only things you can see",
+                    "Anything that can be measured"
+                ],
+                correctAnswer: 0,
+                reference: "Module 2: Matter"
+            },
+            {
+                question: "Which of the following is a pure substance?",
+                options: [
+                    "Salt water",
+                    "Pure gold",
+                    "Air",
+                    "Soil"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Pure Substances"
+            },
+            {
+                question: "What type of mixture has uniform composition throughout?",
+                options: [
+                    "Heterogeneous mixture",
+                    "Homogeneous mixture",
+                    "Both types of mixtures",
+                    "Neither type of mixture"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Types of Mixtures"
+            },
+            {
+                question: "Which state of matter has a definite volume but no definite shape?",
+                options: [
+                    "Solid",
+                    "Liquid",
+                    "Gas",
+                    "Plasma"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: States of Matter"
+            },
+            {
+                question: "According to kinetic theory, what happens to particle motion as temperature increases?",
+                options: [
+                    "Particles slow down",
+                    "Particles move faster",
+                    "Particles stop moving",
+                    "Particle motion is unaffected by temperature"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Kinetic Theory"
+            },
+            {
+                question: "What is diffusion?",
+                options: [
+                    "The process of a solid changing to a liquid",
+                    "The random movement of particles from areas of high to low concentration",
+                    "The process of a liquid changing to a gas",
+                    "The movement of particles from low to high concentration"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Diffusion"
+            },
+            {
+                question: "Which physical property describes how easily a material conducts heat or electricity?",
+                options: [
+                    "Viscosity",
+                    "Conductivity",
+                    "Malleability",
+                    "Ductility"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Physical Properties"
+            },
+            {
+                question: "What is viscosity?",
+                options: [
+                    "The ability to be hammered into sheets",
+                    "The resistance to flow",
+                    "The ability to conduct electricity",
+                    "The ability to be drawn into wires"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Viscosity"
+            },
+            {
+                question: "Which property allows a metal to be hammered into sheets?",
+                options: [
+                    "Ductility",
+                    "Malleability",
+                    "Conductivity",
+                    "Viscosity"
+                ],
+                correctAnswer: 1,
+                reference: "Module 2: Malleability"
+            },
+            {
+                question: "Classify each property as either a physical property or a chemical property.",
+                type: "table",
+                properties: [
+                    { name: "Red color", type: "physical" },
+                    { name: "Flammability", type: "chemical" },
+                    { name: "Density", type: "physical" },
+                    { name: "Solubility", type: "physical" },
+                    { name: "Melting point", type: "physical" },
+                    { name: "Odor", type: "physical" },
+                    { name: "Hardness", type: "physical" },
+                    { name: "Reacts with water to form a gas", type: "chemical" },
+                    { name: "Malleability", type: "physical" }
+                ],
+                reference: "Module 2: Physical and Chemical Properties"
+            },
+            {
+                question: "Classify each change as either a physical change or a chemical change.",
+                type: "table",
+                properties: [
+                    { name: "Salt dissolves in water", type: "physical" },
+                    { name: "A penny is cut in two", type: "physical" },
+                    { name: "An acid and a base react to form a salt, water, and heat", type: "chemical" },
+                    { name: "Water is heated and turns to steam", type: "physical" },
+                    { name: "Copper reacts with moist air to form a patina", type: "chemical" },
+                    { name: "Iron rusts", type: "chemical" }
+                ]
+            }
+        ];
+
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            let contentHtml = '';
+
+            if (question.type === 'table') {
+                contentHtml = `
+                    <div class="table-question">
+                        <table>
+                            <tr>
+                                <th>Property</th>
+                                <th>Physical</th>
+                                <th>Chemical</th>
+                            </tr>
+                            ${question.properties.map((prop, index) => `
+                                <tr>
+                                    <td>${prop.name}</td>
+                                    <td><input type="checkbox" class="checkbox-input" data-index="${index}" data-type="physical"></td>
+                                    <td><input type="checkbox" class="checkbox-input" data-index="${index}" data-type="chemical"></td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                        <p class="reference">Reference: ${question.reference}</p>
+                    </div>
+                `;
+            } else {
+                // Create shuffled options array with original indices
+                if (!shuffledOptions[currentQuestion]) {
+                    shuffledOptions[currentQuestion] = question.options.map((opt, idx) => ({ text: opt, index: idx }));
+                    shuffle(shuffledOptions[currentQuestion]);
+                }
+
+                contentHtml = `
+                    <div class="options">
+                        ${shuffledOptions[currentQuestion].map(option => `
+                            <div class="option" data-index="${option.index}">${option.text}</div>
+                        `).join('')}
+                    </div>
+                    <p class="reference">Reference: ${question.reference}</p>
+                `;
+            }
+
+            document.getElementById('question-container').innerHTML = `
+                <div class="question">
+                    <h2>Question ${currentQuestion + 1} of ${questions.length}</h2>
+                    <p>${question.question}</p>
+                    ${contentHtml}
+                </div>
+            `;
+
+            selectedAnswer = null;
+            answered = false;
+
+            if (question.type === 'table') {
+                document.querySelectorAll('.checkbox-input').forEach(checkbox => {
+                    checkbox.addEventListener('click', (e) => {
+                        if (!answered) {
+                            const index = e.target.dataset.index;
+                            const type = e.target.dataset.type;
+                            const row = e.target.closest('tr');
+                            // Uncheck the other checkbox in the same row
+                            row.querySelectorAll('.checkbox-input').forEach(cb => {
+                                if (cb !== e.target) {
+                                    cb.checked = false;
+                                }
+                            });
+
+                            // Update selected answers
+                            if (!selectedAnswer) {
+                                selectedAnswer = Array(question.properties.length).fill('');
+                            }
+                            selectedAnswer[index] = e.target.checked ? type : '';
+                        }
+                    });
+                });
+            } else {
+                document.querySelectorAll('.option').forEach(option => {
+                    option.addEventListener('click', () => {
+                        if (!answered) {
+                            selectedAnswer = parseInt(option.dataset.index);
+                            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+                            option.classList.add('selected');
+                        }
+                    });
+                });
+            }
+
+            document.getElementById('submit').style.display = 'inline-block';
+            document.getElementById('next').style.display = 'none';
+        }
+
+        document.getElementById('submit').addEventListener('click', () => {
+            if (selectedAnswer === null || answered) return;
+
+            const question = questions[currentQuestion];
+            let isCorrect = false;
+
+            if (question.type === 'table') {
+                if (!selectedAnswer || selectedAnswer.includes('')) {
+                    alert('Please classify all properties');
+                    return;
+                }
+
+                const wrongAnswers = [];
+                let correctCount = 0;
+
+                selectedAnswer.forEach((selected, index) => {
+                    const property = question.properties[index];
+                    if (selected === property.type) {
+                        correctCount++;
+                        document.querySelectorAll(`.checkbox-input[data-index="${index}"]`).forEach(cb => {
+                            if (cb.dataset.type === selected) {
+                                cb.parentElement.classList.add('correct');
+                            }
+                        });
+                    } else {
+                        document.querySelectorAll(`.checkbox-input[data-index="${index}"]`).forEach(cb => {
+                            if (cb.dataset.type === selected) {
+                                cb.parentElement.classList.add('incorrect');
+                            }
+                            if (cb.dataset.type === property.type) {
+                                cb.parentElement.classList.add('correct');
+                            }
+                        });
+                        wrongAnswers.push({
+                            property: property.name,
+                            yourAnswer: selected,
+                            correctAnswer: property.type
+                        });
+                    }
+                });
+
+                const partialScore = correctCount / question.properties.length;
+                score += partialScore;
+                isCorrect = partialScore === 1;
+
+                if (wrongAnswers.length > 0) {
+                    incorrectAnswers.push({
+                        questionNumber: currentQuestion + 1,
+                        question: question.question,
+                        wrongAnswers: wrongAnswers,
+                        reference: question.reference
+                    });
+                }
+            } else {
+                isCorrect = selectedAnswer === question.correctAnswer;
+                if (isCorrect) {
+                    score++;
+                    document.querySelector(`.option[data-index="${selectedAnswer}"]`).classList.add('correct');
+                } else {
+                    document.querySelector(`.option[data-index="${selectedAnswer}"]`).classList.add('incorrect');
+                    document.querySelector(`.option[data-index="${question.correctAnswer}"]`).classList.add('correct');
+                    incorrectAnswers.push({
+                        questionNumber: currentQuestion + 1,
+                        question: question.question,
+                        yourAnswer: shuffledOptions[currentQuestion].find(opt => opt.index === selectedAnswer).text,
+                        correctAnswer: question.options[question.correctAnswer],
+                        reference: question.reference
+                    });
+                }
+            }
+
+            answered = true;
+            document.getElementById('submit').style.display = 'none';
+            document.getElementById('next').style.display = 'inline-block';
+
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById('next').textContent = 'Finish Quiz';
+            }
+        });
+
+        document.getElementById('next').addEventListener('click', () => {
+            if (!answered) return;
+
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion();
+            } else {
+                const studentEmail = document.getElementById('student-email').value;
+                let emailMessage = `Quiz Score: ${score.toFixed(2)} out of ${questions.length}\nCompleted: ${new Date().toLocaleString()}\n\n`;
+                
+                if (incorrectAnswers.length > 0) {
+                    emailMessage += '\nIncorrect Answers:\n';
+                    incorrectAnswers.forEach((item, index) => {
+                        emailMessage += `\nQuestion ${item.questionNumber}: ${item.question}\n`;
+                        if (item.wrongAnswers) {
+                            // Table question
+                            item.wrongAnswers.forEach(wrong => {
+                                emailMessage += `   Property: ${wrong.property}\n`;
+                                emailMessage += `   Your Answer: ${wrong.yourAnswer}\n`;
+                                emailMessage += `   Correct Answer: ${wrong.correctAnswer}\n`;
+                            });
+                        } else {
+                            // Multiple choice question
+                            emailMessage += `   Your Answer: ${item.yourAnswer}\n`;
+                            emailMessage += `   Correct Answer: ${item.correctAnswer}\n`;
+                        }
+                        emailMessage += `   Reference: ${item.reference}\n`;
+                    });
+                }
+
+                const templateParams = {
+                    from_name: 'Physical Science Quiz System',
+                    student_email: studentEmail,
+                    to_name: 'Instructor',
+                    subject: 'Physical Science Module 2 Quiz Results',
+                    message: `Student Email: ${studentEmail}\n\n${emailMessage}`,
+                    reply_to: studentEmail
+                };
+
+                emailjs.send('service_ot1jg6s', 'template_v678xjf', templateParams)
+                    .then(function(response) {
+                        let resultHtml = `
+                            <h2>Quiz Complete!</h2>
+                            <p>You scored ${score.toFixed(2)} out of ${questions.length}</p>
+                            <p>Results have been sent to your instructor.</p>`;
+
+                        if (incorrectAnswers.length > 0) {
+                            resultHtml += `
+                            <div class="incorrect-answers">
+                                <h3>Incorrect Answers:</h3>
+                                <ol>`;
+                            incorrectAnswers.forEach((item, index) => {
+                                resultHtml += `
+                                    <li>
+                                        <p><strong>Question ${item.questionNumber}:</strong> ${item.question}</p>`;
+                                if (item.wrongAnswers) {
+                                    // Table question
+                                    item.wrongAnswers.forEach(wrong => {
+                                        resultHtml += `
+                                            <div style="margin-left: 20px;">
+                                                <p><strong>Property:</strong> ${wrong.property}</p>
+                                                <p class="wrong-answer">Your Answer: ${wrong.yourAnswer}</p>
+                                                <p class="right-answer">Correct Answer: ${wrong.correctAnswer}</p>
+                                            </div>`;
+                                    });
+                                } else {
+                                    // Multiple choice question
+                                    resultHtml += `
+                                        <p class="wrong-answer">Your Answer: ${item.yourAnswer}</p>
+                                        <p class="right-answer">Correct Answer: ${item.correctAnswer}</p>`;
+                                }
+                                resultHtml += `
+                                        <p class="reference">Reference: ${item.reference}</p>
+                                    </li>`;
+                            });
+                            resultHtml += `
+                                </ol>
+                            </div>`;
+                        }
+
+                        document.getElementById('question-container').innerHTML = resultHtml;
+                    }, function(error) {
+                        document.getElementById('question-container').innerHTML = `
+                            <h2>Quiz Complete!</h2>
+                            <p>You scored ${score.toFixed(2)} out of ${questions.length}</p>
+                            <p>Error sending results. Please contact your instructor.</p>
+                        `;
+                    });
+
+                document.getElementById('submit').style.display = 'none';
+                document.getElementById('next').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

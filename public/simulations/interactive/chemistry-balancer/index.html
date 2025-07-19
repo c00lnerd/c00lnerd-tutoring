@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ionic Equation Balancer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .example-selector {
+            margin: 20px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .details-panel {
+            display: none;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .details-panel.show {
+            display: block;
+        }
+        .redox-steps {
+            display: none;
+        }
+        .redox .redox-steps {
+            display: block;
+        }
+        option.precipitation, option.redox, option.acid_base, option.gas_forming {
+            display: none;
+        }
+        .show-precipitation .precipitation,
+        .show-redox .redox,
+        .show-acid_base .acid_base,
+        .show-gas_forming .gas_forming {
+            display: block;
+        }
+        .details-panel.show {
+            display: block;
+        }
+        .equation-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .equation {
+            font-size: 24px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .step {
+            background: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            display: none;
+        }
+        .step.active {
+            display: block !important;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .details-btn {
+            background-color: #f8f9fa;
+            color: #212529;
+            border: 1px solid #dee2e6;
+            padding: 8px 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .details-btn:hover {
+            background-color: #e9ecef;
+        }
+        .nav-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .explanation {
+            margin: 15px 0;
+        }
+        .explanation ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .success {
+            color: #28a745;
+        }
+        .explanation {
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Ionic Equation Balancer</h1>
+    <div class="example-selector">
+        <h3>Select Reaction Type:</h3>
+        <select id="reactionTypeSelect" onchange="changeReactionType()">
+            <option value="precipitation">Precipitation Reactions</option>
+            <option value="redox">Redox Reactions</option>
+            <option value="acid_base">Acid-Base Reactions</option>
+            <option value="gas_forming">Gas-Forming Reactions</option>
+        </select>
+        
+        <h3>Select Example:</h3>
+        <select id="equationSelect" onchange="changeExample()">
+            <!-- Precipitation Reactions -->
+            <option class="precipitation" value="na2so4">Na₂SO₄(aq) + BaCl₂(aq) → 2NaCl(aq) + BaSO₄(s)</option>
+            <option class="precipitation" value="agno3">AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)</option>
+            <option class="precipitation" value="pb2no3">Pb(NO₃)₂(aq) + 2KI(aq) → PbI₂(s) + 2KNO₃(aq)</option>
+            
+            <!-- Redox Reactions -->
+            <option class="redox" value="zn_acid">Zn(s) + 2HCl(aq) → ZnCl₂(aq) + H₂(g)</option>
+            <option class="redox" value="fe_cu">Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)</option>
+            <option class="redox" value="permanganate">2KMnO₄ + 5H₂C₂O₄ + 3H₂SO₄ → 2MnSO₄ + 10CO₂ + K₂SO₄ + 8H₂O</option>
+            
+            <!-- Acid-Base Reactions -->
+            <option class="acid_base" value="hcl_naoh">HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)</option>
+            <option class="acid_base" value="h2so4_ba">H₂SO₄(aq) + Ba(OH)₂(aq) → BaSO₄(s) + 2H₂O(l)</option>
+            <option class="acid_base" value="carbonic">2HCl(aq) + Na₂CO₃(aq) → 2NaCl(aq) + H₂O(l) + CO₂(g)</option>
+            
+            <!-- Gas-Forming Reactions -->
+            <option class="gas_forming" value="carbonate">CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g)</option>
+            <option class="gas_forming" value="sulfide">FeS(s) + 2HCl(aq) → FeCl₂(aq) + H₂S(g)</option>
+            <option class="gas_forming" value="ammonia">NH₄Cl(s) + NaOH(aq) → NaCl(aq) + H₂O(l) + NH₃(g)</option>
+        </select>
+    </div>
+    <div class="equation-container">
+        <div class="equation" id="molecularEquation">
+            Na₂SO₄(aq) + BaCl₂(aq) → 2NaCl(aq) + BaSO₄(s)
+        </div>
+        <div id="steps">
+            <div class="step" id="step1">
+                <h3>Step 1</h3>
+                <div id="step1Explanation">
+                    <!-- Content will be dynamically updated by JavaScript -->
+                </div>
+            </div>
+            <div class="step" id="step2">
+                <h3>Step 2: Write Half-Reactions</h3>
+                <div id="step2Container">
+                    <div id="step2Explanation">
+                        <!-- Content will be dynamically updated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="step" id="step3">
+                <h3>Step 3: Balance atoms and charges</h3>
+                <div id="step3Container">
+                    <div id="step3Explanation">
+                        <!-- Content will be dynamically updated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="step" id="step4">
+                <h3>Step 4</h3>
+                <div id="step4Explanation">
+                    <!-- Content will be dynamically updated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial reaction type
+            const firstExample = examples[document.getElementById('equationSelect').value];
+            updateContent(firstExample);
+            
+            // Show first step
+            resetSteps();
+        });
+    </script>
+</body>
+</html>

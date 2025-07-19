@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Earth Simulation</title>
+    <style>
+        body { 
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+        }
+        canvas {
+            display: block;
+        }
+        #info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #moonInfo {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #weatherControls {
+            position: absolute;
+            top: 10px;
+            right: 150px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #tempLegend, #pressureLegend {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            color: white;
+            font-family: Arial, sans-serif;
+            width: 120px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+        }
+        .legend-gradient {
+            width: 20px;
+            height: 200px;
+            position: relative;
+        }
+        .temp-gradient {
+            background: linear-gradient(to bottom, 
+                #6a1b9a 0%,    /* 100°F+ */
+                #d32f2f 20%,   /* 85°F */
+                #ff9800 40%,   /* 70°F */
+                #fdd835 60%,   /* 55°F */
+                #42a5f5 80%,   /* 40°F */
+                #1565c0 100%   /* 25°F- */
+            );
+        }
+        .pressure-gradient {
+            background: linear-gradient(to bottom,
+                #8b0000 0%,    /* 1050+ mb */
+                #ff0000 20%,   /* 1030 mb */
+                #ff8c00 40%,   /* 1010 mb */
+                #ffff00 60%,   /* 990 mb */
+                #00ff00 80%,   /* 970 mb */
+                #0000ff 100%   /* 950- mb */
+            );
+        }
+        .legend-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 200px;
+            font-size: 12px;
+            padding: 3px 0;
+        }
+        #toggleConstellation {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            transition: background-color 0.3s;
+        }
+        #toggleConstellation:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .star-label {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            pointer-events: none;
+            text-shadow: 0 0 2px black;
+        }
+    </style>
+</head>
+<body>
+    <div id="info">
+        Use mouse to rotate view<br>
+        Scroll to zoom in/out<br>
+        Earth's axial tilt: 23.5°
+    </div>
+    <div id="moonInfo">Moon distance: calculating...</div>
+    <div id="weatherControls">
+        Weather Layer: 
+        <select id="weatherLayer">
+            <option value="none">None</option>
+            <option value="clouds">Cloud Coverage (Global)</option>
+            <option value="precipitation">Precipitation</option>
+            <option value="temp">Temperature</option>
+            <option value="pressure">Pressure</option>
+        </select>
+        <span id="loadingIndicator">Loading...</span>
+        <span id="lastUpdate"></span>
+    </div>
+    <div id="tempLegend">
+        <div class="legend-gradient temp-gradient"></div>
+        <div class="legend-labels">
+            <div>100°F+</div>
+            <div>85°F</div>
+            <div>70°F</div>
+            <div>55°F</div>
+            <div>40°F</div>
+            <div>25°F-</div>
+        </div>
+    </div>
+    <div id="pressureLegend">
+        <div class="legend-gradient pressure-gradient"></div>
+        <div class="legend-labels">
+            <div>1050+ mb</div>
+            <div>1030 mb</div>
+            <div>1010 mb</div>
+            <div>990 mb</div>
+            <div>970 mb</div>
+            <div>950- mb</div>
+        </div>
+    </div>
+    <button id="toggleConstellation">Show Constellations</button>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.157.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.157.0/examples/jsm/",
+                "OrbitControls": "https://unpkg.com/three@0.157.0/examples/jsm/controls/OrbitControls.js"
+            }
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/grib2-js/dist/grib2.min.js"></script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'OrbitControls';
+
+        // Function to decode GRIB2 data
+        function decodeGrib2(data) {
+            const grib = new Grib2(data);
+            const message = grib.getMessage(0);
+            return message.data;
+        }
+
+        // Function to map pressure values to colors
+        function getPressureColor(pressure) {
+            // Pressure ranges and colors matching our legend
+            const ranges = [
+                { min: 1050, color: { r: 139, g: 0, b: 0 } },    // Dark red
+                { min: 1030, color: { r: 255, g: 0, b: 0 } },    // Red
+                { min: 1010, color: { r: 255, g: 140, b: 0 } },  // Orange
+                { min: 990, color: { r: 255, g: 255, b: 0 } },   // Yellow
+                { min: 970, color: { r: 0, g: 255, b: 0 } },     // Green
+                { min: 0, color: { r: 0, g: 0, b: 255 } }        // Blue
+            ];
+
+            // Find the appropriate color range
+            for (let i = 0; i < ranges.length; i++) {
+                if (pressure >= ranges[i].min) {
+                    if (i === 0) return ranges[i].color;
+                    
+                    // Interpolate between this color and the previous one
+                    const t = (pressure - ranges[i].min) / (ranges[i-1].min - ranges[i].min);
+                    return {
+                        r: Math.round(ranges[i].color.r + (ranges[i-1].color.r - ranges[i].color.r) * t),
+                        g: Math.round(ranges[i].color.g + (ranges[i-1].color.g - ranges[i].color.g) * t),
+                        b: Math.round(ranges[i].color.b + (ranges[i-1].color.b - ranges[i].color.b) * t)
+                    };
+                }
+            }
+            return ranges[ranges.length-1].color;
+        }
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Controls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.minDistance = 2.5; // Allow closer zoom (was 5)
+        controls.maxDistance = 30;
+        controls.addEventListener('change', () => {
+            updateWeatherDetail();
+        });
+
+        let currentZoom = 1;
+        let weatherUpdateTimeout;
+
+        // Function to calculate zoom level based on camera distance
+        function calculateZoomLevel() {
+            const distance = camera.position.distanceTo(earth.position);
+            if (distance <= 3) return 4; // Very close - highest detail
+            if (distance <= 4) return 3;
+            if (distance <= 6) return 2;
+            return 1; // Default zoom level for far view
+        }
+
+        // Function to update weather detail based on zoom
+        function updateWeatherDetail() {
+            clearTimeout(weatherUpdateTimeout);
+            weatherUpdateTimeout = setTimeout(() => {
+                const newZoom = calculateZoomLevel();
+                if (newZoom !== currentZoom) {
+                    currentZoom = newZoom;
+                    const currentLayer = document.getElementById('weatherLayer').value;
+                    if (currentLayer !== 'none') {
+                        updateWeatherLayer(currentLayer);
+                    }
+                }
+            }, 200); // Debounce updates
+        }
+
+        // Earth setup with weather overlay support
+        const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
+        const textureLoader = new THREE.TextureLoader();
+
+        // OpenWeatherMap API key - Replace with your own key
+        const openWeatherMapKey = 'a9f4e36550b73b8c77fd3835bf085804'; // You'll need to sign up at OpenWeatherMap for a free API key
+
+        // Function to update weather layer
+        function updateWeatherLayer(layerId) {
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const lastUpdate = document.getElementById('lastUpdate');
+            loadingIndicator.style.display = 'inline';
+            lastUpdate.textContent = '';
+
+            if (layerId === 'none') {
+                // Reset to default Earth texture
+                const defaultTexture = textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg',
+                    () => {
+                        loadingIndicator.style.display = 'none';
+                        lastUpdate.textContent = '';
+                    });
+                earthMaterial.map = defaultTexture;
+                earthMaterial.transparent = false;
+                earthMaterial.opacity = 1.0;
+                earthMaterial.needsUpdate = true;
+                return;
+            }
+
+            // Get current UTC timestamp for weather data
+            const timestamp = Math.floor(Date.now() / 1000);
+            
+            // Create a canvas for the weather overlay
+            const canvas = document.createElement('canvas');
+            canvas.width = 2048;  // Match our texture resolution
+            canvas.height = 1024;
+            const ctx = canvas.getContext('2d');
+
+            // Load base Earth texture first
+            const baseImage = new Image();
+            baseImage.crossOrigin = "Anonymous";
+            baseImage.src = 'https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg';
+            
+            baseImage.onload = () => {
+                ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+
+                // Show/hide legends based on selected layer
+                const tempLegend = document.getElementById('tempLegend');
+                const pressureLegend = document.getElementById('pressureLegend');
+                
+                tempLegend.style.display = layerId === 'temp' ? 'flex' : 'none';
+                pressureLegend.style.display = layerId === 'pressure' ? 'flex' : 'none';
+
+                // Calculate tile grid based on zoom level
+                const gridSize = Math.pow(2, currentZoom);
+                const totalTiles = gridSize * gridSize;
+                let loadedTiles = 0;
+
+                for (let x = 0; x < gridSize; x++) {
+                    for (let y = 0; y < gridSize; y++) {
+                        const tileUrl = `https://tile.openweathermap.org/map/${layerId === 'pressure' ? 'pressure_new' : layerId}/${currentZoom}/${x}/${y}.png?appid=${openWeatherMapKey}&time=${timestamp}`;
+                        
+                        const weatherImage = new Image();
+                        weatherImage.crossOrigin = "Anonymous";
+                        weatherImage.src = tileUrl;
+                        
+                        weatherImage.onload = () => {
+                            ctx.globalAlpha = 0.6;
+                            ctx.drawImage(weatherImage, 
+                                x * canvas.width/gridSize, 
+                                y * canvas.height/gridSize, 
+                                canvas.width/gridSize, 
+                                canvas.height/gridSize
+                            );
+                            
+                            loadedTiles++;
+                            if (loadedTiles === totalTiles) {
+                                const texture = new THREE.CanvasTexture(canvas);
+                                texture.minFilter = THREE.LinearFilter;
+                                texture.magFilter = THREE.LinearFilter;
+                                earthMaterial.map = texture;
+                                earthMaterial.transparent = true;
+                                earthMaterial.opacity = 1.0;
+                                earthMaterial.needsUpdate = true;
+                                loadingIndicator.style.display = 'none';
+                                
+                                const now = new Date();
+                                lastUpdate.textContent = `Last updated: ${now.toLocaleTimeString()} (Zoom level: ${currentZoom})`;
+                            }
+                        };
+                        
+                        weatherImage.onerror = () => {
+                            console.error('Error loading weather tile:', tileUrl);
+                            loadingIndicator.textContent = 'Error loading weather data';
+                            setTimeout(() => {
+                                loadingIndicator.textContent = 'Loading...';
+                                loadingIndicator.style.display = 'none';
+                            }, 5000);
+                        };
+                    }
+                }
+            };
+            
+            baseImage.onerror = () => {
+                console.error('Error loading base Earth texture');
+                loadingIndicator.style.display = 'none';
+            };
+        }
+
+        // Load Earth textures
+        const earthMaterial = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://threejs.org/examples/textures/planets/earth_atmos_2048.jpg'),
+            bumpMap: textureLoader.load('https://threejs.org/examples/textures/planets/earth_normal_2048.jpg'),
+            bumpScale: 0.05,
+            specularMap: textureLoader.load('https://threejs.org/examples/textures/planets/earth_specular_2048.jpg'),
+            specular: new THREE.Color('grey')
+        });
+
+        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+        
+        // Set Earth's axial tilt (23.5 degrees)
+        earth.rotation.x = THREE.MathUtils.degToRad(23.5);
+        scene.add(earth);
+
+        // Add weather layer selection handler
+        document.getElementById('weatherLayer').addEventListener('change', function(e) {
+            const tempLegend = document.getElementById('tempLegend');
+            const pressureLegend = document.getElementById('pressureLegend');
+            
+            tempLegend.style.display = e.target.value === 'temp' ? 'flex' : 'none';
+            pressureLegend.style.display = e.target.value === 'pressure' ? 'flex' : 'none';
+            
+            updateWeatherLayer(e.target.value);
+        });
+
+        // Add Moon with orbit visualization
+        const moonGeometry = new THREE.SphereGeometry(0.545, 32, 32); // Moon is about 27.3% the size of Earth
+        const moonMaterial = new THREE.MeshPhongMaterial({
+            map: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_1024.jpg'),
+            bumpMap: textureLoader.load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_bump_1024.jpg'),
+            bumpScale: 0.02,
+        });
+
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        scene.add(moon);
+
+        // Add moon orbit visualization
+        const moonOrbitGeometry = new THREE.BufferGeometry();
+        const orbitPoints = [];
+        const orbitSegments = 128;
+        for (let i = 0; i <= orbitSegments; i++) {
+            const angle = (i / orbitSegments) * Math.PI * 2;
+            orbitPoints.push(
+                Math.cos(angle) * 8,
+                Math.sin(angle * 0.5) * 2, // Match the orbit inclination
+                Math.sin(angle) * 8
+            );
+        }
+        moonOrbitGeometry.setAttribute('position', new THREE.Float32BufferAttribute(orbitPoints, 3));
+        const moonOrbitMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x444444,
+            transparent: true,
+            opacity: 0.3
+        });
+        const moonOrbit = new THREE.Line(moonOrbitGeometry, moonOrbitMaterial);
+        scene.add(moonOrbit);
+
+        // Moon orbit parameters
+        const moonOrbitRadius = 8; // Reduced for better visibility
+        const moonOrbitSpeed = 0.5; // Adjusted for visualization
+        const moonRotationSpeed = 0.1;
+
+        // Function to update moon position
+        function updateMoonPosition() {
+            const date = new Date();
+            
+            // Convert to UTC
+            const utcHours = date.getUTCHours();
+            const utcMinutes = date.getUTCMinutes();
+            const utcSeconds = date.getUTCSeconds();
+            
+            // Calculate moon angle (360 degrees = 24 hours)
+            const totalSeconds = utcHours * 3600 + utcMinutes * 60 + utcSeconds;
+            const dayProgress = totalSeconds / (24 * 3600);
+            const angle = (dayProgress * Math.PI * 2) - Math.PI;
+
+            moon.position.x = Math.cos(angle) * moonOrbitRadius;
+            moon.position.z = Math.sin(angle) * moonOrbitRadius;
+            moon.position.y = Math.sin(angle * 0.5) * 2; // Add some inclination to orbit
+
+            // Rotate moon
+            moon.rotation.y += moonRotationSpeed * 0.001;
+
+            // Update moon info display
+            const moonDistance = Math.sqrt(
+                moon.position.x * moon.position.x + 
+                moon.position.y * moon.position.y + 
+                moon.position.z * moon.position.z
+            ).toFixed(1);
+            document.getElementById('moonInfo').textContent = 
+                `Moon distance: ${moonDistance} units (Scaled 1:30)`;
+        }
+
+        // Add a subtle glow effect to the moon
+        const moonGlowGeometry = new THREE.SphereGeometry(0.56, 32, 32);
+        const moonGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x444444,
+            transparent: true,
+            opacity: 0.2
+        });
+        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+        moon.add(moonGlow);
+
+        // Lighting
+        const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        scene.add(sunLight);
+
+        const ambientLight = new THREE.AmbientLight(0x333333);
+        scene.add(ambientLight);
+
+        // Function to update sun position
+        function updateSunPosition() {
+            const now = new Date();
+            
+            // Convert to UTC
+            const utcHours = now.getUTCHours();
+            const utcMinutes = now.getUTCMinutes();
+            const utcSeconds = now.getUTCSeconds();
+            
+            // Calculate sun angle (360 degrees = 24 hours)
+            const totalSeconds = utcHours * 3600 + utcMinutes * 60 + utcSeconds;
+            const dayProgress = totalSeconds / (24 * 3600);
+            const angle = (dayProgress * Math.PI * 2) - Math.PI;
+
+            // Position sun light (radius of 100 units to simulate distant light)
+            const radius = 100;
+            sunLight.position.x = Math.cos(angle) * radius;
+            sunLight.position.z = Math.sin(angle) * radius;
+        }
+
+        // Stars background using Yale Bright Star Catalog data
+        const starGeometry = new THREE.BufferGeometry();
+        const starMaterials = [
+            new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.15 }), // Magnitude 0-1
+            new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.12 }), // Magnitude 1-2
+            new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.10 }), // Magnitude 2-3
+            new THREE.PointsMaterial({ color: 0xFFFFFF, size: 0.08 })  // Magnitude 3-4
+        ];
+
+        // Notable Messier Objects [RA (hours), Dec (degrees), Name, Type]
+        const messierObjects = [
+            [5.575, -5.389, "M42", "Orion Nebula"],
+            [17.667, -16.183, "M8", "Lagoon Nebula"],
+            [6.75, -20.767, "M41", "Open Cluster"],
+            [16.693, 36.461, "M13", "Hercules Globular"],
+            [5.886, 32.547, "M37", "Open Cluster"],
+            [17.401, -23.018, "M7", "Ptolemy's Cluster"],
+            [18.314, -17.131, "M22", "Sagittarius Cluster"],
+            [17.504, -34.823, "M6", "Butterfly Cluster"],
+            [23.333, 61.751, "M31", "Andromeda Galaxy"],
+            [13.7, 28.377, "M3", "Globular Cluster"]
+        ];
+
+        // Bright stars data (Right Ascension, Declination, Visual Magnitude)
+        // Format: [RA (hours), Dec (degrees), Magnitude, Name (if notable)]
+        const brightStars = [
+            // Ursa Major (Big Dipper)
+            [11.062, 61.751, 1.79, "Dubhe"],
+            [11.897, 53.695, 2.37, "Merak"],
+            [12.257, 57.033, 2.44, "Phecda"],
+            [12.900, 55.959, 2.27, "Megrez"],
+            [13.792, 49.313, 1.76, "Alioth"],
+            [14.272, 51.677, 1.85, "Mizar"],
+            [13.398, 54.925, 1.86, "Alkaid"],
+            
+            // Orion
+            [5.242, -8.202, 0.45, "Rigel"],
+            [5.919, 7.407, 0.08, "Betelgeuse"],
+            [5.533, -0.299, 1.64, "Alnilam"],
+            [5.603, -1.202, 1.69, "Alnitak"],
+            [5.419, -2.397, 1.50, "Saiph"],
+            
+            // Ursa Minor (Little Dipper)
+            [2.530, 89.264, 2.02, "Polaris"],
+            [15.734, 77.794, 2.08, "Kochab"],
+            
+            // Cassiopeia
+            [0.675, 56.537, 2.24, "Caph"],
+            [0.945, 60.717, 2.68, "Schedar"],
+            [1.430, 60.235, 2.37, "Gamma Cas"],
+            [1.906, 63.670, 2.66, "Ruchbah"],
+            
+            // Scorpius
+            [16.490, -26.432, 0.96, "Antares"],
+            [16.836, -34.293, 2.82, "Shaula"],
+            
+            // Cygnus (Northern Cross)
+            [20.690, 45.280, 1.25, "Deneb"],
+            [19.512, 27.959, 2.87, "Albireo"],
+            
+            // Lyra
+            [18.615, 38.784, 0.03, "Vega"],
+            
+            // Other bright stars
+            [6.752, -16.716, -1.46, "Sirius"],
+            [14.660, -60.833, -0.27, "Alpha Centauri"],
+            [5.278, 46.000, 0.08, "Capella"],
+            [14.261, 19.182, -0.04, "Arcturus"]
+        ];
+
+        const starVertices = [];
+        const starSizes = [];
+        const starColors = [];
+
+        brightStars.forEach(star => {
+            // Convert RA (hours) and Dec (degrees) to Cartesian coordinates
+            const ra = star[0] * 15 * Math.PI / 180;
+            const dec = star[1] * Math.PI / 180;
+            const radius = 100;
+            
+            // Convert to Cartesian coordinates
+            const x = radius * Math.cos(dec) * Math.cos(ra);
+            const y = radius * Math.sin(dec);
+            const z = -radius * Math.cos(dec) * Math.sin(ra);
+            
+            starVertices.push(x, y, z);
+            
+            // Determine star size based on magnitude (increased sizes)
+            const magnitude = star[2];
+            const size = Math.max(0.08, 0.2 - magnitude * 0.02);
+            starSizes.push(size);
+            
+            // Color based on magnitude (brighter stars are whiter)
+            const brightness = Math.min(1, Math.max(0.6, 1.2 - magnitude * 0.15));
+            starColors.push(brightness, brightness, brightness);
+        });
+
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        starGeometry.setAttribute('size', new THREE.Float32BufferAttribute(starSizes, 1));
+        starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+
+        const starMaterial = new THREE.PointsMaterial({
+            size: 1,
+            vertexColors: true,
+            sizeAttenuation: false
+        });
+
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // Add Messier objects
+        const messierGeometry = new THREE.BufferGeometry();
+        const messierVertices = [];
+        const messierColors = [];
+        const messierSizes = [];
+
+        messierObjects.forEach(object => {
+            const ra = object[0] * 15 * Math.PI / 180;
+            const dec = object[1] * Math.PI / 180;
+            const radius = 100;
+            
+            const x = radius * Math.cos(dec) * Math.cos(ra);
+            const y = radius * Math.sin(dec);
+            const z = -radius * Math.cos(dec) * Math.sin(ra);
+            
+            messierVertices.push(x, y, z);
+            
+            // Different colors for different types of objects
+            if (object[3].includes("Nebula")) {
+                messierColors.push(1, 0.4, 0.4); // Red for nebulae
+            } else if (object[3].includes("Cluster")) {
+                messierColors.push(0.4, 1, 0.4); // Green for clusters
+            } else {
+                messierColors.push(0.4, 0.4, 1); // Blue for galaxies
+            }
+            
+            messierSizes.push(0.15); // Larger size for Messier objects
+        });
+
+        messierGeometry.setAttribute('position', new THREE.Float32BufferAttribute(messierVertices, 3));
+        messierGeometry.setAttribute('color', new THREE.Float32BufferAttribute(messierColors, 3));
+        messierGeometry.setAttribute('size', new THREE.Float32BufferAttribute(messierSizes, 1));
+
+        const messierMaterial = new THREE.PointsMaterial({
+            size: 1,
+            vertexColors: true,
+            sizeAttenuation: false
+        });
+
+        const messierPoints = new THREE.Points(messierGeometry, messierMaterial);
+        scene.add(messierPoints);
+
+        // Update star positions with Earth's rotation
+        function updateStarField() {
+            const date = new Date();
+            const hours = date.getUTCHours();
+            const minutes = date.getUTCMinutes();
+            const totalHours = hours + minutes / 60;
+            const rotation = (totalHours / 24) * Math.PI * 2;
+            stars.rotation.y = rotation;
+            messierPoints.rotation.y = rotation;
+        }
+
+        // Constellation lines data
+        const constellationLines = {
+            "Ursa Major": [[0,1], [1,2], [2,3], [3,4], [4,5], [5,6]], // Big Dipper
+            "Orion": [[7,8], [8,9], [9,10], [10,11]], // Main stars of Orion
+            "Cassiopeia": [[14,15], [15,16], [16,17]], // W shape of Cassiopeia
+            "Ursa Minor": [[12,13]], // Polaris to Kochab
+            "Cygnus": [[20,21]], // Main axis of Northern Cross
+        };
+
+        // Create constellation lines
+        const constellationGeometry = new THREE.BufferGeometry();
+        const lineVertices = [];
+        
+        for (const constellation in constellationLines) {
+            const lines = constellationLines[constellation];
+            lines.forEach(line => {
+                const star1 = brightStars[line[0]];
+                const star2 = brightStars[line[1]];
+                
+                // Convert both stars to Cartesian coordinates
+                const radius = 100;
+                
+                const ra1 = star1[0] * 15 * Math.PI / 180;
+                const dec1 = star1[1] * Math.PI / 180;
+                const x1 = radius * Math.cos(dec1) * Math.cos(ra1);
+                const y1 = radius * Math.sin(dec1);
+                const z1 = -radius * Math.cos(dec1) * Math.sin(ra1);
+                
+                const ra2 = star2[0] * 15 * Math.PI / 180;
+                const dec2 = star2[1] * Math.PI / 180;
+                const x2 = radius * Math.cos(dec2) * Math.cos(ra2);
+                const y2 = radius * Math.sin(dec2);
+                const z2 = -radius * Math.cos(dec2) * Math.sin(ra2);
+                
+                lineVertices.push(x1, y1, z1, x2, y2, z2);
+            });
+        }
+        
+        constellationGeometry.setAttribute('position', new THREE.Float32BufferAttribute(lineVertices, 3));
+        const constellationMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x4444ff,
+            transparent: true,
+            opacity: 0.3
+        });
+        const constellationLines3D = new THREE.LineSegments(constellationGeometry, constellationMaterial);
+        constellationLines3D.visible = false;
+        scene.add(constellationLines3D);
+
+        // Create star labels
+        const labelContainer = document.createElement('div');
+        labelContainer.style.position = 'absolute';
+        labelContainer.style.top = '0';
+        labelContainer.style.left = '0';
+        labelContainer.style.pointerEvents = 'none';
+        document.body.appendChild(labelContainer);
+
+        const starLabels = brightStars.map(star => {
+            if (star[3]) {  // If star has a name
+                const div = document.createElement('div');
+                div.className = 'star-label';
+                div.textContent = star[3];
+                div.style.display = 'none';
+                labelContainer.appendChild(div);
+                return div;
+            }
+            return null;
+        }).filter(label => label !== null);
+
+        // Create Messier object labels
+        const messierLabels = messierObjects.map(object => {
+            const div = document.createElement('div');
+            div.className = 'star-label';
+            div.textContent = `${object[2]} (${object[3]})`;
+            div.style.display = 'none';
+            div.style.color = object[3].includes("Nebula") ? '#ffaaaa' : 
+                            object[3].includes("Cluster") ? '#aaffaa' : '#aaaaff';
+            labelContainer.appendChild(div);
+            return div;
+        });
+
+        // Update function to include Messier object labels
+        function updateLabels() {
+            const vector = new THREE.Vector3();
+            
+            // Update star labels
+            starLabels.forEach((label, i) => {
+                if (!label) return;
+                updateLabelPosition(label, brightStars.find(s => s[3] === label.textContent));
+            });
+            
+            // Update Messier object labels
+            messierLabels.forEach((label, i) => {
+                const object = messierObjects[i];
+                updateLabelPosition(label, object);
+            });
+        }
+
+        function updateLabelPosition(label, object) {
+            if (!label || !object) return;
+            
+            const vector = new THREE.Vector3();
+            const ra = object[0] * 15 * Math.PI / 180;
+            const dec = object[1] * Math.PI / 180;
+            const radius = 100;
+            
+            vector.set(
+                radius * Math.cos(dec) * Math.cos(ra),
+                radius * Math.sin(dec),
+                -radius * Math.cos(dec) * Math.sin(ra)
+            );
+            
+            // Apply star field rotation
+            vector.applyAxisAngle(new THREE.Vector3(0, 1, 0), stars.rotation.y);
+            
+            // Project to screen coordinates
+            vector.project(camera);
+            
+            // Convert to screen coordinates
+            const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+            const y = (-vector.y * 0.5 + 0.5) * window.innerHeight;
+            
+            // Check if object is in front of the camera
+            if (vector.z < 1) {
+                label.style.display = constellationLines3D.visible ? 'block' : 'none';
+                label.style.left = `${x}px`;
+                label.style.top = `${y}px`;
+            } else {
+                label.style.display = 'none';
+            }
+        }
+
+        // Add toggle button functionality
+        const toggleButton = document.getElementById('toggleConstellation');
+        toggleButton.addEventListener('click', () => {
+            constellationLines3D.visible = !constellationLines3D.visible;
+            toggleButton.textContent = constellationLines3D.visible ? 
+                'Hide Constellations' : 'Show Constellations';
+        });
+
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Update sun position
+            updateSunPosition();
+            
+            // Update moon position
+            updateMoonPosition();
+            
+            // Update star positions
+            updateStarField();
+            
+            // Update all labels
+            updateLabels();
+            
+            // Update controls
+            controls.update();
+            
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', onWindowResize, false);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
