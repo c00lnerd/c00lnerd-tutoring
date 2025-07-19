@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Flat Earth Preview</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+            max-width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="preview" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('preview');
+        const ctx = canvas.getContext('2d');
+
+        // Set background
+        ctx.fillStyle = '#f0f8ff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Earth circle
+        ctx.beginPath();
+        ctx.arc(400, 200, 180, 0, Math.PI * 2);
+        ctx.fillStyle = '#a5d6ff';
+        ctx.fill();
+
+        // Draw continents (simplified)
+        ctx.fillStyle = '#90EE90';
+        ctx.beginPath();
+        ctx.moveTo(300, 150);
+        ctx.bezierCurveTo(350, 100, 450, 100, 500, 150);
+        ctx.bezierCurveTo(550, 200, 450, 250, 400, 250);
+        ctx.bezierCurveTo(350, 250, 250, 200, 300, 150);
+        ctx.fill();
+
+        // Draw sun
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(600, 100, 40, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add glow effect
+        const gradient = ctx.createRadialGradient(600, 100, 40, 600, 100, 60);
+        gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+        gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(600, 100, 60, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add title
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 24px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Flat Earth Sun Simulator', 400, 350);
+    </script>
+</body>
+</html>

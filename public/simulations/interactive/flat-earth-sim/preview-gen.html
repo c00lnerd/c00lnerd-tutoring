@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Flat Earth Preview</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #fff; }
+        canvas { border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <canvas id="preview" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('preview');
+        const ctx = canvas.getContext('2d');
+        
+        // Draw a simple preview
+        ctx.fillStyle = '#87CEEB'; // Sky blue background
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw Earth circle
+        ctx.fillStyle = '#4CAF50';
+        ctx.beginPath();
+        ctx.arc(400, 200, 150, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Draw Sun
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(600, 100, 30, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Add glow around sun
+        const gradient = ctx.createRadialGradient(600, 100, 30, 600, 100, 60);
+        gradient.addColorStop(0, 'rgba(255, 215, 0, 0.3)');
+        gradient.addColorStop(1, 'rgba(255, 215, 0, 0)');
+        ctx.fillStyle = gradient;
+        ctx.beginPath();
+        ctx.arc(600, 100, 60, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Add text
+        ctx.font = 'bold 24px Arial';
+        ctx.fillStyle = '#000';
+        ctx.textAlign = 'center';
+        ctx.fillText('For Flat Earthers', 400, 350);
+        
+        // Save the preview
+        const link = document.createElement('a');
+        link.download = 'flat-earth-preview.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+    </script>
+</body>
+</html>
+    </script>
+</body>
+</html>
