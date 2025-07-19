@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat Earth Sun Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        canvas {
+            background: #fff;
+            border: 1px solid #ccc;
+            display: block;
+            margin: 0 auto 20px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input, button {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .view-info {
+            text-align: center;
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .canvas-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .controls label {
+            margin-right: 10px;
+        }
+        
+        .info {
+            margin-top: 10px;
+            font-family: monospace;
+        }
+
+        .direction-label {
+            position: absolute;
+            color: red;
+            font-weight: bold;
+        }
+
+        .observer-view-container {
+            position: relative;
+            width: fit-content;
+            margin: 0 auto;
+        }
+
+        #mouseTooltip {
+            position: fixed;
+            display: none;
+            background-color: white;
+            color: black;
+            border: 1px solid #666;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div id="container" style="padding: 20px;">
+        <div id="mouseTooltip"></div>
+        <div id="controls" style="margin-bottom: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="text-align: center; margin-bottom: 5px;">Top View (Gleason Map)</div>
+                <div style="width: 800px; height: 800px; margin: 0 auto;">
+                    <canvas id="mapCanvas" width="800" height="800" style="border: 1px solid #ccc; cursor: crosshair;"></canvas>
+                </div>
+                <div style="text-align: center; margin: 20px 0 5px;">
+                    <div>Observer's View</div>
+                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
+                        <span id="directionHeader">North ← East ← South ← West ← North</span><br>
+                        (Looking at horizon from observer's position)
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 5px;">
+                    <button id="viewDirectionToggle" type="button">Looking South</button>
+                    <button id="viewZoomToggle" type="button" style="margin-left: 10px;">Full View (±180°)</button>
+                    <button id="sunTraceToggle" type="button" style="margin-left: 10px;">Enable Sun Trace</button>
+                </div>
+                <div style="position: relative;">
+                    <div class="observer-view-container">
+                        <canvas id="observerCanvas" width="800" height="200"></canvas>
+                    </div>
+                    <canvas id="magnifier" width="200" height="200" style="position: fixed; border: 2px solid #333; border-radius: 50%; display: none; pointer-events: none; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000;"></canvas>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <div style="margin: 10px 0;">
+                    <button id="playButton" type="button">Play</button>
+                    <div style="margin: 10px 0;">
+                        <label>Animation Speed: </label>
+                        <input type="range" id="speedSlider" min="1" max="100" value="30" style="width: 200px">
+                        <span id="speedDisplay">30x</span>
+                    </div>
+                    <label>Date: </label>
+                    <input type="date" id="dateInput" onchange="sim.updateDateTime()">
+                    <div id="timeControls" style="display: inline-block; margin-left: 10px;">
+                        <label>UTC Time: </label>
+                        <input type="number" id="timeHours" min="0" max="23" style="width:50px">
+                        :
+                        <input type="number" id="timeMinutes" min="0" max="59" style="width:50px">
+                        <span id="timeDisplay" style="margin-left: 10px;"></span>
+                        <div style="margin-top: 10px;">
+                            <input type="range" id="hourSlider" min="0" max="24" step="1" style="width: 300px">
+                        </div>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <div id="analysisText" style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        Angle from view: <span id="relativeAngle">0</span>°
+                        <br>
+                        Distance to visible horizon: <span id="horizonDistance">5</span> 
+                        <br>
+                        Ground distance to sun: <span id="groundDistance">0</span> 
+                        <br>
+                        3D distance to sun: <span id="actualDistance">0</span> 
+                        <br>
+                        Apparent sun size: <span id="apparentSize">0</span>°
+                        <br>
+                        Sun elevation: <span id="sunElevation">0</span>°
+                        <br>
+                        Sun azimuth: <span id="sunAzimuth">0</span>° (absolute)
+                        <br>
+
+                        Flat Earth sun diameter: <span id="sunDiameter">0</span> 
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center;">
+                <label style="margin-left: 10px;">Observer Lat: 
+                    <input type="number" id="observerLat" min="-90" max="90" value="33.59" step="0.01" style="width: 70px;">°
+                </label>
+                <label style="margin-left: 10px;">Observer Lon: 
+                    <input type="number" id="observerLon" min="-180" max="180" value="-86.49" step="0.01" style="width: 70px;">°
+                </label>
+                <label style="margin-left: 10px;">Sun Height: 
+                    <input type="number" id="sunHeight" min="1000" max="10000" value="5000" step="100" style="width: 70px;">
+                    <span id="sunHeightUnit">km</span>
+                </label>
+                <button id="unitToggle" style="margin-left: 10px;">Toggle Units (km/mi)</button>
+            </div>
+        </div>
+
+        <div id="info" style="text-align: center; margin-top: 10px;">
+            <div>UTC Time: <span id="utcTimeDisplay"></span></div>
+            <div>Local Time at Observer: <span id="localTimeDisplay"></span></div>
+            <div>Subsolar Point: <span id="subsolarPoint"></span></div>
+            <div id="debugLog" style="margin-top: 20px; padding: 10px; background: #f5f5f5; border: 1px solid #ccc; white-space: pre; font-family: monospace;"></div>
+        </div>
+    </div>
+
+    <script src="spa.js"></script>
+    <script>
+        // Wait for both DOM and scripts to load
+        window.addEventListener('load', () => {
+            console.log('Page loaded, initializing simulator...');
+            window.sim = new FlatEarthSim();
+        });
+
+        class FlatEarthSim {
+            constructor() {
+                // Initialize sun trace array
+                this.sunTracePoints = [];
+                this.sunTraceEnabled = false;
+                this.canvas = null;
+                this.ctx = null;
+                this.observerCanvas = null;
+                this.observerCtx = null;
+                this.magnifierCanvas = null;
+                this.magnifierCtx = null;
+                this.observerLat = 33.59; // Default to specified location
+                // For Gleason map: 0° at right (3 o'clock), increasing clockwise
+                // We want Birmingham at ~86.49°W (-86.49°)
+                this.observerLon = -86.49; // Harpersville, AL area longitude
+                this.isPlaying = false;
+                this.animationFrame = null;
+                this.lastFrameTime = Date.now();
+                
+                // Initialize solar position calculator
+                this.spa = new SolarPositionAlgorithm();
+                
+                // Set up observer location input handlers
+                const latInput = document.getElementById('observerLat');
+                const lonInput = document.getElementById('observerLon');
+                
+                if (latInput && lonInput) {
+                    // Set initial values
+                    latInput.value = this.observerLat.toFixed(2);
+                    lonInput.value = this.observerLon.toFixed(2);
+                    
+                    // Handle input changes
+                    latInput.addEventListener('change', (e) => {
+                        this.observerLat = parseFloat(e.target.value);
+                        this.draw();
+                    });
+                    
+                    lonInput.addEventListener('change', (e) => {
+                        this.observerLon = parseFloat(e.target.value);
+                        this.draw();
+                    });
+                }
+                
+                // Method to calculate sun position
+                this.calculateSunPosition = () => {
+                    return this.spa.calculateSolarPosition(this.currentTime, this.observerLat, this.observerLon, this.sunHeight);
+                };
+                
+                // Initialize with a fixed UTC time
+                const now = new Date(Date.UTC(2025, 5, 11, 12, 0, 0)); // Month is 0-based
+                this.currentTime = now;
+                this.useMetric = true; // Default to metric units
+
+                // Initialize date input first
+                const dateInput = document.getElementById('dateInput');
+                if (dateInput) {
+                    const year = now.getUTCFullYear();
+                    const month = (now.getUTCMonth() + 1).toString().padStart(2, '0');
+                    const day = now.getUTCDate().toString().padStart(2, '0');
+                    const dateStr = `${year}-${month}-${day}`;
+                    console.log('Setting initial date to:', dateStr);
+                    dateInput.value = dateStr;
+                }
+                
+                // Initialize time inputs
+                const timeHours = document.getElementById('timeHours');
+                const timeMinutes = document.getElementById('timeMinutes');
+                if (timeHours) timeHours.value = now.getUTCHours();
+                if (timeMinutes) timeMinutes.value = now.getUTCMinutes();
+                
+                this.viewDirection = 'south';
+                this.viewZoom = 'full';
+                this.isZoomedView = false; // Add this property to track zoom state
+                this.mouseX = 0;
+                this.mouseY = 0;
+                this.units = 'km';
+                this.sunHeight = 5000;
+                this.earthRadius = 6371;
+                this.magnifierVisible = false;
+                this.magnifierSize = 200;
+                this.magnifierZoom = 4;
+                this.magnifierCrosshairSize = 20;
+                
+                // Time display elements properties
+                this.animationSpeed = 1; // Default speed multiplier
+                this.timeMultiplier = 1000; // Default time multiplier (1000ms = 1 second per second)
+                this.useMetric = true; // Default to metric units
+                
+                // Time display elements
+                this.utcTimeDisplay = null;
+                this.localTimeDisplay = null;
+                this.timeDisplayReady = false;
+                
+                // Bind core methods
+                this.updateTimeDisplay = this.updateTimeDisplay.bind(this);
+                this.animate = this.animate.bind(this);
+                this.draw = this.draw.bind(this);
+                this.calculateSunPosition = this.calculateSunPosition.bind(this);
+                
+                // Load map image
+                this.mapImage = new Image();
+                this.mapImage.src = 'gleason_map_new.png';
+                
+                // Wait for map to load before initializing
+                this.mapImage.onload = () => {
+                    // Now that map is loaded, initialize everything
+                    this.initialize();
+                };
+            }
+
+            initialize() {
+                // Initialize canvases
+                this.canvas = document.getElementById('mapCanvas');
+                this.observerCanvas = document.getElementById('observerCanvas');
+                this.magnifierCanvas = document.getElementById('magnifier');
+                if (!this.canvas || !this.observerCanvas || !this.magnifierCanvas) {
+                    //console.error('Canvas elements not found');
+                    return;
+                }
+                
+                this.ctx = this.canvas.getContext('2d');
+                this.observerCtx = this.observerCanvas.getContext('2d');
+                this.magnifierCtx = this.magnifierCanvas.getContext('2d');
+
+                // Add click handler for observer position
+                this.canvas.addEventListener('click', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    // Convert click position to lat/lon
+                    const centerX = this.canvas.width / 2;
+                    const centerY = this.canvas.height / 2;
+                    const dx = x - centerX;
+                    const dy = y - centerY;
+                    
+                    // Calculate radius and angle
+                    const r = Math.sqrt(dx * dx + dy * dy);
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    // Convert to lat/lon
+                    const mapRadius = this.canvas.width * 0.24;
+                    this.observerLat = 90 - (r / mapRadius * 90);
+                    
+                    // Convert angle to longitude
+                    // Angle is clockwise from right (0°)
+                    // Convert to -180 to +180 range
+                    let lon = -angle;  // Negative because angle increases clockwise
+                    if (lon > 180) lon -= 360;
+                    if (lon <= -180) lon += 360;
+                    this.observerLon = lon;
+                    
+                    // Update input fields
+                    document.getElementById('observerLat').value = this.observerLat.toFixed(2);
+                    document.getElementById('observerLon').value = this.observerLon.toFixed(2);
+                    
+                    // Redraw
+                    this.draw();
+                });
+
+                // Set canvas sizes             // Canvas size is fixed in HTML
+                const container = this.canvas.parentElement;
+                if (container) {
+                    container.style.height = '800px';
+                }
+                // No resize handler needed since size is fixed
+                this.observerCanvas = document.getElementById('observerCanvas');
+                if (!this.observerCanvas) {
+                    console.error('Observer canvas not found');
+                    return;
+                }
+                
+                // Clear any existing animation frame
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                    this.animationFrame = null;
+                }
+                
+                // Set up event listeners
+                this.setupEventListeners();
+                
+                // Make sure time display elements exist
+                const checkElements = () => {
+                    if (!this.timeDisplayReady) {
+                        this.utcTimeDisplay = document.getElementById('utcTimeDisplay');
+                        this.localTimeDisplay = document.getElementById('localTimeDisplay');
+                        
+                        if (!this.utcTimeDisplay || !this.localTimeDisplay) {
+                            setTimeout(checkElements, 100);
+                            return;
+                        }
+                        
+                        this.timeDisplayReady = true;
+                        
+                        // Initialize time inputs and display
+                        this.updateDateTime();
+                        this.updateTimeDisplay();
+                        
+                        // Initial calculations and draw
+                        var sunPos = this.calculateSunPosition();
+                        console.log('Initial sun position:', sunPos);
+                        this.draw();
+                        
+                        // Start animation loop
+                        this.lastFrameTime = Date.now();
+                        this.animate();
+                    }
+                };
+                
+                checkElements();
+
+                if (!this.observerCanvas) {
+                    console.error('Observer canvas not found');
+                    return;
+                }
+                this.observerCtx = this.observerCanvas.getContext('2d');
+                this.observerCanvas.width = 800;
+                this.observerCanvas.height = 200;
+
+                // Initialize date and time inputs
+                const dateInput = document.getElementById('dateInput');
+                const timeHours = document.getElementById('timeHours');
+                const timeMinutes = document.getElementById('timeMinutes');
+                const hourSlider = document.getElementById('hourSlider');
+                
+                const hours = this.currentTime.getUTCHours();
+                const minutes = this.currentTime.getUTCMinutes();
+                
+                if (dateInput) dateInput.value = this.currentTime.toISOString().split('T')[0];
+                if (timeHours) timeHours.value = hours;
+                if (timeMinutes) timeMinutes.value = minutes;
+                if (hourSlider) hourSlider.value = hours;
+                
+                // Draw initial state
+                this.draw();
+            }
+
+            setupEventListeners() {
+                // Add mousemove listener for coordinates and magnifier
+                if (this.canvas) {
+                    this.canvas.addEventListener('mousemove', (e) => {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const coords = this.getLatLonFromClick(x, y);
+                        
+                        // Update tooltip
+                        const tooltip = document.getElementById('mouseTooltip');
+                        if (tooltip) {
+                            tooltip.textContent = `Lat: ${coords.lat.toFixed(2)}°${coords.lat >= 0 ? 'N' : 'S'}, Lon: ${Math.abs(coords.lon).toFixed(2)}°${coords.lon >= 0 ? 'E' : 'W'}`;
+                            tooltip.style.display = 'block';
+                            const offset = 15;
+                            tooltip.style.left = (rect.left + x + offset) + 'px';
+                            tooltip.style.top = (rect.top + y + offset) + 'px';
+                        }
+                        
+                        // Update magnifier
+                        if (this.magnifierCanvas) {
+                            // Show magnifier when over the map
+                            this.magnifierCanvas.style.display = 'block';
+                            
+                            // Position magnifier to avoid covering latitude and longitude numbers
+                            const mapCenterX = this.canvas.width / 2;
+                            const mapCenterY = this.canvas.height / 2;
+                            const magnifierOffset = this.magnifierSize / 2;
+                            
+                            // Determine horizontal position
+                            let leftPos;
+                            if (x < mapCenterX) {
+                                // On left side, show magnifier to the right
+                                leftPos = e.clientX + magnifierOffset;
+                            } else {
+                                // On right side, show magnifier to the left
+                                leftPos = e.clientX - magnifierOffset * 3;
+                            }
+                            
+                            // Determine vertical position
+                            let topPos;
+                            if (y > mapCenterY) {
+                                // Bottom half - show magnifier above
+                                topPos = e.clientY - magnifierOffset * 3;
+                            } else {
+                                // Top half - show magnifier below
+                                topPos = e.clientY + magnifierOffset;
+                            }
+                            
+                            this.magnifierCanvas.style.left = leftPos + 'px';
+                            this.magnifierCanvas.style.top = topPos + 'px';
+                            
+                            // Clear magnifier
+                            this.magnifierCtx.clearRect(0, 0, this.magnifierSize, this.magnifierSize);
+                            
+                            // Create circular clip path
+                            this.magnifierCtx.save();
+                            this.magnifierCtx.beginPath();
+                            this.magnifierCtx.arc(this.magnifierSize/2, this.magnifierSize/2, this.magnifierSize/2, 0, Math.PI * 2);
+                            this.magnifierCtx.clip();
+                            
+                            // Draw magnified portion of map
+                            const sourceX = x - (this.magnifierSize/this.magnifierZoom/2);
+                            const sourceY = y - (this.magnifierSize/this.magnifierZoom/2);
+                            const sourceWidth = this.magnifierSize/this.magnifierZoom;
+                            const sourceHeight = this.magnifierSize/this.magnifierZoom;
+                            
+                            this.magnifierCtx.drawImage(
+                                this.canvas,
+                                sourceX, sourceY, sourceWidth, sourceHeight,
+                                0, 0, this.magnifierSize, this.magnifierSize
+                            );
+                            
+                            // Draw crosshair
+                            this.magnifierCtx.strokeStyle = '#FF0000';
+                            this.magnifierCtx.lineWidth = 1;
+                            const center = this.magnifierSize / 2;
+                            const size = this.magnifierCrosshairSize;
+                            
+                            this.magnifierCtx.beginPath();
+                            this.magnifierCtx.moveTo(center - size/2, center);
+                            this.magnifierCtx.lineTo(center + size/2, center);
+                            this.magnifierCtx.moveTo(center, center - size/2);
+                            this.magnifierCtx.lineTo(center, center + size/2);
+                            this.magnifierCtx.stroke();
+                            
+                            this.magnifierCtx.restore();
+                        }
+                    });
+
+                    this.canvas.addEventListener('mouseleave', () => {
+                        const tooltip = document.getElementById('mouseTooltip');
+                        if (tooltip) {
+                            tooltip.style.display = 'none';
+                        }
+                        if (this.magnifierCanvas) {
+                            this.magnifierCanvas.style.display = 'none';
+                        }
+                    });
+
+                    // Add click handler to set observer position
+                    this.canvas.addEventListener('click', (e) => {
+                        const rect = this.canvas.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        const coords = this.getLatLonFromClick(x, y);
+                        
+                        // Update observer position inputs
+                        const latInput = document.getElementById('observerLat');
+                        const lonInput = document.getElementById('observerLon');
+                        if (latInput && lonInput) {
+                            //console.log('Map clicked - updating observer position:', { lat: coords.lat, lon: coords.lon });
+                            latInput.value = coords.lat.toFixed(2);
+                            lonInput.value = coords.lon.toFixed(2);
+                            // Update time display first
+                            this.updateDateTime();
+                            this.updateTimeDisplay();
+                            
+                            // Then redraw to update the view
+                            this.draw();
+                        }
+                    });
+                }
+
+                var unitToggle = document.getElementById('unitToggle');
+                var sunHeightUnit = document.getElementById('sunHeightUnit');
+                var sunHeightInput = document.getElementById('sunHeight');
+                var dateInput = document.getElementById('dateInput');
+                var timeHours = document.getElementById('timeHours');
+                var timeMinutes = document.getElementById('timeMinutes');
+                var hourSlider = document.getElementById('hourSlider');
+                
+                const hours = this.currentTime.getUTCHours();
+                const minutes = this.currentTime.getUTCMinutes();
+                
+                if (dateInput) dateInput.value = this.currentTime.toISOString().split('T')[0];
+                if (timeHours) timeHours.value = hours;
+                if (timeMinutes) timeMinutes.value = minutes;
+                if (hourSlider) hourSlider.value = hours;
+                
+                // Set up play button event listener
+                let playButton = document.getElementById('playButton');
+                if (playButton) {
+                    // Bind the method once during setup
+                    this.togglePlay = this.togglePlay.bind(this);
+                    
+                    // Remove any existing listeners
+                    playButton.replaceWith(playButton.cloneNode(true));
+                    playButton = document.getElementById('playButton');
+                    
+                    // Add new listener with bound method
+                    playButton.addEventListener('click', this.togglePlay);
+                }
+
+                if (unitToggle) {
+                    //console.log('Setting up unit toggle listener');
+                    unitToggle.addEventListener('click', () => {
+                        //console.log('Unit toggle clicked, current metric:', this.useMetric);
+                        this.useMetric = !this.useMetric;
+                        
+                        // Update unit display
+                        if (sunHeightUnit) {
+                            sunHeightUnit.textContent = this.useMetric ? 'km' : 'mi';
+                        }
+                        
+                        // Update height input value
+                        if (sunHeightInput) {
+                            if (this.useMetric) {
+                                // Display the stored km value
+                                sunHeightInput.value = Math.round(this.sunHeight);
+                            } else {
+                                // Convert km to miles for display
+                                sunHeightInput.value = Math.round(this.sunHeight / 1.60934);
+                            }
+                        }
+                        
+                        this.draw();
+                    });
+                }
+
+                // Set up speed slider event listener
+                const speedSlider = document.getElementById('speedSlider');
+                const speedDisplay = document.getElementById('speedDisplay');
+                if (speedSlider && speedDisplay) {
+                    speedSlider.addEventListener('input', (e) => {
+                        this.animationSpeed = parseInt(e.target.value);
+                        this.timeMultiplier = this.animationSpeed * 1000;
+                        speedDisplay.textContent = `${this.animationSpeed}x`;
+                    });
+                }
+
+                // Set up view direction toggle
+                const viewDirectionToggle = document.getElementById('viewDirectionToggle');
+                if (viewDirectionToggle) {
+                    this.toggleViewDirection = this.toggleViewDirection.bind(this);
+                    viewDirectionToggle.addEventListener('click', this.toggleViewDirection);
+                }
+
+                // Set up view zoom toggle
+                const viewZoomToggle = document.getElementById('viewZoomToggle');
+                if (viewZoomToggle) {
+                    this.toggleViewZoom = this.toggleViewZoom.bind(this);
+                    viewZoomToggle.addEventListener('click', this.toggleViewZoom);
+                }
+
+                // Set up time controls event listeners
+                if (timeHours) timeHours.addEventListener('change', () => this.updateDateTime());
+                if (timeMinutes) timeMinutes.addEventListener('change', () => this.updateDateTime());
+                if (hourSlider) hourSlider.addEventListener('input', (e) => this.updateSliderValue(parseFloat(e.target.value) * 60));
+                
+                // Set up sun height input event listener
+                if (sunHeightInput) {
+                    sunHeightInput.addEventListener('change', () => {
+                        const inputValue = parseFloat(sunHeightInput.value);
+                        // Convert to km if input is in miles
+                        this.sunHeight = this.useMetric ? inputValue : inputValue * 1.60934;
+                        this.draw();
+                    });
+                }
+                if (dateInput) {
+                    dateInput.addEventListener('change', (e) => {
+                        if (!this.isPlaying) {
+                            var newDate = new Date(e.target.value + 'T' + 
+                                this.currentTime.getHours().toString().padStart(2, '0') + ':' +
+                                this.currentTime.getMinutes().toString().padStart(2, '0'));
+                            this.currentTime = newDate;
+                            this.draw();
+                        }
+                    });
+                }
+
+                if (timeHours) {
+                    timeHours.addEventListener('change', (e) => {
+                        if (!this.isPlaying) {
+                            var hours = parseInt(e.target.value);
+                            if (!isNaN(hours) && hours >= 0 && hours < 24) {
+                                this.currentTime.setHours(hours);
+                                this.draw();
+                            }
+                        }
+                    });
+                }
+
+                if (timeMinutes) {
+                    timeMinutes.addEventListener('change', (e) => {
+                        if (!this.isPlaying) {
+                            var minutes = parseInt(e.target.value);
+                            if (!isNaN(minutes) && minutes >= 0 && minutes < 60) {
+                                this.currentTime.setMinutes(minutes);
+                                this.draw();
+                            }
+                        }
+                    });
+                }
+
+                // Initial state of time inputs
+                this.updateTimeInputState();
+                
+                // Set up sun trace toggle button
+                const sunTraceToggle = document.getElementById('sunTraceToggle');
+                if (sunTraceToggle) {
+                    sunTraceToggle.addEventListener('click', () => this.toggleSunTrace());
+                }
+                
+                // Set up observer position input event listeners
+                const observerLat = document.getElementById('observerLat');
+                const observerLon = document.getElementById('observerLon');
+                
+                if (observerLat) {
+                    observerLat.addEventListener('input', () => {
+                        //console.log('Observer latitude changed');
+                        // Clear sun trace when position changes
+                        this.sunTracePoints = [];
+                        this.draw();
+                    });
+                }
+                
+                if (observerLon) {
+                    observerLon.addEventListener('input', () => {
+                        //console.log('Observer longitude changed');
+                        // Clear sun trace when position changes
+                        this.sunTracePoints = [];
+                        this.draw();
+                    });
+                }
+            }
+
+            initTimeSlider() {
+                const slider = document.getElementById('hourSlider');
+                if (slider) {
+                    slider.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value) * 60;
+                        this.updateSliderValue(value);
+                    });
+                }
+            }
+
+            togglePlay() {
+                // Cancel any existing animation frame
+                if (this.animationFrame) {
+                    cancelAnimationFrame(this.animationFrame);
+                    this.animationFrame = null;
+                }
+                
+                this.isPlaying = !this.isPlaying;
+                
+                const playButton = document.getElementById('playButton');
+                const timeHours = document.getElementById('timeHours');
+                const timeMinutes = document.getElementById('timeMinutes');
+                
+                if (playButton) {
+                    playButton.textContent = this.isPlaying ? 'Pause' : 'Play';
+                }
+                
+                // Enable/disable time inputs during play/pause
+                if (timeHours) timeHours.disabled = this.isPlaying;
+                if (timeMinutes) timeMinutes.disabled = this.isPlaying;
+                
+                if (this.isPlaying) {
+                    this.lastFrameTime = Date.now();
+                    this.animationFrame = requestAnimationFrame(this.animate);
+                } else {
+                    if (this.animationFrame) {
+                        cancelAnimationFrame(this.animationFrame);
+                        this.animationFrame = null;
+                    }
+                }
+            }
+
+            updateDateTime() {
+                const dateInput = document.getElementById('dateInput');
+                const hours = parseInt(document.getElementById('timeHours').value);
+                const minutes = parseInt(document.getElementById('timeMinutes').value);
+                
+                // Parse the date from input, maintaining the current date if it exists
+                const currentDate = dateInput.value;
+                this.currentTime = new Date(currentDate);
+                this.currentTime.setUTCHours(hours, minutes, 0, 0);
+                
+                // Update display
+                document.getElementById('timeDisplay').textContent = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                
+                // Update slider
+                const totalMinutes = hours * 60 + minutes;
+                document.getElementById('hourSlider').value = totalMinutes;
+                
+                this.draw();
+            }
+
+            animate = () => {
+                if (!this.isPlaying) {
+                    return;
+                }
+                
+                const currentTime = Date.now();
+                const deltaTime = currentTime - this.lastFrameTime;
+                this.lastFrameTime = currentTime;
+                
+                // Update simulation time with faster time multiplier
+                this.currentTime.setTime(this.currentTime.getTime() + (deltaTime * this.timeMultiplier));
+                
+                // Update time inputs
+                const hours = this.currentTime.getUTCHours();
+                const minutes = this.currentTime.getUTCMinutes();
+                const currentDate = this.currentTime.toISOString().split('T')[0];
+                
+                // Update time inputs
+                document.getElementById('timeHours').value = hours;
+                document.getElementById('timeMinutes').value = minutes;
+                
+                // Update date input when day changes
+                const dateInput = document.getElementById('dateInput');
+                if (dateInput && dateInput.value !== currentDate) {
+                    dateInput.value = currentDate;
+                }
+                
+                // Update time display with UTC time
+                const utcHours = this.currentTime.getUTCHours();
+                const utcMinutes = this.currentTime.getUTCMinutes();
+                const ampm = utcHours >= 12 ? 'PM' : 'AM';
+                const hours12 = utcHours % 12 || 12;
+                
+                document.getElementById('timeDisplay').textContent = 
+                    `${hours12}:${utcMinutes.toString().padStart(2, '0')} ${ampm}`;
+                
+                // Redraw everything
+                this.draw();
+                
+                // Request next frame
+                this.animationFrame = requestAnimationFrame(this.animate);
+            }
+
+            getLatLonFromClick = (x, y) => {
+                // Calculate distance from center (as fraction of map radius)
+                const centerX = this.canvas.width / 2;
+                const centerY = this.canvas.height / 2;
+                const dx = x - centerX;
+                const dy = y - centerY;
+                
+                // Calculate distance from center (in pixels)
+                const maxDistance = this.canvas.width * 0.24; // Match the map radius used elsewhere
+                const pixelDistance = Math.sqrt(dx * dx + dy * dy);
+                
+                // Calculate latitude (90° at center, -90° at edge)
+                let lat = 90 - (pixelDistance / maxDistance * 90);
+                lat = Math.max(-90, Math.min(90, lat));
+                
+                // Calculate longitude
+                // On Gleason map: 0° at prime meridian (3 o'clock), increases clockwise
+                // Standard longitude: -180° to +180°, positive is East
+                let gleasonAngle = Math.atan2(dy, dx) * 180 / Math.PI;
+                // Convert Gleason angle to standard longitude
+                // When pointing east (0° in atan2), that's the prime meridian (0° longitude)
+                // When pointing north (-90° in atan2), that's 90°W (-90° longitude)
+                let lon = -gleasonAngle;
+                // Normalize to -180 to +180 range
+                if (lon <= -180) lon += 360;
+                if (lon > 180) lon -= 360;
+                
+                return { lat, lon };
+            };
+
+            toggleViewDirection() {
+                this.viewDirection = this.viewDirection === 'south' ? 'north' : 'south';
+                const button = document.getElementById('viewDirectionToggle');
+                if (button) {
+                    button.textContent = `Looking ${this.viewDirection === 'south' ? 'South' : 'North'}`;
+                }
+                const header = document.getElementById('directionHeader');
+                if (header) {
+                    header.textContent = this.viewDirection === 'south' ? 
+                        'North ← East ← South ← West ← North' :
+                        'South → East → North → West → South';
+                }
+                // Clear sun trace when view direction changes
+                this.sunTracePoints = [];
+                this.draw();
+            }
+
+            toggleViewZoom() {
+                //console.log('toggleViewZoom called, current isZoomedView:', this.isZoomedView);
+                this.isZoomedView = !this.isZoomedView;
+                //console.log('toggleViewZoom new isZoomedView:', this.isZoomedView);
+                const button = document.getElementById('viewZoomToggle');
+                if (button) {
+                    button.textContent = this.isZoomedView ? 'Half View (±90°)' : 'Full View (±180°)';
+                    //console.log('Button text updated to:', button.textContent);
+                } else {
+                    //console.error('viewZoomToggle button not found in toggleViewZoom!');
+                }
+                // Clear sun trace when view zoom changes
+                this.sunTracePoints = [];
+                this.draw();
+            }
+            
+            toggleSunTrace() {
+                this.sunTraceEnabled = !this.sunTraceEnabled;
+                
+                // Clear trace points when disabled
+                if (!this.sunTraceEnabled) {
+                    this.sunTracePoints = [];
+                }
+                
+                const button = document.getElementById('sunTraceToggle');
+                if (button) {
+                    button.textContent = this.sunTraceEnabled ? 'Disable Sun Trace' : 'Enable Sun Trace';
+                }
+                
+                this.draw();
+            }
+
+            calculateSunPosition = () => {
+                // Get current date and time
+                var now = this.currentTime;
+                var dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+                
+                // Calculate solar declination (more accurate formula)
+                var L = 280.46646 + 0.985647 * dayOfYear; // Mean longitude of the Sun
+                var g = 357.52911 + 0.985600 * dayOfYear; // Mean anomaly
+                var g_rad = g * Math.PI/180;
+                
+                // Equation of center
+                var C = (1.914602 - 0.004817 * dayOfYear) * Math.sin(g_rad) +
+                        (0.019993 - 0.000101 * dayOfYear) * Math.sin(2 * g_rad) +
+                        0.000289 * Math.sin(3 * g_rad);
+                
+                // Sun's true longitude
+                var lambda = L + C;
+                
+                // Calculate solar declination based on day of year
+                var solarDeclination = Math.asin(Math.sin(23.44 * Math.PI/180) * Math.sin(lambda * Math.PI/180)) * 180/Math.PI;
+                
+                // Calculate equation of time (in minutes)
+                var Emin = -0.171 * Math.sin(0.0337 * dayOfYear + 0.465) -
+                           0.1299 * Math.sin(0.01787 * dayOfYear - 0.168);
+                
+                // Get observer position
+                var obsLat = parseFloat(document.getElementById('observerLat').value);
+                var obsLon = parseFloat(document.getElementById('observerLon').value);
+                
+                // Get current time from inputs (already in UTC)
+                var hours = parseInt(document.getElementById('timeHours').value);
+                var minutes = parseInt(document.getElementById('timeMinutes').value);
+                
+                // Calculate decimal hours in UTC
+                var T_UTC = hours + minutes/60;
+                
+                // Normalize T_UTC to 0-24 range
+                T_UTC = (T_UTC + 24) % 24;
+                
+                // Calculate subsolar point
+                // At UTC 00:00, sun should be at 180°W (-180°)
+                // Each hour moves sun 15° westward (clockwise)
+                var subsolarLon = -180 - T_UTC * 15 + Emin/4;  // Emin/4 converts equation of time from minutes to degrees
+                while (subsolarLon <= -180) subsolarLon += 360;
+                while (subsolarLon > 180) subsolarLon -= 360;
+                var subsolarLat = solarDeclination;
+                
+                // Calculate map positions using radius that matches Gleason map proportions
+                var mapRadius = this.canvas.width * 0.24; // Original map scale that worked correctly
+                
+                // Calculate observer position on map (Gleason projection)
+                // Distance from center is proportional to latitude (90° at center, 0° at edge)
+                var obsRadius = mapRadius * (90 - obsLat) / 90;
+                // For Gleason map: convert longitude to clockwise angle from Greenwich
+                // We negate longitude because we want clockwise rotation (negative lon = counterclockwise)
+                var obsTheta = -obsLon * Math.PI / 180;
+                var obsX = this.canvas.width/2 + obsRadius * Math.cos(obsTheta);
+                var obsY = this.canvas.height/2 + obsRadius * Math.sin(obsTheta);
+                
+                // Calculate sun position (Gleason projection)
+                // Distance from center based on solar declination
+                var sunRadius = mapRadius * (90 - subsolarLat) / 90;
+                // For Gleason map: convert longitude to clockwise angle from Greenwich
+                // We negate longitude because we want clockwise rotation (negative lon = counterclockwise)
+                var sunTheta = -subsolarLon * Math.PI / 180;
+                var sunX = this.canvas.width/2 + sunRadius * Math.cos(sunTheta);
+                var sunY = this.canvas.height/2 + sunRadius * Math.sin(sunTheta);
+                
+                // Calculate ground distance
+                var groundDistance = this.calculateGroundDistance(obsLat, obsLon, subsolarLat, subsolarLon);
+                
+                // Calculate 3D distance (using Pythagorean theorem with height)
+                var groundDistance3D = Math.sqrt(groundDistance * groundDistance + this.sunHeight * this.sunHeight);
+                
+                // Calculate angle between observer's north and sun
+                // On flat earth, north is always toward the center
+                const dx = sunX - obsX;
+                const dy = sunY - obsY;
+                const northDx = this.canvas.width/2 - obsX;
+                const northDy = this.canvas.height/2 - obsY;
+                
+                // Calculate angles from observer to north and to sun
+                const angleToSun = Math.atan2(dy, dx);
+                const angleToNorth = Math.atan2(northDy, northDx);
+                
+                // Calculate azimuth as the difference
+                var azimuth = ((angleToSun - angleToNorth) * 180/Math.PI + 360) % 360;
+                
+                // Calculate elevation using flat earth perspective
+                // On a flat earth, elevation is based on the apparent angle between ground and sun
+                // using the ground distance and sun height
+                var elevation = Math.atan2(this.sunHeight, groundDistance) * 180/Math.PI;
+                
+                // Calculate sun diameter that would subtend 0.5° at sun height
+                // Using formula: angle = 2 * arctan(diameter/(2*distance))
+                // For 0.5° angle at sun height: 0.5 = 2 * arctan(diameter/(2*height))
+                // Therefore: diameter = 2 * height * tan(0.25°)
+                var quarterDegRad = 0.25 * Math.PI/180;
+                var sunDiameter = 2 * this.sunHeight * Math.tan(quarterDegRad);
+                
+                // Calculate angular size based on current 3D distance
+                // Using the same formula: angle = 2 * arctan(diameter/(2*distance))
+                var angularSize = 2 * Math.atan(sunDiameter/(2*groundDistance3D)) * 180/Math.PI;
+                
+                // Draw the sun on the map
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.beginPath();
+                this.ctx.arc(sunX, sunY, 8, 0, 2 * Math.PI);
+                this.ctx.fill();
+                this.ctx.strokeStyle = '#FFA500';
+                this.ctx.stroke();
+
+                // Draw observer position
+                this.ctx.fillStyle = '#FF0000';
+                this.ctx.beginPath();
+                this.ctx.arc(obsX, obsY, 4, 0, 2 * Math.PI);
+                this.ctx.fill();
+                
+                return {
+                    x: sunX,
+                    y: sunY,
+                    obsX: obsX,
+                    obsY: obsY,
+                    azimuth: azimuth,
+                    elevation: elevation,
+                    groundDistance: groundDistance,
+                    groundDistance3D: groundDistance3D,
+                    angularSize: angularSize,
+                    sunDiameter: sunDiameter,
+                    subsolarLat: subsolarLat,
+                    subsolarLon: subsolarLon
+                    }
+                }
+                
+            drawObserverView = (azimuth, elevation, solarPos) => {
+                var obsCtx = this.observerCanvas.getContext('2d');
+                obsCtx.clearRect(0, 0, this.observerCanvas.width, this.observerCanvas.height);
+                
+                // Draw sky gradient and ground
+                // Sky
+                obsCtx.fillStyle = '#87CEEB'; // Sky blue
+                obsCtx.fillRect(0, 0, this.observerCanvas.width, this.observerCanvas.height * 0.6);
+                
+                // Ground
+                obsCtx.fillStyle = '#90EE90'; // Light green
+                obsCtx.fillRect(0, this.observerCanvas.height * 0.6, this.observerCanvas.width, this.observerCanvas.height * 0.4);
+                
+                // Draw horizon line
+                obsCtx.beginPath();
+                obsCtx.moveTo(0, this.observerCanvas.height * 0.6);
+                obsCtx.lineTo(this.observerCanvas.width, this.observerCanvas.height * 0.6);
+                obsCtx.strokeStyle = '#000';
+                obsCtx.stroke();
+                
+                // Get view direction from toggle button
+                const viewDirectionToggle = document.getElementById('viewDirectionToggle');
+                const lookNorth = viewDirectionToggle.textContent === 'Looking North';
+                
+                // Get observer longitude
+                const observerLon = parseFloat(document.getElementById('observerLon').value);
+                
+                // On a flat disk, calculate angle between observer-to-pole and observer-to-sun lines
+                const POLE_TO_EQUATOR_KM = 10000;
+                
+                // Convert observer position to flat disk coordinates
+                const obsLat = parseFloat(document.getElementById('observerLat').value);
+                const r1 = POLE_TO_EQUATOR_KM * (90 - obsLat) / 90;  // Distance from pole
+                const theta1 = -observerLon * Math.PI / 180;  // Angle from 3 o'clock
+                const x1 = r1 * Math.cos(theta1);
+                const y1 = r1 * Math.sin(theta1);
+                
+                // Convert sun position to flat disk coordinates
+                const r2 = POLE_TO_EQUATOR_KM * (90 - solarPos.subsolarLat) / 90;
+                const theta2 = -solarPos.subsolarLon * Math.PI / 180;
+                const x2 = r2 * Math.cos(theta2);
+                const y2 = r2 * Math.sin(theta2);
+                
+                // Get view direction from UI
+                const lookingSouth = document.getElementById('viewDirectionToggle').textContent.includes('Looking South');
+                
+                // Calculate vectors
+                let toReference, toSun;
+                if (lookingSouth) {
+                    // When looking south, measure angle from south vector
+                    toReference = [x1, y1];  // Vector from observer to antipode (south)
+                    toSun = [x2 - x1, y2 - y1];  // Vector from observer to sun
+                } else {
+                    // When looking north, measure angle from north vector (to pole)
+                    toReference = [-x1, -y1];  // Vector from observer to pole
+                    toSun = [x2 - x1, y2 - y1];  // Vector from observer to sun
+                }
+                
+                // Calculate angle between vectors using dot product
+                const dot = toReference[0] * toSun[0] + toReference[1] * toSun[1];
+                const magRef = Math.sqrt(toReference[0] * toReference[0] + toReference[1] * toReference[1]);
+                const magToSun = Math.sqrt(toSun[0] * toSun[0] + toSun[1] * toSun[1]);
+                
+                // Get angle in degrees
+                const angleRad = Math.acos(Math.min(1, Math.max(-1, dot / (magRef * magToSun))));
+                
+                // Use cross product to determine if sun is east or west of meridian
+                const cross = toReference[0] * toSun[1] - toReference[1] * toSun[0];
+                
+                // Calculate relative angle
+                let relativeAngle;
+                
+                // Special case: sun on meridian (very small cross product)
+                if (Math.abs(cross) < 0.0001 * magRef * magToSun) {
+                    relativeAngle = 0;
+                } else {
+                    // When looking south, flip the sign of cross product
+                    // This makes east negative and west positive
+                    const crossSign = lookingSouth ? -1 : 1;
+                    relativeAngle = (cross > 0 ? crossSign : -crossSign) * angleRad * 180 / Math.PI;
+                }
+
+                // Debug logging
+                const debugAngle = {
+                    observer: {
+                        lat: obsLat,
+                        lon: observerLon,
+                        r: r1,
+                        theta: theta1 * 180/Math.PI,
+                        x: x1,
+                        y: y1
+                    },
+                    sun: {
+                        lat: solarPos.subsolarLat,
+                        lon: solarPos.subsolarLon,
+                        r: r2,
+                        theta: theta2 * 180/Math.PI,
+                        x: x2,
+                        y: y2
+                    },
+                    vectors: {
+                        toReference: {
+                            x: toReference[0],
+                            y: toReference[1],
+                            mag: magRef
+                        },
+                        toSun: {
+                            x: toSun[0],
+                            y: toSun[1],
+                            mag: magToSun
+                        }
+                    },
+                    calculation: {
+                        dot: dot,
+                        cosAngle: dot / (magRef * magToSun),
+                        radians: angleRad,
+                        degrees: angleRad * 180 / Math.PI,
+                        cross: cross,
+                        final: relativeAngle,
+                        lookingSouth: lookingSouth
+                    }
+                };
+                
+                
+                
+                // Update angle from view display
+                const angleFromViewEl = document.getElementById('angleFromView');
+                if (angleFromViewEl) {
+                    angleFromViewEl.textContent = `Angle from view: ${relativeAngle.toFixed(1)}°`;
+                }
+                
+                // Calculate normalized position for drawing based on zoom level
+                let normalizedAzimuth;
+                let sunVisible = true; // Track if sun should be visible
+                
+                if (this.isZoomedView) {
+                    // In zoomed view, only show sun if within ±90° range
+                    if (relativeAngle < -90 || relativeAngle > 90) {
+                        sunVisible = false;
+                    }
+                }
+                
+                // Map angle to [0,1] range with 0° at center
+                normalizedAzimuth = 0.5 + (relativeAngle / (this.isZoomedView ? 180 : 360));
+                
+                // When looking south, flip the display left-to-right
+                if (!lookNorth) {
+                    normalizedAzimuth = 1 - normalizedAzimuth;
+                }
+                
+                const sunX = this.observerCanvas.width * normalizedAzimuth;
+                
+                // Calculate apparent elevation using perspective
+                const horizonY = this.observerCanvas.height * 0.6; // Horizon line
+                const zenithY = 0; // Top of canvas for max elevation
+                const skyHeight = horizonY - zenithY;
+                
+                // Map elevation angle to vertical position
+                // 0° = horizon, 90° = zenith
+                const clampedElevation = Math.min(Math.max(elevation, 0), 90);
+                const normalizedElevation = clampedElevation / 90;
+                const sunY = horizonY - (skyHeight * normalizedElevation);
+                
+                // Update compass labels based on viewing direction
+                const directionLabels = document.querySelectorAll('.direction-label');
+                directionLabels.forEach(label => {
+                    if (lookNorth) {
+                        if (label.dataset.dir === 'N') label.textContent = 'N';
+                        if (label.dataset.dir === 'S') label.textContent = 'S';
+                        if (label.dataset.dir === 'E') label.textContent = 'E';
+                        if (label.dataset.dir === 'W') label.textContent = 'W';
+                    } else {
+                        if (label.dataset.dir === 'N') label.textContent = 'S';
+                        if (label.dataset.dir === 'S') label.textContent = 'N';
+                        if (label.dataset.dir === 'E') label.textContent = 'E';
+                        if (label.dataset.dir === 'W') label.textContent = 'W';
+                    }
+                });
+                
+                // Update angle displays
+                document.getElementById('sunElevation').textContent = elevation.toFixed(1);
+                document.getElementById('sunAzimuth').textContent = azimuth.toFixed(1);
+                document.getElementById('relativeAngle').textContent = relativeAngle.toFixed(1);
+                
+                // Store sun position for tracing if enabled and sun is visible
+                if (this.sunTraceEnabled && sunVisible) {
+                    // Add current position to trace points array
+                    this.sunTracePoints.push({ x: sunX, y: sunY });
+                    
+                    // Limit the number of points to prevent memory issues
+                    if (this.sunTracePoints.length > this.maxTracePoints) {
+                        this.sunTracePoints.shift(); // Remove oldest point
+                    }
+                    
+                    // Draw the trace path
+                    if (this.sunTracePoints.length > 1) {
+                        obsCtx.strokeStyle = 'rgba(255, 100, 0, 0.7)';
+                        obsCtx.lineWidth = 2;
+                        
+                        // Start a new path
+                        obsCtx.beginPath();
+                        obsCtx.moveTo(this.sunTracePoints[0].x, this.sunTracePoints[0].y);
+                        
+                        // Connect points
+                        for (let i = 1; i < this.sunTracePoints.length; i++) {
+                            const prevX = this.sunTracePoints[i-1].x;
+                            const currentX = this.sunTracePoints[i].x;
+                            const currentY = this.sunTracePoints[i].y;
+                            
+                            // Check if we've crossed the boundary (large jump in x position)
+                            if (Math.abs(currentX - prevX) > this.observerCanvas.width / 3) {
+                                // End current path
+                                obsCtx.stroke();
+                                // Start new path
+                                obsCtx.beginPath();
+                                obsCtx.moveTo(currentX, currentY);
+                            } else {
+                                obsCtx.lineTo(currentX, currentY);
+                            }
+                        }
+                        
+                        // Draw final segment
+                        obsCtx.stroke();
+                    }
+                }
+                
+                // Draw the sun only if it's visible in the current view
+                if (sunVisible) {
+                    // Scale sun size based on angular size
+                    // At 0.5 degrees (nominal size at sun height), use base radius of 10px
+                    // Scale proportionally with angular size
+                    const baseRadius = 10; // Radius at 0.5 degrees
+                    const sunRadius = baseRadius * (solarPos.angularSize / 0.5);
+                    
+                    obsCtx.fillStyle = '#FFD700';  // Yellow color for sun
+                    obsCtx.beginPath();
+                    obsCtx.arc(sunX, sunY, sunRadius, 0, 2 * Math.PI);
+                    obsCtx.fill();
+                    obsCtx.strokeStyle = '#FFA500';
+                    obsCtx.stroke();
+                }
+
+                // Draw degree scale
+                obsCtx.fillStyle = '#666';
+                obsCtx.font = '12px Arial';
+                obsCtx.textAlign = 'center';
+                
+                // Draw angle markers every 45 degrees
+                for (let deg = -180; deg <= 180; deg += 45) {
+                    // When looking south, angles go from +180 (east/left) to -180 (west/right)
+                    const displayDeg = lookNorth ? deg : -deg;
+                    const x = this.observerCanvas.width * ((deg + 180) / 360);
+                    obsCtx.fillText(displayDeg + '°', x, this.observerCanvas.height - 5);
+                }
+
+                // Draw elevation angle markings on the left side
+                obsCtx.fillStyle = '#666';
+                obsCtx.font = '10px Arial';
+                
+                // Draw elevation markings from 0° to 90° in 15° increments
+                for (let el = 0; el <= 90; el += 15) {
+                    const y = horizonY - (skyHeight * el / 90);
+                    obsCtx.fillText(el + '°', 5, y + 3);
+                    
+                    // Draw small tick marks
+                    obsCtx.strokeStyle = '#999';
+                    obsCtx.lineWidth = 1;
+                    obsCtx.beginPath();
+                    obsCtx.moveTo(25, y);
+                    obsCtx.lineTo(35, y);
+                    obsCtx.stroke();
+                }
+            }
+            updateTimeInputState = () => {
+                var dateInput = document.getElementById('dateInput');
+                var timeHours = document.getElementById('timeHours');
+                var timeMinutes = document.getElementById('timeMinutes');
+
+                // Enable/disable based on play state
+                if (dateInput) dateInput.disabled = this.isPlaying;
+                if (timeHours) timeHours.disabled = this.isPlaying;
+                if (timeMinutes) timeMinutes.disabled = this.isPlaying;
+            }
+
+            handleMouseMove = (event) => {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const y = event.clientY - rect.top;
+                
+                // Position magnifier canvas
+                this.magnifierCanvas.style.left = (event.clientX - this.magnifierRadius) + 'px';
+                this.magnifierCanvas.style.top = (event.clientY - this.magnifierRadius) + 'px';
+                
+                // Clear magnifier canvas
+                this.magnifierCtx.clearRect(0, 0, this.magnifierCanvas.width, this.magnifierCanvas.height);
+                
+                // Create circular clip path
+                this.magnifierCtx.beginPath();
+                this.magnifierCtx.arc(this.magnifierRadius, this.magnifierRadius, this.magnifierRadius, 0, Math.PI * 2);
+                this.magnifierCtx.clip();
+                
+                // Draw magnified portion of the map
+                const sourceX = x - this.magnifierRadius / this.magnification;
+                const sourceY = y - this.magnifierRadius / this.magnification;
+                const sourceWidth = this.magnifierCanvas.width / this.magnification;
+                const sourceHeight = this.magnifierCanvas.height / this.magnification;
+                
+                this.magnifierCtx.drawImage(
+                    this.canvas,
+                    sourceX, sourceY, sourceWidth, sourceHeight,
+                    0, 0, this.magnifierCanvas.width, this.magnifierCanvas.height
+                );
+                
+                // Draw crosshair
+                this.magnifierCtx.strokeStyle = '#FF0000';
+                this.magnifierCtx.lineWidth = 1;
+                const center = this.magnifierRadius;
+                const size = this.magnifierCrosshairSize;
+                
+                this.magnifierCtx.beginPath();
+                this.magnifierCtx.moveTo(center - size/2, center);
+                this.magnifierCtx.lineTo(center + size/2, center);
+                this.magnifierCtx.moveTo(center, center - size/2);
+                this.magnifierCtx.lineTo(center, center + size/2);
+                this.magnifierCtx.stroke();
+            }
+            
+
+            
+            updateTimeDisplay() {
+                try {
+                    if (!this.currentTime) {
+                        return;
+                    }
+
+                    // Try to get time display elements if not already found
+                    if (!this.timeDisplayReady) {
+                        this.utcTimeDisplay = document.getElementById('utcTimeDisplay');
+                        this.localTimeDisplay = document.getElementById('localTimeDisplay');
+                        
+                        if (!this.utcTimeDisplay || !this.localTimeDisplay) {
+                            return;
+                        }
+                        
+
+                        this.timeDisplayReady = true;
+                    }
+
+                    // Update UTC time
+                    const utcHours = this.currentTime.getUTCHours();
+                    const utcMinutes = this.currentTime.getUTCMinutes();
+                    this.utcTimeDisplay.textContent = `${utcHours.toString().padStart(2, '0')}:${utcMinutes.toString().padStart(2, '0')}`;
+                    //('UTC time updated:', `${utcHours}:${utcMinutes}`);
+                    
+                    // Calculate local time based on observer longitude
+                    const observerLon = parseFloat(document.getElementById('observerLon').value);
+                    
+                    // Calculate time zone offset in hours from longitude
+                    const tzOffset = observerLon / 15; // 15 degrees per hour
+                    //console.log('Timezone offset (hours):', tzOffset);
+                    
+                    // Calculate total minutes with offset
+                    const totalMinutesUTC = utcHours * 60 + utcMinutes;
+                    const offsetMinutes = Math.round(tzOffset * 60); // Convert hours to minutes
+                    const totalLocalMinutes = totalMinutesUTC + offsetMinutes;
+                    //console.log('Time calculation:', { totalMinutesUTC, offsetMinutes, totalLocalMinutes });
+                    
+                    // Convert back to hours and minutes, handling day wrapping
+                    let localHours = Math.floor(((totalLocalMinutes + 1440) % 1440) / 60);
+                    let localMinutes = ((totalLocalMinutes + 1440) % 1440) % 60;
+                    //console.log('Local time components:', { localHours, localMinutes });
+                    
+                    const ampm = localHours >= 12 ? 'PM' : 'AM';
+                    const hours12 = localHours % 12 || 12;
+                    
+                    const timeString = `${hours12}:${localMinutes.toString().padStart(2, '0')} ${ampm}`;
+                    //console.log('Setting local time display to:', timeString);
+                    this.localTimeDisplay.textContent = timeString;
+                } catch (error) {
+                    //console.error('Error in updateTimeDisplay:', error);
+                }
+            }
+
+            draw() {
+                // Update time display whenever we draw
+                this.updateTimeDisplay();
+                
+                // Clear canvases
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw map
+                // Draw map as a perfect circle with 30% scale up
+                const canvasSize = Math.min(this.canvas.width, this.canvas.height);
+                const scaledSize = canvasSize * 1.3; // Scale up by 30%
+                
+                // Calculate source dimensions to maintain aspect ratio
+                let sourceWidth, sourceHeight, sourceX, sourceY;
+                if (this.mapImage.width / this.mapImage.height > 1) {
+                    // Image is wider than tall, use height as reference
+                    sourceHeight = this.mapImage.height;
+                    sourceWidth = sourceHeight;
+                    sourceX = (this.mapImage.width - sourceHeight) / 2;
+                    sourceY = 0;
+                } else {
+                    // Image is taller than wide, use width as reference
+                    sourceWidth = this.mapImage.width;
+                    sourceHeight = sourceWidth;
+                    sourceX = 0;
+                    sourceY = (this.mapImage.height - sourceWidth) / 2;
+                }
+                
+                // Draw the circular portion of the image scaled up
+                const x = (this.canvas.width - scaledSize) / 2 + 3.5;  // Shift right by 3.5px
+                const y = (this.canvas.height - scaledSize) / 2 - 10;  // Shift up by 10px
+                this.ctx.drawImage(this.mapImage, 
+                    sourceX, sourceY, sourceWidth, sourceHeight,
+                    x, y, scaledSize, scaledSize);
+                
+                // Draw grid
+                // Draw tropic circles
+                const mapRadius = this.canvas.width * 0.24; // Same radius calculation as used for positioning
+                this.ctx.strokeStyle = '#444';
+                this.ctx.lineWidth = 4;
+                
+                // Tropic of Cancer (23.44°N)
+                this.ctx.setLineDash([10, 10]);
+                const cancerRadius = mapRadius * (90 - 23.44) / 90;
+                this.ctx.beginPath();
+                this.ctx.arc(this.canvas.width/2, this.canvas.height/2, cancerRadius, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.fillStyle = '#444';
+                this.ctx.font = 'bold 16px Arial';
+                this.ctx.fillText('23.44°N', this.canvas.width/2 + cancerRadius + 5, this.canvas.height/2);
+                
+                // Tropic of Capricorn (23.44°S)
+                const capricornRadius = mapRadius * (90 + 23.44) / 90;
+                this.ctx.beginPath();
+                this.ctx.arc(this.canvas.width/2, this.canvas.height/2, capricornRadius, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.fillText('23.44°S', this.canvas.width/2 + capricornRadius + 5, this.canvas.height/2);
+                
+                // Reset line style
+                this.ctx.setLineDash([]);
+                this.ctx.lineWidth = 1;
+                
+                // Calculate and draw sun position
+                var sunPos = this.calculateSunPosition();
+                
+                // Scale map radius to match our 10,000 km pole-to-equator distance
+                const POLE_TO_EQUATOR_KM = 10000;
+                const PIXELS_PER_KM = (this.canvas.width * 0.24) / POLE_TO_EQUATOR_KM;
+                
+                // Draw the sun
+                const sunR = PIXELS_PER_KM * POLE_TO_EQUATOR_KM * (90 - sunPos.subsolarLat) / 90;
+                const sunAngle = -sunPos.subsolarLon * Math.PI / 180;
+                const sunX = this.canvas.width/2 + sunR * Math.cos(sunAngle);
+                const sunY = this.canvas.height/2 + sunR * Math.sin(sunAngle);
+                
+                // Draw sun as yellow circle
+                this.ctx.fillStyle = 'yellow';
+                this.ctx.strokeStyle = 'orange';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(sunX, sunY, 8, 0, 2 * Math.PI);
+                this.ctx.fill();
+                this.ctx.stroke();
+                
+                // Draw observer position
+                const obsR = PIXELS_PER_KM * POLE_TO_EQUATOR_KM * (90 - this.observerLat) / 90;
+                // Convert longitude to angle
+                // Longitude: -180 to +180, with -ve being West
+                // Angle: 0° at right, increasing clockwise
+                const obsAngle = -this.observerLon * Math.PI / 180;  // Negative because angle increases clockwise
+                const obsX = this.canvas.width/2 + obsR * Math.cos(obsAngle);
+                const obsY = this.canvas.height/2 + obsR * Math.sin(obsAngle);
+                
+                // Draw observer as red dot
+                this.ctx.fillStyle = 'red';
+                this.ctx.strokeStyle = 'darkred';
+                this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.arc(obsX, obsY, 5, 0, 2 * Math.PI);
+                this.ctx.fill();
+                this.ctx.stroke();
+                
+                // Draw line between observer and sun
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = 'red';
+                this.ctx.lineWidth = 2;
+                this.ctx.setLineDash([5, 5]); // Dashed line
+                this.ctx.moveTo(obsX, obsY);
+                this.ctx.lineTo(sunX, sunY);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]); // Reset to solid line
+                
+                // Get distances from current sun position
+                const groundDistance = sunPos.groundDistance;
+                const distance3D = sunPos.groundDistance3D;
+                
+                // Convert distances based on units
+                const unit = this.useMetric ? 'km' : 'mi';
+                const conversion = this.useMetric ? 1 : 1/1.60934;
+                
+                // Calculate horizon distance
+                const observerHeight = 1.8; // meters (6 feet)
+                const horizonDistance = Math.sqrt(2 * 6371000 * observerHeight) / 1000; // Convert to km
+                
+                // Convert all distances to selected units
+                const horizonDistanceDisplay = horizonDistance * conversion;
+                const groundDistanceDisplay = groundDistance * conversion;
+                const distance3DDisplay = distance3D * conversion;
+                
+                // Helper function to safely update element text
+                const updateElement = (id, text) => {
+                    const element = document.getElementById(id);
+                    if (element) element.textContent = text;
+                };
+                
+                // Update display elements
+                updateElement('horizonDistance', horizonDistanceDisplay.toFixed(2) + ' ' + unit);
+                updateElement('groundDistance', groundDistanceDisplay.toFixed(2) + ' ' + unit);
+                updateElement('actualDistance', distance3DDisplay.toFixed(2) + ' ' + unit);
+                updateElement('apparentSize', sunPos.angularSize.toFixed(2));
+                updateElement('sunElevation', sunPos.elevation.toFixed(2));
+                updateElement('sunDiameter', `${Math.round(sunPos.sunDiameter * conversion)} ${unit}`);
+                updateElement('sunAzimuth', sunPos.azimuth.toFixed(2));
+                
+
+                
+                // Use calculated azimuth, elevation and sun position for observer view
+                this.drawObserverView(sunPos.azimuth, sunPos.elevation, sunPos);
+                
+                // Update displays if elements exist
+                const infoEl = document.getElementById('info');
+                var timeDisplayEl = document.getElementById('timeDisplay');
+                var subsolarPointEl = document.getElementById('subsolarPoint');
+
+                if (infoEl) {
+                    infoEl.innerHTML =
+                        'Sun Position:<br>' +
+                        'Azimuth: ' + sunPos.azimuth.toFixed(2) + '°<br>' +
+                        'Elevation: ' + sunPos.elevation.toFixed(2) + '°<br>' +
+                        'Ground Distance: ' + groundDistanceDisplay.toFixed(2) + ' ' + unit + '<br>' +
+                        'Subsolar Point: ' + sunPos.subsolarLat.toFixed(2) + '°N, ' + sunPos.subsolarLon.toFixed(2) + '°E';
+                }
+                
+                if (timeDisplayEl) {
+                    timeDisplayEl.textContent = this.currentTime.toLocaleTimeString();
+                }
+
+                if (subsolarPointEl) {
+                    subsolarPointEl.textContent = 
+                        `${Math.abs(sunPos.subsolarLat).toFixed(1)}°${sunPos.subsolarLat >= 0 ? 'N' : 'S'}, ` +
+                        `${Math.abs(sunPos.subsolarLon).toFixed(1)}°${sunPos.subsolarLon >= 0 ? 'E' : 'W'}`;
+                }
+
+
+            };
+
+            calculateGroundDistance = (lat1, lon1, lat2, lon2) => {
+                // For true flat earth model:
+                // 1. Distance from pole to equator is ~10,000 km
+                // 2. Distances scale linearly with radius from center
+                // 3. 1 degree of longitude = (2πr)/360 where r is distance from pole
+                const POLE_TO_EQUATOR_KM = 10000;
+                
+                // Convert latitudes to radial distances from pole
+                const r1 = POLE_TO_EQUATOR_KM * (90 - lat1) / 90;
+                const r2 = POLE_TO_EQUATOR_KM * (90 - lat2) / 90;
+                
+                // Convert longitudes to radians
+                const theta1 = -lon1 * Math.PI / 180;  // Negative for clockwise angle
+                const theta2 = -lon2 * Math.PI / 180;
+                
+                // Convert to cartesian coordinates (in km)
+                const x1 = r1 * Math.cos(theta1);
+                const y1 = r1 * Math.sin(theta1);
+                const x2 = r2 * Math.cos(theta2);
+                const y2 = r2 * Math.sin(theta2);
+                
+                // Calculate straight-line distance in km
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                return Math.sqrt(dx*dx + dy*dy);
+                
+                // Note: On a flat earth:
+                // - Circumference at latitude L = 2πr where r = POLE_TO_EQUATOR_KM * (90-L)/90
+                // - At equator (L=0), circumference = 2π * 10000 ≈ 62,832 km
+                // - This is ~1.57 times larger than reality (~40,075 km)
+                // - Each degree of longitude at latitude L = (2πr)/360 km
+            };
+
+            drawGrid = () => {
+                // Scale map radius to match our 10,000 km pole-to-equator distance
+                const POLE_TO_EQUATOR_KM = 10000;
+                const PIXELS_PER_KM = (this.canvas.width * 0.24) / POLE_TO_EQUATOR_KM;
+                
+                // Draw latitude circles every 30 degrees
+                this.ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+                for (var lat = 30; lat <= 90; lat += 30) {
+                    var r = PIXELS_PER_KM * POLE_TO_EQUATOR_KM * (90 - lat) / 90;
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.canvas.width/2, this.canvas.height/2, r, 0, 2 * Math.PI);
+                    this.ctx.strokeStyle = '#CCCCCC';
+                    this.ctx.stroke();
+                }
+                
+                // Draw longitude lines
+                for (var lon = 0; lon < 360; lon += 30) {
+                    var theta = lon * Math.PI / 180;
+                    var r = mapRadius;
+                    var x = r * Math.cos(theta);
+                    var y = r * Math.sin(theta);
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.canvas.width/2, this.canvas.height/2);
+                    this.ctx.lineTo(x + this.canvas.width/2, y + this.canvas.height/2);
+                    this.ctx.strokeStyle = '#CCCCCC';
+                    this.ctx.stroke();
+                }
+                
+                // Draw special latitude circles
+                this.ctx.textAlign = 'left';
+                this.ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                this.ctx.font = '12px Arial';
+                
+                // North Pole
+                this.ctx.strokeStyle = 'rgba(0,0,255,0.2)';
+                this.ctx.beginPath();
+                this.ctx.arc(this.canvas.width/2, this.canvas.height/2, 5, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.fillText('90°N', this.canvas.width/2 + 10, this.canvas.height/2);
+                
+                // Tropic of Cancer (23.44°N)
+                this.ctx.strokeStyle = 'rgba(255,0,0,0.2)';
+                this.ctx.beginPath();
+                var tropicRadius = mapRadius * (90 - 23.44) / 90;
+                this.ctx.arc(this.canvas.width/2, this.canvas.height/2, tropicRadius, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.fillText('23.44°N', this.canvas.width/2 + tropicRadius + 5, this.canvas.height/2);
+                
+                // Equator (0°)
+                this.ctx.strokeStyle = 'rgba(0,255,0,0.2)';
+                this.ctx.beginPath();
+                var equatorRadius = mapRadius * 90 / 180;
+                this.ctx.arc(this.canvas.width/2, this.canvas.height/2, equatorRadius, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.fillText('0°', this.canvas.width/2 + equatorRadius + 5, this.canvas.height/2);
+                
+                // Tropic of Capricorn (23.44°S)
+                this.ctx.strokeStyle = 'rgba(255,0,0,0.2)';
+                this.ctx.beginPath();
+                var capricornRadius = mapRadius * (90 + 23.44) / 90;
+                this.ctx.arc(this.canvas.width/2, this.canvas.height/2, capricornRadius, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.fillText('23.44°S', this.canvas.width/2 + capricornRadius + 5, this.canvas.height/2);
+            }
+
+            updateSliderValue(value) {
+                try {
+                    const hours = Math.floor(value / 60);
+                    const minutes = value % 60;
+                    
+                    // Get all required DOM elements
+                    const elements = {
+                        hours: document.getElementById('timeHours'),
+                        minutes: document.getElementById('timeMinutes'),
+                        date: document.getElementById('dateInput'),
+                        display: document.getElementById('timeDisplay')
+                    };
+                    
+                    // Update time inputs
+                    if (elements.hours) elements.hours.value = hours;
+                    if (elements.minutes) elements.minutes.value = minutes;
+                    
+                    // Update current time
+                    if (elements.date) {
+                        this.currentTime = new Date(elements.date.value);
+                        this.currentTime.setUTCHours(hours, minutes, 0, 0);
+                    }
+                    
+                    // Update time display with local time
+                    if (elements.display) {
+                        const localTime = new Date(this.currentTime);
+                        const localHours = localTime.getHours();
+                        const localMinutes = localTime.getMinutes();
+                        const ampm = localHours >= 12 ? 'PM' : 'AM';
+                        const hours12 = localHours % 12 || 12;
+                        
+                        elements.display.textContent = 
+                            `${hours12}:${localMinutes.toString().padStart(2, '0')} ${ampm}`;
+                    }
+                    
+                    const totalMinutes = hours * 60 + minutes;
+                    document.getElementById('timeSlider').value = totalMinutes;
+                    
+                    this.update();
+                } catch (error) {
+                    //console.error('Error in updateSliderValue:', error);
+                }
+            }
+        }
+
+        // Initialize simulation when DOM is loaded
+        window.addEventListener('load', () => {
+            console.log('Page loaded, initializing simulator...');
+            window.sim = new FlatEarthSim();
+        });
+    </script>
+</body>
+</html>
