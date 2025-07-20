@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/ContactForm.astro';
 ---
 
 <Layout title="About">
@@ -50,6 +51,13 @@ import Layout from '../layouts/Layout.astro';
 		<h2>Teaching Philosophy</h2>
 		<p>I believe in making complex STEM concepts accessible through interactive learning and real-world applications. My extensive industry experience allows me to bring practical insights into my teaching, helping students understand not just the 'how' but also the 'why' of what they're learning.</p>
 		<p>This website is continuously updated with new content and features through GitHub integration, ensuring students always have access to the latest educational resources and simulations.</p>
+
+		<div class="contact-section">
+			<h2>Get in Touch</h2>
+			<p>Have questions about tutoring or want to discuss how I can help? Feel free to reach out!</p>
+			<ContactForm />
+		</div>
+		</div>
 	</div>
 
 	<style>
@@ -125,6 +133,46 @@ import Layout from '../layouts/Layout.astro';
 
 		.timeline-item p {
 			margin-bottom: 0;
+		}
+
+		.contact-section {
+			text-align: center;
+			margin-top: 3rem;
+			padding: 2rem;
+			background: var(--gray-light);
+			border-radius: 1rem;
+		}
+
+		.email-display {
+			font-size: 1.2rem;
+			margin: 1rem 0;
+			font-weight: bold;
+		}
+
+		.email-link {
+			color: var(--accent);
+			text-decoration: none;
+		}
+
+		.email-link:hover {
+			text-decoration: underline;
+		}
+
+		.contact-button {
+			display: inline-block;
+			padding: 1rem 2rem;
+			background: var(--accent);
+			color: white;
+			text-decoration: none;
+			border-radius: 0.5rem;
+			font-weight: bold;
+			transition: background-color 0.2s;
+			border: none;
+			cursor: pointer;
+		}
+
+		.contact-button:hover {
+			background: var(--accent-dark);
 		}
 
 		@media (max-width: 768px) {

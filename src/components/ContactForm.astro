@@ -1,0 +1,76 @@
+---
+---
+
+<div class="contact-section">
+  <p class="email-display">
+    <a href="#" onclick="window.location='mailto:chuck@c00lnerd.com';return false;" class="email-link">
+      chuck@c00lnerd.com
+    </a>
+  </p>
+  <button class="contact-button" id="email-button" onclick="window.location='mailto:chuck@c00lnerd.com';return false;">
+    Open Email Client
+  </button>
+  <button class="contact-button" id="copy-button" style="margin-left: 1rem;">
+    Copy Email Address
+  </button>
+  <p class="copy-message" id="copy-message" style="display: none;">
+    Email address copied!
+  </p>
+</div>
+
+<script>
+  const copyButton = document.getElementById('copy-button');
+  const copyMessage = document.getElementById('copy-message');
+
+  copyButton?.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText('chuck@c00lnerd.com');
+      if (copyMessage) {
+        copyMessage.style.display = 'block';
+        setTimeout(() => {
+          copyMessage.style.display = 'none';
+        }, 2000);
+      }
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  });
+</script>
+
+<style>
+  .contact-section {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .email-display {
+    font-size: 1.2rem;
+    margin: 1rem 0;
+    font-weight: bold;
+  }
+
+  .email-link {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .email-link:hover {
+    text-decoration: underline;
+  }
+
+  .contact-button {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+  }
+
+  .contact-button:hover {
+    background: var(--accent-dark);
+  }
+</style>
