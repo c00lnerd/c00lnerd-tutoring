@@ -2,14 +2,15 @@
 ---
 
 <div class="contact-section">
+  <p class="contact-intro">Get in touch to discuss tutoring:</p>
   <p class="email-display">
-    <a href="mailto:chuck@c00lnerd.com" class="email-link">chuck@c00lnerd.com</a>
+    <span class="email-text">chuck@c00lnerd.com</span>
   </p>
   <div class="button-group">
-    <a href="mailto:chuck@c00lnerd.com?subject=Tutoring%20Inquiry" class="contact-button" role="button">Open Email Client</a>
     <button class="contact-button" id="copy-button">Copy Email Address</button>
   </div>
-  <p class="copy-message" id="copy-message" style="display: none;">Email address copied!</p>
+  <p class="copy-message" id="copy-message" style="display: none;">Email address copied! You can now paste it into your email client.</p>
+  <p class="note">(First-time emails may appear in your spam folder)</p>
 </div>
 
 <script>
@@ -36,21 +37,25 @@
     max-width: 500px;
     margin: 0 auto;
     text-align: center;
+    padding: 2rem;
+    background: var(--gray-light);
+    border-radius: 1rem;
+  }
+
+  .contact-intro {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--gray-dark);
   }
 
   .email-display {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     margin: 1rem 0;
     font-weight: bold;
   }
 
-  .email-link {
+  .email-text {
     color: var(--accent);
-    text-decoration: none;
-  }
-
-  .email-link:hover {
-    text-decoration: underline;
   }
 
   .contact-button {
@@ -58,13 +63,26 @@
     padding: 1rem 2rem;
     background: var(--accent);
     color: white;
-    text-decoration: none;
+    border: none;
     border-radius: 0.5rem;
     font-weight: bold;
+    cursor: pointer;
     transition: background-color 0.2s;
   }
 
   .contact-button:hover {
     background: var(--accent-dark);
+  }
+
+  .note {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--gray);
+  }
+
+  .copy-message {
+    margin-top: 0.5rem;
+    color: var(--accent);
+    font-weight: bold;
   }
 </style>
