@@ -1,0 +1,712 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Module 5 Quiz: Chemical Reactions">
+    <div class="container">
+        <h1>Module 5 Quiz: Chemical Reactions</h1>
+
+        <div id="email-section">
+            <h2>Enter your email to start the quiz</h2>
+            <p>Your email is optional but recommended to receive your results.</p>
+            <div class="email-input">
+                <input type="email" id="email" placeholder="Enter your email (optional)">
+                <label>
+                    <input type="checkbox" id="save-results" checked>
+                    Save results and send to instructor
+                </label>
+            </div>
+            <button id="start-quiz" class="btn">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container">
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div id="progress" class="progress"></div>
+                </div>
+                <span id="question-number"></span>
+            </div>
+            
+            <div id="question-text"></div>
+            <div class="options"></div>
+            
+            <div id="feedback"></div>
+            
+            <div class="navigation">
+                <button id="prev-question" class="btn">Previous</button>
+                <button id="next-question" class="btn">Next</button>
+                <button id="submit-quiz" class="btn">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results">
+            <h2>Quiz Results</h2>
+            <p id="score"></p>
+            <div id="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <button id="download-results" class="btn">Download Results</button>
+            <button id="restart-quiz" class="btn">Restart Quiz</button>
+        </div>
+    </div>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--black);
+        margin-bottom: 30px;
+    }
+
+    #email-section {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .email-input {
+        margin: 20px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .email-input input[type="email"] {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 300px;
+        max-width: 100%;
+    }
+
+    .email-input label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .progress-container {
+        margin-bottom: 20px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .progress {
+        height: 100%;
+        background-color: var(--accent);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    #question-number {
+        font-weight: bold;
+        color: var(--black);
+    }
+
+    #question-text {
+        font-size: 1.2em;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .options {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px;
+        margin: 20px 0;
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .option-button {
+        width: 100% !important;
+        text-align: left;
+        padding: 12px 15px;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1em;
+        line-height: 1.4;
+        display: block !important;
+        margin-bottom: 0;
+        float: none !important;
+        clear: both;
+    }
+
+    .option-button:hover:not(:disabled) {
+        border-color: #007bff;
+        background: #f8f9fa;
+    }
+
+    .option-button.correct {
+        border-color: #28a745;
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .option-button.incorrect {
+        border-color: #dc3545;
+        background: #f8d7da;
+        color: #721c24;
+    }
+
+    #quiz-container {
+        width: 100%;
+        margin-top: 20px;
+        position: relative;
+        display: none;
+    }
+
+    #quiz-container.active {
+        display: block !important;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    .navigation button {
+        flex: 0 0 auto;
+        min-width: 100px;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn:hover:not(:disabled) {
+        background-color: #0056b3;
+    }
+
+    .btn:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    #feedback {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 5px;
+        font-size: 1.1em;
+        line-height: 1.4;
+    }
+
+    #feedback.correct {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+
+    #feedback.incorrect {
+        background: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+
+    #results {
+        text-align: center;
+        display: none;
+    }
+
+    #results.active {
+        display: block;
+    }
+
+    .email-status {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 4px;
+    }
+
+    .email-status.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .email-status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script is:inline>
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        } catch (err) {
+            console.error('Error initializing EmailJS:', err);
+        }
+
+        // Add event listeners
+        document.getElementById('start-quiz').addEventListener('click', startQuiz);
+        document.getElementById('prev-question').addEventListener('click', previousQuestion);
+        document.getElementById('next-question').addEventListener('click', nextQuestion);
+        document.getElementById('submit-quiz').addEventListener('click', submitQuiz);
+        document.getElementById('download-results').addEventListener('click', downloadResults);
+        document.getElementById('restart-quiz').addEventListener('click', restartQuiz);
+    };
+
+    // Quiz questions array
+    window.questions = [
+        {
+            type: "multiple-choice",
+            question: "What is a polyatomic ion?",
+            options: [
+                "A single atom with a charge",
+                "A group of atoms covalently bonded together that acts as a single charged unit",
+                "Two atoms sharing electrons",
+                "An ion that loses electrons"
+            ],
+            correctAnswer: 1,
+            explanation: "A polyatomic ion is a group of atoms covalently bonded together that acts as a single charged unit."
+        },
+        {
+            type: "multiple-choice",
+            question: "In the compound Fe(OH)₃, what does the subscript 3 indicate?",
+            options: [
+                "There are 3 iron atoms",
+                "There are 3 hydroxide ions",
+                "The iron has a 3+ charge",
+                "There are 3 oxygen atoms"
+            ],
+            correctAnswer: 1,
+            explanation: "The subscript 3 indicates there are 3 hydroxide (OH) ions in the compound."
+        },
+        {
+            type: "multiple-choice",
+            question: "Which of the following is an exothermic reaction?",
+            options: [
+                "A reaction that requires constant heat input",
+                "A reaction that absorbs energy from surroundings",
+                "A reaction that releases energy to surroundings",
+                "A reaction that neither absorbs nor releases energy"
+            ],
+            correctAnswer: 2,
+            explanation: "An exothermic reaction is one that releases energy to the surroundings."
+        },
+        {
+            type: "multiple-choice",
+            question: "What is the correct name for CO₂?",
+            options: [
+                "Carbon oxide",
+                "Carbon dioxide",
+                "Dicarbon oxide",
+                "Carbon(IV) oxide"
+            ],
+            correctAnswer: 1,
+            explanation: "CO₂ is correctly named carbon dioxide, indicating one carbon atom and two oxygen atoms."
+        },
+        {
+            type: "multiple-choice",
+            question: "How many moles of atoms are in one mole of water (H₂O)?",
+            options: [
+                "1 mole",
+                "2 moles",
+                "3 moles",
+                "4 moles"
+            ],
+            correctAnswer: 2,
+            explanation: "One mole of water (H₂O) contains 3 moles of atoms: 2 moles of hydrogen atoms and 1 mole of oxygen atoms."
+        },
+        {
+            type: "multiple-choice",
+            question: "What type of reaction occurs when two or more substances combine to form a single compound?",
+            options: [
+                "Decomposition reaction",
+                "Synthesis reaction",
+                "Single replacement reaction",
+                "Double replacement reaction"
+            ],
+            correctAnswer: 1,
+            explanation: "A synthesis reaction occurs when two or more substances combine to form a single compound."
+        },
+        {
+            type: "multiple-choice",
+            question: "In a double replacement reaction, what is exchanged between the two compounds?",
+            options: [
+                "Electrons",
+                "Protons",
+                "Positive ions",
+                "Neutrons"
+            ],
+            correctAnswer: 2,
+            explanation: "In a double replacement reaction, positive ions are exchanged between the two compounds."
+        },
+        {
+            type: "multiple-choice",
+            question: "Which of the following is a characteristic of a combustion reaction?",
+            options: [
+                "Always produces water as a product",
+                "Always involves oxygen as a reactant",
+                "Always occurs at room temperature",
+                "Never releases energy"
+            ],
+            correctAnswer: 1,
+            explanation: "A combustion reaction always involves oxygen as a reactant."
+        },
+        {
+            type: "multiple-choice",
+            question: "What is the correct name for the compound Fe₂O₃?",
+            options: [
+                "Iron oxide",
+                "Iron(II) oxide",
+                "Iron(III) oxide",
+                "Diiron trioxide"
+            ],
+            correctAnswer: 2,
+            explanation: "Fe₂O₃ is iron(III) oxide, where iron has a +3 oxidation state."
+        },
+        {
+            type: "multiple-choice",
+            question: "Which type of reaction occurs when a compound breaks down into simpler substances?",
+            options: [
+                "Synthesis reaction",
+                "Decomposition reaction",
+                "Single replacement reaction",
+                "Combustion reaction"
+            ],
+            correctAnswer: 1,
+            explanation: "A decomposition reaction occurs when a compound breaks down into simpler substances."
+        },
+        {
+            type: "multiple-choice",
+            question: "What is activation energy?",
+            options: [
+                "The energy released by a reaction",
+                "The minimum energy needed to start a chemical reaction",
+                "The total energy of the products",
+                "The energy stored in chemical bonds"
+            ],
+            correctAnswer: 1,
+            explanation: "Activation energy is the minimum energy needed to start a chemical reaction."
+        },
+        {
+            type: "multiple-choice",
+            question: "In an endothermic reaction:",
+            options: [
+                "Energy is released to the surroundings",
+                "Energy is absorbed from the surroundings",
+                "No energy change occurs",
+                "Temperature always decreases"
+            ],
+            correctAnswer: 1,
+            explanation: "In an endothermic reaction, energy is absorbed from the surroundings, making the surroundings cooler."
+        },
+        {
+            type: "multiple-choice",
+            question: "What is the correct formula for iron(III) chloride?",
+            options: [
+                "FeCl",
+                "FeCl₂",
+                "FeCl₃",
+                "Fe₃Cl"
+            ],
+            correctAnswer: 2,
+            explanation: "Iron(III) chloride has the formula FeCl₃, where iron has a +3 charge and chloride has a -1 charge."
+        },
+        {
+            type: "multiple-choice",
+            question: "Which prefix indicates that there are 5 atoms of an element in a molecular compound?",
+            options: [
+                "Tetra-",
+                "Penta-",
+                "Hexa-",
+                "Tri-"
+            ],
+            correctAnswer: 1,
+            explanation: "The prefix 'penta-' indicates 5 atoms of an element in a molecular compound."
+        },
+        {
+            type: "multiple-choice",
+            question: "What happens to chemical bonds during a reaction?",
+            options: [
+                "Only new bonds are formed",
+                "Only existing bonds are broken",
+                "Both breaking and forming of bonds occurs",
+                "Bonds remain unchanged"
+            ],
+            correctAnswer: 2,
+            explanation: "During a chemical reaction, both breaking of existing bonds and forming of new bonds occurs."
+        }
+    ];
+
+    // Quiz state in window scope to match other modules
+    window.currentQuestion = 0;
+    window.userAnswers = new Array(window.questions.length).fill(null);
+    window.questionAttempts = new Array(window.questions.length).fill(0);
+    window.userEmail = '';
+    window.saveResults = false;
+
+    function startQuiz() {
+        const emailInput = document.getElementById('email');
+        const saveResults = document.getElementById('save-results');
+        
+        window.userEmail = emailInput.value;
+        window.saveResults = saveResults.checked;
+
+        document.getElementById('email-section').style.display = 'none';
+        document.getElementById('quiz-container').classList.add('active');
+        
+        showQuestion();
+        updateNavigationButtons();
+    }
+
+    function showQuestion() {
+        const feedback = document.getElementById('feedback');
+        feedback.textContent = '';
+        feedback.className = 'feedback';
+        
+        const optionsContainer = document.querySelector('.options');
+        optionsContainer.innerHTML = '';
+        
+        // Show the current question
+        const question = window.questions[window.currentQuestion];
+        document.getElementById('question-number').textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+        document.getElementById('question-text').textContent = question.question;
+        
+        // Create option buttons
+        question.options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.textContent = option;
+            button.onclick = () => selectAnswer(index);
+            optionsContainer.appendChild(button);
+        });
+        
+        // Restore previous state if answered
+        if (window.userAnswers[window.currentQuestion] !== null) {
+            const selectedIndex = window.userAnswers[window.currentQuestion];
+            const isCorrect = selectedIndex === question.correctAnswer;
+            const buttons = optionsContainer.querySelectorAll('.option-button');
+            
+            buttons[selectedIndex].classList.add(isCorrect ? 'correct' : 'incorrect');
+            buttons.forEach(button => button.disabled = true);
+            
+            feedback.textContent = isCorrect ? 
+                'Correct! ' + (question.explanation || '') : 
+                `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}.` + (question.explanation ? ` ${question.explanation}` : '');
+            feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        }
+        
+        updateProgressBar();
+    }
+
+    function selectAnswer(index) {
+        const question = window.questions[window.currentQuestion];
+        
+        if (!window.questionAttempts[window.currentQuestion]) window.questionAttempts[window.currentQuestion] = 0;
+        if (window.questionAttempts[window.currentQuestion] >= 2) return;
+        
+        window.questionAttempts[window.currentQuestion]++;
+        window.userAnswers[window.currentQuestion] = index;
+        
+        const isCorrect = index === question.correctAnswer;
+        const feedback = document.getElementById('feedback');
+        const options = document.querySelectorAll('.option-button');
+        
+        // Reset all options
+        options.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+            option.disabled = false;
+        });
+        
+        // Style selected option
+        options[index].classList.add(isCorrect ? 'correct' : 'incorrect');
+        
+        // Show feedback
+        feedback.textContent = isCorrect ? 
+            'Correct! ' + (question.explanation || '') : 
+            (window.questionAttempts[window.currentQuestion] >= 2 ? 
+                `Incorrect. The correct answer is: ${question.options[question.correctAnswer]}.` + (question.explanation ? ` ${question.explanation}` : '') : 
+                'Incorrect. Try again.');
+        feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        
+        // Disable all options if correct or max attempts reached
+        if (isCorrect || window.questionAttempts[window.currentQuestion] >= 2) {
+            options.forEach(option => option.disabled = true);
+            if (!isCorrect) {
+                options[question.correctAnswer].classList.add('correct');
+            }
+        }
+        
+        updateNavigationButtons();
+    }
+
+    function updateProgressBar() {
+        const progress = document.querySelector('.progress');
+        const progressPercentage = ((window.currentQuestion + 1) / window.questions.length) * 100;
+        progress.style.width = `${progressPercentage}%`;
+    }
+
+    function updateNavigationButtons() {
+        const prevBtn = document.getElementById('prev-question');
+        const nextBtn = document.getElementById('next-question');
+        const submitBtn = document.getElementById('submit-quiz');
+        
+        // Always allow navigation to previous questions
+        prevBtn.disabled = window.currentQuestion === 0;
+        
+        // Enable next/submit button if:
+        // 1. Current question is answered correctly, or
+        // 2. Current question has reached max attempts (2), or
+        // 3. Current question is answered
+        const currentQuestion = window.questions[window.currentQuestion];
+        const currentAttempts = window.questionAttempts[window.currentQuestion] || 0;
+        const isAnswered = window.userAnswers[window.currentQuestion] !== null;
+        const isCorrect = window.userAnswers[window.currentQuestion] === currentQuestion.correctAnswer;
+            
+        const canProceed = isCorrect || currentAttempts >= 2 || isAnswered;
+        nextBtn.disabled = !canProceed;
+        
+        // Show submit button on last question if answered
+        if (window.currentQuestion === window.questions.length - 1) {
+            nextBtn.style.display = 'none';
+            submitBtn.style.display = 'block';
+            submitBtn.disabled = !canProceed;
+        } else {
+            nextBtn.style.display = 'block';
+            submitBtn.style.display = 'none';
+        }
+    }
+
+    function previousQuestion() {
+        if (window.currentQuestion > 0) {
+            window.currentQuestion--;
+            showQuestion();
+            updateNavigationButtons();
+        }
+    }
+
+    function nextQuestion() {
+        if (window.currentQuestion < window.questions.length - 1) {
+            window.currentQuestion++;
+            showQuestion();
+            updateNavigationButtons();
+        }
+    }
+
+    function submitQuiz() {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        
+        const score = window.userAnswers.filter((answer, index) => answer === window.questions[index].correctAnswer).length;
+        const scorePercentage = (score / window.questions.length) * 100;
+        document.getElementById('score').textContent = `Your score: ${score} out of ${window.questions.length} (${scorePercentage}%)`;
+        
+        if (document.getElementById('save-results').checked && window.userEmail) {
+            sendEmail(window.userEmail, score, window.questions.length);
+        }
+        
+        displayIncorrectAnswers();
+    }
+
+    function sendEmail(email, score, total) {
+        const emailStatus = document.getElementById('email-status');
+        emailStatus.textContent = 'Sending results...';
+        emailStatus.style.display = 'block';
+
+        const templateParams = {
+            user_email: email,
+            quiz_name: "Module 5: Chemical Reactions",
+            score: `${score}/${total}`,
+            percentage: ((score / total) * 100).toFixed(1) + "%"
+        };
+
+        emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+            .then(() => {
+                emailStatus.textContent = "Results sent successfully!";
+                emailStatus.className = "email-status success";
+                emailStatus.style.display = "block";
+            })
+            .catch(() => {
+                emailStatus.textContent = "Failed to send results. Please try again.";
+                emailStatus.className = "email-status error";
+                emailStatus.style.display = "block";
+            });
+    }
+
+    function displayIncorrectAnswers() {
+        const incorrectAnswersDiv = document.getElementById('incorrect-answers');
+        incorrectAnswersDiv.innerHTML = '';
+        
+        window.userAnswers.forEach((answer, index) => {
+            if (answer !== window.questions[index].correctAnswer) {
+                const questionDiv = document.createElement('div');
+                questionDiv.innerHTML = `
+                    <p><strong>Question ${index + 1}:</strong> ${window.questions[index].question}</p>
+                    <p class="wrong-answer">Your answer: ${window.questions[index].options[answer]}</p>
+                    <p class="right-answer">Correct answer: ${window.questions[index].options[window.questions[index].correctAnswer]}</p>
+                    <p class="explanation">${window.questions[index].explanation}</p>
+                `;
+                incorrectAnswersDiv.appendChild(questionDiv);
+            }
+        });
+    }
+
+    function downloadResults() {
+        const score = window.userAnswers.filter((answer, index) => answer === window.questions[index].correctAnswer).length;
+        const percentage = (score / window.questions.length) * 100;
+        
+        let resultsText = `Module 5 Quiz Results\n\n`;
+        resultsText += `Score: ${score}/${window.questions.length} (${percentage.toFixed(1)}%)\n\n`;
+        
+        window.questions.forEach((question, index) => {
+            resultsText += `Question ${index + 1}: ${question.question}\n`;
+            resultsText += `Your answer: ${question.options[window.userAnswers[index]]}\n`;
+            resultsText += `Correct answer: ${question.options[question.correctAnswer]}\n`;
+            resultsText += `${window.userAnswers[index] === question.correctAnswer ? "✓ Correct" : "✗ Incorrect"}\n\n`;
+        });
+        
+        const blob = new Blob([resultsText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'module5_quiz_results.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function restartQuiz() {
+        window.currentQuestion = 0;
+        window.userAnswers = new Array(window.questions.length).fill(null);
+        window.questionAttempts = new Array(window.questions.length).fill(0);
+        
+        document.getElementById('email-section').style.display = 'block';
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('email-status').style.display = 'none';
+        
+        document.getElementById('email').value = '';
+        document.getElementById('save-results').checked = true;
+    }
+</script>
+</Layout>

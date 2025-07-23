@@ -1,0 +1,711 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 9.1: Sound Wave Visualization">
+    <div class="experiment-container">
+        <h1>Experiment 9.1: Sound Wave Visualization</h1>
+        
+        <div class="experiment-intro">
+            <h2>Can we see the effect of sound waves traveling through air?</h2>
+            <p>In this experiment, you'll explore how sound waves travel through air by observing their effects on a candle flame and rice grains.</p>
+        </div>
+
+        <div class="materials-section">
+            <h3>Materials Needed:</h3>
+            <ul>
+                <li>Plastic wrap</li>
+                <li>Scissors</li>
+                <li>Tape</li>
+                <li>Match</li>
+                <li>Plastic 1 liter or 2 liter bottle</li>
+                <li>Candle</li>
+                <li>Large pot</li>
+                <li>Wooden spoon</li>
+                <li>Large bowl</li>
+                <li>Rice</li>
+                <li>Eye protection (goggles or safety glasses)</li>
+            </ul>
+        </div>
+
+        <div class="simulation-section">
+            <h2>Interactive Demonstration</h2>
+            <div class="demo-container">
+                <div class="demo-image">
+                    <img id="currentStep" src="/simulations/experiment9_1/empty-bowl.jpg" alt="Current experiment step" />
+                </div>
+                <div class="button-container">
+                    <button id="setupBowl" class="step-button active">1. Setup Bowl</button>
+                    <button id="coverBowl" class="step-button" disabled>2. Cover with Plastic</button>
+                    <button id="addRice" class="step-button" disabled>3. Add Rice</button>
+                    <button id="bangPot" class="step-button" disabled>4. Bang Pot</button>
+                    <button id="resetBowl" class="step-button reset">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .demo-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 2rem;
+                margin: 2rem 0;
+            }
+
+            .demo-image {
+                width: 100%;
+                max-width: 600px;
+                background: white;
+                padding: 1rem;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            }
+
+            .demo-image img {
+                width: 100%;
+                height: auto;
+                border-radius: 8px;
+                transition: opacity 0.3s ease-in-out;
+            }
+
+            .button-container {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+
+            .step-button {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                border-radius: 8px;
+                background: #e9ecef;
+                color: #495057;
+                font-size: 1rem;
+                cursor: pointer;
+                transition: all 0.2s ease-in-out;
+            }
+
+            .step-button:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .step-button.active {
+                background: #228be6;
+                color: white;
+            }
+
+            .step-button:not(:disabled):hover {
+                transform: translateY(-2px);
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+
+            .step-button.reset {
+                background: #fa5252;
+                color: white;
+            }
+
+            @media (max-width: 768px) {
+                .demo-container {
+                    margin: 1rem;
+                }
+
+                .button-container {
+                    flex-direction: column;
+                    width: 100%;
+                }
+
+                .step-button {
+                    width: 100%;
+                }
+            }
+        </style>
+
+        <script>
+            window.addEventListener('load', function() {
+                const currentStepImg = document.getElementById('currentStep');
+                const setupBtn = document.getElementById('setupBowl');
+                const coverBtn = document.getElementById('coverBowl');
+                const riceBtn = document.getElementById('addRice');
+                const bangBtn = document.getElementById('bangPot');
+                const resetBtn = document.getElementById('resetBowl');
+
+                const steps = {
+                    setup: '/simulations/experiment9_1/empty-bowl.jpg',
+                    cover: '/simulations/experiment9_1/covered-bowl.jpg',
+                    rice: '/simulations/experiment9_1/rice-setup.jpg',
+                    bang: '/simulations/experiment9_1/pot-position.jpg'
+                };
+
+                function updateStep(step) {
+                    currentStepImg.style.opacity = '0';
+                    setTimeout(() => {
+                        currentStepImg.src = steps[step];
+                        currentStepImg.style.opacity = '1';
+                    }, 300);
+                }
+
+                setupBtn.addEventListener('click', () => {
+                    updateStep('setup');
+                    coverBtn.disabled = false;
+                    coverBtn.classList.add('active');
+                    setupBtn.classList.remove('active');
+                });
+
+                coverBtn.addEventListener('click', () => {
+                    updateStep('cover');
+                    riceBtn.disabled = false;
+                    riceBtn.classList.add('active');
+                    coverBtn.classList.remove('active');
+                });
+
+                riceBtn.addEventListener('click', () => {
+                    updateStep('rice');
+                    bangBtn.disabled = false;
+                    bangBtn.classList.add('active');
+                    riceBtn.classList.remove('active');
+                });
+
+                bangBtn.addEventListener('click', () => {
+                    updateStep('bang');
+                    bangBtn.classList.remove('active');
+                });
+
+                resetBtn.addEventListener('click', () => {
+                    updateStep('setup');
+                    coverBtn.disabled = true;
+                    riceBtn.disabled = true;
+                    bangBtn.disabled = true;
+                    setupBtn.classList.add('active');
+                    coverBtn.classList.remove('active');
+                    riceBtn.classList.remove('active');
+                    bangBtn.classList.remove('active');
+                });
+            });
+        </script>
+
+        <!-- Real experiment photos -->
+        <div class="real-experiment">
+            <h2>Real Experiment Photos</h2>
+            <p>Here's what the actual experiment setup and process looks like:</p>
+            
+            <div class="photo-grid">
+                <div class="photo-item">
+                    <img src="/simulations/experiment9_1/empty-bowl.jpg" alt="Empty bowl setup" loading="lazy" />
+                    <p>Step 1: Empty bowl setup</p>
+                </div>
+                <div class="photo-item">
+                    <img src="/simulations/experiment9_1/covered-bowl.jpg" alt="Bowl covered with plastic wrap" loading="lazy" />
+                    <p>Step 2: Bowl covered with plastic wrap</p>
+                </div>
+                <div class="photo-item">
+                    <img src="/simulations/experiment9_1/rice-setup.jpg" alt="Rice grains on plastic wrap" loading="lazy" />
+                    <p>Step 3: Rice grains placed on plastic wrap</p>
+                </div>
+                <div class="photo-item">
+                    <img src="/simulations/experiment9_1/pot-position.jpg" alt="Pot positioned above bowl" loading="lazy" />
+                    <p>Step 4: Pot positioned above bowl</p>
+                </div>
+            </div>
+
+            <!-- Video demonstration -->
+            <div class="video-section">
+                <h3>Watch the Experiment in Action</h3>
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <video 
+                            id="experimentVideo" 
+                            width="360" 
+                            height="640"
+                            preload="auto"
+                            playsinline
+                            crossorigin="anonymous"
+                            poster="/simulations/experiment9_1/rice-setup.jpg"
+                        >
+                            <source 
+                                src="/simulations/experiment9_1/experiment.mp4" 
+                                type="video/mp4; codecs=avc1.42E01E,mp4a.40.2"
+                            />
+                            Your browser does not support the video tag.
+                        </video>
+                        <div class="video-controls">
+                            <button class="play-button" id="playButton">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </button>
+                            <div class="volume-control">
+                                <button class="volume-button" id="volumeButton">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+                                    </svg>
+                                </button>
+                                <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="1">
+                            </div>
+                        </div>
+                    </div>
+                    <p>Video demonstration of rice grains bouncing when the pot is hit</p>
+                    <div id="videoError" style="display: none; color: red; margin-top: 1rem;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="controls-section">
+        <div class="volume-control">
+            <label for="volume">Sound Intensity:</label>
+            <input type="range" id="volume" min="1" max="10" value="5">
+            <span id="volumeDisplay">5</span>
+        </div>
+    </div>
+
+    <div class="conclusion-section">
+        <h3>Conclusions:</h3>
+        <div class="questions">
+            <p>Based on your observations, answer the following questions:</p>
+            <ol>
+                <li>What happened to the candle flame when you flicked the plastic wrap? Why?</li>
+                <li>What happened to the rice grains when you banged the pot? Why?</li>
+                <li>How do these observations help us understand sound waves?</li>
+            </ol>
+            <textarea id="conclusions" rows="6" placeholder="Write your conclusions here..."></textarea>
+        </div>
+    </div>
+</div>
+
+<style>
+    .experiment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .experiment-intro {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .materials-section {
+        background: #fff;
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .materials-section ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .materials-section li {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .simulation-section {
+        margin: 2rem 0;
+    }
+
+    .demo-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        margin: 2rem 0;
+    }
+
+    .demo-image {
+        width: 100%;
+        max-width: 600px;
+        background: white;
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .demo-image img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .step-button {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        background: #e9ecef;
+        color: #495057;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .step-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .step-button.active {
+        background: #228be6;
+        color: white;
+    }
+
+    .step-button:not(:disabled):hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .step-button.reset {
+        background: #fa5252;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .demo-container {
+            margin: 1rem;
+        }
+
+        .button-container {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .step-button {
+            width: 100%;
+        }
+    }
+
+    .real-experiment {
+        margin: 2rem 0;
+        padding: 2rem;
+        background: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .real-experiment h2 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .real-experiment > p {
+        color: #666;
+        margin-bottom: 2rem;
+        text-align: center;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .photo-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+    .photo-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: white;
+        padding: 1rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .photo-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .photo-item img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .photo-item p {
+        font-size: 0.95rem;
+        color: #2c3e50;
+        text-align: center;
+        margin: 0.5rem 0;
+        font-weight: 500;
+    }
+
+    .video-section {
+        margin: 4rem auto 2rem;
+        text-align: center;
+        max-width: 800px;
+    }
+
+    .video-section h3 {
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+    }
+
+    .video-container {
+        width: 100%;
+        max-width: 360px;  /* Match video width */
+        margin: 2rem auto;
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        padding-bottom: 177.78%;  /* 360:640 aspect ratio */
+        background: #f8f9fa;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .video-container video {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 8px;
+        background: #f8f9fa;
+    }
+
+    .video-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        z-index: 2;
+    }
+
+    .play-button, .volume-button {
+        background: white;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .play-button:hover, .volume-button:hover {
+        background: #f0f0f0;
+    }
+
+    .play-button svg, .volume-button svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .volume-control input[type="range"] {
+        width: 100px;
+        height: 4px;
+        -webkit-appearance: none;
+        background: white;
+        border-radius: 2px;
+        cursor: pointer;
+    }
+
+    .volume-control input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 12px;
+        height: 12px;
+        background: white;
+        border-radius: 50%;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+        .real-experiment {
+            padding: 1.5rem;
+            margin: 1rem;
+        }
+
+        .photo-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .video-container {
+            margin: 0 1rem;
+            padding: 1rem;
+        }
+
+        .video-section {
+            margin: 3rem auto 1rem;
+        }
+    }
+
+    .controls-section {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f5f5f5;
+        border-radius: 8px;
+    }
+
+    .volume-control {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .volume-control input[type="range"] {
+        flex: 1;
+        max-width: 200px;
+    }
+
+    .volume-control span {
+        min-width: 2rem;
+        text-align: center;
+    }
+
+    .conclusion-section {
+        background: #fff;
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .questions ol {
+        margin-bottom: 1rem;
+    }
+</style>
+
+<script client:load>
+window.addEventListener('load', function() {
+    const video = document.getElementById('experimentVideo');
+    const playButton = document.getElementById('playButton');
+    const volumeButton = document.getElementById('volumeButton');
+    const volumeSlider = document.getElementById('volumeSlider');
+    
+    if (video && playButton && volumeButton && volumeSlider) {
+        playButton.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+                playButton.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+            } else {
+                video.pause();
+                playButton.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+            }
+        });
+
+        volumeButton.addEventListener('click', function() {
+            if (video.muted) {
+                video.muted = false;
+                volumeButton.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
+                volumeSlider.value = video.volume;
+            } else {
+                video.muted = true;
+                volumeButton.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 9v6h4l5 5V4l-5 5H7z"/></svg>';
+                volumeSlider.value = 0;
+            }
+        });
+
+        volumeSlider.addEventListener('input', function() {
+            video.volume = this.value;
+            video.muted = (this.value === 0);
+            volumeButton.innerHTML = video.muted ? 
+                '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 9v6h4l5 5V4l-5 5H7z"/></svg>' :
+                '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>';
+        });
+
+        video.addEventListener('ended', function() {
+            playButton.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+        });
+
+        video.addEventListener('error', function(e) {
+            console.error('Video error:', video.error);
+            if (video.error) {
+                document.getElementById('videoError').textContent = `Video error: ${video.error.message}`;
+                document.getElementById('videoError').style.display = 'block';
+            }
+        });
+
+        video.addEventListener('loadedmetadata', function() {
+            console.log('Video metadata loaded successfully');
+            document.getElementById('videoError').style.display = 'none';
+        });
+    }
+});
+</script>
+
+<!--
+To add your photos and video:
+
+1. Create this directory structure:
+   public/
+   └── simulations/
+       └── experiment9_1/
+           ├── empty-bowl.jpg
+           ├── covered-bowl.jpg
+           ├── rice-setup.jpg
+           ├── pot-position.jpg
+           └── experiment.mp4
+
+2. Copy your photos and video into the experiment9_1 directory
+3. Make sure the filenames match exactly as shown above
+4. The photos should be in JPG format
+5. The video should be in MP4 format
+-->
+
+<script is:inline>
+    // Wait for DOM and resources to be fully loaded
+    window.addEventListener('load', function() {
+        console.log('Window load event fired');
+        
+        // Set up volume control
+        const volumeControl = document.getElementById('volume');
+        if (volumeControl) {
+            volumeControl.addEventListener('input', (e) => {
+                const volumeDisplay = document.getElementById('volumeDisplay');
+                if (volumeDisplay) {
+                    volumeDisplay.textContent = e.target.value;
+                }
+            });
+            console.log('Volume control initialized');
+        } else {
+            console.warn('Volume control not found');
+        }
+    });
+</script>
+</Layout>

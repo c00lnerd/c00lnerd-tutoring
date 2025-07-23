@@ -1,0 +1,691 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 9.2: Speed of Sound">
+    <div class="experiment-container">
+        <h1>Experiment 9.2: Speed of Sound</h1>
+        
+        <div class="experiment-intro">
+            <h2>How fast does sound travel?</h2>
+            <p>In this experiment, you'll measure the speed of sound in air by timing how long it takes for a sound to travel a known distance.</p>
+        </div>
+
+        <div class="materials-section">
+            <h3>Materials Needed:</h3>
+            <ul>
+                <li>Two metal pots or pans</li>
+                <li>Metal spoon or stick</li>
+                <li>Stopwatch (phone timer works)</li>
+                <li>Measuring tape or meter stick</li>
+                <li>Partner to help with measurements</li>
+                <li>Calculator</li>
+                <li>Safety goggles</li>
+                <li>Notebook and pencil</li>
+            </ul>
+        </div>
+
+        <div class="simulation-container">
+            <div class="simulation-controls">
+                <div class="setup-area">
+                    <canvas id="soundCanvas" width="800" height="400"></canvas>
+                    <div class="controls">
+                        <div class="distance-control">
+                            <label for="distance">Distance (meters):</label>
+                            <input type="number" id="distance" min="10" max="100" value="50" step="10">
+                        </div>
+                        <div class="environment-controls">
+                            <div class="control-group">
+                                <label for="temperature">Air Temperature (°C):</label>
+                                <input type="number" id="temperature" min="-50" max="50" value="20" step="1">
+                                <span class="note">Affects sound speed: <span id="speedAtTemp">343</span> m/s</span>
+                            </div>
+                            <div class="control-group">
+                                <label for="wind">Wind Speed (m/s):</label>
+                                <input type="number" id="wind" min="-20" max="20" value="0" step="1">
+                                <span class="note">Negative = headwind, Positive = tailwind</span>
+                            </div>
+                            <div class="control-group">
+                                <label for="humidity">Relative Humidity (%):</label>
+                                <input type="number" id="humidity" min="0" max="100" value="50" step="5">
+                            </div>
+                        </div>
+                        <button id="startMeasurement">Start Measurement</button>
+                        <button id="reset">Reset</button>
+                    </div>
+                </div>
+                <div class="measurement-area">
+                    <h4>Measurements:</h4>
+                    <div class="measurement-display">
+                        <p>Distance: <span id="displayDistance">50</span> meters</p>
+                        <p>Time: <span id="displayTime">0.000</span> seconds</p>
+                        <p>Speed: <span id="displaySpeed">0</span> m/s</p>
+                        <p>Effective Speed: <span id="effectiveSpeed">0</span> m/s</p>
+                    </div>
+                    <div class="environmental-effects">
+                        <h5>Environmental Effects:</h5>
+                        <ul id="effectsList">
+                            <li>Base speed of sound: 343 m/s</li>
+                            <li>Temperature effect: +0 m/s</li>
+                            <li>Wind effect: +0 m/s</li>
+                            <li>Humidity effect: minimal</li>
+                        </ul>
+                    </div>
+                    <div class="observation-box">
+                        <h5>Record your observations:</h5>
+                        <textarea id="observations" placeholder="How do environmental factors affect your measurements?"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="procedure-section">
+            <h3>Procedure:</h3>
+            <ol>
+                <li>
+                    <h4>Setup</h4>
+                    <p>Find an open area outdoors. Measure and mark a distance of at least 50 meters.</p>
+                    <div class="safety-note">
+                        <strong>Safety Note:</strong> Wear safety goggles to protect your eyes from any metal particles when striking the pots.
+                    </div>
+                </li>
+                <li>
+                    <h4>Position</h4>
+                    <p>Have your partner stand at one end with one pot and the metal spoon. You stand at the other end with the second pot and the stopwatch.</p>
+                </li>
+                <li>
+                    <h4>Measurement</h4>
+                    <p>Your partner will raise the spoon high enough for you to see, then strike their pot. Start your stopwatch when you see the spoon hit and stop it when you hear the sound.</p>
+                </li>
+                <li>
+                    <h4>Calculate</h4>
+                    <p>Record the time in seconds. Calculate the speed of sound using the formula: Speed = Distance ÷ Time</p>
+                </li>
+                <li>
+                    <h4>Repeat</h4>
+                    <p>Repeat the measurement 5 times and calculate the average speed.</p>
+                </li>
+            </ol>
+        </div>
+
+        <div class="data-section">
+            <h3>Data Collection:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Trial</th>
+                        <th>Distance (m)</th>
+                        <th>Time (s)</th>
+                        <th>Speed (m/s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="time-input" step="0.001"></td>
+                        <td class="speed-result">0</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="time-input" step="0.001"></td>
+                        <td class="speed-result">0</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="time-input" step="0.001"></td>
+                        <td class="speed-result">0</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="time-input" step="0.001"></td>
+                        <td class="speed-result">0</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="time-input" step="0.001"></td>
+                        <td class="speed-result">0</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Average Speed:</td>
+                        <td id="averageSpeed">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="conclusion-section">
+            <h3>Analysis:</h3>
+            <div class="questions">
+                <p>Based on your measurements, answer these questions:</p>
+                <ol>
+                    <li>How close was your measured speed to the actual speed of sound (approximately 343 m/s at room temperature)?</li>
+                    <li>What factors might have affected your measurements?</li>
+                    <li>Why is it important to see the spoon hit before starting the timer?</li>
+                    <li>How might temperature affect the speed of sound?</li>
+                </ol>
+                <textarea id="conclusions" rows="6" placeholder="Write your analysis here..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .experiment-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .experiment-intro {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .materials-section {
+            background: #fff;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .materials-section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .materials-section li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .simulation-container {
+            margin: 2rem 0;
+        }
+
+        .simulation-controls {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+            background: #fff;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .setup-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .distance-control {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        input[type="number"] {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100px;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent-dark);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .measurement-display {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .measurement-display p {
+            margin: 0.5rem 0;
+        }
+
+        .procedure-section {
+            margin: 2rem 0;
+        }
+
+        .procedure-section ol {
+            list-style-type: none;
+            counter-reset: step-counter;
+            padding: 0;
+        }
+
+        .procedure-section li {
+            counter-increment: step-counter;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .procedure-section li::before {
+            content: "Step " counter(step-counter);
+            font-weight: bold;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .safety-note {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .data-section {
+            margin: 2rem 0;
+            background: #fff;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        th {
+            background: #f8f9fa;
+        }
+
+        .conclusion-section {
+            background: #fff;
+            padding: 1.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            margin-top: 0.5rem;
+        }
+
+        h4 {
+            color: var(--accent);
+            margin: 0 0 1rem 0;
+        }
+
+        .environment-controls {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .control-group label {
+            min-width: 120px;
+        }
+
+        .control-group input {
+            width: 80px;
+        }
+
+        .note {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .environmental-effects {
+            background: #e9ecef;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+
+        .environmental-effects ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .environmental-effects li {
+            padding: 0.25rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .experiment-container {
+                padding: 1rem;
+            }
+
+            .simulation-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .distance-control {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            input[type="number"] {
+                width: 100%;
+            }
+        }
+    </style>
+
+    <script client:load>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('soundCanvas');
+            const ctx = canvas.getContext('2d');
+            let animationId = null;
+            let startTime = 0;
+            let isRunning = false;
+
+            // Initialize display elements
+            const distanceInput = document.getElementById('distance');
+            const displayDistance = document.getElementById('displayDistance');
+            const displayTime = document.getElementById('displayTime');
+            const displaySpeed = document.getElementById('displaySpeed');
+            const startButton = document.getElementById('startMeasurement');
+            const resetButton = document.getElementById('reset');
+
+            // Initialize data table calculations
+            const timeInputs = document.querySelectorAll('.time-input');
+            const distanceInputs = document.querySelectorAll('.distance-input');
+            const speedResults = document.querySelectorAll('.speed-result');
+            const averageSpeed = document.getElementById('averageSpeed');
+
+            function drawScene() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw ground with wind indicators
+                const wind = parseFloat(document.getElementById('wind').value);
+                ctx.fillStyle = '#90EE90';
+                ctx.fillRect(0, 300, canvas.width, 100);
+                
+                // Draw wind arrows
+                if (wind !== 0) {
+                    const arrowSpacing = 50;
+                    const arrowSize = Math.min(Math.abs(wind), 20) * 2;
+                    ctx.strokeStyle = 'rgba(0, 0, 255, 0.3)';
+                    ctx.lineWidth = 2;
+                    
+                    for (let x = 50; x < canvas.width - 50; x += arrowSpacing) {
+                        ctx.beginPath();
+                        if (wind > 0) {
+                            ctx.moveTo(x, 350);
+                            ctx.lineTo(x + arrowSize, 350);
+                            ctx.lineTo(x + arrowSize - 5, 345);
+                            ctx.moveTo(x + arrowSize, 350);
+                            ctx.lineTo(x + arrowSize - 5, 355);
+                        } else {
+                            ctx.moveTo(x + arrowSize, 350);
+                            ctx.lineTo(x, 350);
+                            ctx.lineTo(x + 5, 345);
+                            ctx.moveTo(x, 350);
+                            ctx.lineTo(x + 5, 355);
+                        }
+                        ctx.stroke();
+                    }
+                }
+
+                // Draw temperature indicator
+                const temp = parseFloat(document.getElementById('temperature').value);
+                ctx.fillStyle = temp > 20 ? '#FF6B6B' : '#4DABF7';
+                ctx.globalAlpha = Math.min(Math.abs(temp - 20) / 50, 0.3);
+                ctx.fillRect(0, 0, canvas.width, 300);
+                ctx.globalAlpha = 1;
+
+                // Draw people
+                drawPerson(50, 250);
+                drawPerson(750, 250);
+
+                // Draw measurement line
+                ctx.strokeStyle = '#666';
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(50, 280);
+                ctx.lineTo(750, 280);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Draw distance label
+                ctx.fillStyle = '#000';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${distanceInput.value} meters`, canvas.width / 2, 295);
+            }
+
+            function drawPerson(x, y) {
+                ctx.fillStyle = '#000';
+                // Head
+                ctx.beginPath();
+                ctx.arc(x, y - 30, 10, 0, Math.PI * 2);
+                ctx.fill();
+                // Body
+                ctx.beginPath();
+                ctx.moveTo(x, y - 20);
+                ctx.lineTo(x, y + 10);
+                ctx.stroke();
+                // Arms
+                ctx.beginPath();
+                ctx.moveTo(x - 15, y - 10);
+                ctx.lineTo(x + 15, y - 10);
+                ctx.stroke();
+                // Legs
+                ctx.beginPath();
+                ctx.moveTo(x, y + 10);
+                ctx.lineTo(x - 10, y + 30);
+                ctx.moveTo(x, y + 10);
+                ctx.lineTo(x + 10, y + 30);
+                ctx.stroke();
+                // Pot
+                ctx.beginPath();
+                ctx.arc(x + 20, y - 10, 8, 0, Math.PI * 2);
+                ctx.stroke();
+            }
+
+            function calculateSoundSpeed(tempC) {
+                // Speed of sound = 331.3 + 0.606 * T(°C) m/s
+                return 331.3 + 0.606 * tempC;
+            }
+
+            function updateEnvironmentalEffects() {
+                const temp = parseFloat(document.getElementById('temperature').value);
+                const wind = parseFloat(document.getElementById('wind').value);
+                const humidity = parseFloat(document.getElementById('humidity').value);
+                
+                const baseSpeed = 343;
+                const tempEffect = calculateSoundSpeed(temp) - calculateSoundSpeed(20);
+                const windEffect = wind;
+                const humidityEffect = (humidity - 50) * 0.1; // Slight effect from humidity
+                
+                const effectiveSpeed = baseSpeed + tempEffect + windEffect + humidityEffect;
+                
+                document.getElementById('speedAtTemp').textContent = effectiveSpeed.toFixed(1);
+                document.getElementById('effectiveSpeed').textContent = effectiveSpeed.toFixed(1);
+                
+                const effectsList = document.getElementById('effectsList');
+                effectsList.innerHTML = `
+                    <li>Base speed of sound: ${baseSpeed} m/s</li>
+                    <li>Temperature effect: ${tempEffect > 0 ? '+' : ''}${tempEffect.toFixed(1)} m/s</li>
+                    <li>Wind effect: ${windEffect > 0 ? '+' : ''}${windEffect.toFixed(1)} m/s</li>
+                    <li>Humidity effect: ${Math.abs(humidityEffect) < 1 ? 'minimal' : (humidityEffect > 0 ? '+' : '') + humidityEffect.toFixed(1) + ' m/s'}</li>
+                `;
+            }
+
+            function animateSound() {
+                if (!isRunning) return;
+
+                const currentTime = (Date.now() - startTime) / 1000;
+                displayTime.textContent = currentTime.toFixed(3);
+
+                // Calculate effective sound speed with environmental factors
+                const temp = parseFloat(document.getElementById('temperature').value);
+                const wind = parseFloat(document.getElementById('wind').value);
+                const humidity = parseFloat(document.getElementById('humidity').value);
+                
+                const baseSpeed = calculateSoundSpeed(temp);
+                const effectiveSpeed = baseSpeed + wind + (humidity - 50) * 0.1;
+                
+                // Calculate position of sound wave
+                const distance = parseInt(distanceInput.value);
+                const progress = (currentTime * effectiveSpeed) / distance;
+
+                if (progress >= 1) {
+                    isRunning = false;
+                    const finalTime = currentTime;
+                    displayTime.textContent = finalTime.toFixed(3);
+                    const speed = distance / finalTime;
+                    displaySpeed.textContent = speed.toFixed(1);
+                    startButton.disabled = false;
+                    return;
+                }
+
+                // Draw scene with environmental effects
+                ctx.save();
+                drawScene();
+                
+                // Draw expanding sound wave with wind distortion
+                const startX = 50;
+                const waveX = startX + (750 - startX) * progress;
+                const windDistortion = wind * progress * 2;
+                
+                ctx.strokeStyle = 'rgba(0, 0, 255, 0.5)';
+                ctx.beginPath();
+                ctx.ellipse(startX + windDistortion, 250, waveX - startX, (waveX - startX) * 0.8, 0, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.restore();
+
+                animationId = requestAnimationFrame(animateSound);
+            }
+
+            function startMeasurement() {
+                isRunning = true;
+                startTime = Date.now();
+                startButton.disabled = true;
+                animateSound();
+            }
+
+            function reset() {
+                isRunning = false;
+                if (animationId) {
+                    cancelAnimationFrame(animationId);
+                }
+                startTime = 0;
+                displayTime.textContent = '0.000';
+                displaySpeed.textContent = '0';
+                startButton.disabled = false;
+                drawScene();
+            }
+
+            // Event listeners
+            distanceInput.addEventListener('input', () => {
+                displayDistance.textContent = distanceInput.value;
+                reset();
+            });
+
+            startButton.addEventListener('click', startMeasurement);
+            resetButton.addEventListener('click', reset);
+
+            // Data table calculations
+            function updateSpeeds() {
+                let totalSpeed = 0;
+                let validMeasurements = 0;
+
+                for (let i = 0; i < timeInputs.length; i++) {
+                    const distance = parseFloat(distanceInputs[i].value) || 0;
+                    const time = parseFloat(timeInputs[i].value) || 0;
+                    
+                    if (distance && time) {
+                        const speed = distance / time;
+                        speedResults[i].textContent = speed.toFixed(1);
+                        totalSpeed += speed;
+                        validMeasurements++;
+                    } else {
+                        speedResults[i].textContent = '0';
+                    }
+                }
+
+                if (validMeasurements > 0) {
+                    averageSpeed.textContent = (totalSpeed / validMeasurements).toFixed(1);
+                } else {
+                    averageSpeed.textContent = '0';
+                }
+            }
+
+            timeInputs.forEach(input => input.addEventListener('input', updateSpeeds));
+            distanceInputs.forEach(input => input.addEventListener('input', updateSpeeds));
+
+            // Add event listeners for environmental controls
+            document.getElementById('temperature').addEventListener('input', updateEnvironmentalEffects);
+            document.getElementById('wind').addEventListener('input', updateEnvironmentalEffects);
+            document.getElementById('humidity').addEventListener('input', updateEnvironmentalEffects);
+
+            // Initial draw
+            drawScene();
+            updateEnvironmentalEffects();
+        });
+    </script>
+</Layout>

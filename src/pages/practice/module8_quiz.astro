@@ -1,0 +1,410 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Module 8 Quiz">
+    <div class="container">
+        <h1>Physical Science Module 8 Quiz</h1>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .email-input {
+        margin-bottom: 20px;
+    }
+    .email-input input[type="email"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 250px;
+    }
+    .question {
+        margin-bottom: 20px;
+    }
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .option-button {
+        display: block;
+        width: 100%;
+        padding: 12px 15px;
+        text-align: left;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-bottom: 8px;
+        transition: all 0.2s ease;
+    }
+    .option-button:hover {
+        background: #f8f9fa;
+        border-color: #adb5bd;
+    }
+    .option-button.selected {
+        background: #e9ecef;
+        border: 1px solid #212529;
+        font-weight: 500;
+    }
+    .option-button.correct {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .feedback {
+        margin: 15px 0;
+        padding: 12px 15px;
+        border-radius: 4px;
+        font-size: 15px;
+        display: none;
+    }
+    .feedback.correct {
+        display: block;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .feedback.incorrect {
+        display: block;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+    .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .controls button {
+        padding: 8px 20px;
+        font-size: 16px;
+        background: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .controls button:hover {
+        background: #e9ecef;
+        border-color: #adb5bd;
+    }
+    #start-quiz {
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .email-status {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+    }
+    .email-status.success {
+        background-color: #c8e6c9;
+        border: 1px solid #4caf50;
+    }
+    .email-status.error {
+        background-color: #ffcdd2;
+        border: 1px solid #f44336;
+    }
+    .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #f0f0f0;
+        margin: 10px 0;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .progress-bar .fill {
+        height: 100%;
+        background: #2196f3;
+        transition: width 0.3s ease;
+    }
+    #question-number {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    #question-text {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script is:inline>
+    // Quiz questions
+    window.questions = [
+        {
+            question: "How do you calculate kinetic energy? (Page 273)",
+            options: [
+                "KE = m × v",
+                "KE = ½ × m × v²",
+                "KE = m × g × h",
+                "KE = F × d"
+            ],
+            correctAnswer: 1,
+            explanation: "Kinetic energy (KE) is calculated using the formula KE = ½ × mass × velocity²"
+        },
+        // ... existing questions remain unchanged ...
+    ];
+
+    // Quiz state
+    window.currentQuestion = 0;
+    window.userAnswers = new Array(window.questions.length).fill(null);
+    window.questionAttempts = new Array(window.questions.length).fill(0);
+    window.userEmail = '';
+    window.saveResults = true;
+
+    function startQuiz() {
+        const email = document.getElementById('email').value;
+        const saveResults = document.getElementById('save-results').checked;
+        window.userEmail = email;
+        window.saveResults = saveResults;
+        
+        document.getElementById('email-section').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        
+        showQuestion();
+        updateProgressBar();
+    }
+
+    function showQuestion() {
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const options = document.querySelector('.options');
+        const feedback = document.getElementById('feedback');
+        
+        questionNumber.textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+        questionText.textContent = window.questions[window.currentQuestion].question;
+        
+        // Clear previous options and feedback
+        options.innerHTML = '';
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        
+        // Create option buttons
+        window.questions[window.currentQuestion].options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.textContent = option;
+            button.onclick = () => selectAnswer(index);
+            options.appendChild(button);
+        });
+        
+        // Update navigation buttons
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.style.display = window.currentQuestion > 0 ? 'block' : 'none';
+        nextBtn.style.display = window.currentQuestion < window.questions.length - 1 ? 'block' : 'none';
+        submitBtn.style.display = window.currentQuestion === window.questions.length - 1 ? 'block' : 'none';
+        
+        // If this question was already answered, show the previous answer
+        if (window.userAnswers[window.currentQuestion] !== undefined) {
+            const options = document.querySelectorAll('.option-button');
+            const selectedOption = options[window.userAnswers[window.currentQuestion]];
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+                if (window.userAnswers[window.currentQuestion] === window.questions[window.currentQuestion].correctAnswer) {
+                    selectedOption.classList.add('correct');
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = window.questions[window.currentQuestion].explanation;
+                }
+            }
+        }
+    }
+
+    function selectAnswer(selectedIndex) {
+        const options = document.querySelectorAll('.option-button');
+        const feedback = document.getElementById('feedback');
+        const currentQuestion = window.questions[window.currentQuestion];
+        
+        // Only allow selection if not already answered correctly
+        if (window.userAnswers[window.currentQuestion] !== currentQuestion.correctAnswer) {
+            window.questionAttempts[window.currentQuestion]++;
+            
+            // Clear previous selection
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Mark new selection
+            options[selectedIndex].classList.add('selected');
+            
+            // Check if answer is correct
+            if (selectedIndex === currentQuestion.correctAnswer) {
+                options[selectedIndex].classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = currentQuestion.explanation;
+                window.userAnswers[window.currentQuestion] = selectedIndex;
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = "Incorrect. Try again.";
+                
+                // If max attempts reached, show correct answer
+                if (window.questionAttempts[window.currentQuestion] >= 2) {
+                    options[currentQuestion.correctAnswer].classList.add('correct');
+                    feedback.textContent = currentQuestion.explanation;
+                    window.userAnswers[window.currentQuestion] = selectedIndex; // Store the last attempt
+                }
+            }
+        }
+        
+        updateProgressBar();
+    }
+
+    function previousQuestion() {
+        if (window.currentQuestion > 0) {
+            window.currentQuestion--;
+            showQuestion();
+        }
+    }
+
+    function nextQuestion() {
+        if (window.currentQuestion < window.questions.length - 1) {
+            window.currentQuestion++;
+            showQuestion();
+        }
+    }
+
+    function updateProgressBar() {
+        const progressBar = document.querySelector('.progress-bar .fill');
+        if (progressBar) {
+            const progress = ((window.currentQuestion + 1) / window.questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+    }
+
+    function submitQuiz() {
+        const score = window.userAnswers.reduce((total, answer, index) => {
+            return total + (answer === window.questions[index].correctAnswer ? 1 : 0);
+        }, 0);
+
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsDiv = document.getElementById('results');
+        const scoreDiv = document.getElementById('score');
+        const incorrectAnswersDiv = document.getElementById('incorrect-answers');
+        
+        quizContainer.style.display = 'none';
+        resultsDiv.style.display = 'block';
+        
+        const percentage = (score / window.questions.length) * 100;
+        scoreDiv.textContent = `Your score: ${score}/${window.questions.length} (${percentage.toFixed(1)}%)`;
+        
+        // Show incorrect answers
+        incorrectAnswersDiv.innerHTML = '';
+        window.userAnswers.forEach((answer, index) => {
+            if (answer !== window.questions[index].correctAnswer) {
+                const questionDiv = document.createElement('div');
+                questionDiv.innerHTML = `
+                    <p><strong>Question ${index + 1}:</strong> ${window.questions[index].question}</p>
+                    <p class="wrong-answer">Your answer: ${window.questions[index].options[answer]}</p>
+                    <p class="right-answer">Correct answer: ${window.questions[index].options[window.questions[index].correctAnswer]}</p>
+                `;
+                incorrectAnswersDiv.appendChild(questionDiv);
+            }
+        });
+
+        // Send results via EmailJS if enabled
+        if (window.saveResults && window.userEmail) {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+            
+            const templateParams = {
+                user_email: window.userEmail,
+                quiz_name: "Module 8 Quiz",
+                score: `${score}/${window.questions.length}`,
+                percentage: percentage.toFixed(1) + "%"
+            };
+
+            emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                .then(() => {
+                    const emailStatus = document.getElementById('email-status');
+                    emailStatus.textContent = "Results sent successfully!";
+                    emailStatus.className = "email-status success";
+                    emailStatus.style.display = "block";
+                })
+                .catch(() => {
+                    const emailStatus = document.getElementById('email-status');
+                    emailStatus.textContent = "Failed to send results. Please try again.";
+                    emailStatus.className = "email-status error";
+                    emailStatus.style.display = "block";
+                });
+        }
+    }
+
+    // Add download results functionality
+    document.getElementById('download-results').addEventListener('click', function() {
+        const score = window.userAnswers.reduce((total, answer, index) => {
+            return total + (answer === window.questions[index].correctAnswer ? 1 : 0);
+        }, 0);
+        
+        const percentage = (score / window.questions.length) * 100;
+        
+        let resultsText = `Module 8 Quiz Results\n\n`;
+        resultsText += `Score: ${score}/${window.questions.length} (${percentage.toFixed(1)}%)\n\n`;
+        
+        window.questions.forEach((question, index) => {
+            resultsText += `Question ${index + 1}: ${question.question}\n`;
+            resultsText += `Your answer: ${question.options[window.userAnswers[index]]}\n`;
+            resultsText += `Correct answer: ${question.options[question.correctAnswer]}\n`;
+            resultsText += `${window.userAnswers[index] === question.correctAnswer ? "✓ Correct" : "✗ Incorrect"}\n\n`;
+        });
+        
+        const blob = new Blob([resultsText], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'module8_quiz_results.txt';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    });
+</script>

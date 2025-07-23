@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical Science Module 9 Quiz</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .email-input {
+            margin: 20px 0;
+        }
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .email-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option-button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .option-button:hover {
+            background-color: #f8f8f8;
+            border-color: #aaa;
+        }
+        .option-button.selected {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        .feedback {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.9em;
+        }
+        .feedback.correct {
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .feedback.incorrect {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196f3;
+            color: white;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        button:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Physical Science Module 9 Quiz</h1>
+        
+        <div class="email-input">
+            <label for="email">Enter your email to receive quiz results:</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <div id="quiz-container"></div>
+
+        <div class="navigation">
+            <button id="prevBtn" onclick="previousQuestion()">Previous</button>
+            <button id="nextBtn" onclick="nextQuestion()">Next</button>
+            <button id="submitBtn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+        </div>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        })();
+
+        const questions = [
+            {
+                question: "What type of wave is a mechanical wave? (Study Guide)",
+                options: [
+                    "A wave that travels along the surface of a medium",
+                    "A wave that transfers energy through matter",
+                    "A wave that only exists in solids",
+                    "A wave that doesn't require a medium"
+                ],
+                correctAnswer: 1,
+                feedback: "A mechanical wave is a wave that transfers energy through matter, as defined in the study guide."
+            },
+            {
+                question: "What are the three main types of mechanical waves? (Page 312)",
+                options: [
+                    "Light waves, sound waves, and radio waves",
+                    "Water waves, sound waves, and light waves",
+                    "Transverse waves, longitudinal waves, and surface waves",
+                    "Primary waves, secondary waves, and surface waves"
+                ],
+                correctAnswer: 2,
+                feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+            },
+            {
+                question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+                options: [
+                    "They are directly proportional",
+                    "They are inversely proportional",
+                    "They are independent of each other",
+                    "They are always equal"
+                ],
+                correctAnswer: 1,
+                feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+                ],
+                correctAnswer: 1,
+                feedback: "A mechanical wave is a wave that transfers energy through matter, as defined in the study guide."
+            },
+            {
+                question: "What are the three main types of mechanical waves? (Page 312)",
+                options: [
+                    "Light waves, sound waves, and radio waves",
+                    "Water waves, sound waves, and light waves",
+                    "Transverse waves, longitudinal waves, and surface waves",
+                    "Primary waves, secondary waves, and surface waves"
+                ],
+                correctAnswer: 2,
+                feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+            },
+            {
+                question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+                options: [
+                    "They are directly proportional",
+                    "They are inversely proportional",
+                    "They are independent of each other",
+                    "They are always equal"
+                ],
+                correctAnswer: 1,
+                feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz when the page loads
+        window.onload = function() {
+            displayQuestion(0);
+        };
+    </script>
+    <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        })();
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .email-input {
+            margin: 20px 0;
+        }
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .email-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option-button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .option-button:hover {
+            background-color: #f8f8f8;
+            border-color: #aaa;
+        }
+        .option-button.selected {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        .feedback {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.9em;
+        }
+        .feedback.correct {
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .feedback.incorrect {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196f3;
+            color: white;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        button:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Physical Science Module 9 Quiz</h1>
+        
+        <div class="email-input">
+            <label for="email">Enter your email to receive results:</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <div id="quiz-container"></div>
+
+        <div class="navigation">
+            <button onclick="previousQuestion()" id="prevBtn">Previous</button>
+            <button onclick="nextQuestion()" id="nextBtn">Next</button>
+        </div>
+
+        <button onclick="submitQuiz()" id="submitBtn" style="display: none;">Submit Quiz</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Initialize EmailJS
+        (function() {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        })();
+
+        // Quiz questions array
+        const questions = [
+            {
+                question: "What type of wave is a mechanical wave? (Study Guide)",
+                options: [
+                    "A wave that travels along the surface of a medium",
+                    "A wave in which the medium vibrates at right angles to the direction the wave travels",
+                    "A wave in which the vibration is parallel to wave direction",
+                    "A disturbance in matter that transfers energy through the matter"
+                ],
+                correctAnswer: 3,
+                feedback: "A mechanical wave is a disturbance in matter that transfers energy through the matter. This is the fundamental definition that distinguishes mechanical waves from other types of waves."
+            },
+            {
+                question: "In a vacuum chamber experiment with an alarm clock, what happens to the sound? (Study Guide)",
+                options: [
+                    "The sound gets louder due to echo",
+                    "The sound remains the same as outside the chamber",
+                    "The sound cannot be heard when air is removed because sound needs a medium",
+                    "The sound changes pitch but remains audible"
+                ],
+                correctAnswer: 2,
+                feedback: "When air is evacuated from the chamber, the alarm cannot be heard because sound waves are mechanical waves that require a medium (like air) to travel through. Without a medium, sound cannot propagate."
+            },
+            {
+                question: "What happens to sound waves' speed when traveling through a wall? (Study Guide)",
+                options: [
+                    "They always travel faster",
+                    "They always travel slower",
+                    "They maintain the same speed",
+                    "They stop completely"
+                ],
+                correctAnswer: 0,
+                feedback: "When sound waves travel through a wall, they typically travel faster than in air because solid materials generally have higher density and elastic properties, allowing sound waves to propagate more quickly."
+            },
+            {
+                question: "Why do jets fly at Mach 1 or higher only in sparsely populated areas? (Study Guide)",
+                options: [
+                    "To save fuel",
+                    "To avoid noise pollution and sonic booms in populated areas",
+                    "Because they can only reach those speeds at high altitudes",
+                    "To avoid interference with radio communications"
+                ],
+                correctAnswer: 1,
+                feedback: "Jets fly at supersonic speeds only in sparsely populated areas to avoid the disruptive effects of sonic booms on populated areas, which can cause disturbance and potential damage."
+            },
+            {
+                question: "How does medical ultrasound imaging work? (Page 341)",
+                options: [
+                    "By using visible light to see through the body",
+                    "By detecting magnetic fields in the body",
+                    "By measuring reflected and transmitted sound waves from obstructions in the body",
+                    "By using X-rays to create images"
+                ],
+                correctAnswer: 2,
+                feedback: "Medical ultrasound works by directing ultrasonic waves into the body and detecting the reflected and transmitted portions when they hit obstructions. The sensors are tuned to detect waves that were transmitted through the body but reflected back by obstructions."
+            },
+            {
+                question: "How does shortening a guitar string affect its pitch? (Study Guide)",
+                options: [
+                    "The pitch decreases",
+                    "The pitch increases",
+                    "The pitch stays the same",
+                    "The string stops vibrating"
+                ],
+                correctAnswer: 1,
+                feedback: "When a guitar string is shortened (like when pressing it against a fret), the pitch increases because shorter strings vibrate at higher frequencies."
+            },
+            {
+                question: "When comparing two musical notes of the same pitch but different loudness, what wave property differs? (Study Guide)",
+                options: [
+                    "Wavelength",
+                    "Frequency",
+                    "Speed",
+                    "Amplitude"
+                ],
+                correctAnswer: 3,
+                feedback: "When two notes have the same pitch but different loudness, their amplitude differs. The wavelength, frequency, and speed remain the same since these determine the pitch, which is constant."
+            },
+            {
+                question: "What is sonar mapping used for? (Page 341)",
+                options: [
+                    "Only for finding schools of fish",
+                    "Only for military submarine detection",
+                    "For creating detailed maps of ocean floors and detecting underwater features",
+                    "For measuring ocean temperatures"
+                ],
+                correctAnswer: 2,
+                feedback: "Sonar mapping is used to create detailed maps of the ocean floor, allowing scientists to identify features like volcanoes. For example, the West Mata volcano was discovered using sonar mapping."
+            },
+            {
+                question: "What makes bat sonar more efficient than human-made sonar systems? (Page 342)",
+                options: [
+                    "Bats use radio waves instead of sound waves",
+                    "Bats emit a single frequency of ultrasonic waves",
+                    "Bats use multiple frequencies and analyze amplitude differences for each frequency",
+                    "Bats only use low-frequency sound waves"
+                ],
+                correctAnswer: 2,
+                feedback: "Bat sonar is more efficient because it produces a wide range of ultrasonic frequencies and analyzes how different materials react to different frequencies by measuring the amplitude of reflected waves."
+            },
+            {
+                question: "If you hear thunder 2.3 seconds after seeing lightning at 13°C, how far away was the strike? (Study Guide)",
+                options: [
+                    "About 460 meters",
+                    "About 780 meters",
+                    "About 920 meters",
+                    "About 1150 meters"
+                ],
+                correctAnswer: 1,
+                feedback: "At 13°C, sound travels at approximately 340 m/s. Distance = speed × time = 340 m/s × 2.3s ≈ 780 meters from the observer."
+            },
+            {
+                question: "What makes bat sonar information processing remarkable? (Page 342)",
+                options: [
+                    "It takes several minutes to process the data",
+                    "It requires a large computing system",
+                    "It can only detect stationary objects",
+                    "It can process data faster than modern computers and detect multiple moving targets simultaneously"
+                ],
+                correctAnswer: 3,
+                feedback: "Bat sonar processing is remarkable because it can process information faster than modern computers, allowing bats to identify and track multiple moving insects simultaneously - up to five insects per second!"
+            },
+            {
+                question: "What other animals use natural sonar systems? (Page 342)",
+                options: [
+                    "Only bats use natural sonar",
+                    "Bats and dolphins only",
+                    "Bats and porpoises use sonar, with porpoises specialized for underwater use",
+                    "All marine mammals use sonar"
+                ],
+                correctAnswer: 2,
+                feedback: "While bat sonar is the most efficient known to humankind, porpoises also use sonar to navigate as well, though their eyesight is limited underwater."
+            },
+            {
+                question: "How is sound intensity measured and what is its unit? (Page 331)",
+                options: [
+                    "In watts, measuring wave power",
+                    "In decibels (dB), where 0 dB is the threshold of hearing",
+                    "In hertz, measuring wave frequency",
+                    "In meters, measuring wavelength"
+                ],
+                correctAnswer: 1,
+                feedback: "Sound intensity is measured in decibels (dB). The decibel scale starts at 0 dB, which is the threshold of human hearing."
+            },
+            {
+                question: "What happens to sound intensity when you increase the amplitude of a sound wave? (Page 332)",
+                options: [
+                    "It decreases proportionally",
+                    "It stays the same",
+                    "It increases proportionally",
+                    "It has no relationship to amplitude"
+                ],
+                correctAnswer: 2,
+                feedback: "As shown in Experiment 9.3, increasing a wave's amplitude increases its intensity and loudness. The more energy added, the greater the amplitude and thus the intensity."
+            },
+            {
+                question: "What is the relationship between wavelength and pitch in sound waves? (Page 336)",
+                options: [
+                    "Long wavelength = high pitch, short wavelength = low pitch",
+                    "Wavelength has no effect on pitch",
+                    "Short wavelength = high pitch, long wavelength = low pitch",
+                    "Pitch is only determined by amplitude"
+                ],
+                correctAnswer: 2,
+                feedback: "Sound waves with short wavelengths have high frequencies and high pitch, while sound waves with long wavelengths have low frequencies and low pitch."
+            },
+            {
+                question: "What is the frequency range of human hearing? (Page 337-338)",
+                options: [
+                    "0 Hz to 10,000 Hz",
+                    "20 Hz to 20,000 Hz",
+                    "100 Hz to 50,000 Hz",
+                    "1,000 Hz to 100,000 Hz"
+                ],
+                correctAnswer: 1,
+                feedback: "Human ears are generally sensitive to waves with frequencies between 20 Hz and 20,000 Hz. These are called sonic waves."
+            },
+            {
+                question: "How do ultrasonic rulers work? (Page 340)",
+                options: [
+                    "By measuring light reflections",
+                    "By detecting magnetic fields",
+                    "By measuring the time for sound waves to bounce back from objects",
+                    "By using radio waves"
+                ],
+                correctAnswer: 2,
+                feedback: "Ultrasonic rulers work by emitting sound waves and measuring the time it takes for them to bounce back from an object. Using the speed of sound and this time, they can calculate distance with precision better than 0.5 cm."
+            },
+            {
+                question: "What is resonance in sound waves? (Page 331)",
+                options: [
+                    "When sound waves cancel each other out",
+                    "When an object vibrates at its natural frequency due to sound waves",
+                    "When sound waves reflect off surfaces",
+                    "When sound waves change frequency"
+                ],
+                correctAnswer: 1,
+                feedback: "Resonance occurs when an object is forced to vibrate at its natural frequency by sound waves, causing it to vibrate with a large amplitude."
+            },
+            {
+                question: "What causes the Doppler effect? (Page 334)",
+                options: [
+                    "Changes in wave amplitude",
+                    "Changes in wave speed",
+                    "Relative motion between the source and observer",
+                    "Changes in wave frequency only"
+                ],
+                correctAnswer: 2,
+                feedback: "The Doppler effect occurs when there is relative motion between the source of waves and an observer, causing an apparent change in frequency."
+            },
+            {
+                question: "What happens to the frequency of sound waves when a source moves toward an observer? (Page 335)",
+                options: [
+                    "The frequency decreases",
+                    "The frequency increases",
+                    "The frequency stays the same",
+                    "The frequency becomes zero"
+                ],
+                correctAnswer: 1,
+                feedback: "When a sound source moves toward an observer, the observed frequency increases (higher pitch) due to wave compression."
+            },
+            {
+                question: "What is the formula for calculating the Doppler shift in frequency? (Page 336)",
+                options: [
+                    "f = f₀(v ± vₛ)/(v ∓ vₒ)",
+                    "f = f₀(v ∓ vₛ)/(v ± vₒ)",
+                    "f = f₀(v)/(v ± vₒ)",
+                    "f = f₀(v ± vₛ)/v"
+                ],
+                correctAnswer: 0,
+                feedback: "The Doppler shift formula is f = f₀(v ± vₛ)/(v ∓ vₒ), where f₀ is the source frequency, v is wave speed, vₛ is source velocity, and vₒ is observer velocity."
+            },
+            {
+                question: "What is interference in sound waves? (Page 338)",
+                options: [
+                    "When sound waves reflect off surfaces",
+                    "When sound waves combine to form a new wave pattern",
+                    "When sound waves change speed",
+                    "When sound waves change frequency"
+                ],
+                correctAnswer: 1,
+                feedback: "Interference occurs when two or more waves combine to form a new wave pattern, which can result in constructive or destructive interference."
+            },
+            {
+                question: "How does sound travel through the human ear? (Page 323)",
+                options: [
+                    "Sound waves directly stimulate the brain",
+                    "Sound waves cause the tympanic membrane to vibrate, which is then converted to electrical signals",
+                    "Sound waves are converted to light signals",
+                    "Sound waves are amplified by the outer ear only"
+                ],
+                correctAnswer: 1,
+                feedback: "Sound waves cause the tympanic membrane (eardrum) to vibrate. These vibrations are transferred through ossicles to the cochlea, which converts them into electrical signals sent to the brain via the auditory nerve."
+            },
+            {
+                question: "What is the equation for calculating the speed of sound in air? (Page 326)",
+                options: [
+                    "v = 331.5 + 0.6T (where T is in Celsius)",
+                    "v = 343.5 + 0.6T",
+                    "v = 331.5 + T",
+                    "v = 340.5 + 0.6T"
+                ],
+                correctAnswer: 0,
+                feedback: "The speed of sound in air is given by the equation v = (331.5 + 0.6T) m/s, where T is the temperature in Celsius."
+            },
+            {
+                question: "In which medium does sound travel fastest? (Page 329)",
+                options: [
+                    "Air at 0°C",
+                    "Water at 30°C",
+                    "Steel",
+                    "Glass"
+                ],
+                correctAnswer: 3,
+                feedback: "According to Table 9.1, sound travels fastest in glass at 5503 m/s, compared to other materials like air (331 m/s), water (1509 m/s), and steel (5029 m/s)."
+            },
+            {
+                question: "What is a sonic boom? (Page 330)",
+                options: [
+                    "The sound of thunder during a storm",
+                    "The thunder-like sound produced when an object travels at or above Mach 1",
+                    "The sound of a jet engine starting",
+                    "The sound waves produced by normal aircraft flight"
+                ],
+                correctAnswer: 1,
+                feedback: "A sonic boom is the thunder-like sound produced as a result of an object traveling at or above Mach 1 (the speed of sound)."
+            },
+            {
+                question: "What happens during a thunderstorm that allows you to calculate the distance of lightning? (Page 327)",
+                options: [
+                    "The temperature affects the sound speed only",
+                    "Lightning and thunder occur at different times",
+                    "Light travels instantly while sound takes time to reach you",
+                    "Thunder always takes exactly 5 seconds to reach you"
+                ],
+                correctAnswer: 2,
+                feedback: "Since light travels extremely quickly (essentially instant at short distances) while sound travels much more slowly, the time delay between seeing lightning and hearing thunder can be used to calculate the distance."
+            },
+            {
+                question: "What is a mechanical wave? (Page 312)",
+                options: [
+                    "A disturbance in matter that transfers energy through the matter",
+                    "A wave that only travels through air",
+                    "A wave that only travels through water",
+                    "A disturbance that doesn't transfer energy"
+                ],
+                correctAnswer: 0,
+                feedback: "A mechanical wave is a disturbance in matter that transfers energy through the matter, as defined on page 312."
+            },
+            {
+                question: "What are the three main types of mechanical waves? (Page 312)",
+                options: [
+                    "Light waves, sound waves, and radio waves",
+                    "Water waves, sound waves, and light waves",
+                    "Transverse waves, longitudinal waves, and surface waves",
+                    "Primary waves, secondary waves, and surface waves"
+                ],
+                correctAnswer: 2,
+                feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+            },
+            {
+                question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+                options: [
+                    "They are directly proportional",
+                    "They are inversely proportional",
+                    "They are independent of each other",
+                    "They are always equal"
+                ],
+                correctAnswer: 1,
+                feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+            },
+            {
+                question: "Using the wave speed equation (v = λ × f), what is the speed of a wave with wavelength 2.0 meters and frequency 4.0 Hz? (Based on page 319)",
+                options: [
+                    "0.5 m/s",
+                    "2.0 m/s",
+                    "6.0 m/s",
+                    "8.0 m/s"
+                ],
+                correctAnswer: 3,
+                feedback: "Using v = λ × f: Speed = 2.0 m × 4.0 Hz = 8.0 m/s"
+            },
+            {
+                question: "What is amplitude in a wave? (Page 316)",
+                options: [
+                    "The distance between two crests",
+                    "The maximum displacement from rest position",
+                    "The number of waves per second",
+                    "The speed of the wave"
+                ],
+                correctAnswer: 1,
+                feedback: "Amplitude is the maximum displacement of the medium from its rest position, as explained on page 316."
+            }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option},
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz when the page loads
+        window.onload = function() {
+            displayQuestion(0);
+        };
+    </script>
+</body>
+</html>
+            question: "What is a mechanical wave? (Page 312)",
+            options: [
+                "A disturbance in matter that transfers energy through the matter",
+                "A wave that only travels through air",
+                "A wave that only travels through water",
+                "A disturbance that doesn't transfer energy"
+            ],
+            correctAnswer: 0,
+            feedback: "A mechanical wave is a disturbance in matter that transfers energy through the matter, as defined on page 312."
+        },
+        {
+            question: "What are the three main types of mechanical waves? (Page 312)",
+            options: [
+                "Light waves, sound waves, and radio waves",
+                "Water waves, sound waves, and light waves",
+                "Transverse waves, longitudinal waves, and surface waves",
+                "Primary waves, secondary waves, and surface waves"
+            ],
+            correctAnswer: 2,
+            feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+        },
+        {
+            question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+            options: [
+                "They are directly proportional",
+                "They are inversely proportional",
+                "They are independent of each other",
+                "They are always equal"
+            ],
+            correctAnswer: 1,
+            feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+        },
+        {
+            question: "Using the wave speed equation (v = λ × f), what is the speed of a wave with wavelength 2.0 meters and frequency 4.0 Hz? (Based on page 319)",
+            options: [
+                "0.5 m/s",
+                "2.0 m/s",
+                "6.0 m/s",
+                "8.0 m/s"
+            ],
+            correctAnswer: 3,
+            feedback: "Using v = λ × f: Speed = 2.0 m × 4.0 Hz = 8.0 m/s"
+        },
+        {
+            question: "What is amplitude in a wave? (Page 316)",
+            options: [
+                "The distance between two crests",
+                "The maximum displacement from rest position",
+                "The number of waves per second",
+                "The speed of the wave"
+            ],
+            correctAnswer: 1,
+            feedback: "Amplitude is the maximum displacement of the medium from its rest position, as explained on page 316."
+        }];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option},
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz when the page loads
+        window.onload = function() {
+            displayQuestion(0);
+        };
+    </script>
+</body>
+</html>
+            question: "What is a mechanical wave? (Page 312)",
+            options: [
+                "A disturbance in matter that transfers energy through the matter",
+                "A wave that only travels through air",
+                "A wave that only travels through water",
+                "A disturbance that doesn't transfer energy"
+            ],
+            correctAnswer: 0,
+            feedback: "A mechanical wave is a disturbance in matter that transfers energy through the matter, as defined on page 312."
+        },
+        {
+            question: "What are the three main types of mechanical waves? (Page 312)",
+            options: [
+                "Light waves, sound waves, and radio waves",
+                "Water waves, sound waves, and light waves",
+                "Transverse waves, longitudinal waves, and surface waves",
+                "Primary waves, secondary waves, and surface waves"
+            ],
+            correctAnswer: 2,
+            feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+        },
+        {
+            question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+            options: [
+                "They are directly proportional",
+                "They are inversely proportional",
+                "They are independent of each other",
+                "They are always equal"
+            ],
+            correctAnswer: 1,
+            feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+        },
+        {
+            question: "Using the wave speed equation (v = λ × f), what is the speed of a wave with wavelength 2.0 meters and frequency 4.0 Hz? (Based on page 319)",
+            options: [
+                "0.5 m/s",
+                "2.0 m/s",
+                "6.0 m/s",
+                "8.0 m/s"
+            ],
+            correctAnswer: 3,
+            feedback: "Using v = λ × f: Speed = 2.0 m × 4.0 Hz = 8.0 m/s"
+        },
+        {
+            question: "What is amplitude in a wave? (Page 316)",
+            options: [
+                "The distance between two crests",
+                "The maximum displacement from rest position",
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .email-input {
+            margin: 20px 0;
+        }
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        .email-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .question {
+            background-color: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .option-button {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            background: white;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+        .option-button:hover {
+            background-color: #f8f8f8;
+            border-color: #aaa;
+        }
+        .option-button.selected {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+        .feedback {
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+            font-size: 0.9em;
+        }
+        .feedback.correct {
+            background-color: #e8f5e9;
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+        }
+        .feedback.incorrect {
+            background-color: #ffebee;
+            border: 1px solid #f44336;
+            color: #c62828;
+        }
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #2196f3;
+            color: white;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        button:hover {
+            background-color: #1976d2;
+        }
+        button:disabled {
+            background-color: #bdbdbd;
+            cursor: not-allowed;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+</body>
+</html>
+        (function() {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        })();
+
+        const questions = [{
+            question: "What is a mechanical wave? (Page 312)",
+            options: [
+                "A disturbance in matter that transfers energy through the matter",
+                "A wave that only travels through air",
+                "A wave that only travels through water",
+                "A disturbance that doesn't transfer energy"
+            ],
+            correctAnswer: 0,
+            feedback: "A mechanical wave is a disturbance in matter that transfers energy through the matter, as defined on page 312."
+        },
+        {
+            question: "What are the three main types of mechanical waves? (Page 312)",
+            options: [
+                "Light waves, sound waves, and radio waves",
+                "Water waves, sound waves, and light waves",
+                "Transverse waves, longitudinal waves, and surface waves",
+                "Primary waves, secondary waves, and surface waves"
+            ],
+            correctAnswer: 2,
+            feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+        },
+        {
+            question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+            options: [
+                "They are directly proportional",
+                "They are inversely proportional",
+                "They are independent of each other",
+                "They are always equal"
+            ],
+            correctAnswer: 1,
+            feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+        },
+        {
+            question: "Using the wave speed equation (v = λ × f), what is the speed of a wave with wavelength 2.0 meters and frequency 4.0 Hz? (Based on page 319)",
+            options: [
+                "0.5 m/s",
+                "2.0 m/s",
+                "6.0 m/s",
+                "8.0 m/s"
+            ],
+            correctAnswer: 3,
+            feedback: "Using v = λ × f: Speed = 2.0 m × 4.0 Hz = 8.0 m/s"
+        },
+        {
+            question: "What is amplitude in a wave? (Page 316)",
+            options: [
+                "The distance between two crests",
+                "The maximum displacement from rest position",
+                "The number of waves per second",
+                "The speed of the wave"
+            ],
+            correctAnswer: 1,
+            feedback: "Amplitude is the maximum displacement of the medium from its rest position, as explained on page 316."
+        }];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option},
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz
+        window.onload = function() {
+            displayQuestion(0);
+        };
+    </script>
+</body>
+</html>
+        (function() {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        })();
+
+        const questions = [{
+            question: "What is a mechanical wave? (Page 312)",
+            options: [
+                "A disturbance in matter that transfers energy through the matter",
+                "A wave that only travels through air",
+                "A wave that only travels through water",
+                "A disturbance that doesn't transfer energy"
+            ],
+            correctAnswer: 0,
+            feedback: "A mechanical wave is a disturbance in matter that transfers energy through the matter, as defined on page 312."
+        },
+        {
+            question: "What are the three main types of mechanical waves? (Page 312)",
+            options: [
+                "Light waves, sound waves, and radio waves",
+                "Water waves, sound waves, and light waves",
+                "Transverse waves, longitudinal waves, and surface waves",
+                "Primary waves, secondary waves, and surface waves"
+            ],
+            correctAnswer: 2,
+            feedback: "The three main types of mechanical waves are transverse waves, longitudinal waves, and surface waves."
+        },
+        {
+            question: "What is the relationship between wavelength and frequency in waves? (Page 318)",
+            options: [
+                "They are directly proportional",
+                "They are inversely proportional",
+                "They are independent of each other",
+                "They are always equal"
+            ],
+            correctAnswer: 1,
+            feedback: "As stated on page 318, wavelength and frequency are inversely proportional - when one gets large, the other gets small."
+        },
+        {
+            question: "Using the wave speed equation (v = λ × f), what is the speed of a wave with wavelength 2.0 meters and frequency 4.0 Hz? (Based on page 319)",
+            options: [
+                "0.5 m/s",
+                "2.0 m/s",
+                "6.0 m/s",
+                "8.0 m/s"
+            ],
+            correctAnswer: 3,
+            feedback: "Using v = λ × f: Speed = 2.0 m × 4.0 Hz = 8.0 m/s"
+        },
+        {
+            question: "What is amplitude in a wave? (Page 316)",
+            options: [
+                "The distance between two crests",
+                "The maximum displacement from rest position",
+                "The number of waves per second",
+                "The speed of the wave"
+            ],
+            correctAnswer: 1,
+            feedback: "Amplitude is the maximum displacement of the medium from its rest position, as explained on page 316."
+        }];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option},
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz
+        displayQuestion(0);
+    </script>
+</body>
+</html>
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option},
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz
+        displayQuestion(0);
+    </script>
+</body>
+</html>
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+
+        function displayQuestion(index) {
+            const quizContainer = document.getElementById('quiz-container');
+            const question = questions[index];
+            
+            let html = `
+                <div class="question">
+                    <h3>Question ${index + 1}/${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${question.options.map((option, i) => `
+                            <button class="option-button ${userAnswers[index] === i ? 'selected' : ''}" 
+                                    onclick="selectAnswer(${i})">
+                                ${option},
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div class="feedback" id="feedback-${index}"></div>
+                </div>
+            `;
+            
+            quizContainer.innerHTML = html;
+            updateNavigation();
+        }
+
+        function selectAnswer(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            displayQuestion(currentQuestion);
+        }
+
+        function previousQuestion() {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                displayQuestion(currentQuestion);
+            }
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'inline';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'inline';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'inline' : 'none';
+        }
+
+        function submitQuiz() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email address');
+                return;
+            }
+
+            let score = 0;
+            let results = [];
+
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.correctAnswer;
+                if (isCorrect) score++;
+                
+                results.push(`Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n${question.feedback}`);
+            });
+
+            const percentage = (score / questions.length) * 100;
+            const resultText = `Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)\n\nDetailed Results:\n\n${results.join('\n\n')}`;
+
+            emailjs.send('default_service', 'template_quiz', {
+                to_email: email,
+                quiz_name: 'Physical Science Module 9',
+                score: `${score}/${questions.length}`,
+                percentage: percentage.toFixed(1),
+                details: resultText
+            }).then(
+                function(response) {
+                    document.getElementById('result').innerHTML = 
+                        `Quiz submitted! Results have been sent to ${email}<br>Score: ${score}/${questions.length} (${percentage.toFixed(1)}%)`;
+                },
+                function(error) {
+                    console.error('Email failed:', error);
+                    document.getElementById('result').innerHTML = 
+                        'Failed to send email. Please try again or contact support.';
+                }
+            );
+        }
+
+        // Initialize the quiz
+        displayQuestion(0);
+    </script>
+</body>
+                    <div class="option"><input type="radio" name="q2" value="b"> b) They are inversely proportional</div>
+                    <div class="option"><input type="radio" name="q2" value="c"> c) They are independent of each other</div>
+                    <div class="option"><input type="radio" name="q2" value="d"> d) They are always equal</div>
+                </div>
+                <div class="feedback" id="feedback2">The correct answer is b) They are inversely proportional. When wavelength increases, frequency decreases, and vice versa.</div>
+            </div>
+
+            <div class="question">
+                <p>3. What is the approximate threshold of pain for sound intensity in decibels (dB)?</p>
+                <div class="options">
+                    <div class="option"><input type="radio" name="q3" value="a"> a) 80 dB</div>
+                    <div class="option"><input type="radio" name="q3" value="b"> b) 100 dB</div>
+                    <div class="option"><input type="radio" name="q3" value="c"> c) 120 dB</div>
+                    <div class="option"><input type="radio" name="q3" value="d"> d) 140 dB</div>
+                </div>
+                <div class="feedback" id="feedback3">The correct answer is c) 120 dB. This is the threshold of pain for human hearing, as shown in the sound intensity level table.</div>
+            </div>
+
+            <div class="question">
+                <p>4. In the Doppler effect, what happens to the frequency of a sound when the source is moving away from the observer?</p>
+                <div class="options">
+                    <div class="option"><input type="radio" name="q4" value="a"> a) It increases</div>
+                    <div class="option"><input type="radio" name="q4" value="b"> b) It decreases</div>
+                    <div class="option"><input type="radio" name="q4" value="c"> c) It stays the same</div>
+                    <div class="option"><input type="radio" name="q4" value="d"> d) It becomes zero</div>
+                </div>
+                <div class="feedback" id="feedback4">The correct answer is b) It decreases. When a sound source moves away from an observer, the wavelength stretches out, resulting in a lower frequency and thus a lower pitch.</div>
+            </div>
+
+            <div class="question">
+                <p>5. Through which medium does sound travel fastest?</p>
+                <div class="options">
+                    <div class="option"><input type="radio" name="q5" value="a"> a) Air at 25°C</div>
+                    <div class="option"><input type="radio" name="q5" value="b"> b) Water at 30°C</div>
+                    <div class="option"><input type="radio" name="q5" value="c"> c) Steel</div>
+                    <div class="option"><input type="radio" name="q5" value="d"> d) Wood</div>
+                </div>
+                <div class="feedback" id="feedback5">The correct answer is c) Steel. According to the table of sound speeds in different media, steel has one of the highest speeds at about 5029 m/s.</div>
+            </div>
+
+            <button type="button" onclick="checkAnswers()">Submit Quiz</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const correctAnswers = {
+            q1: "b",
+            q2: "b",
+            q3: "c",
+            q4: "b",
+            q5: "c"
+        };
+
+        function checkAnswers() {
+            let score = 0;
+            let total = Object.keys(correctAnswers).length;
+            
+            // Check each answer and show feedback
+            for (let i = 1; i <= total; i++) {
+                let selected = document.querySelector(`input[name="q${i}"]:checked`);
+                let feedbackElement = document.getElementById(`feedback${i}`);
+                feedbackElement.style.display = "block";
+                
+                if (selected && selected.value === correctAnswers[`q${i}`]) {
+                    score++;
+                }
+            }
+
+            // Calculate percentage
+            let percentage = (score / total) * 100;
+
+            // Display result
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = `You scored ${score} out of ${total} (${percentage}%)`;
+            
+            // Add encouraging message based on score
+            if (percentage === 100) {
+                resultDiv.innerHTML += "<br>Perfect score! Excellent understanding of waves and sound!";
+            } else if (percentage >= 80) {
+                resultDiv.innerHTML += "<br>Great job! You have a solid grasp of the material.";
+            } else if (percentage >= 60) {
+                resultDiv.innerHTML += "<br>Good effort! Review the feedback to strengthen your understanding.";
+            } else {
+                resultDiv.innerHTML += "<br>Keep studying! Review the module material and try again.";
+            }
+        }
+    </script>
+</body>
+</html>
