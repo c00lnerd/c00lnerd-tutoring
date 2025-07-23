@@ -5,49 +5,40 @@ import Layout from '../../layouts/Layout.astro';
 <Layout title="Physical Science Module 6 Quiz">
     <div class="container">
         <h1>Physical Science Module 6 Quiz</h1>
-
-        <!-- Start Screen -->
-        <div id="start-screen">
-            <h2>Ready to begin?</h2>
-            <p>This quiz will test your understanding of motion and forces.</p>
-            <button id="start-quiz" class="control-button">Start Quiz</button>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
         </div>
 
-        <!-- Quiz Container -->
         <div id="quiz-container" style="display: none;">
-            <div class="progress-container">
-                <div class="progress"></div>
+            <div class="progress-bar">
+                <div class="fill"></div>
             </div>
-            
-            <div class="question-container">
-                <div id="question-number"></div>
-                <div id="question-text"></div>
-                
-                <!-- Multiple Choice Container -->
-                <div id="multiple-choice-container" class="options-container">
-                    <!-- Options will be dynamically inserted here -->
-                </div>
-                
-                <!-- Feedback Container -->
-                <div id="feedback" class="feedback"></div>
-                
-                <!-- Navigation -->
-                <div class="navigation">
-                    <button id="prevBtn" class="control-button" style="display: none;">Previous Question</button>
-                    <button id="nextBtn" class="control-button" style="display: none;">Next Question</button>
-                    <button id="submitBtn" class="control-button" style="display: none;">Submit Quiz</button>
-                </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
             </div>
         </div>
 
-        <!-- Results Container -->
         <div id="results" style="display: none;">
             <h2>Quiz Results</h2>
             <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
             <div id="incorrect-answers"></div>
-            <div class="controls">
+            <div class="result-buttons">
                 <button id="download-results" class="control-button">Download Results</button>
-                <button id="restart-quiz" class="control-button">Start Over</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Restart Quiz</button>
             </div>
         </div>
     </div>
@@ -443,11 +434,11 @@ import Layout from '../../layouts/Layout.astro';
     function showQuestion() {
         const question = questions[window.currentQuestion];
         const quizContainer = document.getElementById('quiz-container');
-        const progressBar = document.querySelector('.progress-container');
-        const questionContent = document.getElementById('question-content');
+        const progressBar = document.querySelector('.progress-bar');
+        const questionContent = document.getElementById('question-text');
         
         // Update progress bar
-        progressBar.querySelector('.progress').style.width = `${((window.currentQuestion + 1) / questions.length) * 100}%`;
+        progressBar.querySelector('.fill').style.width = `${((window.currentQuestion + 1) / questions.length) * 100}%`;
         
         const questionHtml = `
             <h2>Question ${window.currentQuestion + 1}/${questions.length}</h2>
@@ -481,8 +472,8 @@ import Layout from '../../layouts/Layout.astro';
         const question = questions[window.currentQuestion];
         const options = document.querySelectorAll('.option-button');
         const feedback = document.getElementById('feedback');
-        const nextBtn = document.getElementById('nextBtn');
-        const submitBtn = document.getElementById('submitBtn');
+        const nextBtn = document.getElementById('next-button');
+        const submitBtn = document.getElementById('submit-button');
         
         // If already answered correctly or max attempts reached, do nothing
         if ((window.userAnswers[window.currentQuestion] !== null && 
