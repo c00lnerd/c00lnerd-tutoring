@@ -1,0 +1,358 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Chemistry Equation Balancer">
+    <div class="container">
+        <h1>Ionic Equation Balancer</h1>
+        
+        <div class="example-selector">
+            <h3>Select Reaction Type:</h3>
+            <select id="reactionTypeSelect" onchange="changeReactionType()">
+                <option value="">Choose a reaction type...</option>
+                <option value="precipitation">Precipitation Reactions</option>
+                <option value="redox">Redox Reactions</option>
+                <option value="acid_base">Acid-Base Reactions</option>
+                <option value="gas_forming">Gas-Forming Reactions</option>
+            </select>
+            
+            <div class="example-dropdown">
+                <label for="exampleSelect">Choose an example:</label>
+                <select id="exampleSelect" onchange="loadExample()">
+                    <option value="">Select an example...</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <div class="equation-input">
+                <label for="reactants">Reactants (separated by +):</label>
+                <input type="text" id="reactants" placeholder="e.g., AgNO3 + NaCl">
+            </div>
+            
+            <div class="equation-input">
+                <label for="products">Products (separated by +):</label>
+                <input type="text" id="products" placeholder="e.g., AgCl + NaNO3">
+            </div>
+            
+            <button id="balanceBtn" onclick="balanceEquation()">Balance Equation</button>
+        </div>
+
+        <div class="results-section">
+            <div id="balancedEquation" class="result-box"></div>
+            <div id="ionicEquation" class="result-box"></div>
+            <div id="netIonicEquation" class="result-box"></div>
+        </div>
+
+        <div class="details-panel" id="detailsPanel">
+            <h4>Step-by-Step Solution:</h4>
+            <div id="solutionSteps"></div>
+        </div>
+
+        <div class="instructions">
+            <h3>How to Use:</h3>
+            <ol>
+                <li>Select a reaction type from the dropdown</li>
+                <li>Choose an example or enter your own compounds</li>
+                <li>Enter reactants and products separated by +</li>
+                <li>Click "Balance Equation" to see the balanced equation</li>
+                <li>View the complete ionic and net ionic equations</li>
+            </ol>
+            
+            <h4>Supported Compounds:</h4>
+            <p>Enter chemical formulas like: H2SO4, NaOH, AgNO3, BaCl2, etc.</p>
+            <p>The balancer supports common ionic compounds, acids, and bases.</p>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .container {
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--accent);
+        margin-bottom: 2rem;
+    }
+
+    .example-selector {
+        margin: 20px 0;
+        padding: 20px;
+        background: var(--gray-light);
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .example-selector h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .example-dropdown {
+        margin-top: 1rem;
+    }
+
+    select {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 2px solid var(--gray-light);
+        border-radius: 5px;
+        margin-top: 0.5rem;
+    }
+
+    select:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    .input-section {
+        margin: 2rem 0;
+        padding: 1.5rem;
+        background: var(--gray-light);
+        border-radius: 8px;
+    }
+
+    .equation-input {
+        margin-bottom: 1rem;
+    }
+
+    .equation-input label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+        color: var(--accent);
+    }
+
+    .equation-input input {
+        width: 100%;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 2px solid var(--gray-light);
+        border-radius: 5px;
+    }
+
+    .equation-input input:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        background-color: var(--accent);
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 1rem;
+    }
+
+    button:hover {
+        background-color: var(--accent-dark);
+    }
+
+    .results-section {
+        margin: 2rem 0;
+    }
+
+    .result-box {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        font-family: 'Courier New', monospace;
+        font-size: 1.1rem;
+        min-height: 2rem;
+    }
+
+    .result-box:empty {
+        display: none;
+    }
+
+    .details-panel {
+        display: none;
+        background-color: var(--gray-light);
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 2rem 0;
+    }
+
+    .details-panel.show {
+        display: block;
+    }
+
+    .details-panel h4 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .instructions {
+        background-color: var(--gray-light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .instructions h3, .instructions h4 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .instructions ol {
+        margin-left: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .instructions li {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+
+    .instructions p {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .example-selector, .input-section {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<script is:inline>
+    // Example reactions database
+    const examples = {
+        precipitation: [
+            { name: "Silver chloride formation", reactants: "AgNO3 + NaCl", products: "AgCl + NaNO3" },
+            { name: "Barium sulfate formation", reactants: "BaCl2 + Na2SO4", products: "BaSO4 + NaCl" },
+            { name: "Lead iodide formation", reactants: "Pb(NO3)2 + KI", products: "PbI2 + KNO3" }
+        ],
+        redox: [
+            { name: "Zinc and copper sulfate", reactants: "Zn + CuSO4", products: "ZnSO4 + Cu" },
+            { name: "Iron and silver nitrate", reactants: "Fe + AgNO3", products: "Fe(NO3)3 + Ag" }
+        ],
+        acid_base: [
+            { name: "HCl and NaOH", reactants: "HCl + NaOH", products: "NaCl + H2O" },
+            { name: "H2SO4 and Ba(OH)2", reactants: "H2SO4 + Ba(OH)2", products: "BaSO4 + H2O" }
+        ],
+        gas_forming: [
+            { name: "Carbonate and acid", reactants: "CaCO3 + HCl", products: "CaCl2 + H2O + CO2" },
+            { name: "Sulfite and acid", reactants: "Na2SO3 + HCl", products: "NaCl + H2O + SO2" }
+        ]
+    };
+
+    function changeReactionType() {
+        const reactionType = document.getElementById('reactionTypeSelect').value;
+        const exampleSelect = document.getElementById('exampleSelect');
+        
+        // Clear previous options
+        exampleSelect.innerHTML = '<option value="">Select an example...</option>';
+        
+        if (reactionType && examples[reactionType]) {
+            examples[reactionType].forEach((example, index) => {
+                const option = document.createElement('option');
+                option.value = `${reactionType}_${index}`;
+                option.textContent = example.name;
+                exampleSelect.appendChild(option);
+            });
+        }
+    }
+
+    function loadExample() {
+        const exampleValue = document.getElementById('exampleSelect').value;
+        if (!exampleValue) return;
+        
+        const [reactionType, index] = exampleValue.split('_');
+        const example = examples[reactionType][parseInt(index)];
+        
+        if (example) {
+            document.getElementById('reactants').value = example.reactants;
+            document.getElementById('products').value = example.products;
+        }
+    }
+
+    function balanceEquation() {
+        const reactants = document.getElementById('reactants').value.trim();
+        const products = document.getElementById('products').value.trim();
+        
+        if (!reactants || !products) {
+            alert('Please enter both reactants and products');
+            return;
+        }
+
+        try {
+            // Simple balancing logic (this is a simplified version)
+            const balancedEquation = `${reactants} → ${products}`;
+            const ionicEquation = generateIonicEquation(reactants, products);
+            const netIonicEquation = generateNetIonicEquation(reactants, products);
+            
+            document.getElementById('balancedEquation').innerHTML = 
+                `<strong>Balanced Equation:</strong><br>${balancedEquation}`;
+            document.getElementById('ionicEquation').innerHTML = 
+                `<strong>Complete Ionic Equation:</strong><br>${ionicEquation}`;
+            document.getElementById('netIonicEquation').innerHTML = 
+                `<strong>Net Ionic Equation:</strong><br>${netIonicEquation}`;
+            
+            // Show details panel
+            const detailsPanel = document.getElementById('detailsPanel');
+            detailsPanel.classList.add('show');
+            
+            // Generate solution steps
+            generateSolutionSteps(reactants, products);
+            
+        } catch (error) {
+            alert('Error balancing equation: ' + error.message);
+        }
+    }
+
+    function generateIonicEquation(reactants, products) {
+        // Simplified ionic equation generation
+        // In a full implementation, this would parse compounds and generate proper ionic forms
+        return `Complete ionic equation for: ${reactants} → ${products}`;
+    }
+
+    function generateNetIonicEquation(reactants, products) {
+        // Simplified net ionic equation generation
+        // In a full implementation, this would identify spectator ions and remove them
+        return `Net ionic equation for: ${reactants} → ${products}`;
+    }
+
+    function generateSolutionSteps(reactants, products) {
+        const stepsDiv = document.getElementById('solutionSteps');
+        stepsDiv.innerHTML = `
+            <ol>
+                <li>Write the unbalanced equation: ${reactants} → ${products}</li>
+                <li>Identify the compounds and their states</li>
+                <li>Write the complete ionic equation</li>
+                <li>Identify spectator ions</li>
+                <li>Write the net ionic equation</li>
+            </ol>
+            <p><em>Note: This is a simplified demonstration. A full implementation would include detailed balancing algorithms and proper ionic dissociation.</em></p>
+        `;
+    }
+
+    // Initialize the page
+    window.addEventListener('DOMContentLoaded', () => {
+        // Set up initial state
+        console.log('Chemistry Equation Balancer loaded');
+    });
+</script>

@@ -4,6 +4,23 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout title="Experiment 9.1: Sound Wave Visualization">
     <div class="experiment-container">
+        <!-- Student Information Section -->
+        <div class="student-info-section">
+            <h2>Student Information</h2>
+            <p>Please enter your email address so your instructor can see your experiment results:</p>
+            <div class="email-input-container">
+                <input type="email" id="studentEmail" placeholder="Enter your email address" required>
+                <button id="saveEmail" class="save-email-btn">Save Email</button>
+            </div>
+            <div id="emailStatus" class="email-status"></div>
+            
+            <!-- Submit Results Button -->
+            <div class="submit-results-section" style="margin-top: 1rem; display: none;" id="submitResultsSection">
+                <button id="submitResults" class="submit-results-btn">📧 Submit Experiment Results</button>
+                <p class="submit-note">Click this button when you've completed the experiment to send your results to the instructor.</p>
+            </div>
+        </div>
+
         <h1>Experiment 9.1: Sound Wave Visualization</h1>
         
         <div class="experiment-intro">
@@ -172,6 +189,7 @@ import Layout from '../../layouts/Layout.astro';
                 bangBtn.addEventListener('click', () => {
                     updateStep('bang');
                     bangBtn.classList.remove('active');
+                    document.getElementById('submitResultsSection').style.display = 'block';
                 });
 
                 resetBtn.addEventListener('click', () => {
@@ -183,6 +201,7 @@ import Layout from '../../layouts/Layout.astro';
                     coverBtn.classList.remove('active');
                     riceBtn.classList.remove('active');
                     bangBtn.classList.remove('active');
+                    document.getElementById('submitResultsSection').style.display = 'none';
                 });
             });
         </script>
@@ -606,12 +625,82 @@ import Layout from '../../layouts/Layout.astro';
         margin: 2rem 0;
     }
 
+    .conclusion-section h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    .conclusion-section textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 120px;
+        background: #fff;
+        color: #333;
+        box-sizing: border-box;
+    }
+
+    .conclusion-section textarea:focus {
+        outline: none;
+        border-color: #228be6;
+        box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.1);
+    }
+
+    .conclusion-section textarea::placeholder {
+        color: #999;
+        font-style: italic;
+    }
+
     .questions ol {
         margin-bottom: 1rem;
     }
+
+    .questions li {
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+
+    .student-info-section {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .email-input-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .email-input-container input[type="email"] {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .save-email-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background: #228be6;
+        color: white;
+        cursor: pointer;
+    }
+
+    .email-status {
+        color: #666;
+        font-size: 0.9rem;
+    }
 </style>
 
-<script client:load>
+<script>
 window.addEventListener('load', function() {
     const video = document.getElementById('experimentVideo');
     const playButton = document.getElementById('playButton');
@@ -666,46 +755,141 @@ window.addEventListener('load', function() {
             document.getElementById('videoError').style.display = 'none';
         });
     }
+    
+    // Email functionality
+    const emailInput = document.getElementById('studentEmail');
+    const saveEmailBtn = document.getElementById('saveEmail');
+    const emailStatus = document.getElementById('emailStatus');
+    const submitResultsBtn = document.getElementById('submitResults');
+    
+    // Check if email is already saved
+    const savedEmail = localStorage.getItem('studentEmail');
+    if (savedEmail) {
+        emailInput.value = savedEmail;
+        emailStatus.textContent = `Email saved: ${savedEmail}`;
+        emailStatus.style.color = '#28a745';
+        document.getElementById('submitResultsSection').style.display = 'block';
+    }
+    
+    // Save email functionality
+    saveEmailBtn.addEventListener('click', function() {
+        const email = emailInput.value.trim();
+        if (email && isValidEmail(email)) {
+            localStorage.setItem('studentEmail', email);
+            emailStatus.textContent = `Email saved: ${email}`;
+            emailStatus.style.color = '#28a745';
+            document.getElementById('submitResultsSection').style.display = 'block';
+        } else {
+            emailStatus.textContent = 'Please enter a valid email address';
+            emailStatus.style.color = '#dc3545';
+            document.getElementById('submitResultsSection').style.display = 'none';
+        }
+    });
+    
+    // Email validation
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+    
+    // Send experiment results via EmailJS
+    submitResultsBtn.addEventListener('click', function() {
+        const savedEmail = localStorage.getItem('studentEmail');
+        if (savedEmail) {
+            const conclusions = document.getElementById('conclusions').value.trim();
+            if (conclusions) {
+                // Send via EmailJS
+                sendExperimentResults(savedEmail, conclusions);
+            } else {
+                alert('Please fill in your conclusions before submitting');
+            }
+        } else {
+            alert('Please save your email address before submitting');
+        }
+    });
+    
+    // Send experiment results via EmailJS
+    function sendExperimentResults(email, conclusions) {
+        console.log('=== EXPERIMENT RESULTS SUBMISSION ===');
+        console.log('Student Email:', email);
+        console.log('Student Conclusions:', conclusions);
+        console.log('Conclusions Length:', conclusions ? conclusions.length : 0);
+        
+        if (typeof emailjs !== 'undefined') {
+            // Initialize EmailJS right before sending (matching Module 9 quiz)
+            emailjs.init("la6DVzxI7W2gVEkX6");
+            console.log('✅ EmailJS initialized successfully');
+            
+            const templateParams = {
+                user_email: email,
+                subject: "Experiment 9.1: Sound Wave Visualization - Results",
+                message: `EXPERIMENT 9.1: SOUND WAVE VISUALIZATION
+========================================
+STUDENT EMAIL: ${email}
+COMPLETION TIME: ${new Date().toLocaleString()}
+STUDENT CONCLUSIONS:
+${conclusions || 'No conclusions provided'}
+EXPERIMENT SUMMARY:
+The student completed the sound wave visualization experiment, observing how sound waves create vibrations in rice grains placed on a plastic-covered bowl when sound is produced nearby.`,
+                quiz_name: "Experiment 9.1: Sound Wave Visualization",
+                score: "Completed",
+                percentage: "100%"
+            };
+
+            console.log('=== EMAILJS TEMPLATE PARAMETERS ===');
+            console.log('user_email:', templateParams.user_email);
+            console.log('subject:', templateParams.subject);
+            console.log('message:', templateParams.message);
+            console.log('quiz_name:', templateParams.quiz_name);
+            console.log('score:', templateParams.score);
+            console.log('percentage:', templateParams.percentage);
+            console.log('=== END TEMPLATE PARAMETERS ===');
+
+            // Show user what's being sent
+            emailStatus.innerHTML += `<br><small style="color: blue;">📤 Sending: "${conclusions ? conclusions.substring(0, 50) + '...' : 'No conclusions'}"</small>`;
+
+            emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                .then(function(response) {
+                    console.log('✅ Experiment results sent successfully:', response);
+                    console.log('Response status:', response.status);
+                    console.log('Response text:', response.text);
+                    emailStatus.innerHTML += '<br><small style="color: green;">✓ Results sent to instructor successfully!</small>';
+                    submitResultsBtn.textContent = '✅ Results Sent';
+                    submitResultsBtn.disabled = true;
+                })
+                .catch(function(error) {
+                    console.error('❌ Failed to send experiment results:', error);
+                    console.error('Error details:', error.text || error.message);
+                    emailStatus.innerHTML += '<br><small style="color: red;">⚠ Failed to send results. Please try again.</small>';
+                });
+        } else {
+            console.warn('⚠ EmailJS not available - typeof emailjs:', typeof emailjs);
+            emailStatus.innerHTML += '<br><small style="color: red;">⚠ EmailJS not available</small>';
+        }
+    }
 });
 </script>
 
-<!--
-To add your photos and video:
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
 
-1. Create this directory structure:
-   public/
-   └── simulations/
-       └── experiment9_1/
-           ├── empty-bowl.jpg
-           ├── covered-bowl.jpg
-           ├── rice-setup.jpg
-           ├── pot-position.jpg
-           └── experiment.mp4
-
-2. Copy your photos and video into the experiment9_1 directory
-3. Make sure the filenames match exactly as shown above
-4. The photos should be in JPG format
-5. The video should be in MP4 format
--->
-
-<script is:inline>
+<script client:load>
+window.addEventListener('load', function() {
     // Wait for DOM and resources to be fully loaded
-    window.addEventListener('load', function() {
-        console.log('Window load event fired');
+    console.log('Window load event fired');
         
-        // Set up volume control
-        const volumeControl = document.getElementById('volume');
-        if (volumeControl) {
-            volumeControl.addEventListener('input', (e) => {
-                const volumeDisplay = document.getElementById('volumeDisplay');
-                if (volumeDisplay) {
-                    volumeDisplay.textContent = e.target.value;
-                }
-            });
-            console.log('Volume control initialized');
-        } else {
-            console.warn('Volume control not found');
-        }
-    });
+    // Set up volume control
+    const volumeControl = document.getElementById('volume');
+    if (volumeControl) {
+        volumeControl.addEventListener('input', (e) => {
+            const volumeDisplay = document.getElementById('volumeDisplay');
+            if (volumeDisplay) {
+                volumeDisplay.textContent = e.target.value;
+            }
+        });
+        console.log('Volume control initialized');
+    } else {
+        console.warn('Volume control not found');
+    }
+});
 </script>
 </Layout>

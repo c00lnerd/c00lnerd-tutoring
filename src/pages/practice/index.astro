@@ -94,6 +94,113 @@ const getModuleDescription = (moduleNum: number) => {
                 </div>
             </div>
         </section>
+
+        <!-- Experiments Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-4">Hands-On Experiments</h2>
+            <p class="text-gray-600 mb-6">Interactive experiments to explore physical science concepts through hands-on activities.</p>
+            
+            <div class="experiments-section">
+                <h3 class="text-xl font-semibold mb-4 text-blue-600">Module 9: Waves and Sound</h3>
+                <div class="experiments-grid">
+                    <div class="experiment-card">
+                        <div class="experiment-header">
+                            <h4 class="experiment-title">Experiment 9.1: Sound Wave Visualization</h4>
+                            <span class="difficulty-badge beginner">Beginner</span>
+                        </div>
+                        <div class="experiment-preview">
+                            <div class="preview-placeholder">
+                                <div class="wave-visual">
+                                    <div class="sound-source"></div>
+                                    <div class="wave-lines">
+                                        <div class="wave-line"></div>
+                                        <div class="wave-line"></div>
+                                        <div class="wave-line"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="experiment-content">
+                            <p class="experiment-question">
+                                <strong>Question:</strong> Can we see the effect of sound waves traveling through air?
+                            </p>
+                            <p class="experiment-description">
+                                Observe how sound waves travel through air by watching their effects on a candle flame and rice grains. 
+                                This experiment demonstrates the physical nature of sound waves and their ability to transfer energy.
+                            </p>
+                            <div class="experiment-details">
+                                <div class="materials-list">
+                                    <strong>Materials:</strong> Plastic wrap, candle, rice, large bowl, wooden spoon
+                                </div>
+                                <div class="experiment-meta">
+                                    <span class="duration">⏱️ 15-20 min</span>
+                                    <span class="safety">⚠️ Adult supervision</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="experiment-actions">
+                            <a href="/simulations/experiment9_1" class="experiment-link primary">
+                                🧪 Launch Experiment
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="experiment-card">
+                        <div class="experiment-header">
+                            <h4 class="experiment-title">Experiment 9.2: Speed of Sound</h4>
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                        </div>
+                        <div class="experiment-preview">
+                            <div class="preview-placeholder">
+                                <div class="speed-visual">
+                                    <div class="measurement-setup">
+                                        <div class="person-icon">👤</div>
+                                        <div class="distance-line"></div>
+                                        <div class="person-icon">👤</div>
+                                    </div>
+                                    <div class="sound-wave-animation"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="experiment-content">
+                            <p class="experiment-question">
+                                <strong>Question:</strong> How fast does sound travel through air?
+                            </p>
+                            <p class="experiment-description">
+                                Measure the speed of sound in air by timing how long it takes for sound to travel a known distance. 
+                                Explore how environmental factors like temperature and humidity affect sound speed.
+                            </p>
+                            <div class="experiment-details">
+                                <div class="materials-list">
+                                    <strong>Materials:</strong> Metal pots, stopwatch, measuring tape, calculator
+                                </div>
+                                <div class="experiment-meta">
+                                    <span class="duration">⏱️ 25-30 min</span>
+                                    <span class="safety">⚠️ Partner required</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="experiment-actions">
+                            <a href="/simulations/experiment9_2" class="experiment-link primary">
+                                📏 Launch Experiment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="coming-soon-experiments">
+                    <div class="coming-soon-card">
+                        <h4>More Experiments Coming Soon!</h4>
+                        <p>Additional hands-on experiments from other modules will be added to help you explore physical science concepts.</p>
+                        <div class="future-topics">
+                            <span class="topic-tag">Light & Optics</span>
+                            <span class="topic-tag">Electricity & Magnetism</span>
+                            <span class="topic-tag">Heat & Thermodynamics</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <style>
@@ -148,6 +255,304 @@ const getModuleDescription = (moduleNum: number) => {
 
         .resource-link:hover {
             background: #4338ca;
+        }
+
+        /* Experiments Section Styles */
+        .experiments-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .experiments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .experiment-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .experiment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .experiment-header {
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .experiment-title {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .difficulty-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .difficulty-badge.beginner {
+            background: rgba(34, 197, 94, 0.2);
+            color: #15803d;
+        }
+
+        .difficulty-badge.intermediate {
+            background: rgba(251, 191, 36, 0.2);
+            color: #92400e;
+        }
+
+        .experiment-preview {
+            height: 120px;
+            overflow: hidden;
+        }
+
+        .preview-placeholder {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #f0f8ff, #e6f3ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .wave-visual {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sound-source {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #667eea;
+            position: relative;
+        }
+
+        .wave-lines {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .wave-line {
+            width: 60px;
+            height: 3px;
+            background: #667eea;
+            border-radius: 2px;
+            animation: wave-pulse 2s ease-in-out infinite;
+        }
+
+        .wave-line:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .wave-line:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes wave-pulse {
+            0%, 100% { opacity: 0.3; transform: scaleX(0.8); }
+            50% { opacity: 1; transform: scaleX(1.2); }
+        }
+
+        .speed-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .measurement-setup {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .person-icon {
+            font-size: 1.5rem;
+        }
+
+        .distance-line {
+            width: 80px;
+            height: 2px;
+            background: #667eea;
+            position: relative;
+        }
+
+        .distance-line::before,
+        .distance-line::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #667eea;
+            border-radius: 50%;
+            top: -2px;
+        }
+
+        .distance-line::before {
+            left: -3px;
+        }
+
+        .distance-line::after {
+            right: -3px;
+        }
+
+        .sound-wave-animation {
+            width: 60px;
+            height: 3px;
+            background: repeating-linear-gradient(
+                to right,
+                #667eea 0px,
+                #667eea 8px,
+                transparent 8px,
+                transparent 16px
+            );
+            animation: wave-move 1.5s linear infinite;
+        }
+
+        @keyframes wave-move {
+            0% { background-position: 0px 0px; }
+            100% { background-position: 16px 0px; }
+        }
+
+        .experiment-content {
+            padding: 1.5rem;
+        }
+
+        .experiment-question {
+            color: #667eea;
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            font-weight: 500;
+        }
+
+        .experiment-description {
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            color: #4b5563;
+            font-size: 0.95rem;
+        }
+
+        .experiment-details {
+            background: #f8fafc;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .materials-list {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: #374151;
+        }
+
+        .experiment-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .experiment-actions {
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .experiment-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .experiment-link:hover {
+            background: #5a67d8;
+        }
+
+        .coming-soon-experiments {
+            margin-top: 1.5rem;
+        }
+
+        .coming-soon-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px dashed #d1d5db;
+            text-align: center;
+        }
+
+        .coming-soon-card h4 {
+            color: #667eea;
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .coming-soon-card p {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .future-topics {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .topic-tag {
+            background: #e0e7ff;
+            color: #5b21b6;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .experiments-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .experiment-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            
+            .future-topics {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </Layout>

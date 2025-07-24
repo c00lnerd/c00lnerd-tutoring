@@ -4,6 +4,23 @@ import Layout from '../../layouts/Layout.astro';
 
 <Layout title="Experiment 9.2: Speed of Sound">
     <div class="experiment-container">
+        <!-- Student Information Section -->
+        <div class="student-info-section">
+            <h2>Student Information</h2>
+            <p>Please enter your email address so your instructor can track your experiment progress:</p>
+            <div class="email-input-container">
+                <input type="email" id="studentEmail" placeholder="Enter your email address" required>
+                <button id="saveEmail" class="save-email-btn">Save Email</button>
+            </div>
+            <div id="emailStatus" class="email-status"></div>
+            
+            <!-- Manual Send Summary Button -->
+            <div class="send-summary-section" style="margin-top: 1rem; display: none;" id="sendSummarySection">
+                <button id="sendSummary" class="submit-results-btn">Submit Results</button>
+                <p class="submit-note">Click this button when you've completed the experiment to send a comprehensive summary of your work.</p>
+            </div>
+        </div>
+
         <h1>Experiment 9.2: Speed of Sound</h1>
         
         <div class="experiment-intro">
@@ -413,6 +430,69 @@ import Layout from '../../layouts/Layout.astro';
             padding: 0.25rem 0;
         }
 
+        .student-info-section {
+            background: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .email-input-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .email-input-container input[type="email"] {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .save-email-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            background: #228be6;
+            color: white;
+            cursor: pointer;
+        }
+
+        .email-status {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .submit-results-btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            background: #28a745;
+            color: white;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-results-btn:hover {
+            background: #218838;
+        }
+
+        .submit-results-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .submit-note {
+            font-size: 0.9rem;
+            color: #666;
+            margin: 0.5rem 0 0 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .experiment-container {
                 padding: 1rem;
@@ -686,6 +766,282 @@ import Layout from '../../layouts/Layout.astro';
             // Initial draw
             drawScene();
             updateEnvironmentalEffects();
+
+            // Email tracking functionality
+            const emailInput = document.getElementById('studentEmail');
+            const saveEmailButton = document.getElementById('saveEmail');
+            const emailStatus = document.getElementById('emailStatus');
+
+            // Check if email is already saved
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                emailInput.value = savedEmail;
+                emailStatus.textContent = `Email saved: ${savedEmail}`;
+                emailStatus.style.color = '#28a745';
+            }
+
+            saveEmailButton.addEventListener('click', () => {
+                const email = emailInput.value.trim();
+                if (email && isValidEmail(email)) {
+                    localStorage.setItem('studentEmail', email);
+                    emailStatus.textContent = `Email saved: ${email}`;
+                    emailStatus.style.color = '#28a745';
+                    
+                    // Send experiment start notification via EmailJS
+                    sendExperimentNotification('experiment_9_2_started', {
+                        email: email,
+                        experiment: 'Experiment 9.2: Speed of Sound',
+                        timestamp: new Date().toLocaleString(),
+                        activity: 'Student started the experiment'
+                    });
+                } else {
+                    emailStatus.textContent = 'Please enter a valid email address';
+                    emailStatus.style.color = '#dc3545';
+                }
+            });
+
+            // Email validation
+            function isValidEmail(email) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(email);
+            }
+
+            // Send experiment notifications via EmailJS
+            function sendExperimentNotification(action, data) {
+                const savedEmail = localStorage.getItem('studentEmail');
+                if (savedEmail && typeof emailjs !== 'undefined') {
+                    const templateParams = {
+                        student_email: savedEmail,
+                        experiment_name: data.experiment,
+                        activity_type: action,
+                        activity_details: data.activity,
+                        timestamp: data.timestamp,
+                        additional_data: JSON.stringify(data, null, 2)
+                    };
+
+                    emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                        .then(function(response) {
+                            console.log('Experiment notification sent successfully:', response);
+                        })
+                        .catch(function(error) {
+                            console.error('Failed to send experiment notification:', error);
+                        });
+                } else {
+                    console.warn('EmailJS not available or no saved email');
+                }
+            }
+
+            // Log experiment activities
+            function logExperimentActivity(action, data) {
+                const savedEmail = localStorage.getItem('studentEmail');
+                if (savedEmail) {
+                    // Store activity in localStorage
+                    const activities = JSON.parse(localStorage.getItem('experimentActivities') || '[]');
+                    const activityData = {
+                        action: action,
+                        data: data,
+                        timestamp: new Date().toISOString()
+                    };
+                    activities.push(activityData);
+                    localStorage.setItem('experimentActivities', JSON.stringify(activities));
+                    
+                    // Send via EmailJS for important activities
+                    if (action.includes('started') || action.includes('completed') || action.includes('simulation') || action.includes('parameter')) {
+                        sendExperimentNotification(action, {
+                            ...data,
+                            timestamp: new Date().toLocaleString(),
+                            activity: getActivityDescription(action, data)
+                        });
+                    }
+                }
+            }
+
+            // Get human-readable activity descriptions
+            function getActivityDescription(action, data) {
+                switch(action) {
+                    case 'experiment_9_2_started':
+                        return 'Student started Experiment 9.2: Speed of Sound';
+                    case 'simulation_started':
+                        return `Student started simulation with distance: ${data.distance}m, temperature: ${data.temperature}°C`;
+                    case 'simulation_reset':
+                        return 'Student reset the simulation';
+                    case 'parameter_changed':
+                        return `Student changed ${data.parameter} to ${data.value}`;
+                    default:
+                        return `Student performed action: ${action}`;
+                }
+            }
+
+            // Log simulation interactions
+            if (startButton) {
+                startButton.addEventListener('click', function() {
+                    const savedEmail = localStorage.getItem('studentEmail');
+                    if (savedEmail) {
+                        logExperimentActivity('simulation_started', {
+                            email: savedEmail,
+                            experiment: 'experiment_9_2',
+                            distance: document.getElementById('distance').value,
+                            temperature: document.getElementById('temperature').value
+                        });
+                    }
+                });
+            }
+
+            if (resetButton) {
+                resetButton.addEventListener('click', function() {
+                    const savedEmail = localStorage.getItem('studentEmail');
+                    if (savedEmail) {
+                        logExperimentActivity('simulation_reset', {
+                            email: savedEmail,
+                            experiment: 'experiment_9_2'
+                        });
+                    }
+                });
+            }
+
+            // Log when students change environmental parameters
+            const environmentalInputs = ['distance', 'temperature', 'wind', 'humidity'];
+            environmentalInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('change', function() {
+                        const savedEmail = localStorage.getItem('studentEmail');
+                        if (savedEmail) {
+                            logExperimentActivity('parameter_changed', {
+                                email: savedEmail,
+                                experiment: 'experiment_9_2',
+                                parameter: inputId,
+                                value: this.value
+                            });
+                        }
+                    });
+                }
+            });
+
+            // Manual Send Summary Button
+            const submitResultsButton = document.getElementById('sendSummary');
+            const sendSummarySection = document.getElementById('sendSummarySection');
+            submitResultsButton.addEventListener('click', function() {
+                const savedEmail = localStorage.getItem('studentEmail');
+                
+                console.log('=== EXPERIMENT 9.2 RESULTS SUBMISSION ===');
+                console.log('Student Email:', savedEmail);
+                
+                if (savedEmail && typeof emailjs !== 'undefined') {
+                    // Initialize EmailJS right before sending (matching Module 9 quiz)
+                    emailjs.init("la6DVzxI7W2gVEkX6");
+                    console.log('✅ EmailJS initialized successfully');
+                    
+                    // Collect all experiment data
+                    const distance = document.getElementById('distance').value;
+                    const temperature = document.getElementById('temperature').value;
+                    const wind = document.getElementById('wind').value;
+                    const humidity = document.getElementById('humidity').value;
+                    const measurements = Array.from(timeInputs).map((input, index) => 
+                        `Trial ${index + 1}: Distance=${distanceInputs[index].value}m, Time=${input.value}s, Speed=${speedResults[index].textContent}`
+                    ).join('\n');
+                    const avgSpeed = averageSpeed.textContent;
+                    const observations = document.getElementById('observations')?.value || 'No observations recorded';
+                    const conclusions = document.getElementById('conclusions')?.value || 'No conclusions recorded';
+
+                    console.log('Distance:', distance);
+                    console.log('Temperature:', temperature);
+                    console.log('Observations:', observations);
+                    console.log('Conclusions:', conclusions);
+
+                    // Format message for EmailJS template
+                    const messageContent = `EXPERIMENT 9.2: SPEED OF SOUND
+========================================
+STUDENT EMAIL: ${savedEmail}
+COMPLETION TIME: ${new Date().toLocaleString()}
+
+ENVIRONMENTAL CONDITIONS:
+- Distance: ${distance} meters
+- Temperature: ${temperature}°C
+- Wind Speed: ${wind} m/s
+- Humidity: ${humidity}%
+
+MEASUREMENTS:
+${measurements}
+
+AVERAGE SPEED: ${avgSpeed}
+
+STUDENT OBSERVATIONS:
+${observations}
+
+STUDENT CONCLUSIONS:
+${conclusions}
+
+EXPERIMENT SUMMARY:
+The student completed the speed of sound experiment, measuring sound travel time over various distances and calculating the speed of sound under different environmental conditions.`;
+
+                    const templateParams = {
+                        user_email: savedEmail,
+                        subject: "Experiment 9.2: Speed of Sound - Results",
+                        message: messageContent,
+                        quiz_name: "Experiment 9.2: Speed of Sound",
+                        score: "Completed",
+                        percentage: "100%"
+                    };
+
+                    console.log('=== EMAILJS TEMPLATE PARAMETERS ===');
+                    console.log('user_email:', templateParams.user_email);
+                    console.log('subject:', templateParams.subject);
+                    console.log('message:', templateParams.message);
+                    console.log('quiz_name:', templateParams.quiz_name);
+                    console.log('score:', templateParams.score);
+                    console.log('percentage:', templateParams.percentage);
+                    console.log('=== END TEMPLATE PARAMETERS ===');
+
+                    // Show user what's being sent
+                    const emailStatus = document.getElementById('emailStatus');
+                    emailStatus.innerHTML += `<br><small style="color: blue;">📤 Sending experiment results...</small>`;
+
+                    // Send via EmailJS
+                    emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                        .then(function(response) {
+                            console.log('✅ Experiment results sent successfully:', response);
+                            console.log('Response status:', response.status);
+                            console.log('Response text:', response.text);
+                            emailStatus.innerHTML += '<br><small style="color: green;">✓ Results sent to instructor successfully!</small>';
+                            submitResultsButton.textContent = '✅ Results Sent';
+                            submitResultsButton.disabled = true;
+                        })
+                        .catch(function(error) {
+                            console.error('❌ Failed to send experiment results:', error);
+                            console.error('Error details:', error.text || error.message);
+                            emailStatus.innerHTML += '<br><small style="color: red;">⚠ Failed to send results. Please try again.</small>';
+                        });
+                } else {
+                    console.warn('⚠ EmailJS not available or no saved email - typeof emailjs:', typeof emailjs, 'Saved email:', savedEmail);
+                    const emailStatus = document.getElementById('emailStatus');
+                    emailStatus.innerHTML += '<br><small style="color: red;">⚠ Please save your email first</small>';
+                }
+            });
+
+            // Show send summary button when email is saved
+            emailInput.addEventListener('input', function() {
+                const email = emailInput.value.trim();
+                if (email && isValidEmail(email)) {
+                    sendSummarySection.style.display = 'block';
+                } else {
+                    sendSummarySection.style.display = 'none';
+                }
+            });
         });
     </script>
 </Layout>
+
+<!-- Load EmailJS -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script is:inline>
+    // Initialize EmailJS when the library loads
+    window.addEventListener('load', function() {
+        try {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+            console.log('EmailJS initialized successfully');
+        } catch (err) {
+            console.error('Error initializing EmailJS:', err);
+        }
+    });
+</script>
