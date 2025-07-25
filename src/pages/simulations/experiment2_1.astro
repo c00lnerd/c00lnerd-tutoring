@@ -1,0 +1,569 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 2.1: Diffusion at Different Temperatures">
+    <div class="container">
+        <h1>Experiment 2.1: Diffusion at Different Temperatures</h1>
+        
+        <!-- Email Input Section -->
+        <div class="email-section">
+            <h3>Student Information</h3>
+            <p>Enter your email so your instructor can see your experiment results:</p>
+            <input type="email" id="studentEmail" placeholder="your.email@example.com" />
+            <div class="email-status" id="emailStatus"></div>
+        </div>
+
+        <div class="experiment-content">
+            <h2>Purpose</h2>
+            <p>To demonstrate the relationship between temperature, kinetic energy, and the rate of diffusion.</p>
+
+            <h2>Materials</h2>
+            <div class="materials-list">
+                <div class="materials-grid">
+                    <div class="material-item">
+                        <div class="material-icon">🥤</div>
+                        <span>4 beakers (250 mL) or clear glass cups (same size)</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">🔥</div>
+                        <span>Hot water</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">❄️</div>
+                        <span>Cold water</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">🧊</div>
+                        <span>Ice</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">🎨</div>
+                        <span>Red, blue, green, and yellow food coloring</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">📏</div>
+                        <span>Measuring cup</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">⏱️</div>
+                        <span>Stopwatch (optional)</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">👥</div>
+                        <span>A helper</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2>Question</h2>
+            <div class="question-section">
+                <p><strong>How does changing the temperature affect the rate of diffusion?</strong></p>
+            </div>
+
+            <h2>Hypothesis</h2>
+            <div class="hypothesis-section">
+                <p>Write your prediction of which beaker of water (steaming hot, hot, cold, or freezing) will have the faster rate of diffusion:</p>
+                <textarea id="hypothesis" placeholder="Enter your hypothesis here..."></textarea>
+            </div>
+
+            <h2>Procedure</h2>
+            <div class="procedure-section">
+                <div class="step">
+                    <h4>Step 1: Prepare Ice Water</h4>
+                    <p>Place a cup of ice cubes into a bowl and add a cup of water. Let sit for 10 minutes.</p>
+                    <div class="observation-input">
+                        <label for="step1_notes">Notes/Observations:</label>
+                        <textarea id="step1_notes" placeholder="Record any observations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 2: Prepare Room Temperature Water</h4>
+                    <p>Add 2/3 cup of tepid (not too hot, not too cold) water to a beaker and let it sit to come to room temperature.</p>
+                    <div class="observation-input">
+                        <label for="step2_notes">Notes/Observations:</label>
+                        <textarea id="step2_notes" placeholder="Record any observations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 3: Prepare Ice Water Beaker</h4>
+                    <p>After 10 minutes remove the ice cubes and measure out 2/3 cup of the ice water and put into a beaker.</p>
+                    <div class="observation-input">
+                        <label for="step3_notes">Notes/Observations:</label>
+                        <textarea id="step3_notes" placeholder="Record any observations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 4: Prepare Hot Water</h4>
+                    <p>Fill another beaker with 2/3 cup very hot tap water.</p>
+                    <div class="observation-input">
+                        <label for="step4_notes">Notes/Observations:</label>
+                        <textarea id="step4_notes" placeholder="Record any observations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 5: Prepare Cold Water</h4>
+                    <p>Fill another beaker with 2/3 cup very cold tap water.</p>
+                    <div class="observation-input">
+                        <label for="step5_notes">Notes/Observations:</label>
+                        <textarea id="step5_notes" placeholder="Record any observations..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 6: Arrange Beakers</h4>
+                    <p>Place the beakers or cups side by side.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 7: Add Food Coloring Simultaneously</h4>
+                    <p>With your helper and at the same time, put three drops of yellow food coloring in the beaker of very hot tap water, three drops of red food coloring in the beaker of room temperature water, three drops of green food coloring in the beaker of very cold tap water, and three drops of blue food coloring in the beaker of ice water. It is important to add the food coloring to the beakers at the same time. Have your helper add drops to 2 beakers at the same time that you add drops to the other 2 beakers. If you have a stopwatch start the timer as soon as the drops of food coloring enter the water.</p>
+                    <div class="observation-input">
+                        <label for="step7_notes">Timing and Setup Notes:</label>
+                        <textarea id="step7_notes" placeholder="Record timing and coordination notes..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 8: Observe Without Mixing</h4>
+                    <p>Do not mix the water. Allow the drops of food coloring to spread on their own.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 9: Record Observations</h4>
+                    <p>Observe which food coloring fills the water of the beaker first. (Diffusion is complete when the beakers are uniformly colored.) Record your observations in your data table. If you have a stopwatch record the times that the food coloring spread throughout the beakers.</p>
+                    
+                    <div class="data-table">
+                        <h5>Diffusion Observations</h5>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Water Temperature</th>
+                                    <th>Food Coloring</th>
+                                    <th>Time to Complete Diffusion</th>
+                                    <th>Order of Completion</th>
+                                    <th>Observations</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Very Hot</td>
+                                    <td>Yellow</td>
+                                    <td><input type="text" id="hot_time" placeholder="Time or 'fastest/slowest'"></td>
+                                    <td><input type="number" id="hot_order" placeholder="1-4" min="1" max="4"></td>
+                                    <td><input type="text" id="hot_observations" placeholder="Describe what you observed"></td>
+                                </tr>
+                                <tr>
+                                    <td>Room Temperature</td>
+                                    <td>Red</td>
+                                    <td><input type="text" id="room_time" placeholder="Time or 'fastest/slowest'"></td>
+                                    <td><input type="number" id="room_order" placeholder="1-4" min="1" max="4"></td>
+                                    <td><input type="text" id="room_observations" placeholder="Describe what you observed"></td>
+                                </tr>
+                                <tr>
+                                    <td>Very Cold</td>
+                                    <td>Green</td>
+                                    <td><input type="text" id="cold_time" placeholder="Time or 'fastest/slowest'"></td>
+                                    <td><input type="number" id="cold_order" placeholder="1-4" min="1" max="4"></td>
+                                    <td><input type="text" id="cold_observations" placeholder="Describe what you observed"></td>
+                                </tr>
+                                <tr>
+                                    <td>Ice Water</td>
+                                    <td>Blue</td>
+                                    <td><input type="text" id="ice_time" placeholder="Time or 'fastest/slowest'"></td>
+                                    <td><input type="number" id="ice_order" placeholder="1-4" min="1" max="4"></td>
+                                    <td><input type="text" id="ice_observations" placeholder="Describe what you observed"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 10: Clean Up</h4>
+                    <p>Pour the colored water down the drain and rinse and dry the beakers. Put everything away in its proper place.</p>
+                </div>
+            </div>
+
+            <h2>Conclusions</h2>
+            <div class="conclusions-section">
+                <div class="question-group">
+                    <label for="results_explanation">Explain your results by using the kinetic theory of matter and making connections to the text:</label>
+                    <textarea id="results_explanation" placeholder="Explain your results using kinetic theory..."></textarea>
+                </div>
+
+                <div class="question-group">
+                    <label for="hypothesis_check">Was your hypothesis correct? Explain:</label>
+                    <textarea id="hypothesis_check" placeholder="Compare your results to your original hypothesis..."></textarea>
+                </div>
+
+                <div class="question-group">
+                    <label for="temperature_relationship">What relationship did you observe between temperature and diffusion rate?</label>
+                    <textarea id="temperature_relationship" placeholder="Describe the relationship you observed..."></textarea>
+                </div>
+
+                <div class="question-group">
+                    <label for="real_world_applications">Give examples of where you might see this principle in real life:</label>
+                    <textarea id="real_world_applications" placeholder="List real-world examples of temperature affecting diffusion..."></textarea>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button id="submitResults" class="submit-btn">Submit Experiment Results</button>
+                <div id="submitStatus" class="submit-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script>
+        // Initialize EmailJS with error checking
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        }
+
+        // Load saved email
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                document.getElementById('studentEmail').value = savedEmail;
+            }
+        });
+
+        // Save email when entered
+        document.getElementById('studentEmail').addEventListener('change', function() {
+            localStorage.setItem('studentEmail', this.value);
+        });
+
+        // Submit experiment results
+        document.getElementById('submitResults').addEventListener('click', function() {
+            const email = document.getElementById('studentEmail').value;
+            
+            if (!email) {
+                alert('Please enter your email address before submitting.');
+                return;
+            }
+
+            if (typeof emailjs === 'undefined') {
+                alert('EmailJS is not loaded. Please refresh the page and try again.');
+                return;
+            }
+
+            // Collect all experiment data
+            const experimentData = {
+                hypothesis: document.getElementById('hypothesis').value,
+                step1_notes: document.getElementById('step1_notes').value,
+                step2_notes: document.getElementById('step2_notes').value,
+                step3_notes: document.getElementById('step3_notes').value,
+                step4_notes: document.getElementById('step4_notes').value,
+                step5_notes: document.getElementById('step5_notes').value,
+                step7_notes: document.getElementById('step7_notes').value,
+                
+                // Data table results
+                hot_time: document.getElementById('hot_time').value,
+                hot_order: document.getElementById('hot_order').value,
+                hot_observations: document.getElementById('hot_observations').value,
+                room_time: document.getElementById('room_time').value,
+                room_order: document.getElementById('room_order').value,
+                room_observations: document.getElementById('room_observations').value,
+                cold_time: document.getElementById('cold_time').value,
+                cold_order: document.getElementById('cold_order').value,
+                cold_observations: document.getElementById('cold_observations').value,
+                ice_time: document.getElementById('ice_time').value,
+                ice_order: document.getElementById('ice_order').value,
+                ice_observations: document.getElementById('ice_observations').value,
+                
+                // Conclusions
+                results_explanation: document.getElementById('results_explanation').value,
+                hypothesis_check: document.getElementById('hypothesis_check').value,
+                temperature_relationship: document.getElementById('temperature_relationship').value,
+                real_world_applications: document.getElementById('real_world_applications').value
+            };
+
+            // Format data for email
+            const message = `
+EXPERIMENT 2.1: DIFFUSION AT DIFFERENT TEMPERATURES RESULTS
+Student Email: ${email}
+Submission Time: ${new Date().toLocaleString()}
+
+=== HYPOTHESIS ===
+${experimentData.hypothesis}
+
+=== PROCEDURE NOTES ===
+Step 1 (Ice Water Prep): ${experimentData.step1_notes}
+Step 2 (Room Temp Prep): ${experimentData.step2_notes}
+Step 3 (Ice Water Beaker): ${experimentData.step3_notes}
+Step 4 (Hot Water): ${experimentData.step4_notes}
+Step 5 (Cold Water): ${experimentData.step5_notes}
+Step 7 (Food Coloring): ${experimentData.step7_notes}
+
+=== DIFFUSION DATA ===
+Very Hot Water (Yellow):
+- Time: ${experimentData.hot_time}
+- Order: ${experimentData.hot_order}
+- Observations: ${experimentData.hot_observations}
+
+Room Temperature Water (Red):
+- Time: ${experimentData.room_time}
+- Order: ${experimentData.room_order}
+- Observations: ${experimentData.room_observations}
+
+Very Cold Water (Green):
+- Time: ${experimentData.cold_time}
+- Order: ${experimentData.cold_order}
+- Observations: ${experimentData.cold_observations}
+
+Ice Water (Blue):
+- Time: ${experimentData.ice_time}
+- Order: ${experimentData.ice_order}
+- Observations: ${experimentData.ice_observations}
+
+=== CONCLUSIONS ===
+Results Explanation (Kinetic Theory):
+${experimentData.results_explanation}
+
+Hypothesis Check:
+${experimentData.hypothesis_check}
+
+Temperature-Diffusion Relationship:
+${experimentData.temperature_relationship}
+
+Real-World Applications:
+${experimentData.real_world_applications}
+            `;
+
+            const templateParams = {
+                to_email: 'instructor@example.com',
+                from_email: email,
+                message: message,
+                subject: 'Experiment 2.1 Results - Diffusion at Different Temperatures'
+            };
+
+            // Console logging for debugging
+            console.log('=== EXPERIMENT 2.1 EMAIL DATA ===');
+            console.log('Student Email:', email);
+            console.log('Submission Time:', new Date().toLocaleString());
+            console.log('EmailJS Template Params:', templateParams);
+            console.log('Full Message Content:');
+            console.log(message);
+            console.log('=====================================');
+
+            document.getElementById('submitStatus').innerHTML = 'Sending results...';
+            
+            emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                .then(function(response) {
+                    console.log('✅ EmailJS Success Response:', response);
+                    document.getElementById('submitStatus').innerHTML = 
+                        '<span style="color: green;">✓ Results sent successfully!</span>';
+                }, function(error) {
+                    console.error('❌ EmailJS Error:', error);
+                    document.getElementById('submitStatus').innerHTML = 
+                        '<span style="color: red;">✗ Failed to send results.</span>';
+                });
+        });
+    </script>
+
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .email-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+
+        .email-section h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        #studentEmail {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .materials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .material-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .material-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .question-section, .hypothesis-section {
+            background: #e8f4f8;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+
+        .hypothesis-section textarea, .question-group textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+            margin-top: 10px;
+        }
+
+        .step {
+            background: #ffffff;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .step h4 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+        }
+
+        .observation-input {
+            margin-top: 15px;
+        }
+
+        .observation-input label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        .observation-input textarea {
+            width: 100%;
+            min-height: 60px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .data-table {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .data-table table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .data-table th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        .data-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .question-group {
+            margin-bottom: 25px;
+        }
+
+        .question-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .submit-btn {
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #218838;
+        }
+
+        .submit-status {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .materials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .data-table {
+                font-size: 14px;
+            }
+        }
+    </style>
+</Layout>

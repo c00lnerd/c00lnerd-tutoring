@@ -10,6 +10,5 @@ export default defineConfig({
   },
   outDir: './dist',
   publicDir: './public',
-  base: '/',
-  trailingSlash: 'always'
+  base: '/'
 });

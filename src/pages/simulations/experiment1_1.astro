@@ -1,0 +1,589 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 1.1: Making Observations">
+    <div class="experiment-container">
+        <!-- Student Information Section -->
+        <div class="student-info-section">
+            <h2>Student Information</h2>
+            <p>Please enter your email address so your instructor can see your experiment results:</p>
+            <div class="email-input-container">
+                <input type="email" id="studentEmail" placeholder="Enter your email address" required>
+                <button id="saveEmail" class="save-email-btn">Save Email</button>
+            </div>
+            <div id="emailStatus" class="email-status"></div>
+            
+            <!-- Submit Results Button -->
+            <div class="submit-results-section" style="margin-top: 1rem; display: none;" id="submitResultsSection">
+                <button id="submitResults" class="submit-results-btn">📧 Submit Experiment Results</button>
+                <p class="submit-note">Click this button when you've completed the experiment to send your results to the instructor.</p>
+            </div>
+        </div>
+
+        <h1>Experiment 1.1: Making Observations</h1>
+        
+        <div class="experiment-intro">
+            <h2>Purpose</h2>
+            <p>To explore qualitative and quantitative observations as they relate to the properties of solids.</p>
+        </div>
+
+        <div class="materials-section">
+            <h3>Materials Needed:</h3>
+            <div class="materials-visual">
+                <div class="materials-grid">
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="15" stroke="#e74c3c" stroke-width="2" fill="#fff"/>
+                                <text x="20" y="25" text-anchor="middle" font-size="8" fill="#e74c3c">Alka</text>
+                            </svg>
+                        </div>
+                        <span>Alka Seltzer tablet</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <ellipse cx="20" cy="20" rx="8" ry="12" stroke="#666" stroke-width="2" fill="#999"/>
+                            </svg>
+                        </div>
+                        <span>Small solid object (pebble/eraser)</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="12" stroke="#333" stroke-width="2" fill="none"/>
+                                <circle cx="20" cy="20" r="8" stroke="#333" stroke-width="1" fill="none"/>
+                                <line x1="20" y1="8" x2="20" y2="32" stroke="#333" stroke-width="1"/>
+                            </svg>
+                        </div>
+                        <span>Magnifying glass</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <rect x="5" y="15" width="30" height="3" stroke="#333" stroke-width="1" fill="#f39c12"/>
+                                <line x1="10" y1="12" x2="10" y2="21" stroke="#333" stroke-width="1"/>
+                                <line x1="20" y1="12" x2="20" y2="21" stroke="#333" stroke-width="1"/>
+                                <line x1="30" y1="12" x2="30" y2="21" stroke="#333" stroke-width="1"/>
+                            </svg>
+                        </div>
+                        <span>Centimeter ruler</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <rect x="8" y="25" width="24" height="8" stroke="#333" stroke-width="2" fill="#ddd"/>
+                                <circle cx="20" cy="15" r="8" stroke="#333" stroke-width="2" fill="#fff"/>
+                            </svg>
+                        </div>
+                        <span>Kitchen balance</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <path d="M 12 30 L 12 15 Q 12 10 20 10 Q 28 10 28 15 L 28 30 Z" stroke="#333" stroke-width="2" fill="#e3f2fd"/>
+                                <line x1="12" y1="25" x2="28" y2="25" stroke="#2196f3" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <span>Beaker of water</span>
+                    </div>
+                    <div class="material-item">
+                        <div class="material-icon">
+                            <svg width="40" height="40" viewBox="0 0 40 40">
+                                <line x1="8" y1="20" x2="32" y2="20" stroke="#8b4513" stroke-width="3"/>
+                                <circle cx="32" cy="20" r="2" fill="#8b4513"/>
+                            </svg>
+                        </div>
+                        <span>Stirring rod or spoon</span>
+                    </div>
+                </div>
+            </div>
+            <ul>
+                <li>Alka Seltzer tablet</li>
+                <li>A small solid object (such as a pebble or eraser)</li>
+                <li>Magnifying glass</li>
+                <li>Centimeter ruler</li>
+                <li>Kitchen balance</li>
+                <li>Beaker of water</li>
+                <li>Stirring rod or spoon to stir</li>
+            </ul>
+        </div>
+
+        <div class="procedure-section">
+            <h3>Procedure:</h3>
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Step 1: Initial Observations</h4>
+                    <p>Examine the small solid object using your senses. In the data table in your student notebook, make a list of your observations. <strong>CAUTION:</strong> Never taste anything in a science experiment. Unknown substances may be hazardous.</p>
+                    <div class="observation-input">
+                        <label for="step1Observations">Your Step 1 Observations:</label>
+                        <textarea id="step1Observations" rows="3" placeholder="Record your sensory observations here..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 2: Magnifying Glass</h4>
+                    <p>Observe the object with a magnifying glass. Record what you see.</p>
+                    <div class="procedure-visual">
+                        <div class="magnifying-demo">
+                            <svg width="200" height="100" viewBox="0 0 200 100">
+                                <!-- Object -->
+                                <ellipse cx="80" cy="50" rx="15" ry="20" stroke="#666" stroke-width="2" fill="#999"/>
+                                <!-- Magnifying glass -->
+                                <circle cx="130" cy="40" r="25" stroke="#333" stroke-width="3" fill="none"/>
+                                <line x1="150" y1="60" x2="170" y2="80" stroke="#8b4513" stroke-width="4"/>
+                                <!-- Magnified view -->
+                                <circle cx="130" cy="40" r="20" stroke="#e74c3c" stroke-width="1" fill="rgba(231, 76, 60, 0.1)"/>
+                                <text x="130" y="45" text-anchor="middle" font-size="8" fill="#333">Details visible!</text>
+                            </svg>
+                        </div>
+                        <p><em>Use the magnifying glass to see details not visible to the naked eye</em></p>
+                    </div>
+                    <div class="observation-input">
+                        <label for="step2Observations">Your Step 2 Observations:</label>
+                        <textarea id="step2Observations" rows="3" placeholder="Record what you observed with the magnifying glass..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 3: Weight Measurement</h4>
+                    <p>Use the kitchen balance to determine the weight of the object. Add the weight (be sure to include units) to your list of observations.</p>
+                    <div class="measurement-input">
+                        <label for="objectWeight">Object Weight:</label>
+                        <input type="text" id="objectWeight" placeholder="e.g., 15.2 grams">
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 4: Dimension Measurements</h4>
+                    <p>Use a centimeter ruler to measure two dimensions (length, width, height, or diameter). Record these observations and be sure to include units.</p>
+                    <div class="measurement-inputs">
+                        <div>
+                            <label for="dimension1">Dimension 1:</label>
+                            <input type="text" id="dimension1" placeholder="e.g., Length: 3.5 cm">
+                        </div>
+                        <div>
+                            <label for="dimension2">Dimension 2:</label>
+                            <input type="text" id="dimension2" placeholder="e.g., Width: 2.1 cm">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 5: Water Test</h4>
+                    <p>Place the object in the beaker of water and stir. Record any observations.</p>
+                    <div class="procedure-visual">
+                        <div class="water-test-demo">
+                            <svg width="200" height="120" viewBox="0 0 200 120">
+                                <!-- Beaker -->
+                                <path d="M 60 100 L 60 40 Q 60 30 70 30 L 130 30 Q 140 30 140 40 L 140 100 Z" stroke="#333" stroke-width="2" fill="#e3f2fd"/>
+                                <!-- Water level -->
+                                <line x1="65" y1="70" x2="135" y2="70" stroke="#2196f3" stroke-width="2"/>
+                                <!-- Object in water -->
+                                <ellipse cx="100" cy="80" rx="8" ry="10" stroke="#666" stroke-width="1" fill="#999"/>
+                                <!-- Stirring rod -->
+                                <line x1="90" y1="25" x2="110" y2="85" stroke="#8b4513" stroke-width="3"/>
+                                <!-- Bubbles/reaction -->
+                                <circle cx="95" cy="75" r="2" stroke="#fff" stroke-width="1" fill="rgba(255,255,255,0.7)"/>
+                                <circle cx="105" cy="65" r="1.5" stroke="#fff" stroke-width="1" fill="rgba(255,255,255,0.7)"/>
+                                <circle cx="85" cy="85" r="1" stroke="#fff" stroke-width="1" fill="rgba(255,255,255,0.7)"/>
+                                <text x="100" y="115" text-anchor="middle" font-size="10" fill="#333">Observe changes!</text>
+                            </svg>
+                        </div>
+                        <p><em>Watch for bubbling, dissolving, floating, or other changes</em></p>
+                    </div>
+                    <div class="observation-input">
+                        <label for="step5Observations">Your Step 5 Observations:</label>
+                        <textarea id="step5Observations" rows="3" placeholder="Record what happened when you placed the object in water..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 6: Remove Object</h4>
+                    <p>Remove the object from the beaker.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 7: Alka Seltzer Test</h4>
+                    <p>Repeat steps 1 through 5 for the Alka Seltzer tablet. Record all observations in the data table of your student notebook.</p>
+                    <div class="observation-input">
+                        <label for="alkaSeltzerObservations">Alka Seltzer Observations:</label>
+                        <textarea id="alkaSeltzerObservations" rows="4" placeholder="Record all your observations for the Alka Seltzer tablet..."></textarea>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 8: Clean Up</h4>
+                    <p>Empty the beaker down the drain, rinse the beaker and return all materials to their proper place.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="conclusion-section">
+            <h3>Conclusion:</h3>
+            <p>Answer the following questions in a paragraph as you sum up what you learned:</p>
+            <ol>
+                <li>How did the appearance of each object differ under the magnifying glass?</li>
+                <li>Which data were obtained by qualitative observations?</li>
+                <li>Which data were obtained by quantitative observations?</li>
+                <li>How did the instruments extend the observations you made with your senses?</li>
+                <li>How did the objects change when placed in the beaker of water?</li>
+            </ol>
+            <textarea id="conclusions" rows="8" placeholder="Write your conclusions here, addressing all five questions..."></textarea>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .experiment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .student-info-section {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .email-input-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .email-input-container input[type="email"] {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .save-email-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background: #228be6;
+        color: white;
+        cursor: pointer;
+    }
+
+    .email-status {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .submit-results-btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        background: #28a745;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .submit-results-btn:hover {
+        background: #218838;
+    }
+
+    .submit-results-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .submit-note {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0.5rem 0 0 0;
+        text-align: center;
+    }
+
+    .experiment-intro {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .materials-section, .procedure-section, .conclusion-section {
+        background: #fff;
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .materials-section ul {
+        list-style-type: disc;
+        margin-left: 2rem;
+    }
+
+    .materials-section li {
+        margin-bottom: 0.5rem;
+    }
+
+    .materials-visual {
+        margin-bottom: 1rem;
+    }
+
+    .materials-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+
+    .material-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .material-icon {
+        margin-bottom: 0.5rem;
+    }
+
+    .steps-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .step {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #228be6;
+    }
+
+    .step h4 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .procedure-visual {
+        margin-top: 1rem;
+    }
+
+    .magnifying-demo, .water-test-demo {
+        margin-bottom: 0.5rem;
+    }
+
+    .observation-input, .measurement-input {
+        margin-top: 1rem;
+    }
+
+    .observation-input label, .measurement-input label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+
+    .observation-input textarea, .measurement-input input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: inherit;
+    }
+
+    .measurement-inputs {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .conclusion-section textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 120px;
+        background: #fff;
+        color: #333;
+        box-sizing: border-box;
+    }
+
+    .conclusion-section textarea:focus {
+        outline: none;
+        border-color: #228be6;
+        box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.1);
+    }
+
+    .conclusion-section textarea::placeholder {
+        color: #999;
+        font-style: italic;
+    }
+
+    .conclusion-section ol {
+        margin-bottom: 1rem;
+    }
+
+    .conclusion-section li {
+        margin-bottom: 0.5rem;
+        color: #555;
+    }
+
+    @media (max-width: 768px) {
+        .experiment-container {
+            padding: 1rem;
+        }
+
+        .materials-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .measurement-inputs {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Email functionality
+        const emailInput = document.getElementById('studentEmail');
+        const saveEmailBtn = document.getElementById('saveEmail');
+        const emailStatus = document.getElementById('emailStatus');
+        const submitResultsBtn = document.getElementById('submitResults');
+        
+        // Check if email is already saved
+        const savedEmail = localStorage.getItem('studentEmail');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+            emailStatus.textContent = `Email saved: ${savedEmail}`;
+            emailStatus.style.color = '#28a745';
+            document.getElementById('submitResultsSection').style.display = 'block';
+        }
+        
+        // Save email functionality
+        saveEmailBtn.addEventListener('click', function() {
+            const email = emailInput.value.trim();
+            if (email && isValidEmail(email)) {
+                localStorage.setItem('studentEmail', email);
+                emailStatus.textContent = `Email saved: ${email}`;
+                emailStatus.style.color = '#28a745';
+                document.getElementById('submitResultsSection').style.display = 'block';
+            } else {
+                emailStatus.textContent = 'Please enter a valid email address';
+                emailStatus.style.color = '#dc3545';
+                document.getElementById('submitResultsSection').style.display = 'none';
+            }
+        });
+        
+        // Email validation
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        // Send experiment results via EmailJS
+        submitResultsBtn.addEventListener('click', function() {
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                const conclusions = document.getElementById('conclusions').value.trim();
+                if (conclusions) {
+                    sendExperimentResults(savedEmail, conclusions);
+                } else {
+                    alert('Please fill in your conclusions before submitting');
+                }
+            } else {
+                alert('Please save your email address before submitting');
+            }
+        });
+        
+        // Send experiment results via EmailJS
+        function sendExperimentResults(email, conclusions) {
+            console.log('=== EXPERIMENT 1.1 RESULTS SUBMISSION ===');
+            console.log('Student Email:', email);
+            console.log('Student Conclusions:', conclusions);
+            
+            if (typeof emailjs !== 'undefined') {
+                // Initialize EmailJS right before sending (matching Module 9 quiz)
+                emailjs.init("la6DVzxI7W2gVEkX6");
+                console.log('✅ EmailJS initialized successfully');
+                
+                // Collect all experiment data
+                const step1Obs = document.getElementById('step1Observations').value || 'No observations recorded';
+                const step2Obs = document.getElementById('step2Observations').value || 'No observations recorded';
+                const objectWeight = document.getElementById('objectWeight').value || 'Not measured';
+                const dimension1 = document.getElementById('dimension1').value || 'Not measured';
+                const dimension2 = document.getElementById('dimension2').value || 'Not measured';
+                const step5Obs = document.getElementById('step5Observations').value || 'No observations recorded';
+                const alkaSeltzerObs = document.getElementById('alkaSeltzerObservations').value || 'No observations recorded';
+
+                // Format message for EmailJS template
+                const messageContent = `EXPERIMENT 1.1: MAKING OBSERVATIONS
+========================================
+
+STUDENT EMAIL: ${email}
+COMPLETION TIME: ${new Date().toLocaleString()}
+
+SOLID OBJECT OBSERVATIONS:
+Step 1 (Sensory): ${step1Obs}
+Step 2 (Magnifying Glass): ${step2Obs}
+Step 3 (Weight): ${objectWeight}
+Step 4 (Dimensions): ${dimension1}, ${dimension2}
+Step 5 (Water Test): ${step5Obs}
+
+ALKA SELTZER OBSERVATIONS:
+${alkaSeltzerObs}
+
+STUDENT CONCLUSIONS:
+${conclusions}
+
+EXPERIMENT SUMMARY:
+The student completed the making observations experiment, exploring qualitative and quantitative observations as they relate to the properties of solids, comparing a solid object and Alka Seltzer tablet.`;
+
+                const templateParams = {
+                    user_email: email,
+                    subject: "Experiment 1.1: Making Observations - Results",
+                    message: messageContent,
+                    quiz_name: "Experiment 1.1: Making Observations",
+                    score: "Completed",
+                    percentage: "100%"
+                };
+
+                console.log('=== EMAILJS TEMPLATE PARAMETERS ===');
+                console.log('user_email:', templateParams.user_email);
+                console.log('subject:', templateParams.subject);
+                console.log('message:', templateParams.message);
+                console.log('=== END TEMPLATE PARAMETERS ===');
+
+                // Show user what's being sent
+                emailStatus.innerHTML += `<br><small style="color: blue;">📤 Sending experiment results...</small>`;
+
+                emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                    .then(function(response) {
+                        console.log('✅ Experiment results sent successfully:', response);
+                        emailStatus.innerHTML += '<br><small style="color: green;">✓ Results sent to instructor successfully!</small>';
+                        submitResultsBtn.textContent = '✅ Results Sent';
+                        submitResultsBtn.disabled = true;
+                    })
+                    .catch(function(error) {
+                        console.error('❌ Failed to send experiment results:', error);
+                        emailStatus.innerHTML += '<br><small style="color: red;">⚠ Failed to send results. Please try again.</small>';
+                    });
+            } else {
+                console.warn('⚠ EmailJS not available - typeof emailjs:', typeof emailjs);
+                emailStatus.innerHTML += '<br><small style="color: red;">⚠ EmailJS not available</small>';
+            }
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+</Layout>

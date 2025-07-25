@@ -6,74 +6,65 @@ import Layout from '../../../layouts/Layout.astro';
     <div class="container">
         <h1>Ionic Equation Balancer</h1>
         
-        <div class="example-selector">
-            <h3>Select Reaction Type:</h3>
-            <select id="reactionTypeSelect" onchange="changeReactionType()">
-                <option value="">Choose a reaction type...</option>
-                <option value="precipitation">Precipitation Reactions</option>
-                <option value="redox">Redox Reactions</option>
-                <option value="acid_base">Acid-Base Reactions</option>
-                <option value="gas_forming">Gas-Forming Reactions</option>
-            </select>
+        <div class="controls">
+            <div class="control-group">
+                <label for="reactionTypeSelect">Select Reaction Type:</label>
+                <select id="reactionTypeSelect" onchange="changeReactionType()">
+                    <option value="precipitation">Precipitation Reactions</option>
+                    <option value="redox">Redox Reactions</option>
+                    <option value="acid_base">Acid-Base Reactions</option>
+                    <option value="gas_forming">Gas-Forming Reactions</option>
+                </select>
+            </div>
             
-            <div class="example-dropdown">
-                <label for="exampleSelect">Choose an example:</label>
-                <select id="exampleSelect" onchange="loadExample()">
-                    <option value="">Select an example...</option>
+            <div class="control-group">
+                <label for="equationSelect">Select Example:</label>
+                <select id="equationSelect" onchange="changeExample()">
                 </select>
             </div>
         </div>
 
-        <div class="input-section">
-            <div class="equation-input">
-                <label for="reactants">Reactants (separated by +):</label>
-                <input type="text" id="reactants" placeholder="e.g., AgNO3 + NaCl">
+        <div class="equation-display">
+            <div id="molecularEquation" class="equation"></div>
+        </div>
+
+        <div class="steps-container">
+            <div id="step1" class="step">
+                <h3>Step 1: Identify the reaction</h3>
+                <div id="step1Explanation" class="step-content"></div>
             </div>
-            
-            <div class="equation-input">
-                <label for="products">Products (separated by +):</label>
-                <input type="text" id="products" placeholder="e.g., AgCl + NaNO3">
+
+            <div id="step2" class="step">
+                <h3>Step 2: Write the complete ionic equation</h3>
+                <div id="step2Explanation" class="step-content"></div>
             </div>
-            
-            <button id="balanceBtn" onclick="balanceEquation()">Balance Equation</button>
-        </div>
 
-        <div class="results-section">
-            <div id="balancedEquation" class="result-box"></div>
-            <div id="ionicEquation" class="result-box"></div>
-            <div id="netIonicEquation" class="result-box"></div>
-        </div>
+            <div id="step3" class="step">
+                <h3>Step 3: Identify spectator ions</h3>
+                <div id="step3Explanation" class="step-content"></div>
+            </div>
 
-        <div class="details-panel" id="detailsPanel">
-            <h4>Step-by-Step Solution:</h4>
-            <div id="solutionSteps"></div>
-        </div>
-
-        <div class="instructions">
-            <h3>How to Use:</h3>
-            <ol>
-                <li>Select a reaction type from the dropdown</li>
-                <li>Choose an example or enter your own compounds</li>
-                <li>Enter reactants and products separated by +</li>
-                <li>Click "Balance Equation" to see the balanced equation</li>
-                <li>View the complete ionic and net ionic equations</li>
-            </ol>
-            
-            <h4>Supported Compounds:</h4>
-            <p>Enter chemical formulas like: H2SO4, NaOH, AgNO3, BaCl2, etc.</p>
-            <p>The balancer supports common ionic compounds, acids, and bases.</p>
+            <div id="step4" class="step">
+                <h3>Step 4: Write the net ionic equation</h3>
+                <div id="step4Explanation" class="step-content"></div>
+            </div>
         </div>
     </div>
 </Layout>
 
 <style>
+    :root {
+        --accent: #007bff;
+        --accent-dark: #0056b3;
+        --gray: #ced4da;
+        --gray-light: #f1f3f5;
+        --gray-dark: #6c757d;
+    }
+
     .container {
         max-width: 900px;
-        margin: 2rem auto;
-        padding: 2rem;
-        background-color: white;
-        border-radius: 10px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin: 0 auto;
+        padding: 2rem 1rem;
     }
 
     h1 {
@@ -82,30 +73,35 @@ import Layout from '../../../layouts/Layout.astro';
         margin-bottom: 2rem;
     }
 
-    .example-selector {
-        margin: 20px 0;
-        padding: 20px;
+    .controls {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
         background: var(--gray-light);
         border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex-wrap: wrap;
     }
 
-    .example-selector h3 {
+    .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        min-width: 200px;
+        flex: 1;
+    }
+
+    .control-group label {
+        font-weight: bold;
         color: var(--accent);
-        margin-bottom: 1rem;
-    }
-
-    .example-dropdown {
-        margin-top: 1rem;
     }
 
     select {
-        width: 100%;
-        padding: 0.5rem;
-        font-size: 1rem;
-        border: 2px solid var(--gray-light);
+        padding: 0.75rem;
+        border: 2px solid var(--gray);
         border-radius: 5px;
-        margin-top: 0.5rem;
+        font-size: 1rem;
+        background: white;
     }
 
     select:focus {
@@ -113,246 +109,887 @@ import Layout from '../../../layouts/Layout.astro';
         border-color: var(--accent);
     }
 
-    .input-section {
+    select option[disabled] {
+        display: none;
+    }
+
+    .equation-display {
+        text-align: center;
         margin: 2rem 0;
         padding: 1.5rem;
         background: var(--gray-light);
         border-radius: 8px;
     }
 
-    .equation-input {
-        margin-bottom: 1rem;
-    }
-
-    .equation-input label {
-        display: block;
-        margin-bottom: 0.5rem;
+    .equation {
+        font-size: 1.5rem;
         font-weight: bold;
         color: var(--accent);
-    }
-
-    .equation-input input {
-        width: 100%;
-        padding: 0.5rem;
-        font-size: 1rem;
-        border: 2px solid var(--gray-light);
-        border-radius: 5px;
-    }
-
-    .equation-input input:focus {
-        outline: none;
-        border-color: var(--accent);
-    }
-
-    button {
-        width: 100%;
-        padding: 0.75rem;
-        font-size: 1.1rem;
-        font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        background-color: var(--accent);
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        margin-top: 1rem;
-    }
-
-    button:hover {
-        background-color: var(--accent-dark);
-    }
-
-    .results-section {
-        margin: 2rem 0;
-    }
-
-    .result-box {
         margin: 1rem 0;
-        padding: 1rem;
-        background: #f8f9fa;
-        border: 1px solid #dee2e6;
-        border-radius: 5px;
-        font-family: 'Courier New', monospace;
-        font-size: 1.1rem;
-        min-height: 2rem;
     }
 
-    .result-box:empty {
+    .steps-container {
+        margin-top: 2rem;
+    }
+
+    .step {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 2px solid var(--gray);
+        border-radius: 8px;
+        background: white;
         display: none;
+    }
+
+    .step.active {
+        display: block;
+        border-color: var(--accent);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .step h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+        border-bottom: 2px solid var(--accent);
+        padding-bottom: 0.5rem;
+    }
+
+    .step-content {
+        line-height: 1.6;
+    }
+
+    .step-content .equation {
+        background: var(--gray-light);
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+        font-size: 1.2rem;
+    }
+
+    .nav-buttons {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .nav-buttons button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.2s;
+    }
+
+    .nav-buttons button:hover {
+        background-color: #0056b3;
+    }
+
+    .details-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+    }
+
+    .details-btn:hover {
+        background: var(--accent-dark);
     }
 
     .details-panel {
-        display: none;
-        background-color: var(--gray-light);
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        padding: 1.5rem;
-        margin: 2rem 0;
+        display: none !important;
+        background: #f8f9fa;
+        border: 1px solid var(--gray);
+        border-radius: 5px;
+        padding: 1rem;
+        margin: 1rem 0;
     }
 
     .details-panel.show {
-        display: block;
+        display: block !important;
     }
 
     .details-panel h4 {
         color: var(--accent);
-        margin-bottom: 1rem;
-    }
-
-    .instructions {
-        background-color: var(--gray-light);
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-top: 2rem;
-    }
-
-    .instructions h3, .instructions h4 {
-        color: var(--accent);
-        margin-bottom: 1rem;
-    }
-
-    .instructions ol {
-        margin-left: 1.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .instructions li {
         margin-bottom: 0.5rem;
-        line-height: 1.6;
     }
 
-    .instructions p {
-        margin-bottom: 0.5rem;
-        line-height: 1.6;
+    .details-panel ul {
+        margin: 0.5rem 0;
+        padding-left: 1.5rem;
     }
 
-    @media (max-width: 600px) {
-        .container {
-            margin: 1rem;
-            padding: 1rem;
+    .details-panel li {
+        margin-bottom: 0.25rem;
+    }
+
+    .gas-info, .acid-base-info {
+        background: var(--gray-light);
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+    }
+
+    .oxidation-states {
+        background: var(--gray-light);
+        padding: 1rem;
+        border-radius: 5px;
+        margin: 1rem 0;
+    }
+
+    .explanation {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-left: 4px solid var(--accent);
+        border-radius: 0 5px 5px 0;
+    }
+
+    @media (max-width: 768px) {
+        .controls {
+            flex-direction: column;
+            gap: 1rem;
         }
-
-        .example-selector, .input-section {
-            padding: 1rem;
+        
+        .control-group {
+            min-width: auto;
+        }
+        
+        .nav-buttons {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .btn {
+            width: 100%;
+            max-width: 200px;
         }
     }
 </style>
 
 <script is:inline>
-    // Example reactions database
-    const examples = {
-        precipitation: [
-            { name: "Silver chloride formation", reactants: "AgNO3 + NaCl", products: "AgCl + NaNO3" },
-            { name: "Barium sulfate formation", reactants: "BaCl2 + Na2SO4", products: "BaSO4 + NaCl" },
-            { name: "Lead iodide formation", reactants: "Pb(NO3)2 + KI", products: "PbI2 + KNO3" }
-        ],
-        redox: [
-            { name: "Zinc and copper sulfate", reactants: "Zn + CuSO4", products: "ZnSO4 + Cu" },
-            { name: "Iron and silver nitrate", reactants: "Fe + AgNO3", products: "Fe(NO3)3 + Ag" }
-        ],
-        acid_base: [
-            { name: "HCl and NaOH", reactants: "HCl + NaOH", products: "NaCl + H2O" },
-            { name: "H2SO4 and Ba(OH)2", reactants: "H2SO4 + Ba(OH)2", products: "BaSO4 + H2O" }
-        ],
-        gas_forming: [
-            { name: "Carbonate and acid", reactants: "CaCO3 + HCl", products: "CaCl2 + H2O + CO2" },
-            { name: "Sulfite and acid", reactants: "Na2SO3 + HCl", products: "NaCl + H2O + SO2" }
-        ]
+    // Global variables
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    // Reaction types and their steps
+    const reactionTypes = {
+        precipitation: {
+            steps: [
+                "Identify the reaction",
+                "Write the complete ionic equation", 
+                "Identify spectator ions",
+                "Write the net ionic equation"
+            ]
+        },
+        redox: {
+            steps: [
+                "Identify oxidation states",
+                "Write half-reactions",
+                "Balance atoms and charges", 
+                "Write the balanced equation"
+            ]
+        },
+        acid_base: {
+            steps: [
+                "Identify acid and base",
+                "Write the molecular equation",
+                "Write the ionic equation",
+                "Write the net ionic equation"
+            ]
+        },
+        gas_forming: {
+            steps: [
+                "Identify gas product",
+                "Write the molecular equation",
+                "Write the ionic equation", 
+                "Write the net ionic equation"
+            ]
+        }
     };
 
-    function changeReactionType() {
-        const reactionType = document.getElementById('reactionTypeSelect').value;
-        const exampleSelect = document.getElementById('exampleSelect');
-        
-        // Clear previous options
-        exampleSelect.innerHTML = '<option value="">Select an example...</option>';
-        
-        if (reactionType && examples[reactionType]) {
-            examples[reactionType].forEach((example, index) => {
-                const option = document.createElement('option');
-                option.value = `${reactionType}_${index}`;
-                option.textContent = example.name;
-                exampleSelect.appendChild(option);
-            });
+    // Examples database
+    const examples = {
+        agno3_nacl: {
+            type: 'precipitation',
+            molecular: 'AgNO₃(aq) + NaCl(aq) → AgCl(s) + NaNO₃(aq)',
+            complete_ionic: 'Ag⁺(aq) + NO₃⁻(aq) + Na⁺(aq) + Cl⁻(aq) → AgCl(s) + Na⁺(aq) + NO₃⁻(aq)',
+            net_ionic: 'Ag⁺(aq) + Cl⁻(aq) → AgCl(s)',
+            spectator_ions: ['Na⁺', 'NO₃⁻'],
+            explanation: 'Silver chloride precipitates as a white solid, while sodium and nitrate ions remain in solution as spectator ions.'
+        },
+        bacl2_na2so4: {
+            type: 'precipitation',
+            molecular: 'BaCl₂(aq) + Na₂SO₄(aq) → BaSO₄(s) + 2NaCl(aq)',
+            complete_ionic: 'Ba²⁺(aq) + 2Cl⁻(aq) + 2Na⁺(aq) + SO₄²⁻(aq) → BaSO₄(s) + 2Na⁺(aq) + 2Cl⁻(aq)',
+            net_ionic: 'Ba²⁺(aq) + SO₄²⁻(aq) → BaSO₄(s)',
+            spectator_ions: ['Na⁺', 'Cl⁻'],
+            explanation: 'Barium sulfate precipitates as a white solid, commonly used in medical imaging.'
+        },
+        pb_no3_2_ki: {
+            type: 'precipitation',
+            molecular: 'Pb(NO₃)₂(aq) + 2KI(aq) → PbI₂(s) + 2KNO₃(aq)',
+            complete_ionic: 'Pb²⁺(aq) + 2NO₃⁻(aq) + 2K⁺(aq) + 2I⁻(aq) → PbI₂(s) + 2K⁺(aq) + 2NO₃⁻(aq)',
+            net_ionic: 'Pb²⁺(aq) + 2I⁻(aq) → PbI₂(s)',
+            spectator_ions: ['K⁺', 'NO₃⁻'],
+            explanation: 'Lead iodide precipitates as a bright yellow solid, demonstrating the formation of an insoluble salt.'
+        },
+        zn_hcl: {
+            type: 'redox',
+            molecular: 'Zn(s) + 2HCl(aq) → ZnCl₂(aq) + H₂(g)',
+            complete_ionic: 'Zn(s) + 2H⁺(aq) + 2Cl⁻(aq) → Zn²⁺(aq) + 2Cl⁻(aq) + H₂(g)',
+            net_ionic: 'Zn(s) + 2H⁺(aq) → Zn²⁺(aq) + H₂(g)',
+            half_reactions: ['Zn(s) → Zn²⁺(aq) + 2e⁻', '2H⁺(aq) + 2e⁻ → H₂(g)'],
+            oxidation_numbers: {'Zn': '0 → +2', 'H': '+1 → 0'},
+            balanced: 'Zn(s) + 2HCl(aq) → ZnCl₂(aq) + H₂(g)',
+            explanation: 'Zinc is oxidized while hydrogen is reduced, producing hydrogen gas.'
+        },
+        cu_agno3: {
+            type: 'redox',
+            molecular: 'Cu(s) + 2AgNO₃(aq) → Cu(NO₃)₂(aq) + 2Ag(s)',
+            complete_ionic: 'Cu(s) + 2Ag⁺(aq) + 2NO₃⁻(aq) → Cu²⁺(aq) + 2NO₃⁻(aq) + 2Ag(s)',
+            net_ionic: 'Cu(s) + 2Ag⁺(aq) → Cu²⁺(aq) + 2Ag(s)',
+            half_reactions: ['Cu(s) → Cu²⁺(aq) + 2e⁻', '2Ag⁺(aq) + 2e⁻ → 2Ag(s)'],
+            oxidation_numbers: {'Cu': '0 → +2', 'Ag': '+1 → 0'},
+            balanced: 'Cu(s) + 2AgNO₃(aq) → Cu(NO₃)₂(aq) + 2Ag(s)',
+            explanation: 'Copper displaces silver from solution, forming metallic silver crystals.'
+        },
+        fe_cuso4: {
+            type: 'redox',
+            molecular: 'Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)',
+            complete_ionic: 'Fe(s) + Cu²⁺(aq) + SO₄²⁻(aq) → Fe²⁺(aq) + SO₄²⁻(aq) + Cu(s)',
+            net_ionic: 'Fe(s) + Cu²⁺(aq) → Fe²⁺(aq) + Cu(s)',
+            half_reactions: ['Fe(s) → Fe²⁺(aq) + 2e⁻', 'Cu²⁺(aq) + 2e⁻ → Cu(s)'],
+            oxidation_numbers: {'Fe': '0 → +2', 'Cu': '+2 → 0'},
+            balanced: 'Fe(s) + CuSO₄(aq) → FeSO₄(aq) + Cu(s)',
+            explanation: 'Iron displaces copper from solution, demonstrating the activity series of metals.'
+        },
+        hcl_naoh: {
+            type: 'acid_base',
+            molecular: 'HCl(aq) + NaOH(aq) → NaCl(aq) + H₂O(l)',
+            ionic: 'H⁺(aq) + Cl⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Cl⁻(aq) + H₂O(l)',
+            net_ionic: 'H⁺(aq) + OH⁻(aq) → H₂O(l)',
+            acid_base_id: { acid: 'HCl (hydrochloric acid)', base: 'NaOH (sodium hydroxide)' },
+            ph_change: 'Acidic to neutral (pH increases from ~1 to ~7)',
+            explanation: 'Strong acid neutralizes strong base to form salt and water.'
+        },
+        h2so4_koh: {
+            type: 'acid_base',
+            molecular: 'H₂SO₄(aq) + 2KOH(aq) → K₂SO₄(aq) + 2H₂O(l)',
+            ionic: '2H⁺(aq) + SO₄²⁻(aq) + 2K⁺(aq) + 2OH⁻(aq) → 2K⁺(aq) + SO₄²⁻(aq) + 2H₂O(l)',
+            net_ionic: '2H⁺(aq) + 2OH⁻(aq) → 2H₂O(l)',
+            acid_base_id: { acid: 'H₂SO₄ (sulfuric acid)', base: 'KOH (potassium hydroxide)' },
+            ph_change: 'Acidic to neutral (pH increases)',
+            explanation: 'Diprotic acid requires two moles of base for complete neutralization.'
+        },
+        hno3_ca_oh_2: {
+            type: 'acid_base',
+            molecular: '2HNO₃(aq) + Ca(OH)₂(aq) → Ca(NO₃)₂(aq) + 2H₂O(l)',
+            ionic: '2H⁺(aq) + 2NO₃⁻(aq) + Ca²⁺(aq) + 2OH⁻(aq) → Ca²⁺(aq) + 2NO₃⁻(aq) + 2H₂O(l)',
+            net_ionic: '2H⁺(aq) + 2OH⁻(aq) → 2H₂O(l)',
+            acid_base_id: { acid: 'HNO₃ (nitric acid)', base: 'Ca(OH)₂ (calcium hydroxide)' },
+            ph_change: 'Acidic to neutral (pH increases)',
+            explanation: 'Two moles of monoprotic acid neutralize one mole of diprotic base.'
+        },
+        caco3_hcl: {
+            type: 'gas_forming',
+            molecular: 'CaCO₃(s) + 2HCl(aq) → CaCl₂(aq) + H₂O(l) + CO₂(g)',
+            ionic: 'CaCO₃(s) + 2H⁺(aq) + 2Cl⁻(aq) → Ca²⁺(aq) + 2Cl⁻(aq) + H₂O(l) + CO₂(g)',
+            net: 'CaCO₃(s) + 2H⁺(aq) → Ca²⁺(aq) + H₂O(l) + CO₂(g)',
+            gas_properties: { formula: 'CO₂', name: 'Carbon dioxide', test: 'Turns limewater milky' },
+            explanation: 'Carbonate reacts with acid to produce carbon dioxide gas, water, and a salt.'
+        },
+        na2so3_h2so4: {
+            type: 'gas_forming',
+            molecular: 'Na₂SO₃(s) + H₂SO₄(aq) → Na₂SO₄(aq) + H₂O(l) + SO₂(g)',
+            ionic: 'Na₂SO₃(s) + 2H⁺(aq) + SO₄²⁻(aq) → 2Na⁺(aq) + SO₄²⁻(aq) + H₂O(l) + SO₂(g)',
+            net: 'Na₂SO₃(s) + 2H⁺(aq) → 2Na⁺(aq) + H₂O(l) + SO₂(g)',
+            gas_properties: { formula: 'SO₂', name: 'Sulfur dioxide', test: 'Bleaches wet litmus paper' },
+            explanation: 'Sulfite reacts with acid to produce sulfur dioxide gas with a pungent odor.'
+        },
+        nh4cl_naoh: {
+            type: 'gas_forming',
+            molecular: 'NH₄Cl(s) + NaOH(aq) → NaCl(aq) + H₂O(l) + NH₃(g)',
+            ionic: 'NH₄⁺(aq) + Cl⁻(aq) + Na⁺(aq) + OH⁻(aq) → Na⁺(aq) + Cl⁻(aq) + H₂O(l) + NH₃(g)',
+            net: 'NH₄⁺(aq) + OH⁻(aq) → H₂O(l) + NH₃(g)',
+            gas_properties: { formula: 'NH₃', name: 'Ammonia', test: 'White fumes with HCl' },
+            explanation: 'Ammonium ion reacts with hydroxide to produce ammonia gas and water.'
         }
-    }
+    };
 
-    function loadExample() {
-        const exampleValue = document.getElementById('exampleSelect').value;
-        if (!exampleValue) return;
+    window.toggleDetails = function(step) {
+        const detailsPanel = document.getElementById(`details${step}`);
+        const button = document.querySelector(`#step${step}Explanation .details-btn`);
         
-        const [reactionType, index] = exampleValue.split('_');
-        const example = examples[reactionType][parseInt(index)];
+        console.log('Toggle details for step:', step);
+        console.log('Details panel:', detailsPanel);
+        console.log('Button:', button);
         
-        if (example) {
-            document.getElementById('reactants').value = example.reactants;
-            document.getElementById('products').value = example.products;
-        }
-    }
-
-    function balanceEquation() {
-        const reactants = document.getElementById('reactants').value.trim();
-        const products = document.getElementById('products').value.trim();
-        
-        if (!reactants || !products) {
-            alert('Please enter both reactants and products');
-            return;
-        }
-
-        try {
-            // Simple balancing logic (this is a simplified version)
-            const balancedEquation = `${reactants} → ${products}`;
-            const ionicEquation = generateIonicEquation(reactants, products);
-            const netIonicEquation = generateNetIonicEquation(reactants, products);
-            
-            document.getElementById('balancedEquation').innerHTML = 
-                `<strong>Balanced Equation:</strong><br>${balancedEquation}`;
-            document.getElementById('ionicEquation').innerHTML = 
-                `<strong>Complete Ionic Equation:</strong><br>${ionicEquation}`;
-            document.getElementById('netIonicEquation').innerHTML = 
-                `<strong>Net Ionic Equation:</strong><br>${netIonicEquation}`;
-            
-            // Show details panel
-            const detailsPanel = document.getElementById('detailsPanel');
+        if (detailsPanel.classList.contains('show')) {
+            detailsPanel.classList.remove('show');
+            detailsPanel.style.display = 'none';
+            button.textContent = 'Show More Details';
+        } else {
             detailsPanel.classList.add('show');
-            
-            // Generate solution steps
-            generateSolutionSteps(reactants, products);
-            
-        } catch (error) {
-            alert('Error balancing equation: ' + error.message);
+            detailsPanel.style.display = 'block';
+            button.textContent = 'Hide Details';
+        }
+    };
+
+    function addNavigationButtons(stepId) {
+        const step = document.getElementById(`step${stepId}`);
+        const explanation = document.getElementById(`step${stepId}Explanation`);
+        
+        console.log('Adding navigation buttons for step:', stepId);
+        
+        // Remove any existing buttons first
+        const existingDetailsBtn = explanation.querySelector('.details-btn');
+        const existingDetailsPanel = explanation.querySelector('.details-panel');
+        if (existingDetailsBtn) existingDetailsBtn.remove();
+        if (existingDetailsPanel) existingDetailsPanel.remove();
+        
+        // Add details button if not already present
+        const detailsButton = document.createElement('button');
+        detailsButton.className = 'details-btn';
+        detailsButton.textContent = 'Show More Details';
+        detailsButton.onclick = function() { 
+            window.toggleDetails(stepId);
+            return false; // Prevent default action and event bubbling
+        };
+        explanation.appendChild(detailsButton);
+        
+        const detailsPanel = document.createElement('div');
+        detailsPanel.className = 'details-panel';
+        detailsPanel.id = `details${stepId}`;
+        detailsPanel.style.display = 'none'; // Explicitly hide by default
+        explanation.appendChild(detailsPanel);
+        
+        // Add the appropriate details content based on step
+        const detailsContent = getDetailsContent(stepId);
+        detailsPanel.innerHTML = detailsContent;
+        
+        // Add navigation buttons
+        const existingNav = step.querySelector('.nav-buttons');
+        if (existingNav) {
+            existingNav.remove();
+        }
+        
+        const navDiv = document.createElement('div');
+        navDiv.className = 'nav-buttons';
+        navDiv.style = 'margin-top: 20px; display: flex; gap: 10px;';
+        
+        if (stepId > 1) {
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous Step';
+            prevButton.style.backgroundColor = '#007bff';
+            prevButton.style.color = 'white';
+            prevButton.style.border = 'none';
+            prevButton.style.padding = '0.5rem 1rem';
+            prevButton.style.borderRadius = '5px';
+            prevButton.style.cursor = 'pointer';
+            prevButton.style.fontSize = '1rem';
+            prevButton.onclick = previousStep;
+            navDiv.appendChild(prevButton);
+        }
+        
+        if (stepId < totalSteps) {
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next Step';
+            nextButton.style.backgroundColor = '#007bff';
+            nextButton.style.color = 'white';
+            nextButton.style.border = 'none';
+            nextButton.style.padding = '0.5rem 1rem';
+            nextButton.style.borderRadius = '5px';
+            nextButton.style.cursor = 'pointer';
+            nextButton.style.fontSize = '1rem';
+            nextButton.onclick = nextStep;
+            navDiv.appendChild(nextButton);
+        } else {
+            const resetButton = document.createElement('button');
+            resetButton.textContent = 'Start Over';
+            resetButton.style.backgroundColor = '#007bff';
+            resetButton.style.color = 'white';
+            resetButton.style.border = 'none';
+            resetButton.style.padding = '0.5rem 1rem';
+            resetButton.style.borderRadius = '5px';
+            resetButton.style.cursor = 'pointer';
+            resetButton.style.fontSize = '1rem';
+            resetButton.onclick = resetSteps;
+            navDiv.appendChild(resetButton);
+        }
+        
+        step.appendChild(navDiv);
+    }
+
+    function getDetailsContent(stepId) {
+        const currentType = document.getElementById('reactionTypeSelect').value;
+        
+        if (currentType === 'precipitation') {
+            switch(stepId) {
+                case 1:
+                    return `
+                        <h4>Understanding Molecular Equations:</h4>
+                        <ul>
+                            <li>Shows complete formulas of all compounds</li>
+                            <li>Includes state symbols (aq, s, l, g)</li>
+                            <li>Does not show individual ions</li>
+                        </ul>`;
+                case 2:
+                    return `
+                        <h4>Complete Ionic Equations:</h4>
+                        <ul>
+                            <li>Show all aqueous compounds as separated ions</li>
+                            <li>Keep solid, liquid, and gas compounds together</li>
+                            <li>Include all ions present in solution</li>
+                        </ul>`;
+                case 3:
+                    return `
+                        <h4>Understanding Spectator Ions:</h4>
+                        <ul>
+                            <li>Spectator ions do not participate in the reaction</li>
+                            <li>They remain unchanged throughout the process</li>
+                            <li>They appear in the same form on both sides of the equation</li>
+                            <li>Removing them simplifies the equation to show only the actual reaction</li>
+                        </ul>`;
+                case 4:
+                    return `
+                        <h4>Net Ionic Equations:</h4>
+                        <ul>
+                            <li>Show only species that participate in the reaction</li>
+                            <li>Omit spectator ions</li>
+                            <li>Represent the actual chemical change</li>
+                            <li>Are the same for similar precipitation reactions</li>
+                        </ul>`;
+            }
+        } else if (currentType === 'redox') {
+            switch(stepId) {
+                case 1:
+                    return `
+                        <h4>Calculating Oxidation Numbers:</h4>
+                        <ul>
+                            <li>Free elements have oxidation number of 0</li>
+                            <li>Monatomic ions have oxidation number equal to their charge</li>
+                            <li>Oxygen usually has -2 (except in peroxides)</li>
+                            <li>Hydrogen usually has +1 (except in metal hydrides)</li>
+                            <li>Sum of oxidation numbers equals the charge of the compound</li>
+                        </ul>`;
+                case 2:
+                    return `
+                        <h4>Half-Reaction Method:</h4>
+                        <ul>
+                            <li>Oxidation: loss of electrons (increase in oxidation number)</li>
+                            <li>Reduction: gain of electrons (decrease in oxidation number)</li>
+                            <li>Separate the reaction into two half-reactions</li>
+                            <li>Balance each half-reaction independently</li>
+                        </ul>`;
+                case 3:
+                    return `
+                        <h4>Balancing Half-Reactions:</h4>
+                        <ul>
+                            <li>Balance atoms other than O and H first</li>
+                            <li>Balance O by adding H₂O</li>
+                            <li>Balance H by adding H⁺</li>
+                            <li>Balance charge by adding electrons</li>
+                            <li>In basic solution, add OH⁻ to both sides for each H⁺</li>
+                        </ul>`;
+                case 4:
+                    return `
+                        <h4>Combining Half-Reactions:</h4>
+                        <ul>
+                            <li>Multiply each half-reaction by factors to equalize electrons</li>
+                            <li>Add the half-reactions to cancel electrons</li>
+                            <li>Simplify by canceling species on both sides</li>
+                            <li>Check that atoms and charge are balanced</li>
+                        </ul>`;
+            }
+        } else if (currentType === 'acid_base') {
+            switch(stepId) {
+                case 1:
+                    return `
+                        <h4>Acid-Base Definitions:</h4>
+                        <ul>
+                            <li>Arrhenius: Acid produces H⁺, base produces OH⁻</li>
+                            <li>Brønsted-Lowry: Acid donates H⁺, base accepts H⁺</li>
+                            <li>Lewis: Acid accepts electron pair, base donates electron pair</li>
+                            <li>Strong acids/bases dissociate completely; weak ones partially</li>
+                        </ul>`;
+                case 2:
+                    return `
+                        <h4>Molecular Equation Tips:</h4>
+                        <ul>
+                            <li>Show all compounds in their undissociated form</li>
+                            <li>Include state symbols (aq, s, l, g)</li>
+                            <li>Check for gas formation (CO₂, NH₃) or precipitates</li>
+                            <li>Ensure equation is balanced</li>
+                        </ul>`;
+                case 3:
+                    return `
+                        <h4>Ionic Equation Analysis:</h4>
+                        <ul>
+                            <li>Strong electrolytes dissociate completely in solution</li>
+                            <li>Weak electrolytes remain mostly undissociated</li>
+                            <li>Include spectator ions in complete ionic equation</li>
+                            <li>pH changes indicate acid-base neutralization</li>
+                        </ul>`;
+                case 4:
+                    return `
+                        <h4>Neutralization Reactions:</h4>
+                        <ul>
+                            <li>Net ionic equation often simplifies to: H⁺ + OH⁻ → H₂O</li>
+                            <li>Salt formation occurs from remaining ions</li>
+                            <li>Titration endpoint occurs at equivalence point</li>
+                            <li>pH at endpoint depends on strength of acid and base</li>
+                        </ul>`;
+            }
+        } else if (currentType === 'gas_forming') {
+            switch(stepId) {
+                case 1:
+                    return `
+                        <h4>Common Gas-Forming Reactions:</h4>
+                        <ul>
+                            <li>Carbonates + acid → CO₂ gas</li>
+                            <li>Metal sulfides + acid → H₂S gas</li>
+                            <li>Ammonium salts + base → NH₃ gas</li>
+                            <li>Active metals + acid → H₂ gas</li>
+                            <li>Sulfites + acid → SO₂ gas</li>
+                        </ul>`;
+                case 2:
+                    return `
+                        <h4>Writing Molecular Equations:</h4>
+                        <ul>
+                            <li>Include all reactants and products with correct formulas</li>
+                            <li>Add state symbols, especially (g) for gas products</li>
+                            <li>Consider solubility rules for aqueous solutions</li>
+                            <li>Ensure mass and charge are balanced</li>
+                        </ul>`;
+                case 3:
+                    return `
+                        <h4>Balancing Gas-Forming Equations:</h4>
+                        <ul>
+                            <li>Balance atoms systematically (leave H and O for last)</li>
+                            <li>Verify gas formation conditions (temperature, concentration)</li>
+                            <li>Consider intermediate species in multi-step reactions</li>
+                            <li>Check for competing reactions</li>
+                        </ul>`;
+                case 4:
+                    return `
+                        <h4>Gas Testing Methods:</h4>
+                        <ul>
+                            <li>CO₂: Turns limewater (Ca(OH)₂) cloudy</li>
+                            <li>H₂S: Rotten egg smell, blackens lead acetate paper</li>
+                            <li>NH₃: Pungent smell, turns red litmus blue</li>
+                            <li>H₂: "Pop" test with burning splint</li>
+                            <li>SO₂: Bleaches wet litmus paper</li>
+                        </ul>`;
+            }
+        }
+        return '<p>Additional details for this step.</p>';
+    }
+
+    function changeReactionType() {
+        const selectedType = document.getElementById('reactionTypeSelect').value;
+        
+        // Populate dropdown with examples for this reaction type
+        populateExampleDropdown(selectedType);
+        
+        // Update steps based on reaction type
+        const steps = reactionTypes[selectedType].steps;
+        updateStepTitles(steps);
+        
+        // Select first option and update content
+        const equationSelect = document.getElementById('equationSelect');
+        if (equationSelect.options.length > 0) {
+            equationSelect.selectedIndex = 0;
+            const example = examples[equationSelect.value];
+            updateContent(example);
         }
     }
 
-    function generateIonicEquation(reactants, products) {
-        // Simplified ionic equation generation
-        // In a full implementation, this would parse compounds and generate proper ionic forms
-        return `Complete ionic equation for: ${reactants} → ${products}`;
+    function updateStepTitles(steps) {
+        steps.forEach((step, index) => {
+            const stepElement = document.getElementById(`step${index + 1}`);
+            if (stepElement) {
+                const titleElement = stepElement.querySelector('h3');
+                if (titleElement) {
+                    titleElement.textContent = `Step ${index + 1}: ${step}`;
+                }
+            }
+        });
     }
 
-    function generateNetIonicEquation(reactants, products) {
-        // Simplified net ionic equation generation
-        // In a full implementation, this would identify spectator ions and remove them
-        return `Net ionic equation for: ${reactants} → ${products}`;
+    function updateContent(example) {
+        document.getElementById('molecularEquation').textContent = example.molecular;
+
+        // Store current step before hiding
+        const previousStep = currentStep;
+
+        // Hide all steps first
+        for (let i = 1; i <= totalSteps; i++) {
+            document.getElementById(`step${i}`).classList.remove('active');
+        }
+
+        // Update content based on reaction type
+        switch(example.type) {
+            case 'precipitation':
+                updatePrecipitationExample(example);
+                break;
+            case 'redox':
+                updateRedoxExample(example);
+                break;
+            case 'acid_base':
+                updateAcidBaseExample(example);
+                break;
+            case 'gas_forming':
+                updateGasFormingExample(example);
+                break;
+        }
+
+        // Add navigation buttons to all steps
+        for (let i = 1; i <= totalSteps; i++) {
+            addNavigationButtons(i);
+        }
+
+        // Show the same step that was active before
+        document.getElementById(`step${previousStep}`).classList.add('active');
     }
 
-    function generateSolutionSteps(reactants, products) {
-        const stepsDiv = document.getElementById('solutionSteps');
-        stepsDiv.innerHTML = `
-            <ol>
-                <li>Write the unbalanced equation: ${reactants} → ${products}</li>
-                <li>Identify the compounds and their states</li>
-                <li>Write the complete ionic equation</li>
-                <li>Identify spectator ions</li>
-                <li>Write the net ionic equation</li>
-            </ol>
-            <p><em>Note: This is a simplified demonstration. A full implementation would include detailed balancing algorithms and proper ionic dissociation.</em></p>
-        `;
+    function changeExample() {
+        const example = examples[document.getElementById('equationSelect').value];
+        updateContent(example);
     }
 
     // Initialize the page
-    window.addEventListener('DOMContentLoaded', () => {
-        // Set up initial state
-        console.log('Chemistry Equation Balancer loaded');
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM fully loaded');
+        
+        // Populate the example dropdown for the initial reaction type
+        const initialType = document.getElementById('reactionTypeSelect').value;
+        populateExampleDropdown(initialType);
+        
+        // Set initial reaction type and example
+        const equationSelect = document.getElementById('equationSelect');
+        if (equationSelect.options.length > 0) {
+            const firstExampleKey = equationSelect.options[0].value;
+            const firstExample = examples[firstExampleKey];
+            updateContent(firstExample);
+            resetSteps();
+        }
+        
+        // Ensure all details panels are hidden by default
+        const allDetailsPanels = document.querySelectorAll('.details-panel');
+        allDetailsPanels.forEach(panel => {
+            panel.classList.remove('show');
+            panel.style.display = 'none';
+        });
+        
+        console.log('Initialization complete');
     });
+
+    // Function to populate the example dropdown based on reaction type
+    function populateExampleDropdown(reactionType) {
+        const equationSelect = document.getElementById('equationSelect');
+        
+        // Clear existing options
+        equationSelect.innerHTML = '';
+        
+        // Add options for the selected reaction type
+        Object.keys(examples).forEach(key => {
+            const example = examples[key];
+            if (example.type === reactionType) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = example.molecular;
+                option.className = reactionType;
+                equationSelect.appendChild(option);
+            }
+        });
+    }
+
+    function nextStep() {
+        if (currentStep < totalSteps) {
+            const currentStepEl = document.getElementById(`step${currentStep}`);
+            const nextStepEl = document.getElementById(`step${currentStep + 1}`);
+            if (currentStepEl && nextStepEl) {
+                currentStepEl.classList.remove('active');
+                currentStep++;
+                nextStepEl.classList.add('active');
+            }
+        }
+    }
+
+    function previousStep() {
+        if (currentStep > 1) {
+            const currentStepEl = document.getElementById(`step${currentStep}`);
+            const prevStepEl = document.getElementById(`step${currentStep - 1}`);
+            if (currentStepEl && prevStepEl) {
+                currentStepEl.classList.remove('active');
+                currentStep--;
+                prevStepEl.classList.add('active');
+            }
+        }
+    }
+
+    function resetSteps() {
+        document.getElementById(`step${currentStep}`).classList.remove('active');
+        currentStep = 1;
+        document.getElementById(`step${currentStep}`).classList.add('active');
+    }
+
+    function updatePrecipitationExample(example) {
+        // COMPLETELY clear all step content and remove any existing elements
+        for (let i = 1; i <= totalSteps; i++) {
+            const explanation = document.getElementById(`step${i}Explanation`);
+            if (explanation) {
+                // Remove ALL children elements first
+                while (explanation.firstChild) {
+                    explanation.removeChild(explanation.firstChild);
+                }
+                // Set to empty
+                explanation.innerHTML = '';
+            }
+        }
+
+        // Step 1: Show molecular equation with details panel
+        document.getElementById('step1Explanation').innerHTML = 
+            `<p>The molecular equation shows all compounds in their undissociated form:</p>
+             <div class="equation">${example.molecular}</div>`;
+
+        // Step 2: Show complete ionic equation with details panel
+        document.getElementById('step2Explanation').innerHTML = 
+            `<p>The complete ionic equation shows all dissociated ions:</p>
+             <div class="equation">${example.complete_ionic}</div>`;
+
+        // Step 3: Identify spectator ions with details panel
+        const reactionProducts = example.net_ionic.split('→')[1].trim();
+        const product = reactionProducts.match(/[A-Za-z₀-₉⁺⁻(]+/)[0];
+        const reactants = example.net_ionic.split('→')[0].trim().split('+').map(r => r.trim());
+        
+        document.getElementById('step3Explanation').innerHTML = 
+            `<p>Look for ions that appear unchanged on both sides:</p>
+             <div class="equation">${example.complete_ionic}</div>
+             <div class="explanation">
+                <p>Spectator ions: ${example.spectator_ions.join(', ')}</p>
+                <p>Reacting ions: ${reactants.join(' and ')} combine to form ${product}</p>
+             </div>`;
+
+        // Step 4: Show net ionic equation with details panel
+        document.getElementById('step4Explanation').innerHTML = 
+            `<p>Net ionic equation (after removing spectator ions):</p>
+             <div class="equation">${example.net_ionic}</div>
+             <p><strong>Explanation:</strong> ${example.explanation}</p>`;
+
+        console.log('All step content created cleanly without any hardcoded details');
+    }
+
+    function updateRedoxExample(example) {
+        // Step 1: Identify oxidation states
+        const oxidationElements = Object.entries(example.oxidation_numbers)
+            .map(([element, change]) => `<li>${element}: ${change}</li>`)
+            .join('');
+
+        document.getElementById('step1Explanation').innerHTML = 
+            `<p>First, let's identify the oxidation states of each element:</p>
+             <div class="equation">${example.molecular}</div>
+             <div class="oxidation-states">
+                <h4>Oxidation States:</h4>
+                <ul>${oxidationElements}</ul>
+             </div>`;
+
+        // Step 2: Show half-reactions
+        const oxidationElement = Object.entries(example.oxidation_numbers)[0];
+        const reductionElement = Object.entries(example.oxidation_numbers)[1];
+
+        document.getElementById('step2Explanation').innerHTML = 
+            `<div class="equation">
+                <p>Complete ionic equation:</p>
+                <div>${example.complete_ionic}</div>
+             </div>
+             <div class="equation">
+                <p>Oxidation half-reaction (loss of electrons):</p>
+                <div>${example.half_reactions[0]}</div>
+                <p>Reduction half-reaction (gain of electrons):</p>
+                <div>${example.half_reactions[1]}</div>
+             </div>`;
+
+        // Step 3: Balance atoms and charges
+        document.getElementById('step3Explanation').innerHTML = 
+            `<p>Balance each half-reaction:</p>
+             <div class="equation">
+                ${example.half_reactions.map(reaction => 
+                    `<div>${reaction}</div>`
+                ).join('')}
+             </div>`;
+
+        // Step 4: Show final balanced equation
+        document.getElementById('step4Explanation').innerHTML = 
+            `<p>Final balanced equation:</p>
+             <div class="equation">${example.balanced}</div>
+             <p><strong>Explanation:</strong> ${example.explanation}</p>`;
+    }
+
+    function updateAcidBaseExample(example) {
+        // Step 1: Identify acid and base
+        document.getElementById('step1Explanation').innerHTML = 
+            `<p>First, let's identify the acid and base components:</p>
+             <div class="acid-base-info">
+                <h4>Reactants:</h4>
+                <ul>
+                    <li>Acid: ${example.acid_base_id.acid}</li>
+                    <li>Base: ${example.acid_base_id.base}</li>
+                </ul>
+             </div>
+             <div class="equation">${example.molecular}</div>`;
+
+        // Step 2: Show molecular equation
+        document.getElementById('step2Explanation').innerHTML = 
+            `<p>The molecular equation shows the complete reaction:</p>
+             <div class="equation">${example.molecular}</div>`;
+
+        // Step 3: Show ionic equation
+        document.getElementById('step3Explanation').innerHTML = 
+            `<p>The complete ionic equation shows dissociated ions:</p>
+             <div class="equation">${example.ionic}</div>
+             <div class="explanation">
+                <p>pH change: ${example.ph_change}</p>
+             </div>`;
+
+        // Step 4: Show net ionic equation
+        document.getElementById('step4Explanation').innerHTML = 
+            `<p>The net ionic equation shows the essential reaction:</p>
+             <div class="equation">${example.net_ionic}</div>
+             <p><strong>Explanation:</strong> ${example.explanation}</p>`;
+    }
+
+    function updateGasFormingExample(example) {
+        // Step 1: Identify gas product
+        document.getElementById('step1Explanation').innerHTML = 
+            `<p>First, let's identify the gas product and its properties:</p>
+             <div class="gas-info">
+                <h4>Gas Product: ${example.gas_properties.name} (${example.gas_properties.formula})</h4>
+                <p>Detection Test: ${example.gas_properties.test}</p>
+             </div>
+             <div class="equation">${example.molecular}</div>`;
+
+        // Step 2: Show molecular equation
+        document.getElementById('step2Explanation').innerHTML = 
+            `<p>The molecular equation shows all compounds before dissociation:</p>
+             <div class="equation">${example.molecular}</div>`;
+
+        // Step 3: Show ionic equation
+        document.getElementById('step3Explanation').innerHTML = 
+            `<p>The ionic equation shows dissociated species:</p>
+             <div class="equation">${example.ionic}</div>`;
+
+        // Step 4: Show net equation
+        document.getElementById('step4Explanation').innerHTML = 
+            `<p>The net equation after removing spectator ions:</p>
+             <div class="equation">${example.net}</div>
+             <p><strong>Explanation:</strong> ${example.explanation}</p>`;
+    }
 </script>

@@ -1,0 +1,696 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 1.2: Practice Collecting and Analyzing Data with Pendulums">
+    <div class="experiment-container">
+        <!-- Student Information Section -->
+        <div class="student-info-section">
+            <h2>Student Information</h2>
+            <p>Please enter your email address so your instructor can see your experiment results:</p>
+            <div class="email-input-container">
+                <input type="email" id="studentEmail" placeholder="Enter your email address" required>
+                <button id="saveEmail" class="save-email-btn">Save Email</button>
+            </div>
+            <div id="emailStatus" class="email-status"></div>
+            
+            <!-- Submit Results Button -->
+            <div class="submit-results-section" style="margin-top: 1rem; display: none;" id="submitResultsSection">
+                <button id="submitResults" class="submit-results-btn">📧 Submit Experiment Results</button>
+                <p class="submit-note">Click this button when you've completed the experiment to send your results to the instructor.</p>
+            </div>
+        </div>
+
+        <h1>Experiment 1.2: Practice Collecting and Analyzing Data with Pendulums</h1>
+        
+        <div class="experiment-intro">
+            <h2>Purpose</h2>
+            <p>To explore collecting and analyzing data using tables and graphs while investigating pendulums.</p>
+        </div>
+
+        <div class="materials-section">
+            <h3>Materials Needed:</h3>
+            <ul>
+                <li>String</li>
+                <li>Masking tape</li>
+                <li>Stopwatch or other 30-second timer</li>
+                <li>Pencil</li>
+                <li>Paper clip</li>
+                <li>5 Washers</li>
+                <li>Half a piece of cardstock paper (cut paper in half lengthwise) or cardboard 8.5" × 5.5"</li>
+                <li>Protractor</li>
+                <li>Metric ruler</li>
+            </ul>
+        </div>
+
+        <div class="hypothesis-section">
+            <h3>Question:</h3>
+            <p>How does changing the mass of a pendulum affect the number of swings in one minute? How does changing the length of a pendulum affect the number of swings in one minute?</p>
+            
+            <h3>Hypothesis:</h3>
+            <p>Write your prediction of how the number of swings of a pendulum will change as mass is changed. Write your prediction of how the number of swings of a pendulum will change as length is changed.</p>
+            <textarea id="hypothesis" rows="4" placeholder="Write your hypothesis here..."></textarea>
+        </div>
+
+        <div class="procedure-section">
+            <h3>Procedure - Part 1: Mass</h3>
+            <div class="steps-container">
+                <div class="step">
+                    <h4>Step 1: Variables</h4>
+                    <p>Write what the independent and dependent variables are in the data section of your lab notebook.</p>
+                    <div class="variables-input">
+                        <label for="independentVar1">Independent Variable (Part 1):</label>
+                        <input type="text" id="independentVar1" placeholder="What are you changing?">
+                        <label for="dependentVar1">Dependent Variable (Part 1):</label>
+                        <input type="text" id="dependentVar1" placeholder="What are you measuring?">
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 2: Setup Pendulum</h4>
+                    <p>You must keep all the variables constant except the one you're testing. So to keep the height from which you release the pendulum the same each time, follow these instructions. With the protractor draw a dotted line down the center of your paper or cardboard. Then position the protractor so the center line of the protractor (90°) is on the dotted line as shown in Figure 1.30. Draw a solid line about 20 degrees from the dotted line as shown. Set aside the protractor.</p>
+                    <div class="setup-diagram">
+                        <div class="figure">
+                            <div class="protractor-diagram">
+                                <img src="/images/figure1.30.png" alt="Figure 1.30: Protractor setup for consistent pendulum release angle" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"/>
+                            </div>
+                            <p><strong>Figure 1.30:</strong> Protractor setup for consistent pendulum release angle</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 3: Attach Card</h4>
+                    <p>Tape the card to the edge of a table so that it hangs down and you can see the lines you just drew.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 4: Measure String</h4>
+                    <p>With the ruler, measure out 32 cm of string. Tie one end of the string to the end of the pencil.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 5: Position Pencil</h4>
+                    <p>Tape the pencil to the top of the table so that it lines up with the dotted line on your paper and hangs out over the edge enough that the pendulum can easily swing.</p>
+                </div>
+
+                <div class="step">
+                    <h4>Step 6: Create Pendulum</h4>
+                    <p>Next, take the paper clip and bend it so it has a loop at the top and a hook shape at the bottom. It should look like a Christmas ornament hanger (see Figure 1.31 for an example).</p>
+                    <div class="setup-diagram">
+                        <div class="figure">
+                            <div class="paperclip-diagram">
+                                <img src="/images/figure1.31.png" alt="Figure 1.31: Bent paperclip as pendulum weight holder" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"/>
+                            </div>
+                            <p><strong>Figure 1.31:</strong> Bent paperclip as pendulum weight holder</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 7: Attach String</h4>
+                    <p>Tie the other end of the string hanging from the pencil to the loop on your paperclip. You now have a pendulum. Check to make sure that the string of your pendulum lines up with the dotted line on your card. If it doesn't, adjust the pencil or the card to make it line up. The string shouldn't touch the card so that it can freely swing, but you should be able to see that the string lines up with your dotted line when looking at it from directly in front of it.</p>
+                </div>
+
+                <div class="mass-testing-section">
+                    <h4>Mass Testing (Steps 8-14)</h4>
+                    <p>Now you will test the effect of mass on the number of swings. Add one washer to the paperclip. Put the paperclip back from the rest position (B in Figure 1.32) so that the string lines up with the solid line you drew on the card (position A in Figure 1.32). When your helper says "go," release the paperclip and count how many times the washer-pendulum swings back and forth for 30 seconds. One swing is counted from the release position (A) to the other side (C) and back to the release position (A). Multiply the number you counted by 2. This gives you the number of swings per minute and is known as the frequency. Now find the period by dividing the frequency into 1 (period = 1/frequency). Record the period in your data table.</p>
+                    <div class="setup-diagram">
+                        <div class="figure">
+                            <div class="swing-diagram">
+                                <img src="/images/figure1.32.png" alt="Figure 1.32: Pendulum swing positions - Release from A, through rest position B, to C, and back" style="max-width: 100%; height: auto; display: block; margin: 0 auto;"/>
+                            </div>
+                            <p><strong>Figure 1.32:</strong> Pendulum swing positions - Release from A, through rest position B, to C, and back</p>
+                        </div>
+                    </div>
+                    <div class="mass-data-table">
+                        <h5>Data Collection - Mass Effect</h5>
+                        <table id="massDataTable">
+                            <thead>
+                                <tr>
+                                    <th>Number of Washers</th>
+                                    <th>Trial 1 (swings/30s)</th>
+                                    <th>Trial 2 (swings/30s)</th>
+                                    <th>Trial 3 (swings/30s)</th>
+                                    <th>Average</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1 washer</td>
+                                    <td><input type="number" id="mass1_trial1" placeholder="0"></td>
+                                    <td><input type="number" id="mass1_trial2" placeholder="0"></td>
+                                    <td><input type="number" id="mass1_trial3" placeholder="0"></td>
+                                    <td><span id="mass1_avg">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2 washers</td>
+                                    <td><input type="number" id="mass2_trial1" placeholder="0"></td>
+                                    <td><input type="number" id="mass2_trial2" placeholder="0"></td>
+                                    <td><input type="number" id="mass2_trial3" placeholder="0"></td>
+                                    <td><span id="mass2_avg">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>3 washers</td>
+                                    <td><input type="number" id="mass3_trial1" placeholder="0"></td>
+                                    <td><input type="number" id="mass3_trial2" placeholder="0"></td>
+                                    <td><input type="number" id="mass3_trial3" placeholder="0"></td>
+                                    <td><span id="mass3_avg">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>4 washers</td>
+                                    <td><input type="number" id="mass4_trial1" placeholder="0"></td>
+                                    <td><input type="number" id="mass4_trial2" placeholder="0"></td>
+                                    <td><input type="number" id="mass4_trial3" placeholder="0"></td>
+                                    <td><span id="mass4_avg">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td>5 washers</td>
+                                    <td><input type="number" id="mass5_trial1" placeholder="0"></td>
+                                    <td><input type="number" id="mass5_trial2" placeholder="0"></td>
+                                    <td><input type="number" id="mass5_trial3" placeholder="0"></td>
+                                    <td><span id="mass5_avg">0</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button id="calculateMassAverages" class="calculate-btn">Calculate Averages</button>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Procedure - Part 2: Length</h3>
+            <div class="length-testing-section">
+                <div class="step">
+                    <h4>Step 15: Variables for Length Test</h4>
+                    <p>Write what the independent and dependent variables are in the data section of your lab notebook.</p>
+                    <div class="variables-input">
+                        <label for="independentVar2">Independent Variable (Part 2):</label>
+                        <input type="text" id="independentVar2" placeholder="What are you changing?">
+                        <label for="dependentVar2">Dependent Variable (Part 2):</label>
+                        <input type="text" id="dependentVar2" placeholder="What are you measuring?">
+                    </div>
+                </div>
+
+                <div class="step">
+                    <h4>Step 16: Reset Mass</h4>
+                    <p>Remove 3 washers from the paperclip. You should have 2 washers on the paperclip for the rest of this experiment.</p>
+                </div>
+
+                <div class="length-data-table">
+                    <h5>Data Collection - Length Effect</h5>
+                    <table id="lengthDataTable">
+                        <thead>
+                            <tr>
+                                <th>String Length (cm)</th>
+                                <th>Trial 1 (swings/30s)</th>
+                                <th>Trial 2 (swings/30s)</th>
+                                <th>Trial 3 (swings/30s)</th>
+                                <th>Average</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>30 cm</td>
+                                <td><input type="number" id="length30_trial1" placeholder="0"></td>
+                                <td><input type="number" id="length30_trial2" placeholder="0"></td>
+                                <td><input type="number" id="length30_trial3" placeholder="0"></td>
+                                <td><span id="length30_avg">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>25 cm</td>
+                                <td><input type="number" id="length25_trial1" placeholder="0"></td>
+                                <td><input type="number" id="length25_trial2" placeholder="0"></td>
+                                <td><input type="number" id="length25_trial3" placeholder="0"></td>
+                                <td><span id="length25_avg">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>20 cm</td>
+                                <td><input type="number" id="length20_trial1" placeholder="0"></td>
+                                <td><input type="number" id="length20_trial2" placeholder="0"></td>
+                                <td><input type="number" id="length20_trial3" placeholder="0"></td>
+                                <td><span id="length20_avg">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>15 cm</td>
+                                <td><input type="number" id="length15_trial1" placeholder="0"></td>
+                                <td><input type="number" id="length15_trial2" placeholder="0"></td>
+                                <td><input type="number" id="length15_trial3" placeholder="0"></td>
+                                <td><span id="length15_avg">0</span></td>
+                            </tr>
+                            <tr>
+                                <td>10 cm</td>
+                                <td><input type="number" id="length10_trial1" placeholder="0"></td>
+                                <td><input type="number" id="length10_trial2" placeholder="0"></td>
+                                <td><input type="number" id="length10_trial3" placeholder="0"></td>
+                                <td><span id="length10_avg">0</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button id="calculateLengthAverages" class="calculate-btn">Calculate Averages</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h3>Results:</h3>
+            <ol>
+                <li>Find the average period for each mass in Part 1 of the experiment by adding the period you found in each trial and dividing by 3.</li>
+                <li>Graph the data from Part 1. Remember to put your independent variable (the variable you changed—in this case the mass) on the x-axis and the dependent variable (the responding variable—in this case the average period) on the y-axis. Also remember to choose a scale that shows all the data well, label your axes including units, and give your graph a title.</li>
+                <li>Repeat steps 1 and 2 for Part 2 of the experiment.</li>
+            </ol>
+            <textarea id="results" rows="6" placeholder="Describe your results and what you observed in your graphs..."></textarea>
+        </div>
+
+        <div class="conclusion-section">
+            <h3>Conclusion:</h3>
+            <p>How has organizing your data in tables and graphs helped you to analyze the data? What patterns or trends do you see? Does this correspond to what you read in the text? Write a short paragraph responding to these questions.</p>
+            <textarea id="conclusions" rows="8" placeholder="Write your conclusions here, addressing the analysis questions..."></textarea>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .experiment-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .student-info-section {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .email-input-container {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .email-input-container input[type="email"] {
+        flex: 1;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    .save-email-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background: #228be6;
+        color: white;
+        cursor: pointer;
+    }
+
+    .email-status {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .submit-results-btn {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        background: #28a745;
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .submit-results-btn:hover {
+        background: #218838;
+    }
+
+    .submit-results-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+    }
+
+    .submit-note {
+        font-size: 0.9rem;
+        color: #666;
+        margin: 0.5rem 0 0 0;
+        text-align: center;
+    }
+
+    .experiment-intro, .hypothesis-section {
+        background: #f5f5f5;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .materials-section, .procedure-section, .results-section, .conclusion-section {
+        background: #fff;
+        padding: 1.5rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin: 2rem 0;
+    }
+
+    .materials-section ul {
+        list-style-type: disc;
+        margin-left: 2rem;
+    }
+
+    .materials-section li {
+        margin-bottom: 0.5rem;
+    }
+
+    .steps-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .step {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        border-left: 4px solid #228be6;
+    }
+
+    .step h4 {
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+    }
+
+    .variables-input {
+        margin-top: 1rem;
+    }
+
+    .variables-input label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+    }
+
+    .variables-input input {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+    }
+
+    .mass-data-table, .length-data-table {
+        margin: 2rem 0;
+        background: #fff;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .mass-data-table h5, .length-data-table h5 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+    }
+
+    th, td {
+        padding: 0.75rem;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+
+    th {
+        background: #f8f9fa;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    td input {
+        width: 80px;
+        padding: 0.25rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        text-align: center;
+    }
+
+    .calculate-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 4px;
+        background: #17a2b8;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    .calculate-btn:hover {
+        background: #138496;
+    }
+
+    .hypothesis-section textarea, .results-section textarea, .conclusion-section textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.5;
+        resize: vertical;
+        min-height: 120px;
+        background: #fff;
+        color: #333;
+        box-sizing: border-box;
+    }
+
+    .hypothesis-section textarea:focus, .results-section textarea:focus, .conclusion-section textarea:focus {
+        outline: none;
+        border-color: #228be6;
+        box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.1);
+    }
+
+    .setup-diagram {
+        background: #e9ecef;
+        padding: 1rem;
+        border-radius: 4px;
+        margin: 1rem 0;
+        text-align: center;
+        font-style: italic;
+    }
+
+    .figure {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 1rem 0;
+    }
+
+    .protractor-diagram, .paperclip-diagram, .swing-diagram {
+        margin: 1rem 0;
+    }
+
+    @media (max-width: 768px) {
+        .experiment-container {
+            padding: 1rem;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        td input {
+            width: 60px;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Email functionality
+        const emailInput = document.getElementById('studentEmail');
+        const saveEmailBtn = document.getElementById('saveEmail');
+        const emailStatus = document.getElementById('emailStatus');
+        const submitResultsBtn = document.getElementById('submitResults');
+        
+        // Check if email is already saved
+        const savedEmail = localStorage.getItem('studentEmail');
+        if (savedEmail) {
+            emailInput.value = savedEmail;
+            emailStatus.textContent = `Email saved: ${savedEmail}`;
+            emailStatus.style.color = '#28a745';
+            document.getElementById('submitResultsSection').style.display = 'block';
+        }
+        
+        // Save email functionality
+        saveEmailBtn.addEventListener('click', function() {
+            const email = emailInput.value.trim();
+            if (email && isValidEmail(email)) {
+                localStorage.setItem('studentEmail', email);
+                emailStatus.textContent = `Email saved: ${email}`;
+                emailStatus.style.color = '#28a745';
+                document.getElementById('submitResultsSection').style.display = 'block';
+            } else {
+                emailStatus.textContent = 'Please enter a valid email address';
+                emailStatus.style.color = '#dc3545';
+                document.getElementById('submitResultsSection').style.display = 'none';
+            }
+        });
+        
+        // Email validation
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Calculate averages for mass data
+        document.getElementById('calculateMassAverages').addEventListener('click', function() {
+            for (let i = 1; i <= 5; i++) {
+                const trial1 = parseFloat(document.getElementById(`mass${i}_trial1`).value) || 0;
+                const trial2 = parseFloat(document.getElementById(`mass${i}_trial2`).value) || 0;
+                const trial3 = parseFloat(document.getElementById(`mass${i}_trial3`).value) || 0;
+                const average = (trial1 + trial2 + trial3) / 3;
+                document.getElementById(`mass${i}_avg`).textContent = average.toFixed(2);
+            }
+        });
+
+        // Calculate averages for length data
+        document.getElementById('calculateLengthAverages').addEventListener('click', function() {
+            const lengths = [30, 25, 20, 15, 10];
+            lengths.forEach(length => {
+                const trial1 = parseFloat(document.getElementById(`length${length}_trial1`).value) || 0;
+                const trial2 = parseFloat(document.getElementById(`length${length}_trial2`).value) || 0;
+                const trial3 = parseFloat(document.getElementById(`length${length}_trial3`).value) || 0;
+                const average = (trial1 + trial2 + trial3) / 3;
+                document.getElementById(`length${length}_avg`).textContent = average.toFixed(2);
+            });
+        });
+        
+        // Send experiment results via EmailJS
+        submitResultsBtn.addEventListener('click', function() {
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                const conclusions = document.getElementById('conclusions').value.trim();
+                if (conclusions) {
+                    sendExperimentResults(savedEmail, conclusions);
+                } else {
+                    alert('Please fill in your conclusions before submitting');
+                }
+            } else {
+                alert('Please save your email address before submitting');
+            }
+        });
+        
+        // Send experiment results via EmailJS
+        function sendExperimentResults(email, conclusions) {
+            console.log('=== EXPERIMENT 1.2 RESULTS SUBMISSION ===');
+            console.log('Student Email:', email);
+            console.log('Student Conclusions:', conclusions);
+            
+            if (typeof emailjs !== 'undefined') {
+                // Initialize EmailJS right before sending (matching Module 9 quiz)
+                emailjs.init("la6DVzxI7W2gVEkX6");
+                console.log('✅ EmailJS initialized successfully');
+                
+                // Collect all experiment data
+                const hypothesis = document.getElementById('hypothesis').value || 'No hypothesis recorded';
+                const independentVar1 = document.getElementById('independentVar1').value || 'Not specified';
+                const dependentVar1 = document.getElementById('dependentVar1').value || 'Not specified';
+                const independentVar2 = document.getElementById('independentVar2').value || 'Not specified';
+                const dependentVar2 = document.getElementById('dependentVar2').value || 'Not specified';
+                const results = document.getElementById('results').value || 'No results recorded';
+
+                // Collect mass data
+                let massData = 'MASS DATA:\n';
+                for (let i = 1; i <= 5; i++) {
+                    const trial1 = document.getElementById(`mass${i}_trial1`).value || '0';
+                    const trial2 = document.getElementById(`mass${i}_trial2`).value || '0';
+                    const trial3 = document.getElementById(`mass${i}_trial3`).value || '0';
+                    const avg = document.getElementById(`mass${i}_avg`).textContent || '0';
+                    massData += `${i} washer(s): T1=${trial1}, T2=${trial2}, T3=${trial3}, Avg=${avg}\n`;
+                }
+
+                // Collect length data
+                let lengthData = 'LENGTH DATA:\n';
+                const lengths = [30, 25, 20, 15, 10];
+                lengths.forEach(length => {
+                    const trial1 = document.getElementById(`length${length}_trial1`).value || '0';
+                    const trial2 = document.getElementById(`length${length}_trial2`).value || '0';
+                    const trial3 = document.getElementById(`length${length}_trial3`).value || '0';
+                    const avg = document.getElementById(`length${length}_avg`).textContent || '0';
+                    lengthData += `${length}cm: T1=${trial1}, T2=${trial2}, T3=${trial3}, Avg=${avg}\n`;
+                });
+
+                // Format message for EmailJS template
+                const messageContent = `EXPERIMENT 1.2: PRACTICE COLLECTING AND ANALYZING DATA WITH PENDULUMS
+========================================
+
+STUDENT EMAIL: ${email}
+COMPLETION TIME: ${new Date().toLocaleString()}
+
+HYPOTHESIS:
+${hypothesis}
+
+VARIABLES:
+Part 1 - Independent: ${independentVar1}
+Part 1 - Dependent: ${dependentVar1}
+Part 2 - Independent: ${independentVar2}
+Part 2 - Dependent: ${dependentVar2}
+
+${massData}
+
+${lengthData}
+
+RESULTS ANALYSIS:
+${results}
+
+STUDENT CONCLUSIONS:
+${conclusions}
+
+EXPERIMENT SUMMARY:
+The student completed the pendulum data collection experiment, investigating how mass and length affect pendulum swing frequency, practicing data collection, analysis, and graphing skills.`;
+
+                const templateParams = {
+                    user_email: email,
+                    subject: "Experiment 1.2: Pendulum Data Collection - Results",
+                    message: messageContent,
+                    quiz_name: "Experiment 1.2: Pendulum Data Collection",
+                    score: "Completed",
+                    percentage: "100%"
+                };
+
+                console.log('=== EMAILJS TEMPLATE PARAMETERS ===');
+                console.log('user_email:', templateParams.user_email);
+                console.log('subject:', templateParams.subject);
+                console.log('message:', templateParams.message);
+                console.log('=== END TEMPLATE PARAMETERS ===');
+
+                // Show user what's being sent
+                emailStatus.innerHTML += `<br><small style="color: blue;">📤 Sending experiment results...</small>`;
+
+                emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                    .then(function(response) {
+                        console.log('✅ Experiment results sent successfully:', response);
+                        emailStatus.innerHTML += '<br><small style="color: green;">✓ Results sent to instructor successfully!</small>';
+                        submitResultsBtn.textContent = '✅ Results Sent';
+                        submitResultsBtn.disabled = true;
+                    })
+                    .catch(function(error) {
+                        console.error('❌ Failed to send experiment results:', error);
+                        emailStatus.innerHTML += '<br><small style="color: red;">⚠ Failed to send results. Please try again.</small>';
+                    });
+            } else {
+                console.warn('⚠ EmailJS not available - typeof emailjs:', typeof emailjs);
+                emailStatus.innerHTML += '<br><small style="color: red;">⚠ EmailJS not available</small>';
+            }
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+</Layout>

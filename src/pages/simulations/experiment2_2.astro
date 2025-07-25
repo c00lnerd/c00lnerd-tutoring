@@ -1,0 +1,311 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 2.2: Exploring Different Densities">
+    <div class="container">
+        <h1>Experiment 2.2: Exploring Different Densities</h1>
+        
+        <!-- Email Input Section -->
+        <div class="email-section">
+            <h3>Student Information</h3>
+            <p>Enter your email so your instructor can see your experiment results:</p>
+            <input type="email" id="studentEmail" placeholder="your.email@example.com" />
+        </div>
+
+        <div class="experiment-content">
+            <h2>Purpose</h2>
+            <p>To explore the different densities of several solids and liquids.</p>
+
+            <h2>Materials</h2>
+            <div class="materials-grid">
+                <div class="material-item">📄 Paper towels</div>
+                <div class="material-item">🥤 4 beakers (250 mL) or large glass jars</div>
+                <div class="material-item">🫙 1 large quart jar</div>
+                <div class="material-item">🥄 4 spoons</div>
+                <div class="material-item">📏 Measuring cup</div>
+                <div class="material-item">💧 Water</div>
+                <div class="material-item">🫒 Vegetable oil</div>
+                <div class="material-item">🌽 Corn syrup</div>
+                <div class="material-item">🍷 Rubbing alcohol</div>
+                <div class="material-item">🎨 Food coloring</div>
+                <div class="material-item">🍷 Cork pieces</div>
+                <div class="material-item">🪙 Pennies</div>
+                <div class="material-item">🍇 Grapes</div>
+                <div class="material-item">📎 Paper clips</div>
+                <div class="material-item">🔵 Marbles</div>
+                <div class="material-item">🔩 Washers</div>
+                <div class="material-item">🧊 Ice cubes</div>
+            </div>
+
+            <h2>Questions</h2>
+            <div class="question-section">
+                <p>How do the densities of the solids compare to the densities of the liquids? Will the solid objects sink, float, or be suspended in each of the liquids? How do the densities of the liquids compare with each other?</p>
+            </div>
+
+            <h2>Hypothesis</h2>
+            <div class="hypothesis-section">
+                <p>Write your prediction of what will happen when you place a grape, paper clip, small cork, penny, marble, and washer into each of the four different liquids. Will they sink, float, or be suspended?</p>
+                <textarea id="hypothesis" placeholder="Enter your predictions for each object in each liquid..."></textarea>
+            </div>
+
+            <h2>Procedure</h2>
+            
+            <h3>Part 1: Density Comparisons of Solids in Four Liquids</h3>
+            <div class="procedure-steps">
+                <div class="step">
+                    <h4>Steps 1-5: Prepare Liquids</h4>
+                    <p>1. Place paper towels on work surface<br>
+                    2. Add 150 mL water to first beaker<br>
+                    3. Add 150 mL vegetable oil to second beaker<br>
+                    4. Add 150 mL corn syrup to third beaker<br>
+                    5. Add 150 mL alcohol to fourth beaker</p>
+                </div>
+
+                <div class="step">
+                    <h4>Steps 6-13: Test Objects</h4>
+                    <p>Add cork pieces to each beaker and observe if they sink, float, or become suspended. Record observations. Repeat with pennies, grapes, paper clips, marbles, washers, and ice cubes.</p>
+                    
+                    <div class="data-table">
+                        <h5>Density Observations</h5>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Object</th>
+                                    <th>Water</th>
+                                    <th>Vegetable Oil</th>
+                                    <th>Corn Syrup</th>
+                                    <th>Alcohol</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Cork</td>
+                                    <td><select id="cork_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="cork_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="cork_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="cork_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                                <tr>
+                                    <td>Penny</td>
+                                    <td><select id="penny_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="penny_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="penny_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="penny_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                                <tr>
+                                    <td>Grape</td>
+                                    <td><select id="grape_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="grape_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="grape_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="grape_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                                <tr>
+                                    <td>Paper Clip</td>
+                                    <td><select id="clip_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="clip_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="clip_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="clip_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                                <tr>
+                                    <td>Marble</td>
+                                    <td><select id="marble_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="marble_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="marble_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="marble_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                                <tr>
+                                    <td>Washer</td>
+                                    <td><select id="washer_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="washer_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="washer_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="washer_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                                <tr>
+                                    <td>Ice Cube</td>
+                                    <td><select id="ice_water"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="ice_oil"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="ice_syrup"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                    <td><select id="ice_alcohol"><option>Sink</option><option>Float</option><option>Suspend</option></select></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Part 2: Density Comparisons of Four Liquids</h3>
+            <div class="procedure-steps">
+                <div class="step">
+                    <h4>Steps 15-18: Layer Liquids</h4>
+                    <p>Add food coloring to water and alcohol. Slowly pour liquids into quart jar in order: corn syrup, water, vegetable oil, alcohol. Let settle and record observations.</p>
+                    <textarea id="liquid_layers" placeholder="Describe the order of liquid layers from top to bottom..."></textarea>
+                </div>
+            </div>
+
+            <h2>Conclusions</h2>
+            <div class="conclusions-section">
+                <div class="question-group">
+                    <label for="predictions_correct">Were your predictions correct? Did the solid objects sink, float, or become suspended as you thought?</label>
+                    <textarea id="predictions_correct" placeholder="Compare your predictions to actual results..."></textarea>
+                </div>
+
+                <div class="question-group">
+                    <label for="density_order">Place the substances in order of their densities from highest to lowest:</label>
+                    <textarea id="density_order" placeholder="List all substances from most dense to least dense..."></textarea>
+                </div>
+
+                <div class="question-group">
+                    <label for="density_identification">How can density be used to identify substances?</label>
+                    <textarea id="density_identification" placeholder="Explain how density helps identify materials..."></textarea>
+                </div>
+            </div>
+
+            <div class="submit-section">
+                <button id="submitResults" class="submit-btn">Submit Experiment Results</button>
+                <div id="submitStatus" class="submit-status"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script>
+        // Initialize EmailJS with error checking
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init("la6DVzxI7W2gVEkX6");
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                document.getElementById('studentEmail').value = savedEmail;
+            }
+        });
+
+        document.getElementById('studentEmail').addEventListener('change', function() {
+            localStorage.setItem('studentEmail', this.value);
+        });
+
+        document.getElementById('submitResults').addEventListener('click', function() {
+            const email = document.getElementById('studentEmail').value;
+            
+            if (!email) {
+                alert('Please enter your email address before submitting.');
+                return;
+            }
+
+            if (typeof emailjs === 'undefined') {
+                alert('EmailJS is not loaded. Please refresh the page and try again.');
+                return;
+            }
+
+            // Collect experiment data
+            const data = {
+                hypothesis: document.getElementById('hypothesis').value,
+                layering_observations: document.getElementById('liquid_layers').value,
+                density_patterns: document.getElementById('predictions_correct').value,
+                hypothesis_check: document.getElementById('density_order').value,
+                density_identification: document.getElementById('density_identification').value
+            };
+
+            // Debug: Log what fields we're trying to collect
+            console.log('🔍 Debugging field collection:');
+            console.log('hypothesis element:', document.getElementById('hypothesis'));
+            console.log('liquid_layers element:', document.getElementById('liquid_layers'));
+            console.log('predictions_correct element:', document.getElementById('predictions_correct'));
+            console.log('density_order element:', document.getElementById('density_order'));
+            console.log('density_identification element:', document.getElementById('density_identification'));
+
+            // Collect table data
+            const objects = ['cork', 'penny', 'grape', 'clip', 'marble', 'washer', 'ice'];
+            const liquids = ['water', 'oil', 'syrup', 'alcohol'];
+            let tableData = '\n=== DENSITY OBSERVATIONS ===\n';
+            
+            objects.forEach(obj => {
+                tableData += `\n${obj.toUpperCase()}:\n`;
+                liquids.forEach(liquid => {
+                    const element = document.getElementById(`${obj}_${liquid}`);
+                    if (element) {
+                        tableData += `  ${liquid}: ${element.value}\n`;
+                    } else {
+                        console.warn(`⚠️ Missing element: ${obj}_${liquid}`);
+                        tableData += `  ${liquid}: [not found]\n`;
+                    }
+                });
+            });
+
+            const message = `
+EXPERIMENT 2.2: EXPLORING DIFFERENT DENSITIES RESULTS
+Student Email: ${email}
+Submission Time: ${new Date().toLocaleString()}
+
+=== HYPOTHESIS ===
+${data.hypothesis}
+
+${tableData}
+
+=== LIQUID LAYERING ===
+${data.layering_observations}
+
+=== CONCLUSIONS ===
+Predictions Check: ${data.density_patterns}
+Density Order: ${data.hypothesis_check}
+Density Identification: ${data.density_identification}
+            `;
+
+            const templateParams = {
+                to_email: 'instructor@example.com',
+                from_email: email,
+                message: message,
+                subject: 'Experiment 2.2 Results - Exploring Different Densities'
+            };
+
+            // Console logging for debugging
+            console.log('=== EXPERIMENT 2.2 EMAIL DATA ===');
+            console.log('Student Email:', email);
+            console.log('Submission Time:', new Date().toLocaleString());
+            console.log('EmailJS Template Params:', templateParams);
+            console.log('Full Message Content:');
+            console.log(message);
+            console.log('=====================================');
+
+            document.getElementById('submitStatus').innerHTML = 'Sending results...';
+            
+            emailjs.send("service_ot1jg6s", "template_v678xjf", templateParams)
+                .then(function(response) {
+                    console.log('✅ EmailJS Success Response:', response);
+                    document.getElementById('submitStatus').innerHTML = 
+                        '<span style="color: green;">✓ Results sent successfully!</span>';
+                }, function(error) {
+                    console.error('❌ EmailJS Error:', error);
+                    document.getElementById('submitStatus').innerHTML = 
+                        '<span style="color: red;">✗ Failed to send results.</span>';
+                });
+        });
+    </script>
+
+    <style>
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+        h1 { color: #2c3e50; text-align: center; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+        .email-section { background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px; border-left: 4px solid #3498db; }
+        #studentEmail { width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-size: 16px; margin-top: 10px; }
+        .materials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 20px 0; }
+        .material-item { padding: 8px; background: #f8f9fa; border-radius: 6px; border: 1px solid #e9ecef; }
+        .question-section, .hypothesis-section { background: #e8f4f8; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3498db; }
+        .step { background: #ffffff; border: 1px solid #e9ecef; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .step h4 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #3498db; padding-bottom: 8px; }
+        .data-table { margin-top: 20px; overflow-x: auto; }
+        .data-table table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .data-table th { background: #3498db; color: white; font-weight: bold; }
+        .data-table select { width: 100%; padding: 4px; }
+        textarea { width: 100%; min-height: 80px; padding: 10px; border: 2px solid #ddd; border-radius: 4px; font-family: inherit; resize: vertical; margin-top: 10px; }
+        .question-group { margin-bottom: 25px; }
+        .question-group label { display: block; font-weight: bold; margin-bottom: 10px; color: #2c3e50; }
+        .submit-section { text-align: center; margin-top: 40px; padding: 30px; background: #f8f9fa; border-radius: 8px; }
+        .submit-btn { background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .submit-btn:hover { background: #218838; }
+        .submit-status { margin-top: 15px; font-weight: bold; }
+        @media (max-width: 768px) { .container { padding: 15px; } .materials-grid { grid-template-columns: 1fr; } }
+    </style>
+</Layout>
