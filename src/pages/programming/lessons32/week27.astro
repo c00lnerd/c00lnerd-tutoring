@@ -1,0 +1,482 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 27: Machine Learning & AI Integration - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 27: Machine Learning & AI Integration</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Implementing intelligent decision-making in robotics systems</p>
+            <div style="margin-top: 1rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                <p style="margin: 0; font-weight: 600;">🧠 From data to decisions: Building smart robots</p>
+            </div>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">📚 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">By the end of this lesson, you will:</h3>
+                    <ul style="list-style: none; padding: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Understand basic machine learning concepts and terminology
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Implement simple decision trees for robot behavior
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Create adaptive behavior systems using sensor feedback
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Build pattern recognition systems for autonomous navigation
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Key Concepts:</h3>
+                    <ul style="list-style: none; padding: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Supervised vs unsupervised learning
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Decision trees and classification
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Reinforcement learning basics
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Neural network fundamentals
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Introduction to Machine Learning -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">🤖 Section 1: What is Machine Learning?</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Traditional Programming vs Machine Learning</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    In traditional programming, we write explicit rules for every situation. In machine learning, we provide examples and let the system learn patterns to make decisions on new, unseen data.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+                    <div style="padding: 1rem; background: #f7fafc; border-radius: 8px; border-left: 4px solid #667eea;">
+                        <h4 style="color: #667eea; font-weight: bold; margin-bottom: 0.5rem;">Traditional Programming</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">
+                            Input + Program → Output<br>
+                            We write specific rules for every scenario
+                        </p>
+                    </div>
+                    <div style="padding: 1rem; background: #f0fff4; border-radius: 8px; border-left: 4px solid #48bb78;">
+                        <h4 style="color: #48bb78; font-weight: bold; margin-bottom: 0.5rem;">Machine Learning</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">
+                            Input + Output → Program<br>
+                            System learns patterns from examples
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Types of Machine Learning</h3>
+                
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="color: #667eea; font-weight: bold; margin-bottom: 0.5rem;">1. Supervised Learning</h4>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 0.5rem;">
+                        Learning from labeled examples. Like teaching a robot to recognize objects by showing it thousands of labeled images.
+                    </p>
+                    <p style="color: #718096; font-style: italic; font-size: 0.9rem;">
+                        Example: Training a robot to identify red vs blue objects using camera data
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="color: #667eea; font-weight: bold; margin-bottom: 0.5rem;">2. Unsupervised Learning</h4>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 0.5rem;">
+                        Finding hidden patterns in data without labels. Like discovering that certain sensor readings always occur together.
+                    </p>
+                    <p style="color: #718096; font-style: italic; font-size: 0.9rem;">
+                        Example: Grouping similar driving patterns or obstacle types
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                    <h4 style="color: #667eea; font-weight: bold; margin-bottom: 0.5rem;">3. Reinforcement Learning</h4>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 0.5rem;">
+                        Learning through trial and error with rewards and penalties. Like training a robot to navigate by rewarding successful paths.
+                    </p>
+                    <p style="color: #718096; font-style: italic; font-size: 0.9rem;">
+                        Example: Robot learns optimal driving strategies through practice
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Decision Trees for Robotics -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">🌳 Section 2: Decision Trees for Robot Behavior</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What is a Decision Tree?</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    A decision tree is a flowchart-like structure that helps make decisions by asking a series of yes/no questions. Each internal node represents a test on a sensor reading, each branch represents the outcome of the test, and each leaf node represents a decision or action.
+                </p>
+
+                <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Example: Obstacle Avoidance Decision Tree</h4>
+                    <pre style="background: #2d3748; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.9rem;">${`Distance Sensor Reading < 20cm?
+├─ YES: Is object on the left?
+│  ├─ YES: Turn right
+│  └─ NO: Turn left
+└─ NO: Is path clear ahead?
+   ├─ YES: Move forward
+   └─ NO: Scan for best path`}</pre>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Implementing Decision Trees in Arduino</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Decision trees translate naturally into if-else statements in code. Here's how to implement intelligent obstacle avoidance:
+                </p>
+
+                <div style="background: #2d3748; color: #e2e8f0; padding: 1.5rem; border-radius: 8px; margin: 1rem 0;">
+                    <pre style="margin: 0; font-size: 0.9rem; line-height: 1.4;">${`// Intelligent Obstacle Avoidance with Decision Tree
+int frontDistance, leftDistance, rightDistance;
+
+void intelligentNavigation() {
+  // Gather sensor data
+  frontDistance = getUltrasonicDistance(FRONT_SENSOR);
+  leftDistance = getUltrasonicDistance(LEFT_SENSOR);
+  rightDistance = getUltrasonicDistance(RIGHT_SENSOR);
+  
+  // Decision tree implementation
+  if (frontDistance < 20) {
+    // Obstacle detected ahead
+    if (leftDistance > rightDistance) {
+      // More space on left
+      if (leftDistance > 30) {
+        turnLeft();
+        Serial.println("Decision: Turn left (clear path)");
+      } else {
+        reverseAndTurn();
+        Serial.println("Decision: Reverse and reassess");
+      }
+    } else {
+      // More space on right or equal
+      if (rightDistance > 30) {
+        turnRight();
+        Serial.println("Decision: Turn right (clear path)");
+      } else {
+        reverseAndTurn();
+        Serial.println("Decision: Reverse and reassess");
+      }
+    }
+  } else if (frontDistance < 50) {
+    // Obstacle approaching - slow down
+    moveForwardSlow();
+    Serial.println("Decision: Proceed with caution");
+  } else {
+    // Clear path ahead
+    moveForward();
+    Serial.println("Decision: Full speed ahead");
+  }
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Adaptive Behavior Systems -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">🔄 Section 3: Adaptive Behavior Systems</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Learning from Experience</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Adaptive behavior systems allow robots to modify their behavior based on past experiences. This is crucial for robots operating in changing environments.
+                </p>
+                
+                <div style="background: #f7fafc; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid #667eea;">
+                    <h4 style="color: #667eea; font-weight: bold; margin-bottom: 1rem;">Simple Learning Algorithm Example:</h4>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 0.9rem;">${`
+// Adaptive obstacle avoidance
+int successfulMoves[4] = {0, 0, 0, 0}; // forward, left, right, back
+int totalAttempts[4] = {0, 0, 0, 0};
+
+void adaptiveMove() {
+  int bestMove = 0;
+  float bestSuccessRate = 0;
+  
+  // Find the move with highest success rate
+  for (int i = 0; i < 4; i++) {
+    if (totalAttempts[i] > 0) {
+      float successRate = (float)successfulMoves[i] / totalAttempts[i];
+      if (successRate > bestSuccessRate) {
+        bestSuccessRate = successRate;
+        bestMove = i;
+      }
+    }
+  }
+  
+  executeMove(bestMove);
+  updateLearning(bestMove);
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Pattern Recognition -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">🔍 Section 4: Pattern Recognition</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Recognizing Patterns in Sensor Data</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Pattern recognition helps robots identify recurring features in their environment, enabling better navigation and decision-making.
+                </p>
+                
+                <div style="background: #f0fff4; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid #48bb78;">
+                    <h4 style="color: #48bb78; font-weight: bold; margin-bottom: 1rem;">Simple Pattern Detection:</h4>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 0.9rem;">${`
+// Pattern recognition for navigation
+int sensorHistory[10];
+int historyIndex = 0;
+
+bool detectWallPattern() {
+  // Look for consistent wall detection pattern
+  int wallCount = 0;
+  for (int i = 0; i < 10; i++) {
+    if (sensorHistory[i] < 20) { // Wall detected
+      wallCount++;
+    }
+  }
+  
+  return wallCount > 7; // 70% of readings show wall
+}
+
+void updatePattern(int sensorReading) {
+  sensorHistory[historyIndex] = sensorReading;
+  historyIndex = (historyIndex + 1) % 10;
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 5: Neural Networks Basics -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">🧠 Section 5: Introduction to Neural Networks</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How Neural Networks Work</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Neural networks are inspired by how neurons work in the human brain. They consist of interconnected nodes that process information and learn patterns.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0;">
+                    <div style="padding: 1rem; background: #fef5e7; border-radius: 8px; border-left: 4px solid #f6ad55;">
+                        <h4 style="color: #f6ad55; font-weight: bold; margin-bottom: 0.5rem;">Biological Neuron</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">
+                            Receives signals from dendrites, processes in cell body, sends output through axon
+                        </p>
+                    </div>
+                    <div style="padding: 1rem; background: #e6fffa; border-radius: 8px; border-left: 4px solid #38b2ac;">
+                        <h4 style="color: #38b2ac; font-weight: bold; margin-bottom: 0.5rem;">Artificial Neuron</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">
+                            Receives inputs, applies weights and activation function, produces output
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hands-On Project -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">🛠️ Hands-On Project: AI-Powered Obstacle Avoidance</h2>
+            
+            <div style="background: #f0f9ff; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid #0ea5e9;">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem;">Project Goal</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Create an adaptive obstacle avoidance system that learns from experience and improves its navigation over time.
+                </p>
+                
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 0.5rem;">Implementation Steps:</h4>
+                <ol style="color: #4a5568; line-height: 1.6; margin-left: 1rem;">
+                    <li style="margin-bottom: 0.5rem;">Set up ultrasonic sensors for distance measurement</li>
+                    <li style="margin-bottom: 0.5rem;">Implement basic obstacle detection</li>
+                    <li style="margin-bottom: 0.5rem;">Add learning mechanism to track successful moves</li>
+                    <li style="margin-bottom: 0.5rem;">Create decision tree for movement choices</li>
+                    <li style="margin-bottom: 0.5rem;">Test and refine the adaptive behavior</li>
+                </ol>
+                
+                <div style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; margin-top: 1rem; overflow-x: auto;">
+                    <pre style="font-family: 'Courier New', monospace; font-size: 0.9rem; margin: 0;">${`
+// AI-Powered Obstacle Avoidance System
+#include <NewPing.h>
+
+#define TRIGGER_PIN 12
+#define ECHO_PIN 11
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
+// Learning variables
+float moveSuccess[4] = {0.5, 0.5, 0.5, 0.5}; // forward, left, right, back
+int moveAttempts[4] = {1, 1, 1, 1};
+
+void setup() {
+  Serial.begin(9600);
+  // Initialize motors and sensors
+}
+
+void loop() {
+  int distance = sonar.ping_cm();
+  
+  if (distance < 20 && distance > 0) {
+    // Obstacle detected - use AI to choose best move
+    int bestMove = chooseBestMove();
+    executeMove(bestMove);
+    
+    // Learn from the result
+    delay(1000);
+    updateLearning(bestMove, wasSuccessful());
+  } else {
+    moveForward();
+  }
+  
+  delay(100);
+}
+
+int chooseBestMove() {
+  int bestMove = 0;
+  float bestScore = moveSuccess[0];
+  
+  for (int i = 1; i < 4; i++) {
+    if (moveSuccess[i] > bestScore) {
+      bestScore = moveSuccess[i];
+      bestMove = i;
+    }
+  }
+  
+  return bestMove;
+}
+
+void updateLearning(int move, bool success) {
+  moveAttempts[move]++;
+  if (success) {
+    moveSuccess[move] = (moveSuccess[move] * (moveAttempts[move] - 1) + 1.0) / moveAttempts[move];
+  } else {
+    moveSuccess[move] = (moveSuccess[move] * (moveAttempts[move] - 1) + 0.0) / moveAttempts[move];
+  }
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ethics and Applications -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">⚖️ AI Ethics and Real-World Applications</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Ethical Considerations</h3>
+                <div style="background: #fef5e7; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid #f6ad55;">
+                    <ul style="color: #4a5568; line-height: 1.6; margin: 0; padding-left: 1rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Transparency:</strong> Understanding why AI makes certain decisions</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Bias:</strong> Ensuring AI systems are fair and unbiased</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Safety:</strong> Implementing fail-safes and human oversight</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Privacy:</strong> Protecting user data and maintaining privacy</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Real-World Applications</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; border-left: 4px solid #38b2ac;">
+                        <h4 style="color: #38b2ac; font-weight: bold; margin-bottom: 0.5rem;">Autonomous Vehicles</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">Self-driving cars use ML for navigation, obstacle detection, and traffic analysis</p>
+                    </div>
+                    <div style="background: #f0fff4; padding: 1rem; border-radius: 8px; border-left: 4px solid #48bb78;">
+                        <h4 style="color: #48bb78; font-weight: bold; margin-bottom: 0.5rem;">Medical Robotics</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">Surgical robots learn from procedures to improve precision</p>
+                    </div>
+                    <div style="background: #fef5e7; padding: 1rem; border-radius: 8px; border-left: 4px solid #f6ad55;">
+                        <h4 style="color: #f6ad55; font-weight: bold; margin-bottom: 0.5rem;">Manufacturing</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">Industrial robots adapt to variations in products and processes</p>
+                    </div>
+                    <div style="background: #f0f9ff; padding: 1rem; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                        <h4 style="color: #0ea5e9; font-weight: bold; margin-bottom: 0.5rem;">Home Automation</h4>
+                        <p style="color: #4a5568; font-size: 0.9rem; margin: 0;">Smart home systems learn user preferences and optimize energy usage</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div style="background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 2rem; margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.8rem; font-weight: bold;">📝 Assessment & Homework</h2>
+            
+            <div style="background: #f0f9ff; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid #0ea5e9;">
+                <h3 style="color: #0ea5e9; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                <ol style="color: #4a5568; line-height: 1.6; margin-left: 1rem;">
+                    <li style="margin-bottom: 0.5rem;">What is the main difference between traditional programming and machine learning?</li>
+                    <li style="margin-bottom: 0.5rem;">Name the three main types of machine learning and give an example of each.</li>
+                    <li style="margin-bottom: 0.5rem;">How does a decision tree help a robot make choices?</li>
+                    <li style="margin-bottom: 0.5rem;">What is an adaptive behavior system and why is it useful?</li>
+                    <li style="margin-bottom: 0.5rem;">List three ethical considerations when implementing AI in robotics.</li>
+                </ol>
+            </div>
+            
+            <div style="background: #e6fffa; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; border-left: 4px solid #38b2ac;">
+                <h3 style="color: #38b2ac; font-weight: bold; margin-bottom: 1rem;">Homework Project</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    <strong>Design Your Own Learning Robot:</strong> Create a detailed plan for a robot that uses machine learning to improve its performance in a specific task.
+                </p>
+                <ul style="color: #4a5568; line-height: 1.6; margin-left: 1rem;">
+                    <li style="margin-bottom: 0.5rem;">Choose a specific task (cleaning, security patrol, plant care, etc.)</li>
+                    <li style="margin-bottom: 0.5rem;">Identify what sensors the robot would need</li>
+                    <li style="margin-bottom: 0.5rem;">Describe how the robot would learn and improve over time</li>
+                    <li style="margin-bottom: 0.5rem;">Consider potential ethical issues and how to address them</li>
+                    <li style="margin-bottom: 0.5rem;">Present your design in a 2-page report with diagrams</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Take Quiz Section -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin: 2rem 0; text-align: center;">
+            <h2 style="margin: 0 0 1rem 0; font-size: 1.5rem;">🧠 Ready to Test Your Knowledge?</h2>
+            <p style="margin: 0 0 1.5rem 0; opacity: 0.9;">Take the Week 27 quiz to assess your understanding of machine learning and AI integration concepts.</p>
+            <a href="/programming/quizzes32/week27" style="display: inline-block; background: white; color: #667eea; padding: 1rem 2rem; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; transition: all 0.2s ease;">
+                📝 Take Week 27 Quiz
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week26" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Previous: Week 26
+            </a>
+            <div style="text-align: center;">
+                <a href="/programming/semester-overview" style="color: #667eea; text-decoration: none; font-weight: 500;">
+                    📚 Semester Overview
+                </a>
+            </div>
+            <a href="/programming/lessons32/week28" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Next: Week 28 →
+            </a>
+        </div>
+    </div>
+</Layout>

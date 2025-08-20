@@ -1,0 +1,461 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 8: Introduction to Arduino Hardware - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 8: Introduction to Arduino Hardware</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Explore the Arduino ecosystem and hardware fundamentals</p>
+                <div class="mt-4 p-4 bg-orange-100 rounded-lg">
+                    <p class="text-orange-800 font-medium">🔧 Transition from code to physical computing</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Understand Arduino board components and architecture
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Identify different Arduino models and their capabilities
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Learn about power requirements and connections
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Understand the role of shields and expansion boards
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Microcontroller vs microprocessor
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Digital and analog pins overview
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Power management and safety
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-600 mr-2">•</span>
+                                Communication interfaces (USB, I2C, SPI)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Arduino Board Overview -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">🔍 Section 1: Arduino Board Overview</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What is Arduino?</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Arduino is an open-source electronics platform based on easy-to-use hardware and software. 
+                        It consists of a physical programmable circuit board (microcontroller) and the Arduino IDE 
+                        software that runs on your computer.
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Arduino Philosophy:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Open Source:</strong> Hardware designs and software are freely available</li>
+                            <li><strong>Easy to Use:</strong> Designed for artists, designers, and hobbyists</li>
+                            <li><strong>Cross-Platform:</strong> Works on Windows, Mac, and Linux</li>
+                            <li><strong>Extensible:</strong> Can be expanded with shields and libraries</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Arduino Uno - The Standard Board</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The Arduino Uno is the most popular and widely used Arduino board. It's perfect for learning 
+                        and most projects. Let's explore its key components:
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Technical Specifications:</h4>
+                            <ul class="text-green-700 text-sm space-y-1">
+                                <li><strong>Microcontroller:</strong> ATmega328P</li>
+                                <li><strong>Operating Voltage:</strong> 5V</li>
+                                <li><strong>Input Voltage:</strong> 7-12V (recommended)</li>
+                                <li><strong>Digital I/O Pins:</strong> 14 (6 PWM)</li>
+                                <li><strong>Analog Input Pins:</strong> 6</li>
+                                <li><strong>Flash Memory:</strong> 32KB</li>
+                                <li><strong>SRAM:</strong> 2KB</li>
+                                <li><strong>EEPROM:</strong> 1KB</li>
+                                <li><strong>Clock Speed:</strong> 16MHz</li>
+                            </ul>
+                        </div>
+                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Components:</h4>
+                            <ul class="text-yellow-700 text-sm space-y-1">
+                                <li><strong>USB Connector:</strong> Programming and power</li>
+                                <li><strong>Power Jack:</strong> External power supply</li>
+                                <li><strong>Reset Button:</strong> Restart the program</li>
+                                <li><strong>Power LED:</strong> Indicates board is powered</li>
+                                <li><strong>Built-in LED:</strong> Connected to pin 13</li>
+                                <li><strong>Digital Pins:</strong> 0-13 for digital I/O</li>
+                                <li><strong>Analog Pins:</strong> A0-A5 for analog input</li>
+                                <li><strong>Power Pins:</strong> 3.3V, 5V, GND, Vin</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Arduino Family -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">👨‍👩‍👧‍👦 Section 2: Arduino Family</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Different Arduino Models</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        While Arduino Uno is the most common, there are many other Arduino boards designed for 
+                        specific applications. Each has different capabilities, sizes, and features.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Arduino Nano</h4>
+                            <p class="text-purple-700 text-sm">
+                                <strong>Use Case:</strong> Compact projects, breadboard-friendly<br>
+                                <strong>Features:</strong> Same functionality as Uno, smaller size, no power jack<br>
+                                <strong>Best For:</strong> Permanent installations, space-constrained projects
+                            </p>
+                        </div>
+                        
+                        <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 class="font-semibold text-indigo-800 mb-2">Arduino Mega 2560</h4>
+                            <p class="text-indigo-700 text-sm">
+                                <strong>Use Case:</strong> Complex projects requiring many I/O pins<br>
+                                <strong>Features:</strong> 54 digital pins, 16 analog pins, 4 serial ports<br>
+                                <strong>Best For:</strong> Robotics, automation, multi-sensor projects
+                            </p>
+                        </div>
+                        
+                        <div class="bg-teal-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-teal-800 mb-2">Arduino Leonardo</h4>
+                            <p class="text-teal-700 text-sm">
+                                <strong>Use Case:</strong> HID (Human Interface Device) projects<br>
+                                <strong>Features:</strong> Native USB, can act as keyboard/mouse<br>
+                                <strong>Best For:</strong> Game controllers, keyboard emulation, USB devices
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Choosing the Right Arduino</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Selecting the appropriate Arduino depends on your project requirements:
+                    </p>
+                    
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Selection Criteria:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Number of I/O pins needed:</strong> How many sensors, LEDs, motors?</li>
+                            <li><strong>Size constraints:</strong> Does it need to fit in a small enclosure?</li>
+                            <li><strong>Power requirements:</strong> Battery powered or wall adapter?</li>
+                            <li><strong>Special features:</strong> WiFi, Bluetooth, USB HID capability?</li>
+                            <li><strong>Budget:</strong> Some boards are more expensive than others</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Power and Connections -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">⚡ Section 3: Power and Connections</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Powering Your Arduino</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Arduino can be powered in several ways. Understanding power requirements is crucial 
+                        for reliable operation and preventing damage to your board or components.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Power Sources:</h4>
+                            <ul class="text-green-700 text-sm space-y-1">
+                                <li><strong>USB Cable:</strong> 5V from computer (programming/testing)</li>
+                                <li><strong>External Adapter:</strong> 7-12V DC (recommended 9V)</li>
+                                <li><strong>Battery Pack:</strong> 6-9V (4-6 AA batteries)</li>
+                                <li><strong>Vin Pin:</strong> Direct 7-12V input to voltage regulator</li>
+                            </ul>
+                        </div>
+                        <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">⚠️ Power Safety:</h4>
+                            <ul class="text-red-700 text-sm space-y-1">
+                                <li><strong>Never exceed 12V:</strong> Can damage the voltage regulator</li>
+                                <li><strong>Check polarity:</strong> Wrong polarity can destroy the board</li>
+                                <li><strong>Current limits:</strong> Each pin can source/sink max 40mA</li>
+                                <li><strong>Total current:</strong> All pins combined max 200mA</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Pin Types and Functions</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Understanding the different types of pins and their capabilities is essential for 
+                        connecting sensors, actuators, and other components to your Arduino.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Pin Configuration Examples
+void setup() {
+  // Digital pins can be INPUT or OUTPUT
+  pinMode(13, OUTPUT);    // Built-in LED
+  pinMode(2, INPUT);      // Button input
+  pinMode(3, INPUT_PULLUP); // Button with internal pullup
+  
+  // Analog pins are INPUT by default
+  // No pinMode needed for analogRead()
+  
+  // PWM pins (marked with ~) can use analogWrite()
+  // Pins 3, 5, 6, 9, 10, 11 on Uno
+  
+  Serial.begin(9600);
+  Serial.println("Arduino Hardware Demo");
+}
+
+void loop() {
+  // Digital output
+  digitalWrite(13, HIGH);  // Turn on LED
+  delay(500);
+  digitalWrite(13, LOW);   // Turn off LED
+  delay(500);
+  
+  // Digital input
+  int buttonState = digitalRead(2);
+  Serial.print("Button: ");
+  Serial.println(buttonState);
+  
+  // Analog input
+  int sensorValue = analogRead(A0);
+  Serial.print("Sensor: ");
+  Serial.println(sensorValue);
+  
+  // PWM output
+  analogWrite(9, 128);  // 50% brightness/speed
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 4: Shields and Expansion -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">🛡️ Section 4: Shields and Expansion</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What are Arduino Shields?</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Shields are pre-built circuit boards that plug directly into Arduino, extending its 
+                        capabilities without requiring breadboards or complex wiring. They stack on top of 
+                        the Arduino board using the standard pin layout.
+                    </p>
+                    
+                    <div class="space-y-4">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Popular Shield Types:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li><strong>Motor Shield:</strong> Control multiple motors and servos</li>
+                                <li><strong>WiFi Shield:</strong> Add wireless internet connectivity</li>
+                                <li><strong>LCD Shield:</strong> Display information with buttons</li>
+                                <li><strong>Sensor Shield:</strong> Easy connections for multiple sensors</li>
+                                <li><strong>Proto Shield:</strong> Prototyping area for custom circuits</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Shield Advantages:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li><strong>Plug and Play:</strong> No complex wiring required</li>
+                                <li><strong>Stackable:</strong> Multiple shields can be combined</li>
+                                <li><strong>Professional:</strong> Reliable connections and circuits</li>
+                                <li><strong>Libraries:</strong> Often come with software libraries</li>
+                                <li><strong>Compact:</strong> Saves space compared to breadboard circuits</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Alternative Expansion Methods</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Besides shields, there are other ways to expand Arduino capabilities:
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Breadboards:</h4>
+                            <ul class="text-purple-700 text-sm space-y-1">
+                                <li>Temporary prototyping</li>
+                                <li>Easy to modify circuits</li>
+                                <li>Great for learning</li>
+                                <li>No soldering required</li>
+                            </ul>
+                        </div>
+                        <div class="bg-teal-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-teal-800 mb-2">Breakout Boards:</h4>
+                            <ul class="text-teal-700 text-sm space-y-1">
+                                <li>Individual sensor modules</li>
+                                <li>Connect via jumper wires</li>
+                                <li>Mix and match components</li>
+                                <li>Often include level shifting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-gradient-to-r from-blue-50 to-orange-50 rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">🛠️ Hands-On Activity: Arduino Hardware Explorer</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Hardware Information System</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create a program that displays comprehensive information about your Arduino hardware, 
+                        tests different pin types, and demonstrates hardware capabilities through the Serial Monitor.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Instructions</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Create a hardware information display program</li>
+                        <li>Show board specifications and pin configurations</li>
+                        <li>Test digital pin capabilities (input/output)</li>
+                        <li>Demonstrate analog pin reading</li>
+                        <li>Test PWM functionality on capable pins</li>
+                        <li>Create an interactive hardware testing menu</li>
+                        <li>Include safety warnings and pin limitations</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Expected Features</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Hardware Info Display</h4>
+                            <ul class="text-blue-700 text-sm space-y-1">
+                                <li>Board type and specifications</li>
+                                <li>Available pin counts</li>
+                                <li>Memory information</li>
+                                <li>Clock speed and voltage</li>
+                            </ul>
+                        </div>
+                        <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Interactive Testing</h4>
+                            <ul class="text-orange-700 text-sm space-y-1">
+                                <li>Pin testing commands</li>
+                                <li>Real-time pin monitoring</li>
+                                <li>PWM demonstration</li>
+                                <li>Safety limit warnings</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">📝 Assessment & Homework</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>What is the operating voltage of Arduino Uno?</li>
+                        <li>How many digital I/O pins does Arduino Uno have?</li>
+                        <li>What is the maximum recommended input voltage for Arduino Uno?</li>
+                        <li>Which pins on Arduino Uno support PWM output?</li>
+                        <li>What are the advantages of using shields over breadboard circuits?</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Homework Challenges</h3>
+                    <div class="space-y-4">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 1: Board Comparison</h4>
+                            <p class="text-blue-700">
+                                Research and create a comparison chart of Arduino Uno, Nano, and Mega 2560. 
+                                Include specifications, use cases, and price comparisons.
+                            </p>
+                        </div>
+                        
+                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 2: Power Calculator</h4>
+                            <p class="text-green-700">
+                                Create a program that calculates power consumption for different components 
+                                and warns if the total exceeds Arduino's current limits.
+                            </p>
+                        </div>
+                        
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 3: Shield Research</h4>
+                            <p class="text-purple-700">
+                                Research three Arduino shields that would be useful for robotics projects. 
+                                Explain their functions, pin usage, and how they would work together.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week8" style="background-color: #ea580c; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #c2410c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#c2410c'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#ea580c'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 8 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week7" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 7
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week9" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 9 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+

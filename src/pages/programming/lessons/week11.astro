@@ -1,0 +1,368 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 11: Motors and Movement Control">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">11</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 11: Motors and Movement Control</h1>
+                        <p class="text-gray-600">Making robots move with precision</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Control DC motors and servos
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand PWM (Pulse Width Modulation)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Implement speed and direction control
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Create basic movement patterns
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Motor control programming
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                PWM signal generation
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Robotics kinematics basics
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Motor Types and Control -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        Motor Types and Applications (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Motors in miniAuto Robot:</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 class="font-medium mb-2">DC Motors:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• Drive wheels for movement</li>
+                                    <li>• Variable speed control</li>
+                                    <li>• Forward/reverse direction</li>
+                                    <li>• Need motor driver (H-bridge)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium mb-2">Servo Motors:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• Precise position control</li>
+                                    <li>• Camera pan/tilt</li>
+                                    <li>• Robotic arm joints</li>
+                                    <li>• Built-in control circuit</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Basic motor control setup
+#include <Servo.h>
+
+// DC Motor pins (using L298N driver)
+#define MOTOR_A_PIN1 5
+#define MOTOR_A_PIN2 6
+#define MOTOR_B_PIN1 9
+#define MOTOR_B_PIN2 10
+
+// Servo motor
+Servo cameraServo;
+#define SERVO_PIN 3
+
+void setup() {
+    Serial.begin(9600);
+    // Initialize motor pins
+    pinMode(MOTOR_A_PIN1, OUTPUT);
+    pinMode(MOTOR_A_PIN2, OUTPUT);
+    pinMode(MOTOR_B_PIN1, OUTPUT);
+    pinMode(MOTOR_B_PIN2, OUTPUT);
+    // Initialize servo
+    cameraServo.attach(SERVO_PIN);
+    cameraServo.write(90); // Center position
+    Serial.println("🤖 Motor control system ready!");
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 2: PWM and Speed Control -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        PWM and Speed Control (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">PWM (Pulse Width Modulation):</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Digital way to create "analog" output</li>
+                            <li>• Rapidly switches between HIGH and LOW</li>
+                            <li>• Duty cycle determines average voltage</li>
+                            <li>• analogWrite() generates PWM (0-255)</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// PWM motor speed control
+void setMotorSpeed(int motorA_speed, int motorB_speed) {
+    // Motor A control
+    if (motorA_speed > 0) {
+        // Forward direction
+        analogWrite(MOTOR_A_PIN1, motorA_speed);
+        analogWrite(MOTOR_A_PIN2, 0);
+    } else if (motorA_speed < 0) {
+        // Reverse direction
+        analogWrite(MOTOR_A_PIN1, 0);
+        analogWrite(MOTOR_A_PIN2, -motorA_speed);
+    } else {
+        // Stop
+        analogWrite(MOTOR_A_PIN1, 0);
+        analogWrite(MOTOR_A_PIN2, 0);
+    }
+    // Motor B control (similar logic)
+    if (motorB_speed > 0) {
+        analogWrite(MOTOR_B_PIN1, motorB_speed);
+        analogWrite(MOTOR_B_PIN2, 0);
+    } else if (motorB_speed < 0) {
+        analogWrite(MOTOR_B_PIN1, 0);
+        analogWrite(MOTOR_B_PIN2, -motorB_speed);
+    } else {
+        analogWrite(MOTOR_B_PIN1, 0);
+        analogWrite(MOTOR_B_PIN2, 0);
+    }
+}
+
+// High-level movement functions
+void moveForward(int speed) {
+    setMotorSpeed(speed, speed);
+    Serial.println("🚀 Moving forward");
+}
+
+void turnRight(int speed) {
+    setMotorSpeed(speed, -speed);  // Differential steering
+    Serial.println("↪️ Turning right");
+}
+
+void stopRobot() {
+    setMotorSpeed(0, 0);
+    Serial.println("⏹️ Robot stopped");
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 3: Movement Patterns -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Movement Patterns and Navigation (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Basic Robot Movements:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Forward/backward motion</li>
+                            <li>• Turning and rotation</li>
+                            <li>• Curved paths and arcs</li>
+                            <li>• Complex patterns and sequences</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Movement pattern examples
+void squarePattern() {
+    Serial.println(" Executing square pattern");
+    for (int i = 0; i < 4; i++) {
+        // Move forward for 2 seconds
+        moveForward(150);
+        delay(2000);
+        // Turn 90 degrees (approximately)
+        turnRight(150);
+        delay(500);
+        stopRobot();
+        delay(500);
+    }
+    stopRobot();
+}
+
+void figureEight() {
+    Serial.println(" Executing figure-8 pattern");
+    // First loop
+    for (int i = 0; i < 8; i++) {
+        setMotorSpeed(200, 100);  // Curved left
+        delay(500);
+    }
+    // Second loop (opposite direction)
+    for (int i = 0; i < 8; i++) {
+        setMotorSpeed(100, 200);  // Curved right
+        delay(500);
+    }
+    stopRobot();
+}
+
+void obstacleAvoidance() {
+    // Simulated obstacle avoidance
+    moveForward(150);
+    delay(1000);
+    // "Detect" obstacle
+    Serial.println(" Obstacle detected!");
+    stopRobot();
+    delay(500);
+    // Turn to avoid
+    turnRight(150);
+    delay(1000);
+    // Continue forward
+    moveForward(150);
+    delay(1000);
+    stopRobot();
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 4: Servo Control -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Servo Motor Control (10 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Servo Applications:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Camera pan/tilt for vision systems</li>
+                            <li>• Steering mechanisms</li>
+                            <li>• Robotic arm joints</li>
+                            <li>• Sensor positioning</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Servo control functions
+void sweepCamera() {
+    Serial.println("📹 Camera sweep scan");
+    // Sweep from 0 to 180 degrees
+    for (int angle = 0; angle <= 180; angle += 10) {
+        cameraServo.write(angle);
+        Serial.print("Camera angle: ");
+        Serial.println(angle);
+        delay(200);
+    }
+    // Return to center
+    cameraServo.write(90);
+}
+
+void lookAround() {
+    int positions[] = {45, 90, 135, 90};
+    String directions[] = {"Left", "Center", "Right", "Center"};
+    for (int i = 0; i < 4; i++) {
+        cameraServo.write(positions[i]);
+        Serial.print("👀 Looking ");
+        Serial.println(directions[i]);
+        delay(1000);
+    }
+}`}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: Robot Dance Choreographer</h3>
+                    <p class="text-green-700 mb-4">Students will program a series of coordinated movements combining DC motors and servo control to create a "robot dance" routine.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Requirements:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Control 2 DC motors for movement</li>
+                            <li>• Control 1 servo for "head" movement</li>
+                            <li>• Create at least 3 different movement patterns</li>
+                            <li>• Combine movements into a choreographed sequence</li>
+                            <li>• Add timing and synchronization</li>
+                            <li>• Include Serial output describing each move</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Creative Challenge:</h4>
+                        <p class="text-yellow-700">Add music timing by using specific delay patterns, or create a "robot personality" by varying movement speeds and servo positions to show different "emotions".</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Can student control motor speed and direction?</li>
+                            <li>• Do they understand PWM concepts?</li>
+                            <li>• Are they creating coordinated movements?</li>
+                            <li>• Can they combine DC motors and servos effectively?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">Automated Pet Feeder</p>
+                            <p class="text-blue-700 text-sm">Design a pet feeding robot that uses DC motors to move to a feeding location, uses a servo to dispense food, and returns to a "home" position. Include timing controls and multiple feeding schedules.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week10" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 10
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week11" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 11 Quiz
+                        </a>
+                        <a href="/programming/lessons/week12" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 12 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

@@ -1,0 +1,461 @@
+---
+title: "Week 28 Quiz: Gripper/Manipulator Integration"
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Week 28 Quiz: Gripper/Manipulator Integration</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1000px; margin: 0 auto; padding: 20px; background-color: #f5f7fa; }
+            .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+            .question { background: #f8fafc; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem; border-left: 4px solid #667eea; }
+            .options { margin: 1rem 0; }
+            .option { margin: 0.5rem 0; padding: 0.5rem; background: white; border-radius: 5px; cursor: pointer; border: 2px solid #e5e7eb; transition: all 0.2s; }
+            .option:hover { border-color: #667eea; background: #f0f9ff; }
+            .option.selected { border-color: #667eea; background: #dbeafe; }
+            input[type="text"], textarea { width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 5px; font-size: 1rem; }
+            input[type="text"]:focus, textarea:focus { outline: none; border-color: #667eea; }
+            .btn { background: #667eea; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+            .btn:hover { background: #5a67d8; transform: translateY(-2px); }
+            .btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+            .results { background: #f0f9ff; padding: 1.5rem; border-radius: 10px; margin-top: 2rem; border-left: 4px solid #0ea5e9; }
+            .hidden { display: none; }
+            .student-info { background: #f8fafc; padding: 1.5rem; border-radius: 10px; margin-bottom: 2rem; border-left: 4px solid #10b981; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="margin: 0; font-size: 2.5rem; font-weight: bold;">Week 28 Quiz</h1>
+                <p style="margin: 1rem 0 0 0; font-size: 1.2rem; opacity: 0.9;">Gripper/Manipulator Integration</p>
+            </div>
+
+            <!-- Student Information -->
+            <div class="student-info">
+                <h2 style="color: #059669; margin-bottom: 1rem;">Student Information</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Student Name:</label>
+                        <input type="text" id="studentName" placeholder="Enter your full name" required>
+                    </div>
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email:</label>
+                        <input type="text" id="studentEmail" placeholder="Enter your email" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <div id="quiz">
+                <!-- Question 1 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">1. What is the primary function of an end effector in a robotic system?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q1" value="A" style="margin-right: 0.5rem;"> A) To provide power to the robot
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q1" value="B" style="margin-right: 0.5rem;"> B) To interact with and manipulate objects in the environment
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q1" value="C" style="margin-right: 0.5rem;"> C) To control the robot's movement
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q1" value="D" style="margin-right: 0.5rem;"> D) To process sensor data
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">2. What type of gripper uses two fingers that move parallel to each other?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q2" value="A" style="margin-right: 0.5rem;"> A) Angular gripper
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q2" value="B" style="margin-right: 0.5rem;"> B) Parallel jaw gripper
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q2" value="C" style="margin-right: 0.5rem;"> C) Suction gripper
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q2" value="D" style="margin-right: 0.5rem;"> D) Magnetic gripper
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">3. What is the primary advantage of using servo motors for robotic manipulation?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q3" value="A" style="margin-right: 0.5rem;"> A) They are very cheap
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q3" value="B" style="margin-right: 0.5rem;"> B) They provide precise position control with built-in feedback
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q3" value="C" style="margin-right: 0.5rem;"> C) They consume no power
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q3" value="D" style="margin-right: 0.5rem;"> D) They work without any control signals
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">4. What is force feedback in robotic grippers used for?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q4" value="A" style="margin-right: 0.5rem;"> A) To determine how much force is being applied during gripping
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q4" value="B" style="margin-right: 0.5rem;"> B) To change the gripper's color
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q4" value="C" style="margin-right: 0.5rem;"> C) To make the gripper move faster
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q4" value="D" style="margin-right: 0.5rem;"> D) To play sounds when gripping
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">5. What is the purpose of coordinate transformation in vision-guided manipulation?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q5" value="A" style="margin-right: 0.5rem;"> A) To make the camera work faster
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q5" value="B" style="margin-right: 0.5rem;"> B) To convert camera pixel coordinates to real-world robot coordinates
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q5" value="C" style="margin-right: 0.5rem;"> C) To change the image colors
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q5" value="D" style="margin-right: 0.5rem;"> D) To rotate the camera
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">6. What is inverse kinematics in robotic arm control?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q6" value="A" style="margin-right: 0.5rem;"> A) Moving the arm backwards only
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q6" value="B" style="margin-right: 0.5rem;"> B) Calculating joint angles needed to reach a desired end-effector position
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q6" value="C" style="margin-right: 0.5rem;"> C) Reversing the motor direction
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q6" value="D" style="margin-right: 0.5rem;"> D) A type of sensor
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">7. What is the main benefit of coordinated movement in pick-and-place operations?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q7" value="A" style="margin-right: 0.5rem;"> A) It makes the robot look more impressive
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q7" value="B" style="margin-right: 0.5rem;"> B) It allows simultaneous control of base movement and arm manipulation for efficient operation
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q7" value="C" style="margin-right: 0.5rem;"> C) It reduces the robot's power consumption
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q7" value="D" style="margin-right: 0.5rem;"> D) It eliminates the need for sensors
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">8. What safety consideration is most important when working with robotic arms?</h3>
+                    <div style="margin-left: 1rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q8" value="A" style="margin-right: 0.5rem;"> A) Making the arm move as fast as possible
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q8" value="B" style="margin-right: 0.5rem;"> B) Implementing emergency stops and force limits to prevent injury or damage
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q8" value="C" style="margin-right: 0.5rem;"> C) Using the cheapest materials
+                        </label>
+                        <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                            <input type="radio" name="q8" value="D" style="margin-right: 0.5rem;"> D) Ignoring workspace boundaries
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9 - Short Answer -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">9. Design a vision-guided sorting system that uses a gripper to sort colored objects. Describe the key components, coordinate transformation process, and how you would ensure reliable gripping. (Short Answer)</h3>
+                    <textarea id="question9" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;" placeholder="Describe your vision-guided sorting system design..."></textarea>
+                </div>
+
+                <!-- Question 10 - Short Answer -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #495057; margin-bottom: 1rem;">10. Explain the challenges of implementing force feedback in robotic grippers and propose solutions for adaptive gripping of objects with different sizes and materials. (Short Answer)</h3>
+                    <textarea id="question10" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;" placeholder="Describe force feedback challenges and solutions..."></textarea>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div style="text-align: center; margin: 2rem 0;">
+                <button id="submitBtn" style="background: #667eea; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">Submit Quiz</button>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="results hidden">
+                <h2 style="color: #0c4a6e; margin-bottom: 1rem;">Quiz Results</h2>
+                <div id="resultsContent"></div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb;">
+                <a href="/programming/lessons32/week28" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Back to Lesson
+                </a>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Semester Overview
+                </a>
+                <a href="/programming/lessons32/week29" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next Lesson →
+                </a>
+            </div>
+        </div>
+
+    <script is:inline>
+        // Load EmailJS dynamically
+        const emailjsScript = document.createElement('script');
+        emailjsScript.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+        document.head.appendChild(emailjsScript);
+        
+        // Wait for EmailJS to load before setting up event listener
+        emailjsScript.onload = function() {
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim();
+            
+            if (!studentName || !studentEmail) {
+                alert('Please enter both your name and email address.');
+                return;
+            }
+
+            // Collect answers
+            const answers = {};
+            
+            // Multiple choice questions
+            for (let i = 1; i <= 8; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                answers[`q${i}`] = selected ? selected.value : '';
+            }
+            
+            // Short answer questions
+            answers.q9 = document.getElementById('question9').value.trim();
+            answers.q10 = document.getElementById('question10').value.trim();
+
+            // Check if all questions are answered
+            let unanswered = [];
+            for (let i = 1; i <= 8; i++) {
+                if (!answers[`q${i}`]) unanswered.push(i);
+            }
+            if (!answers.q9) unanswered.push(9);
+            if (!answers.q10) unanswered.push(10);
+            
+            if (unanswered.length > 0) {
+                alert(`Please answer question(s): ${unanswered.join(', ')}`);
+                return;
+            }
+
+            // Correct answers
+            const correctAnswers = {
+                q1: 'B', q2: 'B', q3: 'B', q4: 'A', q5: 'B', 
+                q6: 'B', q7: 'B', q8: 'B'
+            };
+
+            // Calculate score
+            let score = 0;
+            let feedback = [];
+            
+            for (let i = 1; i <= 8; i++) {
+                if (answers[`q${i}`] === correctAnswers[`q${i}`]) {
+                    score++;
+                    feedback.push(`Question ${i}: Correct ✓`);
+                } else {
+                    feedback.push(`Question ${i}: Incorrect ✗ (Correct answer: ${correctAnswers[`q${i}`]})`);
+                }
+            }
+            
+            const percentage = Math.round((score / 8) * 100);
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            // Create quiz data object
+            const quizData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                score: score,
+                totalQuestions: 8,
+                percentage: percentage,
+                grade: grade,
+                answers: answers,
+                feedback: feedback
+            };
+            
+            // Display results, send email, and log to sheets
+            displayResults(quizData);
+            sendResultsEmail(quizData);
+            logToGoogleSheets(quizData);
+            
+            // Disable submit button
+            this.disabled = true;
+            this.textContent = 'Quiz Submitted';
+        });
+        
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('resultsContent');
+            if (!resultsDiv) return;
+            
+            resultsDiv.innerHTML = 
+                '<div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">' +
+                    '<h3 style="color: #1f2937; margin-bottom: 1rem;">Your Performance</h3>' +
+                    '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">' +
+                        '<div style="text-align: center; padding: 1rem; background: #f3f4f6; border-radius: 8px;">' +
+                            '<div style="font-size: 2rem; font-weight: bold; color: #059669;">' + data.score + '/' + data.totalQuestions + '</div>' +
+                            '<div style="color: #6b7280;">Questions Correct</div>' +
+                        '</div>' +
+                        '<div style="text-align: center; padding: 1rem; background: #f3f4f6; border-radius: 8px;">' +
+                            '<div style="font-size: 2rem; font-weight: bold; color: #0ea5e9;">' + data.percentage + '%</div>' +
+                            '<div style="color: #6b7280;">Score</div>' +
+                        '</div>' +
+                        '<div style="text-align: center; padding: 1rem; background: #f3f4f6; border-radius: 8px;">' +
+                            '<div style="font-size: 2rem; font-weight: bold; color: #8b5cf6;">' + data.grade + '</div>' +
+                            '<div style="color: #6b7280;">Grade</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="margin-top: 1rem;">' +
+                        '<h4 style="color: #374151; margin-bottom: 0.5rem;">Detailed Feedback:</h4>' +
+                        '<div style="background: #f9fafb; padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.9rem; line-height: 1.6;">' +
+                            data.feedback.join('<br>') +
+                        '</div>' +
+                    '</div>' +
+                    '<div style="margin-top: 1rem;">' +
+                        '<h4 style="color: #374151; margin-bottom: 0.5rem;">Your Open-Ended Responses:</h4>' +
+                        '<div style="background: #f0f9ff; padding: 1rem; border-radius: 6px; border-left: 4px solid #0ea5e9;">' +
+                            '<div style="margin-bottom: 1rem;">' +
+                                '<strong style="color: #1e40af;">Question 9 - Vision-Guided Sorting System Design:</strong><br>' +
+                                '<div style="margin-top: 0.5rem; padding: 0.5rem; background: white; border-radius: 4px; font-style: italic;">' +
+                                    (data.answers.q9 || '[No response provided]') +
+                                '</div>' +
+                            '</div>' +
+                            '<div>' +
+                                '<strong style="color: #1e40af;">Question 10 - Force Feedback Challenges & Solutions:</strong><br>' +
+                                '<div style="margin-top: 0.5rem; padding: 0.5rem; background: white; border-radius: 4px; font-style: italic;">' +
+                                    (data.answers.q10 || '[No response provided]') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div style="margin-top: 1rem; padding: 1rem; background: #e0f2fe; border-radius: 6px; border-left: 4px solid #0ea5e9;">' +
+                            '<p style="margin: 0; color: #0c4a6e;"><strong>Note:</strong> Your open-ended responses have been sent to your instructor for detailed feedback and review.</p>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function sendResultsEmail(data) {
+            // Initialize EmailJS
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            // Debug: Log the answers to see what's being sent
+            console.log('Email data.answers:', data.answers);
+            console.log('Question 9 answer:', data.answers.q9);
+            console.log('Question 10 answer:', data.answers.q10);
+            
+            const formattedMessage = 
+                'Week 28 Quiz Results - Gripper/Manipulator Integration\n\n' +
+                'Student: ' + data.studentName + '\n' +
+                'Email: ' + data.studentEmail + '\n' +
+                'Score: ' + data.score + '/' + data.totalQuestions + ' (' + data.percentage + '%)\n' +
+                'Grade: ' + data.grade + '\n\n' +
+                'MULTIPLE CHOICE ANSWERS:\n' +
+                '1. End effector function: ' + data.answers.q1 + ' ' + (data.answers.q1 === 'B' ? '✓' : '✗ (Correct: B)') + '\n' +
+                '2. Parallel jaw gripper: ' + data.answers.q2 + ' ' + (data.answers.q2 === 'B' ? '✓' : '✗ (Correct: B)') + '\n' +
+                '3. Servo motor advantage: ' + data.answers.q3 + ' ' + (data.answers.q3 === 'B' ? '✓' : '✗ (Correct: B)') + '\n' +
+                '4. Force feedback purpose: ' + data.answers.q4 + ' ' + (data.answers.q4 === 'A' ? '✓' : '✗ (Correct: A)') + '\n' +
+                '5. Coordinate transformation: ' + data.answers.q5 + ' ' + (data.answers.q5 === 'B' ? '✓' : '✗ (Correct: B)') + '\n' +
+                '6. Inverse kinematics: ' + data.answers.q6 + ' ' + (data.answers.q6 === 'B' ? '✓' : '✗ (Correct: B)') + '\n' +
+                '7. Coordinated movement benefit: ' + data.answers.q7 + ' ' + (data.answers.q7 === 'B' ? '✓' : '✗ (Correct: B)') + '\n' +
+                '8. Safety consideration: ' + data.answers.q8 + ' ' + (data.answers.q8 === 'B' ? '✓' : '✗ (Correct: B)') + '\n\n' +
+                'OPEN-ENDED RESPONSES:\n' +
+                '9. Vision-guided sorting system design:\n' + (data.answers.q9 || '[No response provided]') + '\n\n' +
+                '10. Force feedback challenges and solutions:\n' + (data.answers.q10 || '[No response provided]') + '\n\n' +
+                'Performance Analysis:\n' +
+                (data.percentage >= 80 ? 'Excellent understanding of gripper and manipulator integration concepts!' : 
+                 data.percentage >= 70 ? 'Good grasp of manipulation fundamentals. Review servo control, force feedback, and coordinate transformation.' :
+                 'Needs improvement. Focus on gripper types, inverse kinematics, and safety considerations.');
+            
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: data.studentName,
+                from_email: data.studentEmail,
+                message: formattedMessage,
+                subject: 'Week 28 Programming Quiz - ' + data.studentName
+            }).then(function(response) {
+                console.log('Email sent successfully!', response.status, response.text);
+            }, function(error) {
+                console.log('Email failed to send.', error);
+            });
+        }
+        
+        function logToGoogleSheets(data) {
+            const sheetData = {
+                studentName: data.studentName,
+                studentEmail: data.studentEmail,
+                week: 'Week 28',
+                topic: 'Gripper/Manipulator Integration',
+                score: data.score,
+                totalPoints: data.totalQuestions,
+                percentage: data.percentage,
+                grade: data.grade,
+                timestamp: new Date().toISOString()
+            };
+            
+            fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sheetData)
+            }).then(function() {
+                console.log('Data logged to Google Sheets');
+            }).catch(function(error) {
+                console.error('Error logging to Google Sheets:', error);
+            });
+        }
+        }; // Close emailjsScript.onload function
+    </script>
+    </body>
+</html>

@@ -1,0 +1,430 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 7.2: Newton's First Law">
+    <main class="container mx-auto px-4 py-8">
+        <div class="experiment-header">
+            <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">EXPERIMENT 7.2</h1>
+            <h2 class="text-2xl font-bold text-center text-blue-700 mb-8">NEWTON'S FIRST LAW</h2>
+        </div>
+
+        <!-- Email Collection Section -->
+        <section class="mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                <h4 class="font-bold mb-2">Student Information:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="studentName" class="block text-gray-700 font-bold mb-2">Name:</label>
+                        <input type="text" id="studentName" class="w-full px-3 py-2 border rounded-lg" placeholder="Your Name">
+                    </div>
+                    <div>
+                        <label for="studentEmail" class="block text-gray-700 font-bold mb-2">Email:</label>
+                        <input type="email" id="studentEmail" class="w-full px-3 py-2 border rounded-lg" placeholder="your.email@example.com">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="teacherEmail" class="block text-gray-700 font-bold mb-2">Teacher's Email:</label>
+                    <input type="email" id="teacherEmail" class="w-full px-3 py-2 border rounded-lg" value="chuck@c00lnerd.com" placeholder="teacher.email@example.com">
+                </div>
+            </div>
+        </section>
+
+        <!-- Purpose Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PURPOSE:</h3>
+            <p class="mb-4">To observe Newton's first law of motion through hands-on experiments.</p>
+        </section>
+
+        <!-- Materials Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">MATERIALS:</h3>
+            <ul class="list-disc pl-8 mb-4">
+                <li>A coin (nickels work well)</li>
+                <li>A 3 inch by 5 inch index card (note the units listed)</li>
+                <li>A small beaker or glass (like a juice glass)</li>
+                <li>A raw egg</li>
+                <li>A hard-boiled egg</li>
+                <li>An aluminum pie pan</li>
+                <li>A pair of scissors</li>
+                <li>A marble or other small ball</li>
+                <li>Eye protection such as goggles or safety glasses</li>
+            </ul>
+        </section>
+
+        <!-- Safety Section -->
+        <section class="mb-8">
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                <h3 class="text-xl font-bold text-yellow-700">SAFETY:</h3>
+                <ul class="list-disc pl-8 mb-0">
+                    <li>Always wear eye protection when conducting experiments.</li>
+                    <li>Be careful when handling raw eggs to avoid contamination.</li>
+                    <li>Clean up any broken eggs or spills immediately.</li>
+                    <li>Use caution when cutting the aluminum pie pan with scissors.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Background Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">BACKGROUND:</h3>
+            <p class="mb-4">Sometimes it's hard to understand Newton's first law because it goes against our everyday experience (how can an object keep moving unless acted on by a force, for example). Experiments such as these help you visualize that this law of motion is really true.</p>
+            
+            <p class="mb-4">Newton's First Law of Motion states that an object at rest will stay at rest, and an object in motion will stay in motion with the same speed and direction, unless acted upon by an unbalanced force.</p>
+            
+            <p class="mb-4">This law is also known as the Law of Inertia. Inertia is the resistance of an object to any change in its state of motion. The more mass an object has, the greater its inertia and the more force required to change its motion.</p>
+            
+            <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-4">
+                <div class="md:w-1/2">
+                    <img src="/images/newton-first-law.jpg" alt="Diagram showing marble paths in a pie pan" class="rounded-lg shadow-md mx-auto">
+                    <p class="text-center text-sm mt-2">FIGURE 7.19 - Possible paths of a marble exiting a pie pan</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Questions Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">QUESTIONS:</h3>
+            <p class="mb-4">How can Newton's laws be observed?</p>
+        </section>
+
+        <!-- Hypotheses Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">HYPOTHESES:</h3>
+            <div class="space-y-4">
+                <div>
+                    <p class="font-bold">1. Write your prediction of what will happen to a coin when a card is quickly removed from under it:</p>
+                    <textarea id="hypothesis1a" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your prediction..."></textarea>
+                    
+                    <p class="font-bold mt-4">Write your prediction of what will happen when the card is removed slowly:</p>
+                    <textarea id="hypothesis1b" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your prediction..."></textarea>
+                </div>
+                
+                <div>
+                    <p class="font-bold">2. Write your prediction of what will happen when you stop a spinning hard-boiled egg:</p>
+                    <textarea id="hypothesis2a" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your prediction..."></textarea>
+                    
+                    <p class="font-bold mt-4">Write your prediction of what will happen when you stop a spinning raw egg:</p>
+                    <textarea id="hypothesis2b" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your prediction..."></textarea>
+                </div>
+                
+                <div>
+                    <p class="font-bold">3. Write your prediction of what path (a, b, or c) the circling marble will take when it exits the pie pan in Figure 7.19:</p>
+                    <div class="flex items-center space-x-4 mt-2">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="path" value="a" class="form-radio">
+                            <span class="ml-2">Path A</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="path" value="b" class="form-radio">
+                            <span class="ml-2">Path B</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="path" value="c" class="form-radio">
+                            <span class="ml-2">Path C</span>
+                        </label>
+                    </div>
+                    <textarea id="hypothesis3" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Explain your reasoning..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Procedure Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PROCEDURE—PART 1:</h3>
+            <ol class="list-decimal pl-8 mb-4 space-y-4">
+                <li>
+                    <p>Place the small beaker or glass on the table, right side up.</p>
+                </li>
+                <li>
+                    <p>Place the index card on top of the glass so that it covers the opening. Center the index card so that the center of the card is over the center of the glass.</p>
+                </li>
+                <li>
+                    <p>Place the coin on the center of the index card.</p>
+                </li>
+                <li>
+                    <p>Flick the card quickly with your fingers so that it moves forward, uncovering the glass. You want to flick the edge of the card from the side. Don't flick upwards or downwards. Record what happens to the coin.</p>
+                    <textarea id="observation1a" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+                <li>
+                    <p>Set up the experiment again. This time, instead of flicking the card, grasp the card with your fingers and slowly pull it away from the glass. Keep the card level as you pull it away. Record what happens to the coin this time.</p>
+                    <textarea id="observation1b" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+            </ol>
+
+            <h3 class="text-xl font-bold text-blue-700 mt-8">PROCEDURE—PART 2:</h3>
+            <ol class="list-decimal pl-8 mb-4 space-y-4" start="6">
+                <li>
+                    <p>Place the hard-boiled egg on the table. Make sure it is on its side and not an end.</p>
+                </li>
+                <li>
+                    <p>Spin the egg and watch how it spins. Be sure it spins on its side. Record your observations.</p>
+                    <textarea id="observation2a" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+                <li>
+                    <p>Do the same thing with the raw egg. Record your observations, noting the difference in the way the eggs spin, if any.</p>
+                    <textarea id="observation2b" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+                <li>
+                    <p>Spin the hard-boiled egg again. Once it is spinning, reach down and stop it for an instant, then immediately let it go. Record what happens.</p>
+                    <textarea id="observation2c" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+                <li>
+                    <p>Do the same thing with the raw egg. Record what happens in this case.</p>
+                    <textarea id="observation2d" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+            </ol>
+
+            <h3 class="text-xl font-bold text-blue-700 mt-8">PROCEDURE—PART 3:</h3>
+            <ol class="list-decimal pl-8 mb-4 space-y-4" start="11">
+                <li>
+                    <p>Use the scissors to cut a quarter of the pie pan away. Examine the diagram in Figure 7.19.</p>
+                </li>
+                <li>
+                    <p>In this experiment, you are going to roll the marble into the pie pan as shown in Figure 7.19. The marble will roll around the pan, guided by the pan's walls. When it hits the edge where the quarter was cut out, it will begin to roll on its own.</p>
+                </li>
+                <li>
+                    <p>Before you actually do this, make sure you have written your hypothesis or your prediction of which path the ball will roll once it begins to roll on its own. There are three possible choices.</p>
+                </li>
+                <li>
+                    <p>Now you should actually perform the experiment. Hold the pie pan in place with one of your hands so that it doesn't move.</p>
+                </li>
+                <li>
+                    <p>Using your other hand, propel the marble straight into the pan so that it rolls around the side of the pan as shown in the figure. Watch which way it exits when it ends up moving. Record your observations.</p>
+                    <textarea id="observation3" class="w-full p-2 border rounded-lg mt-2" rows="2" placeholder="Record your observations..."></textarea>
+                </li>
+            </ol>
+        </section>
+
+        <!-- Video Demonstration Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">VIDEO DEMONSTRATION:</h3>
+            <p class="mb-4">Watch this video demonstration of Newton's First Law experiments:</p>
+            <div class="aspect-w-16 aspect-h-9 mb-4">
+                <video id="demoVideo" class="w-full rounded-lg shadow-md" controls>
+                    <source src="/videos/newtons-first-law.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+
+        <!-- Conclusions Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">CONCLUSIONS:</h3>
+            <p class="mb-4">Explain what happened to the coin, the eggs, and the marble in terms of Newton's first law of motion. Use the terms, inertia, force, and friction in your paragraph. Make connections to what you've read in the text.</p>
+            <div class="mb-4">
+                <textarea id="conclusion" class="w-full p-2 border rounded-lg" rows="6" placeholder="Write your conclusion here..."></textarea>
+            </div>
+        </section>
+
+        <!-- Analysis Questions Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">ANALYSIS QUESTIONS:</h3>
+            <div class="space-y-4">
+                <div>
+                    <p class="font-bold">1. In Part 1, why did the coin fall straight down when the card was flicked quickly but moved with the card when pulled slowly?</p>
+                    <textarea id="question1" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+                </div>
+                <div>
+                    <p class="font-bold">2. In Part 2, why did the hard-boiled egg and raw egg behave differently when stopped briefly and released?</p>
+                    <textarea id="question2" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+                </div>
+                <div>
+                    <p class="font-bold">3. In Part 3, explain why the marble followed the path it did when exiting the pie pan.</p>
+                    <textarea id="question3" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+                </div>
+                <div>
+                    <p class="font-bold">4. How does friction affect each of the three experiments?</p>
+                    <textarea id="question4" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+                </div>
+                <div>
+                    <p class="font-bold">5. Give three examples from everyday life where Newton's First Law can be observed.</p>
+                    <textarea id="question5" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+                </div>
+            </div>
+        </section>
+
+        <!-- Extension Activities Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">EXTENSION ACTIVITIES:</h3>
+            <p class="mb-4">Try these additional activities to further explore Newton's First Law:</p>
+            <ol class="list-decimal pl-8 mb-4">
+                <li>Place a small object on a piece of paper. Pull the paper quickly. What happens to the object? Now try pulling the paper slowly. How does this relate to Newton's First Law?</li>
+                <li>Research and design your own demonstration of Newton's First Law using household items.</li>
+                <li>Investigate how seat belts in cars relate to Newton's First Law of Motion.</li>
+            </ol>
+        </section>
+
+        <!-- Submit Section -->
+        <section class="mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h3 class="text-xl font-bold text-blue-700 mb-4">SUBMIT YOUR RESULTS:</h3>
+                <p class="mb-4">Click the button below to submit your experiment results to your teacher.</p>
+                <button id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Submit Results
+                </button>
+                <p id="submissionMessage" class="mt-2 hidden"></p>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<script is:inline>
+    // Load EmailJS
+    (function() {
+        emailjs.init("ct_s19oZHppLy9BlW");
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Store student information in local storage
+        const studentNameInput = document.getElementById('studentName');
+        const studentEmailInput = document.getElementById('studentEmail');
+        const teacherEmailInput = document.getElementById('teacherEmail');
+
+        // Load stored values if they exist
+        if (localStorage.getItem('studentName')) {
+            studentNameInput.value = localStorage.getItem('studentName');
+        }
+        if (localStorage.getItem('studentEmail')) {
+            studentEmailInput.value = localStorage.getItem('studentEmail');
+        }
+        if (localStorage.getItem('teacherEmail')) {
+            teacherEmailInput.value = localStorage.getItem('teacherEmail');
+        }
+
+        // Save values when they change
+        studentNameInput.addEventListener('change', function() {
+            localStorage.setItem('studentName', this.value);
+        });
+        studentEmailInput.addEventListener('change', function() {
+            localStorage.setItem('studentEmail', this.value);
+        });
+        teacherEmailInput.addEventListener('change', function() {
+            localStorage.setItem('teacherEmail', this.value);
+        });
+
+        // Handle form submission
+        const submitBtn = document.getElementById('submitBtn');
+        const submissionMessage = document.getElementById('submissionMessage');
+
+        submitBtn.addEventListener('click', function() {
+            // Validate required fields
+            const studentName = studentNameInput.value.trim();
+            const studentEmail = studentEmailInput.value.trim();
+            const teacherEmail = teacherEmailInput.value.trim();
+            const conclusion = document.getElementById('conclusion').value.trim();
+
+            if (!studentName || !studentEmail || !teacherEmail) {
+                showMessage('Please fill in all required student and teacher information.', 'error');
+                return;
+            }
+
+            if (!conclusion) {
+                showMessage('Please complete your conclusion before submitting.', 'error');
+                return;
+            }
+
+            // Collect data from the experiment
+            const hypothesis1a = document.getElementById('hypothesis1a').value.trim();
+            const hypothesis1b = document.getElementById('hypothesis1b').value.trim();
+            const hypothesis2a = document.getElementById('hypothesis2a').value.trim();
+            const hypothesis2b = document.getElementById('hypothesis2b').value.trim();
+            const hypothesis3 = document.getElementById('hypothesis3').value.trim();
+            
+            const observation1a = document.getElementById('observation1a').value.trim();
+            const observation1b = document.getElementById('observation1b').value.trim();
+            const observation2a = document.getElementById('observation2a').value.trim();
+            const observation2b = document.getElementById('observation2b').value.trim();
+            const observation2c = document.getElementById('observation2c').value.trim();
+            const observation2d = document.getElementById('observation2d').value.trim();
+            const observation3 = document.getElementById('observation3').value.trim();
+            
+            const question1 = document.getElementById('question1').value.trim();
+            const question2 = document.getElementById('question2').value.trim();
+            const question3 = document.getElementById('question3').value.trim();
+            const question4 = document.getElementById('question4').value.trim();
+            const question5 = document.getElementById('question5').value.trim();
+
+            // Get selected path for marble
+            let selectedPath = '';
+            const pathRadios = document.querySelectorAll('input[name="path"]');
+            for (const radio of pathRadios) {
+                if (radio.checked) {
+                    selectedPath = radio.value;
+                    break;
+                }
+            }
+
+            // Prepare comprehensive experiment data for email
+            const experimentData = `
+EXPERIMENT: Newton's First Law
+
+STUDENT: ${studentName}
+EMAIL: ${studentEmail}
+
+HYPOTHESES:
+1a. ${hypothesis1a || 'Not provided'}
+1b. ${hypothesis1b || 'Not provided'}
+2a. ${hypothesis2a || 'Not provided'}
+2b. ${hypothesis2b || 'Not provided'}
+3. ${hypothesis3 || 'Not provided'}
+
+SELECTED PATH: ${selectedPath || 'Not selected'}
+
+OBSERVATIONS:
+1a. ${observation1a || 'Not provided'}
+1b. ${observation1b || 'Not provided'}
+2a. ${observation2a || 'Not provided'}
+2b. ${observation2b || 'Not provided'}
+2c. ${observation2c || 'Not provided'}
+2d. ${observation2d || 'Not provided'}
+3. ${observation3 || 'Not provided'}
+
+ANALYSIS QUESTIONS:
+1. ${question1 || 'Not answered'}
+2. ${question2 || 'Not answered'}
+3. ${question3 || 'Not answered'}
+4. ${question4 || 'Not answered'}
+5. ${question5 || 'Not answered'}
+
+CONCLUSION:
+${conclusion}
+            `.trim();
+
+            // Use proven EmailJS parameter structure from experiment3_2
+            const templateParams = {
+                student_name: studentName,
+                student_email: studentEmail,
+                experiment_title: 'Experiment 7.2: Newton\'s First Law',
+                hypothesis: `Path: ${selectedPath || 'Not selected'} | Hypotheses: ${hypothesis1a || 'N/A'}, ${hypothesis1b || 'N/A'}, ${hypothesis2a || 'N/A'}, ${hypothesis2b || 'N/A'}, ${hypothesis3 || 'N/A'}`,
+                missing_elements: `Observations: ${observation1a || 'N/A'}, ${observation1b || 'N/A'}, ${observation2a || 'N/A'}, ${observation2b || 'N/A'}, ${observation2c || 'N/A'}, ${observation2d || 'N/A'}, ${observation3 || 'N/A'}`,
+                conclusion: experimentData,
+                subject: `Physical Science Experiment 7.2 Results - ${studentName}`
+            };
+
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Send email using EmailJS
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    showMessage('Your experiment results have been submitted successfully!', 'success');
+                    submitBtn.textContent = 'Submitted';
+                })
+                .catch(function(error) {
+                    console.log('FAILED...', error);
+                    showMessage('Failed to submit results. Please try again later.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Results';
+                });
+        });
+
+        function showMessage(message, type) {
+            submissionMessage.textContent = message;
+            submissionMessage.classList.remove('hidden', 'text-green-600', 'text-red-600');
+            submissionMessage.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
+        }
+    });
+</script>

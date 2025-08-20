@@ -1,0 +1,438 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 22: Advanced Robot Behaviors and State Machines">
+    <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0;">Week 22</h1>
+            <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; opacity: 0.9;">Advanced Robot Behaviors and State Machines</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🎯</span> Learning Objectives
+            </h2>
+            <ul style="list-style-type: none; padding: 0;">
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Understand what state machines are and why they're useful for robots
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Design and implement simple state machines for robot behaviors
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Create complex robot behaviors by combining multiple states
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Program robots to make decisions based on sensor inputs
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Build an autonomous robot that can handle multiple tasks
+                </li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Introduction to State Machines -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🔄</span> Introduction to State Machines
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">What is a State Machine?</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    A state machine is a way to organize robot behavior by breaking it down into different "states" or modes. 
+                    Think of it like the different modes your phone can be in: silent mode, vibrate mode, or ring mode. 
+                    Your phone behaves differently in each state, and it switches between states based on what you do.
+                </p>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    For robots, states might be: "searching for objects," "following a line," "avoiding obstacles," or "returning home." 
+                    The robot does different things in each state and switches states based on what its sensors detect.
+                </p>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Why Use State Machines?</h3>
+                <ul style="margin-bottom: 1rem; line-height: 1.8;">
+                    <li><strong>Organization:</strong> Makes complex robot behavior easier to understand and debug</li>
+                    <li><strong>Predictability:</strong> You always know what the robot should be doing in each state</li>
+                    <li><strong>Flexibility:</strong> Easy to add new behaviors or modify existing ones</li>
+                    <li><strong>Reliability:</strong> Prevents the robot from getting confused or stuck</li>
+                    <li><strong>Modularity:</strong> Each state can be programmed and tested separately</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Real-World Examples</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    State machines are everywhere in technology:
+                </p>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Traffic Lights:</strong> Red → Yellow → Green → Red (states change based on timers)</li>
+                    <li><strong>Washing Machine:</strong> Fill → Wash → Rinse → Spin → Done</li>
+                    <li><strong>Video Games:</strong> Menu → Playing → Paused → Game Over</li>
+                    <li><strong>Elevators:</strong> Idle → Moving Up → Moving Down → Door Open</li>
+                    <li><strong>Roomba Vacuum:</strong> Cleaning → Charging → Stuck → Returning Home</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: Designing Simple State Machines -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📋</span> Designing Simple State Machines
+            </h2>
+            
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Step 1: Identify the States</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Start by listing all the different things your robot needs to do. For example, a simple exploring robot might have:
+                </p>
+                <ul style="margin-bottom: 1rem; line-height: 1.8;">
+                    <li><strong>EXPLORING:</strong> Moving forward and looking around</li>
+                    <li><strong>AVOIDING:</strong> Turning away from obstacles</li>
+                    <li><strong>STUCK:</strong> Backing up and trying a different direction</li>
+                    <li><strong>RETURNING:</strong> Going back to the starting point</li>
+                </ul>
+            </div>
+
+            <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Step 2: Define State Transitions</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Next, decide when the robot should switch from one state to another. These are called "transitions":
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Example state transitions for exploring robot:
+
+EXPLORING → AVOIDING: when obstacle detected
+AVOIDING → EXPLORING: when path is clear
+EXPLORING → STUCK: when same position for too long
+STUCK → EXPLORING: after backup maneuver complete
+ANY STATE → RETURNING: when battery is low`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fef7e0; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Step 3: Program Each State</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Write the code for what the robot should do in each state:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Simple state machine structure
+enum RobotState {
+  EXPLORING,
+  AVOIDING,
+  STUCK,
+  RETURNING
+};
+
+RobotState currentState = EXPLORING;
+
+void loop() {
+  switch (currentState) {
+    case EXPLORING:
+      exploreMode();
+      break;
+    case AVOIDING:
+      avoidMode();
+      break;
+    case STUCK:
+      stuckMode();
+      break;
+    case RETURNING:
+      returnMode();
+      break;
+  }
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Programming State Machines -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">💻</span> Programming State Machines
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Complete State Machine Example</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Here's a complete example of a robot that explores, avoids obstacles, and returns home when the battery is low:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`#include <Servo.h>
+
+// Robot states
+enum RobotState {
+  EXPLORING,
+  AVOIDING,
+  STUCK,
+  RETURNING,
+  CHARGING
+};
+
+RobotState currentState = EXPLORING;
+unsigned long stateStartTime = 0;
+unsigned long lastPositionTime = 0;
+float lastX = 0, lastY = 0;
+
+void setup() {
+  Serial.begin(9600);
+  initializeRobot();
+  stateStartTime = millis();
+  Serial.println("Robot starting in EXPLORING state");
+}
+
+void loop() {
+  // Check for state transitions first
+  checkStateTransitions();
+  
+  // Execute current state behavior
+  switch (currentState) {
+    case EXPLORING:
+      exploreMode();
+      break;
+    case AVOIDING:
+      avoidMode();
+      break;
+    case STUCK:
+      stuckMode();
+      break;
+    case RETURNING:
+      returnMode();
+      break;
+    case CHARGING:
+      chargingMode();
+      break;
+  }
+  
+  delay(100); // Small delay for stability
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">State Transition Logic</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    The key to good state machines is clear transition logic:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`void checkStateTransitions() {
+  float batteryLevel = getBatteryLevel();
+  float distance = getUltrasonicDistance();
+  bool isStuck = checkIfStuck();
+  
+  // Battery low - always return home
+  if (batteryLevel < 20 && currentState != RETURNING && currentState != CHARGING) {
+    changeState(RETURNING);
+    return;
+  }
+  
+  // State-specific transitions
+  switch (currentState) {
+    case EXPLORING:
+      if (distance < 20) {  // Obstacle detected
+        changeState(AVOIDING);
+      } else if (isStuck) {  // Haven't moved in a while
+        changeState(STUCK);
+      }
+      break;
+      
+    case AVOIDING:
+      if (distance > 30) {  // Path is clear
+        changeState(EXPLORING);
+      }
+      break;
+      
+    case STUCK:
+      if (millis() - stateStartTime > 3000) {  // Been stuck for 3 seconds
+        changeState(EXPLORING);
+      }
+      break;
+      
+    case RETURNING:
+      if (isAtHome()) {
+        changeState(CHARGING);
+      }
+      break;
+  }
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Individual State Functions</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Each state has its own function that defines what the robot does:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`void exploreMode() {
+  // Move forward slowly and scan for interesting things
+  moveForward(100);  // Slow speed for exploration
+  
+  // Occasionally turn to explore different directions
+  if (millis() - stateStartTime > 5000) {
+    turnRandom();
+    stateStartTime = millis();
+  }
+}
+
+void avoidMode() {
+  // Stop and turn away from obstacle
+  stopMotors();
+  delay(500);
+  
+  // Turn right or left based on which side is clearer
+  if (scanLeft() > scanRight()) {
+    turnLeft();
+  } else {
+    turnRight();
+  }
+  
+  delay(1000);  // Turn for 1 second
+}
+
+void stuckMode() {
+  // Back up and turn to get unstuck
+  moveBackward(150);
+  delay(1000);
+  
+  // Turn a random amount
+  if (random(2) == 0) {
+    turnLeft();
+  } else {
+    turnRight();
+  }
+  delay(random(1000, 3000));  // Turn for 1-3 seconds
+}
+
+void returnMode() {
+  // Navigate back to starting position using GPS or dead reckoning
+  navigateToHome();
+}
+
+void chargingMode() {
+  // Stop all movement and wait
+  stopMotors();
+  Serial.println("Charging... Press reset to restart exploration");
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🔬</span> Hands-On Activity: Autonomous Pet Robot
+            </h2>
+            
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Project Goal</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Create an autonomous "pet" robot that exhibits lifelike behaviors using state machines. 
+                    Your robot pet will explore, play, rest, and interact with its environment just like a real pet!
+                </p>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Pet Robot States</h3>
+                <ol style="line-height: 1.8;">
+                    <li><strong>EXPLORING:</strong> Wanders around curiously, looking for interesting things</li>
+                    <li><strong>PLAYING:</strong> Follows moving objects or chases lights</li>
+                    <li><strong>RESTING:</strong> Sits still and "sleeps" for a while</li>
+                    <li><strong>SOCIALIZING:</strong> Responds to people (sound, movement, or touch)</li>
+                    <li><strong>HUNGRY:</strong> Searches for "food" (specific colored objects)</li>
+                    <li><strong>SCARED:</strong> Backs away from loud noises or sudden movements</li>
+                </ol>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Implementation Steps</h3>
+                <ol style="line-height: 1.8;">
+                    <li><strong>Design Your Pet's Personality:</strong> Decide what makes your robot pet unique</li>
+                    <li><strong>Map Out State Transitions:</strong> When does your pet change behaviors?</li>
+                    <li><strong>Program Basic States:</strong> Start with 3-4 simple states</li>
+                    <li><strong>Add Sensors:</strong> Use ultrasonic, camera, microphone, or touch sensors</li>
+                    <li><strong>Test and Refine:</strong> Observe your pet and adjust behaviors</li>
+                    <li><strong>Add Personality:</strong> Include random behaviors and "moods"</li>
+                </ol>
+            </div>
+
+            <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Bonus Features</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Memory:</strong> Remember where it found food or encountered obstacles</li>
+                    <li><strong>Learning:</strong> Adapt behavior based on past experiences</li>
+                    <li><strong>Communication:</strong> Make different sounds or light patterns for each state</li>
+                    <li><strong>Time Awareness:</strong> Different behaviors at different times of day</li>
+                    <li><strong>Energy System:</strong> Pet gets tired and needs to rest periodically</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📋</span> Assessment & Homework
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Practice Exercises</h3>
+                <ol style="line-height: 1.8;">
+                    <li>Create a simple 3-state machine (explore, avoid, rest) and test it</li>
+                    <li>Add proper state transition logging to track your robot's behavior</li>
+                    <li>Implement a "stuck detection" system that works reliably</li>
+                    <li>Design a state machine for a specific task (cleaning, security, entertainment)</li>
+                    <li>Test your robot's state machine in different environments</li>
+                </ol>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Challenge Projects</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Smart Security Robot:</strong> Patrol, investigate, alert, and return to base</li>
+                    <li><strong>Interactive Game Robot:</strong> Play hide-and-seek or tag with humans</li>
+                    <li><strong>Ecosystem Robot:</strong> Multiple robots with different roles working together</li>
+                    <li><strong>Adaptive Robot:</strong> Changes behavior based on environment and experience</li>
+                </ul>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Reflection Questions</h3>
+                <ol style="line-height: 1.8;">
+                    <li>How do state machines make robot programming easier to understand and debug?</li>
+                    <li>What happens when a robot gets stuck between two states? How can you prevent this?</li>
+                    <li>How could you use state machines to create more realistic robot behaviors?</li>
+                    <li>What real-world systems use state machines that you interact with daily?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week21" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 21: GPS Navigation
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week22" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz →
+            </a>
+        </div>
+    </div>
+</Layout>

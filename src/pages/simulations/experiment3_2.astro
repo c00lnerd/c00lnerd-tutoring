@@ -1,0 +1,467 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 3.2: Creating a Periodic Table">
+    <main class="container mx-auto px-4 py-8">
+        <div class="experiment-header">
+            <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">EXPERIMENT 3.2</h1>
+            <h2 class="text-2xl font-bold text-center text-blue-700 mb-8">CREATING A PERIODIC TABLE</h2>
+        </div>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PURPOSE:</h3>
+            <p class="mb-4">To model Mendeleev's process by attempting to arrange color cards according to their observed properties of color and intensity.</p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">MATERIALS:</h3>
+            <ul class="list-disc pl-8 mb-4">
+                <li>Color cards found in the student notebook (You can also find a copy to print on the Book Extra site.)</li>
+                <li>Scissors</li>
+                <li>Glue or tape</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">QUESTION:</h3>
+            <p class="mb-4">Can you form a periodic table with rows and columns showing a repeating change in properties (color) and increasing atomic mass (shade or color intensity)?</p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">BACKGROUND:</h3>
+            <p class="mb-4">
+                The color of a card represents its properties. For example, you can consider all green color 
+                cards to have similar properties. The green color cards will all have different properties from 
+                the orange cards (and all other color cards). The shade (intensity) of a color card represents 
+                its atomic mass. In other words, a light (lower intensity) green color card represents an 
+                element with a lower atomic mass than a dark (higher intensity) green color card.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PROCEDURE:</h3>
+            <ol class="list-decimal pl-8 mb-4">
+                <li class="mb-2">
+                    Use the interactive simulation below. You will see 24 color cards organized by color families and a periodic table grid with 34 spaces.
+                </li>
+                <li class="mb-2">
+                    <strong>Drag and drop</strong> the color cards from the card container into the periodic table grid. Arrange them in 8 columns following the rainbow pattern: red, orange, yellow, green, teal, blue, indigo, violet. The first row should have only 2 cards (positions 1 and 8).
+                </li>
+                <li class="mb-2">
+                    Within each column, arrange cards by <strong>increasing intensity</strong> (lighter shades at the top, darker shades at the bottom). This represents increasing atomic mass.
+                </li>
+                <li class="mb-2">
+                    Notice that you have <strong>missing elements</strong> - there are 34 grid spaces but only 24 cards. This models Mendeleev's challenge! Predict where the missing elements belong and describe their properties in the form below.
+                </li>
+                <li class="mb-2">
+                    Use the <strong>"Check Arrangement"</strong> button to verify your periodic table follows the correct pattern (same colors in columns, increasing intensity down each column).
+                </li>
+                <li class="mb-2">
+                    <strong>Tip:</strong> Right-click on any card to return it to its original position. Use the "Reset" button to start over if needed.
+                </li>
+                <li class="mb-2">
+                    Complete the form below with your predictions about missing elements and your conclusions about periodic patterns.
+                </li>
+            </ol>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">CONCLUSION:</h3>
+            <p class="mb-4">
+                Were your predictions correct? Explain how the periodic table is a good model for 
+                predicting unknown elements and their properties.
+            </p>
+        </section>
+
+        <!-- Interactive Color Card Simulation -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">INTERACTIVE SIMULATION:</h3>
+            <p class="mb-4">
+                Use this interactive simulation to arrange color cards into a periodic table pattern. 
+                Drag and drop the color cards to arrange them by color (property) and intensity (atomic mass).
+            </p>
+            
+            <div id="colorCardSimulation" class="border border-gray-300 rounded-lg p-4 bg-gray-50 min-h-[400px] mb-4">
+                <div class="flex justify-between mb-4">
+                    <button id="resetBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg">Reset Cards</button>
+                    <button id="checkBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg">Check Arrangement</button>
+                </div>
+                
+                <div id="periodicTableGrid" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; max-width: 600px; margin: 0 auto; padding: 16px; background-color: #ffffff; border: 2px solid #d1d5db; border-radius: 8px;">
+                    <!-- Grid will be populated by JavaScript -->
+                </div>
+                
+                <div id="colorCardContainer" style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; margin-top: 16px; padding: 16px; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <!-- Color cards will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">SUBMIT YOUR WORK</h3>
+            <form id="experimentForm" class="bg-gray-100 p-6 rounded-lg">
+                <div class="mb-4">
+                    <label for="studentName" class="block text-gray-700 font-bold mb-2">Student Name:</label>
+                    <input type="text" id="studentName" name="studentName" class="w-full px-3 py-2 border rounded-lg">
+                </div>
+                
+                <div class="mb-4">
+                    <label for="studentEmail" class="block text-gray-700 font-bold mb-2">Student Email:</label>
+                    <input type="email" id="studentEmail" name="studentEmail" class="w-full px-3 py-2 border rounded-lg">
+                </div>
+                
+
+                
+                <div class="mb-6">
+                    <div class="mb-2">
+                        <label for="missingElements" class="block text-gray-700 font-bold">Describe your predictions for the missing elements:</label>
+                    </div>
+                    <textarea id="missingElements" name="missingElements" rows="6" class="w-full px-3 py-2 border rounded-lg resize-y" placeholder="Based on the patterns you observed in the periodic table simulation, what properties do you predict for the missing elements? Consider their position, color family, and expected intensity."></textarea>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="mb-2">
+                        <label for="conclusion" class="block text-gray-700 font-bold">Conclusion:</label>
+                    </div>
+                    <textarea id="conclusion" name="conclusion" rows="10" class="w-full px-3 py-2 border rounded-lg resize-y" placeholder="Were your predictions correct? Explain how the periodic table is a good model for predicting unknown elements and their properties. What patterns did you discover?"></textarea>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Submit Experiment</button>
+                </div>
+            </form>
+        </section>
+
+        <div class="mt-8 text-center">
+            <a href="/physical-science" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">Back to Physical Science</a>
+        </div>
+    </main>
+
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting simulation setup...');
+            
+            // Color card data
+            const colors = ['red', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'violet'];
+            const intensities = ['100', '300', '500', '700', '900']; // Tailwind color intensities
+            
+            // Create the periodic table grid
+            const grid = document.getElementById('periodicTableGrid');
+            console.log('Grid element:', grid);
+            if (!grid) {
+                console.error('Grid element not found!');
+                return;
+            }
+            
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 8; col++) {
+                    // First row only has 2 elements (positions 0 and 7)
+                    if (row === 0 && col > 0 && col < 7) {
+                        const emptyCell = document.createElement('div');
+                        emptyCell.className = 'h-16 w-16 border border-dashed border-gray-300 rounded bg-gray-100';
+                        emptyCell.style.cssText = 'width: 64px; height: 64px; border: 2px dashed #d1d5db; background-color: #f3f4f6; border-radius: 8px; display: block;';
+                        grid.appendChild(emptyCell);
+                    } else {
+                        const cell = document.createElement('div');
+                        cell.className = 'h-16 w-16 border border-gray-300 rounded droppable bg-white hover:bg-gray-50';
+                        cell.style.cssText = 'width: 64px; height: 64px; border: 2px solid #d1d5db; background-color: white; border-radius: 8px; display: block;';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        // Add the ID that the chart generation function expects
+                        const cellIndex = row * 8 + col;
+                        cell.id = 'cell-' + cellIndex;
+                    cell.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        cell.classList.add('border-blue-500');
+                    });
+                    cell.addEventListener('dragleave', () => {
+                        cell.classList.remove('border-blue-500');
+                    });
+                    cell.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        cell.classList.remove('border-blue-500');
+                        const cardId = e.dataTransfer.getData('text/plain');
+                        const card = document.getElementById(cardId);
+                        
+                        // Enhanced drop logic: handle occupied cells
+                        if (cell.children.length === 0) {
+                            cell.appendChild(card);
+                        } else {
+                            // If cell is occupied, return card to original slot
+                            const originalSlotIndex = card.dataset.originalSlot;
+                            const originalSlot = document.getElementById(`slot-${originalSlotIndex}`);
+                            if (originalSlot) {
+                                originalSlot.appendChild(card);
+                            }
+                        }
+                        });
+                        grid.appendChild(cell);
+                    }
+                }
+            }
+            
+            console.log('Grid creation completed, grid has', grid.children.length, 'cells');
+            
+            // Create the color cards
+            const cardContainer = document.getElementById('colorCardContainer');
+            console.log('Card container element:', cardContainer);
+            if (!cardContainer) {
+                console.error('Card container element not found!');
+                return;
+            }
+            
+            let cardId = 1;
+            
+            // Create cards organized in columns by color families (like periodic table)
+            // Each column will be a color family, each row will be an intensity level
+            const availableCards = [];
+            
+            // Build cards by intensity first, then by color (to create column arrangement)
+            const intensityLevels = ['100', '500', '900'];
+            const colorFamilies = ['red', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'violet'];
+            
+            // Create cards in column order: all light colors first, then medium, then dark
+            intensityLevels.forEach(intensity => {
+                colorFamilies.forEach(color => {
+                    availableCards.push({color: color, intensity: intensity});
+                });
+            });
+            
+            // Keep cards organized (don't shuffle) to show the pattern clearly
+            const shuffledCards = availableCards;
+            
+            // First, create placeholder slots for all 24 positions to maintain grid structure
+            for (let i = 0; i < 24; i++) {
+                const slot = document.createElement('div');
+                slot.id = `slot-${i}`;
+                slot.className = 'card-slot';
+                slot.style.cssText = 'width: 48px; height: 48px; border: 2px dashed #d1d5db; border-radius: 8px; display: block; justify-self: center; align-self: center; background-color: #f9fafb;';
+                cardContainer.appendChild(slot);
+            }
+            
+            // Create the card elements and place them in their slots
+            console.log('Creating', shuffledCards.length, 'color cards...');
+            shuffledCards.forEach((cardData, index) => {
+                const card = document.createElement('div');
+                card.id = `card-${cardId++}`;
+                card.className = `w-12 h-12 bg-${cardData.color}-${cardData.intensity} rounded cursor-move draggable`;
+                
+                // Add inline styles to ensure visibility
+                const colorMap = {
+                    'red': {'100': '#fee2e2', '300': '#fca5a5', '500': '#ef4444', '700': '#b91c1c', '900': '#7f1d1d'},
+                    'orange': {'100': '#fed7aa', '300': '#fdba74', '500': '#f97316', '700': '#c2410c', '900': '#7c2d12'},
+                    'yellow': {'100': '#fef3c7', '300': '#fcd34d', '500': '#eab308', '700': '#a16207', '900': '#713f12'},
+                    'green': {'100': '#dcfce7', '300': '#86efac', '500': '#22c55e', '700': '#15803d', '900': '#14532d'},
+                    'teal': {'100': '#ccfbf1', '300': '#5eead4', '500': '#14b8a6', '700': '#0f766e', '900': '#134e4a'},
+                    'blue': {'100': '#dbeafe', '300': '#93c5fd', '500': '#3b82f6', '700': '#1d4ed8', '900': '#1e3a8a'},
+                    'indigo': {'100': '#e0e7ff', '300': '#a5b4fc', '500': '#6366f1', '700': '#4338ca', '900': '#312e81'},
+                    'violet': {'100': '#ede9fe', '300': '#c4b5fd', '500': '#8b5cf6', '700': '#6d28d9', '900': '#4c1d95'}
+                };
+                
+                const bgColor = colorMap[cardData.color][cardData.intensity] || '#gray';
+                card.style.cssText = `width: 48px; height: 48px; background-color: ${bgColor}; border-radius: 8px; cursor: move; display: block; position: absolute; z-index: 10;`;
+                card.draggable = true;
+                card.dataset.color = cardData.color;
+                card.dataset.intensity = cardData.intensity;
+                card.dataset.originalSlot = index; // Remember original position
+                
+                card.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', card.id);
+                });
+                
+                // Add right-click to remove functionality
+                card.addEventListener('contextmenu', (e) => {
+                    e.preventDefault(); // Prevent browser context menu
+                    
+                    // Return card to its original slot (enhanced logic)
+                    const originalSlotIndex = card.dataset.originalSlot;
+                    const originalSlot = document.getElementById(`slot-${originalSlotIndex}`);
+                    if (originalSlot && originalSlot.children.length === 0) {
+                        originalSlot.appendChild(card);
+                    } else if (originalSlot && originalSlot.children.length > 0) {
+                        // If original slot is occupied, swap cards
+                        const occupyingCard = originalSlot.firstChild;
+                        const currentParent = card.parentNode;
+                        if (currentParent && currentParent.classList.contains('droppable')) {
+                            currentParent.appendChild(occupyingCard);
+                        }
+                        originalSlot.appendChild(card);
+                    }
+                });
+                
+                // Place card in its corresponding slot
+                const slot = document.getElementById(`slot-${index}`);
+                slot.style.position = 'relative';
+                slot.appendChild(card);
+            });
+            console.log('Card creation completed, container has', cardContainer.children.length, 'cards');
+            
+            // Reset button functionality
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                const cards = document.querySelectorAll('.draggable');
+                cards.forEach(card => {
+                    const originalSlotIndex = card.dataset.originalSlot;
+                    const originalSlot = document.getElementById(`slot-${originalSlotIndex}`);
+                    if (originalSlot) {
+                        originalSlot.appendChild(card);
+                    }
+                });
+            });
+            
+            // Check arrangement button - improved validation
+            document.getElementById('checkBtn').addEventListener('click', () => {
+                let correct = true;
+                let feedback = [];
+                const filledCells = document.querySelectorAll('.droppable:not(:empty)');
+                
+                if (filledCells.length === 0) {
+                    alert('Try placing some cards in the periodic table grid first!');
+                    return;
+                }
+                
+                // Group cards by column to check color consistency
+                const columnGroups = {};
+                
+                filledCells.forEach(cell => {
+                    const row = parseInt(cell.dataset.row);
+                    const col = parseInt(cell.dataset.col);
+                    const card = cell.firstChild;
+                    const cardColor = card.dataset.color;
+                    const cardIntensity = card.dataset.intensity;
+                    
+                    if (!columnGroups[col]) {
+                        columnGroups[col] = [];
+                    }
+                    columnGroups[col].push({row, color: cardColor, intensity: cardIntensity});
+                });
+                
+                // Check each column for color consistency and intensity progression
+                Object.keys(columnGroups).forEach(col => {
+                    const columnCards = columnGroups[col];
+                    
+                    // Check if all cards in column have same color
+                    const firstColor = columnCards[0].color;
+                    const allSameColor = columnCards.every(card => card.color === firstColor);
+                    if (!allSameColor) {
+                        correct = false;
+                        feedback.push(`Column ${parseInt(col) + 1} has mixed colors - should all be the same color family.`);
+                    }
+                    
+                    // Check if intensity increases down the column
+                    columnCards.sort((a, b) => a.row - b.row);
+                    for (let i = 1; i < columnCards.length; i++) {
+                        const prevIntensity = parseInt(columnCards[i-1].intensity);
+                        const currIntensity = parseInt(columnCards[i].intensity);
+                        if (currIntensity <= prevIntensity) {
+                            correct = false;
+                            feedback.push(`Column ${parseInt(col) + 1} intensity should increase going down.`);
+                            break;
+                        }
+                    }
+                });
+                
+                if (correct) {
+                    alert('Excellent work! Your periodic table arrangement follows the correct pattern: same colors in columns and increasing intensity down each column!');
+                } else {
+                    let feedbackMsg;
+                    if (feedback.length > 0) {
+                        feedbackMsg = 'Good effort! Here are some tips:\n• ' + feedback.join('\n• ') + 
+                            '\n\nRemember: columns should have the same color (property) and intensity should increase going down each column.';
+                    } else {
+                        feedbackMsg = 'Not quite right. Remember: columns should have the same color (property) and intensity (atomic mass) should increase as you go down each column.';
+                    }
+                    alert(feedbackMsg);
+                }
+            });
+            
+            // Initialize EmailJS
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            // Form submission
+            document.getElementById('experimentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const studentName = document.getElementById('studentName').value;
+                const studentEmail = document.getElementById('studentEmail').value;
+                const missingElements = document.getElementById('missingElements').value;
+                const conclusion = document.getElementById('conclusion').value;
+                
+                // Enhanced form validation for all required fields
+                if (!studentName || !studentEmail || !missingElements || !conclusion) {
+                    alert('Please fill in all required fields: name, email, missing elements predictions, and conclusion.');
+                    return;
+                }
+                
+                // Function to capture current periodic table arrangement
+                function capturePeriodicTable() {
+                    let tableRepresentation = '\nSTUDENT\'S PERIODIC TABLE ARRANGEMENT:\n';
+                    tableRepresentation += '=' .repeat(50) + '\n';
+                    
+                    // Create 5 rows x 8 columns representation
+                    for (let row = 0; row < 5; row++) {
+                        let rowText = '';
+                        for (let col = 0; col < 8; col++) {
+                            const cellIndex = row * 8 + col;
+                            const cell = document.getElementById('cell-' + cellIndex);
+                            
+                            if (cell && cell.children.length > 0) {
+                                const card = cell.children[0];
+                                const color = card.dataset.color || 'unknown';
+                                const intensity = card.dataset.intensity || '?';
+                                rowText += '[' + color.substring(0,3).toUpperCase() + intensity + '] ';
+                            } else if ((row === 0 && col !== 0 && col !== 7) || 
+                                     (row === 1 && (col === 1 || col === 6))) {
+                                // Skip positions that should be empty in first two rows
+                                rowText += '       ';
+                            } else {
+                                rowText += '[EMPTY] ';
+                            }
+                        }
+                        tableRepresentation += rowText + '\n';
+                    }
+                    
+                    tableRepresentation += '=' .repeat(50) + '\n';
+                    tableRepresentation += 'Legend: [COLOR+INTENSITY] - RED100, ORG300, etc.\n';
+                    tableRepresentation += 'EMPTY = Missing element (student prediction needed)\n\n';
+                    
+                    return tableRepresentation;
+                }
+                
+                // Prepare experiment data for email
+                const periodicTableChart = capturePeriodicTable();
+                const experimentData = 'EXPERIMENT 3.2: CREATING A PERIODIC TABLE\n\n' +
+                    'Student: ' + studentName + '\n' +
+                    'Email: ' + studentEmail + '\n\n' +
+                    periodicTableChart +
+                    'MISSING ELEMENTS PREDICTIONS:\n' + missingElements + '\n\n' +
+                    'CONCLUSION:\n' + conclusion + '\n\n' +
+                    'Experiment completed: ' + new Date().toLocaleString();
+                
+                // Send email using EmailJS
+                emailjs.send('service_ot1jg6s', 'template_y556rhr', {
+                    student_name: studentName,
+                    student_email: studentEmail,
+                    experiment_title: 'Experiment 3.2: Creating a Periodic Table',
+                    hypothesis: 'See periodic table arrangement and predictions below',
+                    missing_elements: missingElements,
+                    conclusion: experimentData,
+                    subject: `Experiment 3.2 - ${studentName}`
+                }).then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert('Your experiment has been submitted successfully! Your teacher will be notified.');
+                    document.getElementById('experimentForm').reset();
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    alert('Failed to submit. Please try again.');
+                });
+            });
+            
+        }); // Close DOMContentLoaded
+    </script>
+</Layout>

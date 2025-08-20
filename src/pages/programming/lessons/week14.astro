@@ -1,0 +1,448 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 14: Basic miniAuto Programming">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">14</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 14: Basic miniAuto Programming</h1>
+                        <p class="text-gray-600">Programming your robot for autonomous behavior</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Use miniAuto library functions effectively
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Create autonomous navigation programs
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Implement sensor-based decision making
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Debug and optimize robot behavior
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Robotics library usage
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Autonomous system design
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Real-time debugging techniques
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: miniAuto Library Functions -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        miniAuto Library Functions (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Essential miniAuto Functions:</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 class="font-medium mb-2">Movement Functions:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• <code>moveForward(speed)</code></li>
+                                    <li>• <code>moveBackward(speed)</code></li>
+                                    <li>• <code>turnLeft(speed)</code></li>
+                                    <li>• <code>turnRight(speed)</code></li>
+                                    <li>• <code>stop()</code></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium mb-2">Sensor Functions:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• <code>getDistance()</code></li>
+                                    <li>• <code>getLineSensor()</code></li>
+                                    <li>• <code>getBatteryVoltage()</code></li>
+                                    <li>• <code>getEncoderCount()</code></li>
+                                    <li>• <code>isButtonPressed()</code></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Basic miniAuto program structure
+#include "miniAuto.h"
+
+void setup() {
+    Serial.begin(115200);
+    miniAuto.init();  // Initialize robot systems
+    Serial.println("🤖 miniAuto Ready!");
+    // Startup sequence
+    miniAuto.setLED(BLUE);
+    miniAuto.playTone(440, 200);
+    delay(1000);
+    miniAuto.setLED(GREEN);
+}
+
+void loop() {
+    // Main robot behavior
+    float distance = miniAuto.getDistance();
+    float battery = miniAuto.getBatteryVoltage();
+    // Display status
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.print("cm, Battery: ");
+    Serial.print(battery);
+    Serial.println("V");
+    // Simple obstacle avoidance
+    if (distance > 30) {
+        miniAuto.moveForward(150);
+        miniAuto.setLED(GREEN);
+    } else if (distance > 10) {
+        miniAuto.moveForward(80);  // Slow down
+        miniAuto.setLED(YELLOW);
+    } else {
+        miniAuto.stop();
+        miniAuto.setLED(RED);
+        miniAuto.turnRight(150);
+        delay(500);
+    }
+    delay(100);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 2: Autonomous Navigation -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Autonomous Navigation Algorithms (25 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Navigation Strategies:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Reactive Navigation:</strong> Respond to immediate sensor inputs</li>
+                            <li>• <strong>Behavior-Based:</strong> Combine multiple simple behaviors</li>
+                            <li>• <strong>State Machine:</strong> Different modes for different situations</li>
+                            <li>• <strong>Goal-Oriented:</strong> Navigate toward specific objectives</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Advanced navigation with state machine
+enum NavigationState {
+    EXPLORING,
+    AVOIDING_OBSTACLE,
+    FOLLOWING_WALL,
+    SEARCHING,
+    RETURNING_HOME
+};
+
+NavigationState currentState = EXPLORING;
+unsigned long stateStartTime = 0;
+int explorationDirection = 1;  // 1 = right, -1 = left
+
+void autonomousNavigation() {
+    float frontDistance = miniAuto.getDistance();
+    unsigned long currentTime = millis();
+    switch (currentState) {
+        case EXPLORING:
+            if (frontDistance < 20) {
+                changeState(AVOIDING_OBSTACLE);
+            } else {
+                miniAuto.moveForward(180);
+                miniAuto.setLED(GREEN);
+                // Random direction changes
+                if (currentTime - stateStartTime > 5000) {
+                    if (random(0, 100) < 20) {  // 20% chance
+                        changeState(SEARCHING);
+                    }
+                }
+            }
+            break;
+        case AVOIDING_OBSTACLE:
+            miniAuto.setLED(RED);
+            miniAuto.stop();
+            delay(300);
+            // Turn away from obstacle
+            if (explorationDirection > 0) {
+                miniAuto.turnRight(150);
+            } else {
+                miniAuto.turnLeft(150);
+            }
+            delay(800);
+            changeState(FOLLOWING_WALL);
+            break;
+        case FOLLOWING_WALL:
+            miniAuto.setLED(YELLOW);
+            // Follow wall for a while
+            if (frontDistance > 40) {
+                changeState(EXPLORING);
+            } else {
+                miniAuto.moveForward(120);
+            }
+            if (currentTime - stateStartTime > 3000) {
+                changeState(EXPLORING);
+            }
+            break;
+        case SEARCHING:
+            miniAuto.setLED(BLUE);
+            // Scanning behavior
+            miniAuto.turnRight(100);
+            if (currentTime - stateStartTime > 2000) {
+                explorationDirection *= -1;  // Change direction
+                changeState(EXPLORING);
+            }
+            break;
+    }
+}
+
+void changeState(NavigationState newState) {
+    currentState = newState;
+    stateStartTime = millis();
+    Serial.print("State changed to: ");
+    Serial.println(newState);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 3: Sensor Integration -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Multi-Sensor Decision Making (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Sensor Fusion Concepts:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Combine multiple sensor inputs for better decisions</li>
+                            <li>• Handle conflicting sensor information</li>
+                            <li>• Prioritize sensors based on reliability and context</li>
+                            <li>• Create robust behaviors that work in various environments</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`
+// Multi-sensor decision making
+struct SensorData {
+    float distance;
+    int lineSensorLeft;
+    int lineSensorRight;
+    float batteryVoltage;
+    bool buttonPressed;
+    unsigned long timestamp;
+};
+
+SensorData readAllSensors() {
+    SensorData data;
+    data.distance = miniAuto.getDistance();
+    data.lineSensorLeft = miniAuto.getLineSensor(LEFT);
+    data.lineSensorRight = miniAuto.getLineSensor(RIGHT);
+    data.batteryVoltage = miniAuto.getBatteryVoltage();
+    data.buttonPressed = miniAuto.isButtonPressed();
+    data.timestamp = millis();
+    return data;
+}
+
+void intelligentBehavior() {
+    SensorData sensors = readAllSensors();
+    // Priority 1: Safety (battery and obstacles)
+    if (sensors.batteryVoltage < 6.5) {
+        miniAuto.setLED(RED);
+        miniAuto.playTone(880, 100);
+        Serial.println("🔋 Low battery - returning to base");
+        returnToBase();
+        return;
+    }
+    // Priority 2: Emergency stop
+    if (sensors.buttonPressed) {
+        miniAuto.stop();
+        miniAuto.setLED(RED);
+        Serial.println("🛑 Emergency stop activated");
+        while (miniAuto.isButtonPressed()) delay(100);
+        return;
+    }
+    // Priority 3: Line following (if line detected)
+    if (sensors.lineSensorLeft < 500 || sensors.lineSensorRight < 500) {
+        followLine(sensors);
+        return;
+    }
+    // Priority 4: Obstacle avoidance
+    if (sensors.distance < 25) {
+        avoidObstacle(sensors);
+        return;
+    }
+    // Default: Explore
+    miniAuto.moveForward(150);
+    miniAuto.setLED(GREEN);
+}
+`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 4: Debugging and Optimization -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Debugging and Performance Optimization (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Debugging Techniques:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Use Serial monitor for real-time debugging</li>
+                            <li>• LED indicators for visual status feedback</li>
+                            <li>• Sound cues for different robot states</li>
+                            <li>• Systematic testing of individual components</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Debugging and monitoring system
+                            bool debugMode = true;
+                            unsigned long lastDebugOutput = 0;
+                            
+                            void debugOutput(String message, float value = -999) {
+                                if (!debugMode) return;
+                                Serial.print("[");
+                                Serial.print(millis());
+                                Serial.print("] ");
+                                Serial.print(message);
+                                if (value != -999) {
+                                    Serial.print(": ");
+                                    Serial.print(value);
+                                }
+                                Serial.println();
+                            }
+                            
+                            void performanceMonitor() {
+                                if (millis() - lastDebugOutput > 1000) {
+                                    debugOutput("Distance", miniAuto.getDistance());
+                                    debugOutput("Battery", miniAuto.getBatteryVoltage());
+                                    debugOutput("State", currentState);
+                                    debugOutput("Free RAM", ESP.getFreeHeap());
+                                    lastDebugOutput = millis();
+                                }
+                            }
+                            
+                            // Performance optimization
+                            void optimizedLoop() {
+                                // Reduce sensor reading frequency
+                                static unsigned long lastSensorRead = 0;
+                                static float cachedDistance = 0;
+                                if (millis() - lastSensorRead > 50) {  // 20Hz
+                                    cachedDistance = miniAuto.getDistance();
+                                    lastSensorRead = millis();
+                                }
+                                // Use cached value for decisions
+                                makeDecision(cachedDistance);
+                                // Monitor performance
+                                performanceMonitor();
+                            }`}</pre>                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: Intelligent Explorer Robot</h3>
+                    <p class="text-green-700 mb-4">Students will create a sophisticated autonomous robot that demonstrates intelligent behavior using multiple sensors and decision-making algorithms.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Program Requirements:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Implement state machine navigation</li>
+                            <li>• Use multiple sensors for decision making</li>
+                            <li>• Include safety features (battery monitoring, emergency stop)</li>
+                            <li>• Add visual and audio feedback for different states</li>
+                            <li>• Create debugging output for monitoring</li>
+                            <li>• Optimize performance for smooth operation</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Behavior Goals:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Explore environment autonomously for 5+ minutes</li>
+                            <li>• Avoid all obstacles without getting stuck</li>
+                            <li>• Respond appropriately to different situations</li>
+                            <li>• Provide clear status information to operator</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Advanced Challenge:</h4>
+                        <p class="text-yellow-700">Add a "learning" component where the robot remembers successful navigation strategies and adapts its behavior based on past experiences.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Can student use miniAuto library functions effectively?</li>
+                            <li>• Do they implement proper state machine logic?</li>
+                            <li>• Are they integrating multiple sensors correctly?</li>
+                            <li>• Can they debug and optimize their programs?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">Personal Robot Assistant</p>
+                            <p class="text-blue-700 text-sm">Create a robot that acts as a personal assistant - it can follow you around, respond to button presses with different behaviors, monitor your environment, and provide useful feedback through lights and sounds. Include at least 5 different "assistant modes".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week13" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 13
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week14" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 14 Quiz
+                        </a>
+                        <a href="/programming/lessons/week15" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 15 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

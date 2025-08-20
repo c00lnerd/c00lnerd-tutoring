@@ -1,0 +1,252 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 9: Basic Sensors and Input Devices - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 9: Basic Sensors and Input Devices</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Explore the world of sensors and digital/analog inputs</p>
+                <div class="mt-4 p-4 bg-blue-100 rounded-lg">
+                    <p class="text-blue-800 font-medium">🔍 From hardware to sensing the world around us</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Understand different types of sensors and their applications
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Learn to read digital and analog sensor values
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Implement button inputs with proper debouncing
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Work with potentiometers and variable resistors
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Digital vs analog sensors
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Pull-up and pull-down resistors
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Signal conditioning and filtering
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-600 mr-2">•</span>
+                                Sensor calibration and mapping
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Introduction to Sensors -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">🌡️ Section 1: Introduction to Sensors</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What are Sensors?</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Sensors are devices that detect and measure physical properties from the environment 
+                        and convert them into electrical signals that Arduino can understand. They are the 
+                        "eyes and ears" of your Arduino projects.
+                    </p>
+                    
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Sensor Categories:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <h5 class="font-medium text-green-700 mb-1">Digital Sensors:</h5>
+                                <ul class="text-green-600 text-sm space-y-1">
+                                    <li>• Output HIGH (1) or LOW (0)</li>
+                                    <li>• Examples: buttons, switches, motion detectors</li>
+                                    <li>• Simple on/off or true/false readings</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-green-700 mb-1">Analog Sensors:</h5>
+                                <ul class="text-green-600 text-sm space-y-1">
+                                    <li>• Output variable voltage (0-5V)</li>
+                                    <li>• Examples: temperature, light, pressure sensors</li>
+                                    <li>• Provide continuous range of values</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Digital Input Devices -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">🔘 Section 2: Digital Input Devices</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Buttons and Switches</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Buttons and switches are the simplest digital input devices. They provide a direct 
+                        way for users to interact with your Arduino projects.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Button Reading Example
+const int buttonPin = 2;    // Button connected to pin 2
+const int ledPin = 13;      // Built-in LED
+int buttonState = 0;        // Variable to store button state
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  Serial.begin(9600);
+  Serial.println("Button Test - Press button to toggle LED");
+}
+
+void loop() {
+  buttonState = digitalRead(buttonPin);
+  
+  if (buttonState == LOW) {
+    digitalWrite(ledPin, HIGH);   // Turn LED on
+    Serial.println("Button pressed - LED ON");
+  } else {
+    digitalWrite(ledPin, LOW);    // Turn LED off
+    Serial.println("Button released - LED OFF");
+  }
+  
+  delay(100);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: Analog Input Devices -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">📊 Section 3: Analog Input Devices</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Potentiometers</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Potentiometers are variable resistors that provide analog input, perfect for 
+                        controlling brightness, volume, or speed.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Potentiometer Reading Example
+const int potPin = A0;      // Potentiometer connected to analog pin A0
+const int ledPin = 9;       // PWM LED connected to pin 9
+
+int potValue = 0;           // Variable to store pot reading
+int ledBrightness = 0;      // Variable to store LED brightness
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Potentiometer Control - Turn pot to adjust LED brightness");
+}
+
+void loop() {
+  potValue = analogRead(potPin);
+  ledBrightness = map(potValue, 0, 1023, 0, 255);
+  analogWrite(ledPin, ledBrightness);
+  
+  Serial.print("Pot Value: ");
+  Serial.print(potValue);
+  Serial.print(" | LED Brightness: ");
+  Serial.println(ledBrightness);
+  
+  delay(100);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">🛠️ Hands-On Activity: Multi-Sensor Dashboard</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Interactive Sensor Monitor</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create a sensor monitoring system that reads multiple input devices and provides 
+                        real-time feedback through the Serial Monitor.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Requirements</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Implement button input with proper debouncing</li>
+                        <li>Read potentiometer values and convert to percentages</li>
+                        <li>Simulate light sensor readings</li>
+                        <li>Create a user-friendly Serial Monitor dashboard</li>
+                        <li>Add interactive commands for settings</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">📝 Assessment & Homework</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>What is the difference between digital and analog sensors?</li>
+                        <li>Why do we need pull-up resistors for button inputs?</li>
+                        <li>What is button debouncing and why is it important?</li>
+                        <li>How does a potentiometer work as an analog input device?</li>
+                        <li>What are the benefits of filtering sensor data?</li>
+                    </ol>
+                </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week9" style="background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 9 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week8" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 8
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week10" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 10 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+

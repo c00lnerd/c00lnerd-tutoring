@@ -1,0 +1,497 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 13 Quiz: Communication Protocols and Sensor Integration">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 13 Quiz</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Communication Protocols and Sensor Integration</p>
+        </div>
+
+        <!-- Student Information -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">Student Information</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Name:</label>
+                    <input type="text" id="quiz13StudentName" autocomplete="off" style="width: 100%; padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email:</label>
+                    <input type="email" id="quiz13StudentEmail" autocomplete="off" style="width: 100%; padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Questions -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 2rem;">Quiz Questions</h2>
+            <form id="quizForm">
+                <!-- Question 1 -->
+                <div style="margin-bottom: 2rem; padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: I2C Protocol</h3>
+                    <p class="text-gray-700 mb-4">How many wires are required for I2C communication?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="A" class="mr-3">
+                            <span>A) 1 wire</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="B" class="mr-3">
+                            <span>B) 2 wires</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="C" class="mr-3">
+                            <span>C) 3 wires</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="D" class="mr-3">
+                            <span>D) 4 wires</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: I2C Signal Lines</h3>
+                    <p class="text-gray-700 mb-4">What do SDA and SCL stand for in I2C communication?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="A" class="mr-3">
+                            <span>A) Serial Data and Serial Clock</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="B" class="mr-3">
+                            <span>B) System Data and System Clock</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="C" class="mr-3">
+                            <span>C) Sensor Data and Sensor Clock</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="D" class="mr-3">
+                            <span>D) Synchronous Data and Synchronous Clock</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: SPI Communication</h3>
+                    <p class="text-gray-700 mb-4">How many signal lines does SPI typically use?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="A" class="mr-3">
+                            <span>A) 2 lines</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="B" class="mr-3">
+                            <span>B) 3 lines</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="C" class="mr-3">
+                            <span>C) 4 lines</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="D" class="mr-3">
+                            <span>D) 5 lines</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: SPI Signal Names</h3>
+                    <p class="text-gray-700 mb-4">What does MOSI stand for in SPI communication?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="A" class="mr-3">
+                            <span>A) Master Output Slave Input</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="B" class="mr-3">
+                            <span>B) Master Output Serial Input</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="C" class="mr-3">
+                            <span>C) Multiple Output Single Input</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="D" class="mr-3">
+                            <span>D) Master Operation Slave Interface</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: I2C Addressing</h3>
+                    <p class="text-gray-700 mb-4">What is the typical address size for I2C devices?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="A" class="mr-3">
+                            <span>A) 4 bits</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="B" class="mr-3">
+                            <span>B) 7 bits</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="C" class="mr-3">
+                            <span>C) 8 bits</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="D" class="mr-3">
+                            <span>D) 16 bits</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Protocol Comparison</h3>
+                    <p class="text-gray-700 mb-4">Which communication protocol typically offers higher data transfer speeds?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="A" class="mr-3">
+                            <span>A) I2C</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="B" class="mr-3">
+                            <span>B) SPI</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="C" class="mr-3">
+                            <span>C) Both are equally fast</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="D" class="mr-3">
+                            <span>D) Speed depends on the device, not the protocol</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Arduino Wire Library</h3>
+                    <p class="text-gray-700 mb-4">Which Arduino library is used for I2C communication?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="A" class="mr-3">
+                            <span>A) SPI.h</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="B" class="mr-3">
+                            <span>B) Wire.h</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="C" class="mr-3">
+                            <span>C) Serial.h</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="D" class="mr-3">
+                            <span>D) I2C.h</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Sensor Fusion</h3>
+                    <p class="text-gray-700 mb-4">What is the main benefit of sensor fusion in robotics?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="A" class="mr-3">
+                            <span>A) Reduces power consumption</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="B" class="mr-3">
+                            <span>B) Improves accuracy and reliability by combining multiple data sources</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="C" class="mr-3">
+                            <span>C) Simplifies the code structure</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="D" class="mr-3">
+                            <span>D) Increases data transfer speed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Protocol Selection</h3>
+                    <p class="text-gray-700 mb-4">You're designing a robot that needs to connect a temperature sensor, an accelerometer, an LCD display, and an SD card module. Explain which communication protocol (I2C, SPI, or analog) you would choose for each component and why.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Question 10: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Multi-Sensor System Design</h3>
+                    <p class="text-gray-700 mb-4">Describe how you would implement a sensor fusion algorithm that combines data from an ultrasonic sensor, a gyroscope, and a camera to help a robot navigate through a maze. What would each sensor contribute, and how would you handle conflicting information?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" 
+                            style="background-color: #7c3aed; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section (Hidden Initially) -->
+            <div id="resultsSection" class="bg-white rounded-lg shadow-lg p-8 mb-8 hidden">
+                <h3 class="text-xl font-bold text-green-600 mb-4">Quiz Results</h3>
+                <div id="resultsContent"></div>
+                <div class="mt-6 text-center">
+                    <button onclick="printResults()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg mr-4">
+                        Print Results
+                    </button>
+                    <button onclick="resetQuiz()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">
+                        Retake Quiz
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week13" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Lesson
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week14" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 14 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script is:inline>
+        // Quiz answers
+        const correctAnswers = {
+            q1: 'B', // 2 wires (SDA, SCL)
+            q2: 'A', // Serial Data and Serial Clock
+            q3: 'C', // 4 lines (MOSI, MISO, SCK, CS)
+            q4: 'A', // Master Output Slave Input
+            q5: 'B', // 7 bits
+            q6: 'B', // SPI is typically faster
+            q7: 'B', // Wire.h library
+            q8: 'B'  // Improves accuracy and reliability
+        };
+
+        const explanations = {
+            q1: 'I2C uses only 2 wires: SDA (Serial Data) and SCL (Serial Clock), plus power and ground.',
+            q2: 'SDA stands for Serial Data and SCL stands for Serial Clock in I2C communication.',
+            q3: 'SPI typically uses 4 signal lines: MOSI, MISO, SCK, and CS (Chip Select).',
+            q4: 'MOSI stands for Master Output Slave Input - data flows from master to slave.',
+            q5: 'I2C devices typically use 7-bit addresses, allowing up to 128 different device addresses.',
+            q6: 'SPI generally offers higher data transfer speeds than I2C due to its dedicated data lines.',
+            q7: 'The Wire.h library is used for I2C communication in Arduino programming.',
+            q8: 'Sensor fusion combines data from multiple sensors to improve accuracy, reliability, and robustness.'
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('quiz13StudentName').value;
+            const studentEmail = document.getElementById('quiz13StudentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email address.');
+                return;
+            }
+
+            let score = 0;
+            let totalQuestions = 8; // Multiple choice questions
+            let results = [];
+
+            // Check multiple choice answers
+            for (let i = 1; i <= 8; i++) {
+                const questionName = 'q' + i;
+                const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+                
+                if (selectedAnswer) {
+                    const isCorrect = selectedAnswer.value === correctAnswers[questionName];
+                    if (isCorrect) score++;
+                    
+                    results.push({
+                        question: i,
+                        selected: selectedAnswer.value,
+                        correct: correctAnswers[questionName],
+                        isCorrect: isCorrect,
+                        explanation: explanations[questionName]
+                    });
+                } else {
+                    results.push({
+                        question: i,
+                        selected: 'No answer',
+                        correct: correctAnswers[questionName],
+                        isCorrect: false,
+                        explanation: explanations[questionName]
+                    });
+                }
+            }
+
+            // Get short answer responses
+            const q9Answer = document.querySelector('textarea[name="q9"]').value;
+            const q10Answer = document.querySelector('textarea[name="q10"]').value;
+
+            // Calculate percentage
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Display results
+            displayResults(score, totalQuestions, percentage, results, q9Answer, q10Answer);
+            
+            // Send email to instructor
+            sendQuizResults(studentName, studentEmail, score, totalQuestions, percentage, results, q9Answer, q10Answer);
+        });
+
+        function displayResults(score, total, percentage, results, q9Answer, q10Answer) {
+            // Determine grade
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${total} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #7c3aed; font-weight: bold;">
+                        🔗 Week 13: Communication Protocols and Sensor Integration
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((result, index) => {
+                        return `
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '✓' : '✗'}<br>
+                                <strong>Your answer:</strong> ${result.selected}<br>
+                                <strong>Correct answer:</strong> ${result.correct}
+                            </div>
+                        `;
+                    }).join('')}
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                        <strong>Question 9 - Protocol Selection:</strong><br>
+                        <strong>Your answer:</strong> ${q9Answer || 'No answer provided'}
+                    </div>
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                        <strong>Question 10 - Multi-Sensor System Design:</strong><br>
+                        <strong>Your answer:</strong> ${q10Answer || 'No answer provided'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function sendQuizResults(studentName, studentEmail, score, total, percentage, results, q9Answer, q10Answer) {
+            // Initialize EmailJS
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            let emailContent = `Week 13 Quiz Results - Communication Protocols and Sensor Integration\n\n`;
+            emailContent += `Student: ${studentName}\n`;
+            emailContent += `Email: ${studentEmail}\n`;
+            emailContent += `Score: ${score}/${total} (${percentage}%)\n`;
+            emailContent += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            emailContent += `MULTIPLE CHOICE RESULTS:\n`;
+            results.forEach(result => {
+                emailContent += `Question ${result.question}: ${result.isCorrect ? 'CORRECT' : 'INCORRECT'}\n`;
+                emailContent += `  Student answer: ${result.selected}\n`;
+                emailContent += `  Correct answer: ${result.correct}\n\n`;
+            });
+            
+            emailContent += `SHORT ANSWER RESPONSES:\n\n`;
+            emailContent += `Question 9 - Protocol Selection:\n`;
+            emailContent += `${q9Answer || 'No response provided'}\n\n`;
+            
+            emailContent += `Question 10 - Multi-Sensor System Design:\n`;
+            emailContent += `${q10Answer || 'No response provided'}\n\n`;
+            
+            emailContent += `PERFORMANCE ANALYSIS:\n`;
+            if (percentage >= 90) {
+                emailContent += `Excellent work! ${studentName} demonstrates strong understanding of communication protocols and sensor integration.`;
+            } else if (percentage >= 80) {
+                emailContent += `Good performance! ${studentName} shows solid grasp of I2C, SPI, and multi-sensor concepts.`;
+            } else if (percentage >= 70) {
+                emailContent += `Satisfactory work. ${studentName} understands basic concepts but may need additional practice with protocol implementation.`;
+            } else {
+                emailContent += `${studentName} may need additional support with communication protocols and sensor integration concepts.`;
+            }
+
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: 'C00lnerd Quiz System',
+                from_email: 'chuck@c00lnerd.com',
+                
+                message: emailContent,
+                subject: `Week 13 Programming Quiz - ${studentName}`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+                alert('Quiz results sent successfully!');
+                
+                // Log to Google Sheets
+                console.log('Logging quiz results to Google Sheets...');
+                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentName: studentName,
+                        studentEmail: studentEmail,
+                        week: 'Week 13',
+                        topic: 'Communication Protocols & Sensor Integration',
+                        score: score,
+                        totalPoints: 8,
+                        percentage: percentage,
+                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                        timestamp: new Date().toISOString()
+                    })
+                })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+                
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+                alert('There was an issue sending your quiz results. Please contact your instructor.');
+            });
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('resultsSection').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+
+        function printResults() {
+            window.print();
+        }
+    </script>
+</Layout>
+
+
+

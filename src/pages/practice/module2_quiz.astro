@@ -1,0 +1,750 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Module 2 Quiz">
+    <div class="container">
+        <h1>Physical Science Module 2 Quiz</h1>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill" id="progress"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()" style="display: none;">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status" style="display: none;"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="retry-send" class="control-button" onclick="retrySendEmail()" style="display: none;">Retry Send Email</button>
+                <button id="restart-quiz" class="control-button">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script type="text/javascript" is:inline>
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
+        } catch (error) {
+            console.error('Failed to initialize EmailJS:', error);
+        }
+    }
+</script>
+<script is:inline>
+    // Utility function to shuffle array and track original indices
+    function shuffleAnswers(question) {
+        const originalOptions = [...question.options];
+        const correctAnswerText = question.correctAnswer;
+        
+        // Create array of indices
+        const indices = originalOptions.map((_, index) => index);
+        
+        // Fisher-Yates shuffle
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        // Apply shuffle to options and update correct answer
+        const shuffledOptions = indices.map(i => originalOptions[i]);
+        
+        return {
+            ...question,
+            options: shuffledOptions,
+            correctAnswer: correctAnswerText, // Keep the same text-based correct answer
+            originalOrder: indices
+        };
+    }
+
+    // Enhanced questions with varied distractor lengths
+    const originalQuestions = [
+        {
+            question: "What is matter?",
+            options: [
+                "Anything that has mass and takes up space in the universe",
+                "Only solids and liquids that we can physically handle",
+                "Only things you can see with your eyes",
+                "Only things you can touch with your hands"
+            ],
+            correctAnswer: "Anything that has mass and takes up space in the universe",
+            reference: "Matter is anything that has mass and occupies space (volume)."
+        },
+        {
+            question: "Which of the following is a pure substance?",
+            options: [
+                "Distilled water that contains only H2O molecules",
+                "Salt water mixed with dissolved sodium chloride",
+                "Orange juice containing pulp and various nutrients",
+                "Air composed of nitrogen, oxygen, and other gases"
+            ],
+            correctAnswer: "Distilled water that contains only H2O molecules",
+            reference: "A pure substance consists of only one type of matter. Distilled water contains only H2O molecules."
+        },
+        {
+            question: "What is a physical change?",
+            options: [
+                "A change that alters only the appearance or form of matter, not its composition",
+                "A change that creates new substances with different chemical properties",
+                "A change that cannot be reversed under any circumstances",
+                "A change that only occurs at extremely high temperatures"
+            ],
+            correctAnswer: "A change that alters only the appearance or form of matter, not its composition",
+            reference: "Physical changes only alter the appearance or form of matter without changing its chemical composition."
+        },
+        {
+            question: "Which is an example of a chemical change?",
+            options: [
+                "Rusting of iron when exposed to oxygen and moisture",
+                "Melting ice cubes in a warm environment",
+                "Cutting paper into smaller pieces with scissors",
+                "Dissolving sugar crystals in hot water"
+            ],
+            correctAnswer: "Rusting of iron when exposed to oxygen and moisture",
+            reference: "Rusting is a chemical change because it creates a new substance (iron oxide) with different properties from the original iron."
+        },
+        {
+            question: "What is energy?",
+            options: [
+                "The ability to do work or cause change in matter and systems",
+                "Only heat and light produced by burning substances",
+                "Only movement and motion of physical objects",
+                "Only electricity flowing through conductors and circuits"
+            ],
+            correctAnswer: "The ability to do work or cause change in matter and systems",
+            reference: "Energy is defined as the ability to do work or cause change in matter."
+        },
+        {
+            question: "Which form of energy is associated with the motion of particles?",
+            options: [
+                "Thermal energy from the random movement of atoms and molecules",
+                "Chemical energy stored in molecular bonds and compounds",
+                "Nuclear energy from reactions in atomic nuclei",
+                "Electrical energy from the flow of charged particles"
+            ],
+            correctAnswer: "Thermal energy from the random movement of atoms and molecules",
+            reference: "Thermal energy is the energy associated with the random motion of particles in matter."
+        },
+        {
+            question: "What is the Law of Conservation of Energy?",
+            options: [
+                "Energy cannot be created or destroyed, only transformed from one form to another",
+                "Energy can be created through chemical reactions but not destroyed",
+                "Energy can be destroyed through nuclear processes but not created",
+                "Energy can be both created and destroyed depending on the conditions"
+            ],
+            correctAnswer: "Energy cannot be created or destroyed, only transformed from one form to another",
+            reference: "The Law of Conservation of Energy states that energy cannot be created or destroyed, it can only change from one form to another."
+        },
+        {
+            question: "Which is an example of potential energy?",
+            options: [
+                "A book resting on a high shelf due to its elevated position",
+                "A car moving rapidly on a highway at constant speed",
+                "A fan spinning continuously in a room",
+                "A light bulb glowing brightly when electricity flows through it"
+            ],
+            correctAnswer: "A book resting on a high shelf due to its elevated position",
+            reference: "Potential energy is stored energy. A book on a high shelf has gravitational potential energy due to its position."
+        },
+        {
+            question: "What happens to the kinetic energy of an object when its speed doubles?",
+            options: [
+                "It becomes four times greater according to the kinetic energy formula",
+                "It doubles proportionally with the increase in velocity",
+                "It remains the same regardless of speed changes",
+                "It becomes half as much due to energy conservation"
+            ],
+            correctAnswer: "It becomes four times greater according to the kinetic energy formula",
+            reference: "Kinetic energy is proportional to the square of velocity (KE = ½mv²). When speed doubles, kinetic energy quadruples."
+        },
+        {
+            question: "Which statement about temperature is correct?",
+            options: [
+                "Temperature measures the average kinetic energy of particles in a substance",
+                "Temperature and heat are the same thing and can be used interchangeably",
+                "Temperature measures the total energy contained in a complete system",
+                "Temperature only exists in warm objects and not in cold ones"
+            ],
+            correctAnswer: "Temperature measures the average kinetic energy of particles in a substance",
+            reference: "Temperature is a measure of the average kinetic energy of the particles in a substance."
+        }
+    ];
+
+    // Initialize randomized questions when quiz starts
+    function initializeQuiz() {
+        // Shuffle answers for each question
+        window.questions = originalQuestions.map(question => shuffleAnswers(question));
+        
+        // Initialize quiz state after questions are randomized
+        currentQuestion = 0;
+        userAnswers = new Array(window.questions.length).fill(null);
+        questionAttempts = new Array(window.questions.length).fill(0);
+        
+        console.log('Module 2 quiz initialized with randomized answers');
+    }
+
+    // Initialize state
+    let currentQuestion = 0;
+    let userAnswers = new Array(originalQuestions.length).fill(null);
+    let questionAttempts = new Array(originalQuestions.length).fill(0);
+
+    // Initialize quiz functionality
+    function initQuiz() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
+        } catch (err) {
+            console.error('Error initializing EmailJS:', err);
+        }
+
+        const startButton = document.getElementById('start-quiz');
+        if (startButton) {
+            startButton.onclick = startQuiz;
+        }
+
+        const downloadButton = document.getElementById('download-results');
+        if (downloadButton) {
+            downloadButton.onclick = downloadResults;
+        }
+
+        const restartButton = document.getElementById('restart-quiz');
+        if (restartButton) {
+            restartButton.onclick = restartQuiz;
+        }
+    }
+
+    // Call init when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    } else {
+        initQuiz();
+    }
+
+    function startQuiz() {
+        // Initialize quiz with randomized answers
+        initializeQuiz();
+        
+        document.getElementById('email-section').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const question = window.questions[currentQuestion];
+        const quizContainer = document.getElementById('quiz-container');
+        const progressBar = document.getElementById('progress');
+        
+        // Update progress bar
+        progressBar.style.width = `${((currentQuestion + 1) / window.questions.length) * 100}%`;
+        
+        // Show/hide navigation buttons
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.style.display = currentQuestion > 0 ? 'block' : 'none';
+        nextBtn.style.display = currentQuestion < window.questions.length - 1 ? 'block' : 'none';
+        submitBtn.style.display = currentQuestion === window.questions.length - 1 ? 'block' : 'none';
+
+        // Update question content
+        document.getElementById('question-number').textContent = `Question ${currentQuestion + 1}/${window.questions.length}`;
+        document.getElementById('question-text').textContent = question.question;
+        
+        // Create options
+        const optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = question.options.map((option, index) => `
+            <button class="option-button" onclick="selectAnswer(${index})" ${questionAttempts[currentQuestion] >= 2 ? 'disabled' : ''}>
+                ${option}
+            </button>
+        `).join('');
+
+        // Reset feedback
+        const feedback = document.getElementById('feedback');
+        feedback.className = 'feedback';
+        feedback.style.display = 'none';
+        feedback.innerHTML = '';
+
+        // Re-highlight correct answer and disable buttons if needed
+        const options = document.querySelectorAll('.option-button');
+        if (userAnswers[currentQuestion] !== null) {
+            const correctIndex = question.options.indexOf(question.correctAnswer);
+            options.forEach((option, index) => {
+                if (index === correctIndex) {
+                    option.classList.add('correct');
+                } else if (index === userAnswers[currentQuestion]) {
+                    option.classList.add('incorrect');
+                }
+                option.disabled = true;
+            });
+        }
+    }
+
+    function selectAnswer(optionIndex) {
+        const question = questions[currentQuestion];
+        const options = document.querySelectorAll('.option-button');
+        const feedback = document.getElementById('feedback');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        // If already answered correctly or max attempts reached, do nothing
+        if ((userAnswers[currentQuestion] !== null && 
+             question.options[userAnswers[currentQuestion]] === question.correctAnswer) || 
+            questionAttempts[currentQuestion] >= 2) {
+            return;
+        }
+
+        // Increment attempts
+        questionAttempts[currentQuestion]++;
+        userAnswers[currentQuestion] = optionIndex;
+
+        // Check if answer is correct
+        const selectedAnswer = question.options[optionIndex];
+        const isCorrect = selectedAnswer === question.correctAnswer;
+
+        // Update button states
+        options.forEach((option, index) => {
+            if (index === optionIndex) {
+                option.classList.add(isCorrect ? 'correct' : 'incorrect');
+            }
+            if (isCorrect || questionAttempts[currentQuestion] >= 2) {
+                option.disabled = true;
+                if (index === question.options.indexOf(question.correctAnswer)) {
+                    option.classList.add('correct');
+                }
+            }
+        });
+
+        // Show feedback
+        feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+        feedback.innerHTML = isCorrect ? 
+            `Correct! ${question.reference}` :
+            questionAttempts[currentQuestion] >= 2 ?
+                `Incorrect. The correct answer is: ${question.correctAnswer}<br><br>${question.reference}` :
+                'Incorrect. Try again.';
+        feedback.style.display = 'block';
+
+        // Enable navigation if correct or max attempts reached
+        if (isCorrect || questionAttempts[currentQuestion] >= 2) {
+            if (currentQuestion < questions.length - 1) {
+                nextBtn.style.display = 'block';
+            } else {
+                submitBtn.style.display = 'block';
+            }
+        }
+    }
+
+    function previousQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            showQuestion();
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            currentQuestion++;
+            showQuestion();
+        }
+    }
+
+    function submitQuiz() {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+
+        // Calculate score
+        const score = userAnswers.filter((answer, index) => 
+            questions[index].options[answer] === questions[index].correctAnswer
+        ).length;
+        const percentage = ((score / questions.length) * 100).toFixed(1);
+
+        // Display score
+        document.getElementById('score').innerHTML = `
+            <h3>Your Score: ${score}/${questions.length} (${percentage}%)</h3>
+        `;
+
+        // Display incorrect answers
+        const incorrectAnswers = userAnswers.map((answer, index) => ({
+            question: questions[index].question,
+            userAnswer: questions[index].options[answer],
+            correctAnswer: questions[index].correctAnswer,
+            isCorrect: questions[index].options[answer] === questions[index].correctAnswer
+        })).filter(answer => !answer.isCorrect);
+
+        document.getElementById('incorrect-answers').innerHTML = incorrectAnswers.length > 0 ?
+            `<h3>Review Incorrect Answers:</h3>` +
+            incorrectAnswers.map(answer => `
+                <div class="question-result">
+                    <p><strong>Question:</strong> ${answer.question}</p>
+                    <p><strong>Your Answer:</strong> ${answer.userAnswer}</p>
+                    <p><strong>Correct Answer:</strong> ${answer.correctAnswer}</p>
+                </div>
+            `).join('') : '';
+
+        // Send results if email is provided
+        const email = document.getElementById('email').value;
+        const saveResults = document.getElementById('save-results').checked;
+        
+        if (email && saveResults) {
+            const emailStatus = document.getElementById('email-status');
+            emailStatus.style.display = 'block';
+            emailStatus.innerHTML = 'Sending results...';
+            
+            // Format email message like other working quizzes
+            let emailMessage = `Physical Science Module 2 Quiz Results\n\n`;
+            emailMessage += `Student: ${email}\n`;
+            emailMessage += `Quiz: Measurement and Scientific Method\n`;
+            emailMessage += `Score: ${score}/${window.questions.length} (${percentage}%)\n`;
+            emailMessage += `Percentage: ${percentage}%\n`;
+            emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            if (incorrectAnswers.length > 0) {
+                emailMessage += "Incorrect Answers:\n\n";
+                incorrectAnswers.forEach((item, index) => {
+                    emailMessage += `${index + 1}. ${item.question}\n`;
+                    emailMessage += `   Your answer: ${item.userAnswer}\n`;
+                    emailMessage += `   Correct answer: ${item.correctAnswer}\n\n`;
+                });
+            } else {
+                emailMessage += "Perfect score! All answers were correct.\n";
+            }
+            
+            // Post to Google Sheets
+            const sheetsData = {
+                timestamp: new Date().toISOString(),
+                studentEmail: email,
+                quizTitle: 'Physical Science Module 2 Quiz',
+                score: score,
+                totalQuestions: window.questions.length,
+                percentage: percentage,
+                incorrectCount: incorrectAnswers.length,
+                timeCompleted: new Date().toLocaleString()
+            };
+
+            try {
+                fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                }).then(() => {
+                    console.log('Google Sheets: Data logged successfully');
+                }).catch(error => {
+                    console.error('Google Sheets: Error logging data:', error);
+                });
+            } catch (error) {
+                console.error('Google Sheets: Error logging data:', error);
+            }
+
+            // Update EmailJS template parameters for proper instructor notification
+            const updatedTemplateParams = {
+                from_name: 'Physical Science Quiz System',
+                student_email: email,
+                to_name: 'Instructor',
+                subject: 'Physical Science Module 2 Quiz Results',
+                submission_date: new Date().toLocaleString(),
+                message: `Student Email: ${email}\n\n${emailMessage}`,
+                reply_to: email
+            };
+
+            emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams).then(
+                function(response) {
+                    emailStatus.className = 'email-status success';
+                    emailStatus.innerHTML = '✅ Results sent to instructor via email! ✅ Data logged to Google Sheets';
+                    document.getElementById('retry-send').style.display = 'none';
+                },
+                function(error) {
+                    emailStatus.className = 'email-status error';
+                    emailStatus.innerHTML = 'Failed to send results. Please try again.';
+                    document.getElementById('retry-send').style.display = 'inline-block';
+                }
+            );
+        }
+    }
+
+    function retrySendEmail() {
+        const emailStatus = document.getElementById('email-status');
+        const retryBtn = document.getElementById('retry-send');
+        
+        emailStatus.textContent = 'Retrying email send...';
+        emailStatus.className = 'email-status';
+        retryBtn.disabled = true;
+        
+        // Get the stored quiz data
+        const score = userAnswers.filter((answer, index) => 
+            questions[index].options[answer] === questions[index].correctAnswer
+        ).length;
+        const percentage = ((score / questions.length) * 100).toFixed(1);
+        const email = window.userEmail;
+        
+        // Recreate the email message
+        let emailMessage = `Physical Science Module 2 Quiz Results\n\n`;
+        emailMessage += `Student: ${email}\n`;
+        emailMessage += `Quiz: Matter and Energy\n`;
+        emailMessage += `Score: ${score}/${questions.length} (${percentage}%)\n`;
+        emailMessage += `Percentage: ${percentage}%\n`;
+        emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+        
+        // Add incorrect answers details
+        const incorrectAnswers = userAnswers.reduce((incorrect, answer, index) => {
+            if (questions[index].options[answer] !== questions[index].correctAnswer) {
+                incorrect.push({
+                    question: questions[index].question,
+                    userAnswer: questions[index].options[answer],
+                    correctAnswer: questions[index].correctAnswer,
+                    attempts: questionAttempts[index] || 0
+                });
+            }
+            return incorrect;
+        }, []);
+        
+        if (incorrectAnswers.length > 0) {
+            emailMessage += "Incorrect Answers:\n\n";
+            incorrectAnswers.forEach((item, index) => {
+                emailMessage += `${index + 1}. ${item.question}\n`;
+                emailMessage += `   Your answer: ${item.userAnswer}\n`;
+                emailMessage += `   Correct answer: ${item.correctAnswer}\n`;
+                emailMessage += `   Attempts: ${item.attempts}\n\n`;
+            });
+        } else {
+            emailMessage += "Perfect score! All answers were correct.\n";
+        }
+        
+        // Retry EmailJS send
+        const updatedTemplateParams = {
+            from_name: 'Physical Science Quiz System',
+            student_email: email,
+            to_name: 'Instructor',
+            subject: 'Physical Science Module 2 Quiz Results',
+            submission_date: new Date().toLocaleString(),
+            message: `Student Email: ${email}\n\n${emailMessage}`,
+            reply_to: email
+        };
+        
+        emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams).then(
+            function(response) {
+                emailStatus.className = 'email-status success';
+                emailStatus.innerHTML = '✅ Results sent to instructor via email! ✅ Data logged to Google Sheets';
+                retryBtn.style.display = 'none';
+            },
+            function(error) {
+                emailStatus.className = 'email-status error';
+                emailStatus.innerHTML = 'Failed to send results. Please try again.';
+                retryBtn.disabled = false;
+            }
+        );
+    }
+
+    function downloadResults() {
+        const score = userAnswers.filter((answer, index) => 
+            questions[index].options[answer] === questions[index].correctAnswer
+        ).length;
+        const percentage = ((score / questions.length) * 100).toFixed(1);
+
+        let resultsText = `Physical Science Module 2 Quiz Results\n\n`;
+        resultsText += `Score: ${score}/${questions.length} (${percentage}%)\n\n`;
+        resultsText += `Question Review:\n\n`;
+
+        questions.forEach((question, index) => {
+            const userAnswer = questions[index].options[userAnswers[index]];
+            const isCorrect = userAnswer === question.correctAnswer;
+            
+            resultsText += `Question ${index + 1}: ${question.question}\n`;
+            resultsText += `Your Answer: ${userAnswer}\n`;
+            resultsText += `Correct Answer: ${question.correctAnswer}\n`;
+            resultsText += `Status: ${isCorrect ? 'Correct' : 'Incorrect'}\n\n`;
+        });
+
+        const blob = new Blob([resultsText], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'module2_quiz_results.txt';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        questionAttempts = new Array(questions.length).fill(0);
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('email-section').style.display = 'block';
+        document.getElementById('email-status').style.display = 'none';
+    }
+</script>
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #f0f0f0;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .fill {
+        height: 100%;
+        background-color: #4CAF50;
+        transition: width 0.3s ease-in-out;
+    }
+
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    .option-button {
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: white;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s;
+    }
+
+    .option-button:hover {
+        background-color: #f0f0f0;
+    }
+
+    .option-button.selected {
+        background-color: #e3f2fd;
+        border-color: #2196F3;
+    }
+
+    .option-button.correct {
+        background-color: #d4edda;
+        border-color: #c3e6cb;
+        color: #155724;
+    }
+
+    .option-button.incorrect {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+    }
+
+    .option-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .feedback {
+        margin: 10px 0;
+        padding: 15px;
+        border-radius: 5px;
+        display: none;
+    }
+
+    .feedback.correct {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .feedback.incorrect {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .feedback .reference {
+        margin-top: 8px;
+        font-style: italic;
+        font-size: 0.9em;
+    }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .control-button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .control-button:hover {
+        background-color: #0056b3;
+    }
+
+    .control-button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
+
+    #question-number {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    #question-text {
+        font-size: 1.1em;
+        margin-bottom: 20px;
+    }
+
+    .result-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .email-status {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .email-status.success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .email-status.error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+</Layout>

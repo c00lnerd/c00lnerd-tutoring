@@ -1,0 +1,154 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 8: Introduction to Arduino and Hardware">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">8</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 8: Introduction to Arduino and Hardware</h1>
+                        <p class="text-gray-600">Transitioning from software to hardware programming</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand what microcontrollers are and how they work
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Set up Arduino IDE and connect to hardware
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Write basic Arduino programs (sketches)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand digital vs analog signals
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Hardware-software integration
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Embedded programming basics
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Problem-solving with constraints
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: What is Arduino? -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        What is Arduino? (15 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <p class="text-gray-700 mb-4">
+                            Arduino is an <strong>open-source microcontroller platform</strong> that makes it easy to create interactive electronic projects. Think of it as a tiny computer that can control lights, motors, sensors, and other hardware components.
+                        </p>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h4 class="font-semibold mb-2">What makes Arduino special:</h4>
+                                <ul class="space-y-1 text-gray-600">
+                                    <li>• Easy to learn programming language</li>
+                                    <li>• Affordable hardware ($10-30)</li>
+                                    <li>• Large community support</li>
+                                    <li>• Thousands of tutorials and examples</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold mb-2">Compared to regular computers:</h4>
+                                <ul class="space-y-1 text-gray-600">
+                                    <li>• Much smaller and simpler</li>
+                                    <li>• Designed for specific tasks</li>
+                                    <li>• Direct hardware control</li>
+                                    <li>• No operating system needed</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Arduino IDE Setup -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Arduino IDE Setup (20 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Installation Steps:</h4>
+                        <ol class="space-y-2 text-gray-700 list-decimal list-inside">
+                            <li>Download Arduino IDE from arduino.cc</li>
+                            <li>Install the software (Windows/Mac/Linux)</li>
+                            <li>Connect Arduino board via USB cable</li>
+                            <li>Select correct board type (Arduino Uno)</li>
+                            <li>Select correct COM port</li>
+                        </ol>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400">// Your first Arduino program (sketch)</div>
+                        <div class="text-gray-400">// setup() runs once when Arduino starts</div>
+                        <div>void setup() {</div>
+                        <div class="ml-4">pinMode(LED_BUILTIN, OUTPUT);</div>
+                        <div class="ml-4">Serial.begin(9600);</div>
+                        <div class="ml-4">Serial.println("Arduino started!");</div>
+                        <div>}</div>
+                        <div class="mt-2 text-gray-400">// loop() runs repeatedly forever</div>
+                        <div>void loop() {</div>
+                        <div class="ml-4">digitalWrite(LED_BUILTIN, HIGH);</div>
+                        <div class="ml-4">delay(1000);</div>
+                        <div class="ml-4">digitalWrite(LED_BUILTIN, LOW);</div>
+                        <div class="ml-4">delay(1000);</div>
+                        <div>}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <a href="/programming/lessons/week7" class="text-blue-600 hover:text-blue-800 font-medium">
+                        ← Previous: Week 7
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week8" class="quiz-button" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;">
+                            📝 Take Week 8 Quiz
+                        </a>
+                        <a href="/programming/lessons/week9" class="next-button" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;">
+                            Next: Week 9 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

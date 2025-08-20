@@ -1,0 +1,390 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 23: Robot Swarms and Multi-Agent Systems">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 23: Robot Swarms and Multi-Agent Systems</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Programming Multiple Robots to Work Together</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🎯</span> Learning Objectives
+            </h2>
+            <ul style="line-height: 1.8; color: #4a5568;">
+                <li><strong>Understand swarm robotics:</strong> Learn how multiple robots can work together as a team</li>
+                <li><strong>Explore coordination methods:</strong> Discover how robots communicate and coordinate actions</li>
+                <li><strong>Program simple behaviors:</strong> Create basic flocking and following behaviors</li>
+                <li><strong>Design multi-robot systems:</strong> Plan projects that use multiple miniAuto robots</li>
+                <li><strong>Apply real-world examples:</strong> Connect swarm concepts to nature and technology</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Introduction to Swarm Robotics -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🐝</span> Introduction to Swarm Robotics
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">What is Swarm Robotics?</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Swarm robotics is the study of how multiple robots can work together to accomplish tasks that would be difficult or impossible for a single robot. Just like bees in a hive or birds in a flock, robots can coordinate their actions to achieve common goals.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Key Characteristics of Robot Swarms:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Multiple robots:</strong> Usually many simple robots rather than one complex robot</li>
+                    <li><strong>Local communication:</strong> Robots talk to nearby neighbors, not a central controller</li>
+                    <li><strong>Simple rules:</strong> Each robot follows basic rules that create complex group behavior</li>
+                    <li><strong>Emergent behavior:</strong> The group accomplishes things no single robot could do</li>
+                    <li><strong>Fault tolerance:</strong> If one robot fails, the swarm continues working</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Examples in Nature</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Nature provides many examples of swarm behavior:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Ant colonies:</strong> Find the shortest path to food using pheromone trails</li>
+                    <li><strong>Bird flocks:</strong> Fly in formation without a leader, avoiding obstacles together</li>
+                    <li><strong>Fish schools:</strong> Move as one unit to avoid predators and find food</li>
+                    <li><strong>Bee swarms:</strong> Work together to build hives and collect nectar efficiently</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: Communication and Coordination -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📡</span> Communication and Coordination
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">How Robots Communicate</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    For robots to work together, they need ways to share information:
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Communication Methods:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li><strong>Wireless signals:</strong> WiFi, Bluetooth, or radio communication</li>
+                    <li><strong>Light signals:</strong> LEDs that flash patterns or colors</li>
+                    <li><strong>Sound signals:</strong> Beeps, tones, or ultrasonic communication</li>
+                    <li><strong>Movement patterns:</strong> Physical movements that other robots can see</li>
+                    <li><strong>Shared environment:</strong> Leaving markers or changing the environment</li>
+                </ul>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Simple LED communication example
+void sendSignal(int robotID, int message) {
+  // Flash LED pattern to communicate with other robots
+  for (int i = 0; i < robotID; i++) {
+    digitalWrite(LED_PIN, HIGH);
+    delay(200);
+    digitalWrite(LED_PIN, LOW);
+    delay(200);
+  }
+  
+  delay(500); // Pause between ID and message
+  
+  for (int i = 0; i < message; i++) {
+    digitalWrite(LED_PIN, HIGH);
+    delay(100);
+    digitalWrite(LED_PIN, LOW);
+    delay(100);
+  }
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Coordination Strategies</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Different ways robots can coordinate their actions:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Leader-follower:</strong> One robot leads, others follow its movements</li>
+                    <li><strong>Consensus:</strong> All robots agree on a common decision or direction</li>
+                    <li><strong>Task allocation:</strong> Different robots take on different jobs</li>
+                    <li><strong>Formation control:</strong> Robots maintain specific positions relative to each other</li>
+                    <li><strong>Distributed decision:</strong> Each robot makes decisions based on local information</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: Programming Swarm Behaviors -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">💻</span> Programming Swarm Behaviors
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Basic Flocking Behavior</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Flocking is one of the most famous swarm behaviors. It follows three simple rules:
+                </p>
+                
+                <ol style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li><strong>Separation:</strong> Avoid crowding neighbors (don't crash into other robots)</li>
+                    <li><strong>Alignment:</strong> Steer towards the average heading of neighbors</li>
+                    <li><strong>Cohesion:</strong> Steer towards the average position of neighbors</li>
+                </ol>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Simple flocking behavior for miniAuto
+void flockingBehavior() {
+  float separationDistance = 30; // cm
+  float alignmentDistance = 50;  // cm
+  float cohesionDistance = 60;   // cm
+  
+  // Check for nearby robots using ultrasonic sensor
+  float frontDistance = getUltrasonicDistance();
+  
+  // Rule 1: Separation - avoid getting too close
+  if (frontDistance < separationDistance) {
+    // Turn away from obstacle/robot
+    turnRight(90);
+    moveForward(20);
+    return;
+  }
+  
+  // Rule 2: Alignment - try to match direction of group
+  // (In a real swarm, this would use communication)
+  // For now, we'll use a simple forward movement
+  
+  // Rule 3: Cohesion - stay with the group
+  // Look for other robots and move towards them if too far
+  if (frontDistance > cohesionDistance) {
+    // Move forward to stay with group
+    moveForward(10);
+  } else {
+    // Normal exploration movement
+    moveForward(15);
+    
+    // Occasionally turn to explore
+    if (random(100) < 10) { // 10% chance
+      turnRight(random(30, 60));
+    }
+  }
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Leader-Follower Behavior</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    A simpler approach where one robot leads and others follow:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Leader robot behavior
+void leaderBehavior() {
+  // Leader explores and sends signals
+  exploreEnvironment();
+  
+  // Send periodic signals to followers
+  if (millis() % 2000 < 100) { // Every 2 seconds
+    sendSignal(1, 1); // Leader ID=1, Message=1 (follow me)
+  }
+}
+
+// Follower robot behavior
+void followerBehavior() {
+  float followDistance = 40; // cm behind leader
+  float frontDistance = getUltrasonicDistance();
+  
+  // Try to maintain following distance
+  if (frontDistance < followDistance - 10) {
+    // Too close - slow down or stop
+    stopMoving();
+    delay(500);
+  } else if (frontDistance > followDistance + 10) {
+    // Too far - speed up
+    moveForward(20);
+  } else {
+    // Good distance - normal following
+    moveForward(15);
+  }
+  
+  // Listen for leader signals
+  // (In real implementation, this would check for LED/radio signals)
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Search and Rescue Swarm</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Multiple robots working together to find objects or explore an area:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Search and rescue behavior
+void searchAndRescue() {
+  static bool objectFound = false;
+  static unsigned long searchStartTime = millis();
+  
+  // Search pattern - each robot covers different area
+  int robotID = getRobotID(); // Each robot has unique ID
+  
+  if (!objectFound) {
+    // Spread out to cover more area
+    switch (robotID % 4) {
+      case 0: // Robot 0 - search north
+        moveForward(30);
+        turnRight(90);
+        break;
+      case 1: // Robot 1 - search east
+        turnRight(90);
+        moveForward(30);
+        break;
+      case 2: // Robot 2 - search south
+        turnRight(180);
+        moveForward(30);
+        break;
+      case 3: // Robot 3 - search west
+        turnRight(270);
+        moveForward(30);
+        break;
+    }
+    
+    // Check if object found (using sensors)
+    if (detectObject()) {
+      objectFound = true;
+      signalObjectFound();
+    }
+  } else {
+    // Object found - converge on location
+    moveTowardsSignal();
+  }
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🛠️</span> Hands-On Activity: Robot Follow-the-Leader
+            </h2>
+            
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Project Overview</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Create a simple multi-robot system where one robot leads and others follow, using LED signals and distance sensing.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Materials Needed:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li>2-3 miniAuto robots (or work with other students)</li>
+                    <li>Open space for robot movement (classroom or hallway)</li>
+                    <li>Obstacles to navigate around (books, boxes)</li>
+                </ul>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Implementation Steps:</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Program the leader:</strong> Create exploration behavior with LED signals</li>
+                    <li><strong>Program followers:</strong> Create following behavior based on distance</li>
+                    <li><strong>Test individually:</strong> Make sure each robot works on its own</li>
+                    <li><strong>Test together:</strong> Run multiple robots and observe coordination</li>
+                    <li><strong>Add obstacles:</strong> See how the swarm navigates challenges</li>
+                    <li><strong>Experiment:</strong> Try different following distances and patterns</li>
+                </ol>
+            </div>
+
+            <div style="background: #ffeaa7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">⚠️ Safety and Setup Notes</h3>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Clear space:</strong> Ensure adequate room for multiple robots to move safely</li>
+                    <li><strong>Coordination:</strong> Work with other students to synchronize robot testing</li>
+                    <li><strong>Observation:</strong> Have team members watch and take notes on behavior</li>
+                    <li><strong>Backup plan:</strong> If only one robot available, simulate swarm with manual control</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Observation Questions</h3>
+                <ol style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>How well do the follower robots maintain their distance from the leader?</li>
+                    <li>What happens when the leader encounters an obstacle?</li>
+                    <li>Do the robots successfully navigate around obstacles as a group?</li>
+                    <li>What improvements could make the coordination better?</li>
+                    <li>How does this compare to animal behavior you've observed?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Section 5: Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📝</span> Assessment & Homework
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Reflection Questions</h3>
+                <ol style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>Describe three examples of swarm behavior in nature and explain how they work.</li>
+                    <li>What are the advantages of using multiple simple robots instead of one complex robot?</li>
+                    <li>Explain the three rules of flocking behavior and why each one is important.</li>
+                    <li>How could robot swarms be useful in real-world applications like search and rescue?</li>
+                    <li>What challenges did you encounter when programming multiple robots to work together?</li>
+                </ol>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Programming Challenge</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    <strong>Design a Robot Cleanup Crew:</strong> Create a program for multiple robots that work together to "clean up" an area by finding and collecting objects (represented by obstacles they detect).
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Requirements:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Robots should spread out to cover different areas</li>
+                    <li>When a robot finds an "object," it should signal others</li>
+                    <li>Other robots should come help or continue searching elsewhere</li>
+                    <li>Include obstacle avoidance and coordination behaviors</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Research Project</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Research one real-world application of swarm robotics and write a one-page report covering:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>What problem the robot swarm solves</li>
+                    <li>How many robots are used and how they coordinate</li>
+                    <li>What sensors and communication methods they use</li>
+                    <li>Advantages over traditional single-robot solutions</li>
+                    <li>Current limitations and future possibilities</li>
+                </ul>
+                
+                <p style="margin-top: 1rem; line-height: 1.6; font-style: italic;">
+                    <strong>Suggested topics:</strong> Drone swarms, warehouse robots, environmental monitoring, military applications, or space exploration.
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week22" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 22: State Machines
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week23" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz 📝
+            </a>
+        </div>
+    </div>
+</Layout>

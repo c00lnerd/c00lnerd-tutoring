@@ -1,0 +1,327 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 18: Computer Vision and Image Processing">
+    <style>
+        .code-block {
+            background: #1a1a1a;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border-left: 4px solid #667eea;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 18</h1>
+            <h2 style="font-size: 1.8rem; margin: 0 0 1rem 0; opacity: 0.9;">Computer Vision and Image Processing</h2>
+            <p style="font-size: 1.1rem; margin: 0; opacity: 0.8;">Teaching Robots to "See" and Understand Images</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🎯 Learning Objectives</h2>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Understand how cameras and image sensors work with robots</li>
+                <li>Learn basic image processing techniques like brightness and contrast</li>
+                <li>Discover how robots can detect colors and shapes in images</li>
+                <li>Practice simple object detection and tracking methods</li>
+                <li>Build programs that can analyze and respond to visual information</li>
+                <li>Apply computer vision concepts to improve miniAuto robot navigation</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: How Robots See -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">👁️ Section 1: How Robots See</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Digital Images and Pixels</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Just like how your phone camera takes pictures, robots can use cameras to "see" their environment. Digital images are made up of tiny squares called pixels, and each pixel has a color value that the robot can read and analyze.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Understanding RGB Colors</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Every pixel in a color image has three values: Red, Green, and Blue (RGB). Each value ranges from 0 to 255. For example, pure red would be (255, 0, 0), pure white would be (255, 255, 255), and black would be (0, 0, 0).</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Image Coordinates</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Images use a coordinate system where (0,0) is typically at the top-left corner. The x-coordinate increases as you move right, and the y-coordinate increases as you move down. This is like a grid system for locating specific pixels.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Basic Image Processing Example:</h4>
+            <div class="code-block">
+<pre>{`// Simple image processing with a camera
+class SimpleVision {
+private:
+    int imageWidth = 320;
+    int imageHeight = 240;
+    
+public:
+    // Get the brightness of a pixel (0-255)
+    int getPixelBrightness(int red, int green, int blue) {
+        // Simple average of RGB values
+        return (red + green + blue) / 3;
+    }
+    
+    // Check if a pixel is mostly red
+    bool isRedPixel(int red, int green, int blue) {
+        return (red > 150 && red > green && red > blue);
+    }
+    
+    // Find the center point of the image
+    void getImageCenter(int &centerX, int &centerY) {
+        centerX = imageWidth / 2;
+        centerY = imageHeight / 2;
+    }
+    
+    // Simple brightness adjustment
+    int adjustBrightness(int pixelValue, int adjustment) {
+        int newValue = pixelValue + adjustment;
+        if (newValue > 255) newValue = 255;
+        if (newValue < 0) newValue = 0;
+        return newValue;
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 2: Basic Image Processing -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🖼️ Section 2: Basic Image Processing</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Making Images Easier to Analyze</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Raw camera images can be noisy or have poor lighting. We can process these images to make them easier for the robot to understand. This includes adjusting brightness, increasing contrast, and filtering out unwanted details.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Brightness and Contrast</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Brightness makes the whole image lighter or darker by adding or subtracting the same amount from all pixel values. Contrast makes the difference between light and dark areas more pronounced, helping important features stand out.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Converting to Grayscale</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Sometimes it's easier to work with black and white images. Converting to grayscale simplifies processing and can make it easier to detect edges and shapes. We do this by averaging the red, green, and blue values of each pixel.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Image Processing Techniques:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Brightness Adjustment:</strong> Add or subtract a value from all pixels</li>
+                <li><strong>Contrast Enhancement:</strong> Make light pixels lighter and dark pixels darker</li>
+                <li><strong>Noise Reduction:</strong> Smooth out random variations in pixel values</li>
+                <li><strong>Edge Detection:</strong> Find boundaries between different colored areas</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Image Enhancement System:</h4>
+            <div class="code-block">
+<pre>{`// Simple image enhancement for robot vision
+class ImageProcessor {
+private:
+    int clampValue(int value) {
+        if (value > 255) return 255;
+        if (value < 0) return 0;
+        return value;
+    }
+    
+public:
+    // Convert RGB to grayscale
+    int convertToGray(int red, int green, int blue) {
+        return (red + green + blue) / 3;
+    }
+    
+    // Adjust image brightness
+    int adjustBrightness(int pixelValue, int brightnessDelta) {
+        return clampValue(pixelValue + brightnessDelta);
+    }
+    
+    // Increase contrast
+    int adjustContrast(int pixelValue, float contrastFactor) {
+        // Contrast around middle gray (128)
+        int adjusted = 128 + (pixelValue - 128) * contrastFactor;
+        return clampValue(adjusted);
+    }
+    
+    // Simple noise reduction (average with neighbors)
+    int reduceNoise(int currentPixel, int neighbor1, int neighbor2) {
+        return (currentPixel + neighbor1 + neighbor2) / 3;
+    }
+    
+    // Detect if there's a strong edge (big difference in brightness)
+    bool detectEdge(int pixel1, int pixel2, int threshold) {
+        int difference = abs(pixel1 - pixel2);
+        return difference > threshold;
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 3: Color and Shape Detection -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🎨 Section 3: Color and Shape Detection</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Teaching Robots to Recognize Objects</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">One of the most useful computer vision skills is helping robots identify specific colors and shapes. This allows them to find objects, follow colored lines, or avoid obstacles of certain colors.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Color Range Detection</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Instead of looking for exact colors, we usually look for ranges. For example, "red" might include any pixel where red is greater than 150, and green and blue are both less than 100. This accounts for lighting variations and camera differences.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Simple Shape Recognition</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">We can detect simple shapes by looking for patterns in the edges and corners. A square has four corners and four equal sides, while a circle has no corners and a consistent curved edge. These patterns can be detected using basic counting and measurement techniques.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Object Detection Strategies:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Color Filtering:</strong> Find all pixels within a specific color range</li>
+                <li><strong>Blob Detection:</strong> Group connected pixels of similar colors</li>
+                <li><strong>Size Filtering:</strong> Ignore objects that are too small or too large</li>
+                <li><strong>Position Tracking:</strong> Remember where objects were in previous frames</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Color and Object Detection System:</h4>
+            <div class="code-block">
+<pre>{`// Simple color and object detection
+class ObjectDetector {
+private:
+    struct ColorRange {
+        int minRed, maxRed;
+        int minGreen, maxGreen;
+        int minBlue, maxBlue;
+    };
+    
+    ColorRange redRange = {150, 255, 0, 100, 0, 100};
+    ColorRange blueRange = {0, 100, 0, 100, 150, 255};
+    ColorRange greenRange = {0, 100, 150, 255, 0, 100};
+    
+public:
+    // Check if a pixel matches a specific color range
+    bool isColorInRange(int red, int green, int blue, ColorRange range) {
+        return (red >= range.minRed && red <= range.maxRed &&
+                green >= range.minGreen && green <= range.maxGreen &&
+                blue >= range.minBlue && blue <= range.maxBlue);
+    }
+    
+    // Find the center of a colored object
+    bool findColorCenter(int imageWidth, int imageHeight, 
+                        int &centerX, int &centerY, ColorRange targetColor) {
+        int totalX = 0, totalY = 0, pixelCount = 0;
+        
+        // This would scan through the actual image pixels
+        // For demo purposes, we'll show the logic
+        for (int y = 0; y < imageHeight; y++) {
+            for (int x = 0; x < imageWidth; x++) {
+                // Get pixel color at (x,y) - this would come from camera
+                // int red = getPixelRed(x, y);
+                // int green = getPixelGreen(x, y);
+                // int blue = getPixelBlue(x, y);
+                
+                // if (isColorInRange(red, green, blue, targetColor)) {
+                //     totalX += x;
+                //     totalY += y;
+                //     pixelCount++;
+                // }
+            }
+        }
+        
+        if (pixelCount > 50) { // Need at least 50 pixels for valid object
+            centerX = totalX / pixelCount;
+            centerY = totalY / pixelCount;
+            return true;
+        }
+        return false;
+    }
+    
+    // Simple object tracking
+    float calculateDistance(int x1, int y1, int x2, int y2) {
+        int deltaX = x2 - x1;
+        int deltaY = y2 - y1;
+        return sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem; border-left: 5px solid #28a745;">
+            <h2 style="color: #155724; margin-bottom: 1rem;">🔧 Hands-On Activity: Simple Vision System</h2>
+            <p style="margin-bottom: 1.5rem; color: #155724; font-weight: 500;">Build a basic computer vision system that can detect and track colored objects using your miniAuto robot's camera.</p>
+            
+            <h3 style="color: #155724; margin-bottom: 1rem;">Project: Color-Following Robot</h3>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: #495057; margin-bottom: 1rem;">Materials Needed:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>miniAuto robot with camera module</li>
+                    <li>Colored objects (red ball, blue block, green marker)</li>
+                    <li>Good lighting (avoid shadows and reflections)</li>
+                    <li>Computer for programming and testing</li>
+                </ul>
+                
+                <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Step-by-Step Instructions:</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li><strong>Setup:</strong> Connect your camera and test basic image capture</li>
+                    <li><strong>Color Calibration:</strong> Take sample images and determine RGB ranges for your target colors</li>
+                    <li><strong>Detection Program:</strong> Write code to find the center of colored objects</li>
+                    <li><strong>Movement Logic:</strong> Program the robot to move toward detected objects</li>
+                    <li><strong>Testing:</strong> Test with different colored objects and lighting conditions</li>
+                    <li><strong>Improvements:</strong> Add features like object size filtering and tracking</li>
+                </ol>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107;">
+                <strong style="color: #856404;">💡 Pro Tip:</strong>
+                <span style="color: #856404;"> Start with bright, solid colors in good lighting. Once your basic system works, you can experiment with more challenging conditions and multiple colors!</span>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">📋 Assessment & Homework</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Programming Challenges</h3>
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <ol style="margin-left: 1rem; line-height: 1.8;">
+                    <li><strong>Brightness Detector:</strong> Write a function that determines if an image is too dark, too bright, or just right</li>
+                    <li><strong>Color Counter:</strong> Create a program that counts how many red, green, and blue pixels are in an image</li>
+                    <li><strong>Object Tracker:</strong> Build a system that remembers where an object was and predicts where it might go next</li>
+                    <li><strong>Multi-Color Detection:</strong> Modify your color detection to find multiple different colored objects at once</li>
+                </ol>
+            </div>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Research Assignment</h3>
+            <div style="background: #e7f3ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <p style="margin-bottom: 1rem; line-height: 1.6;"><strong>Topic:</strong> Real-World Computer Vision Applications</p>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">Research and write a one-page report on how computer vision is used in one of these areas:</p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Self-driving cars and obstacle detection</li>
+                    <li>Medical imaging and diagnosis</li>
+                    <li>Security systems and facial recognition</li>
+                    <li>Manufacturing quality control</li>
+                    <li>Sports analysis and performance tracking</li>
+                </ul>
+            </div>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Practical Exercises</h3>
+            <div style="background: #f0f8f0; padding: 1.5rem; border-radius: 8px;">
+                <ul style="margin-left: 1rem; line-height: 1.8;">
+                    <li>Test your color detection system with different lighting conditions</li>
+                    <li>Experiment with detecting objects of different sizes</li>
+                    <li>Try to make your robot follow a colored line or path</li>
+                    <li>Challenge: Can you detect simple shapes like circles or squares?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week17" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 17: Sensor Integration
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week18" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz →
+            </a>
+        </div>
+    </div>
+</Layout>

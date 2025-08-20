@@ -1,0 +1,249 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 15: Advanced miniAuto Features">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">15</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 15: Advanced miniAuto Features</h1>
+                        <p class="text-gray-600">Unlocking your robot's full potential</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Implement line following algorithms
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Use camera for basic AI vision
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Control robotic gripper attachment
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Create complex autonomous behaviors
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Computer vision basics
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                PID control algorithms
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Advanced robotics integration
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Line Following -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        Line Following with PID Control (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Line Following Concepts:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Use infrared sensors to detect dark lines</li>
+                            <li>• Calculate error from center of line</li>
+                            <li>• Apply PID control for smooth following</li>
+                            <li>• Handle intersections and line breaks</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Line following with PID control
+#define BASE_SPEED 120
+#define KP 0.5  // Proportional gain
+int lastError = 0;
+
+void followLine() {
+    int leftSensor = miniAuto.getLineSensor(LEFT);
+    int rightSensor = miniAuto.getLineSensor(RIGHT);
+    int error = calculateLineError(leftSensor, rightSensor);
+    float correction = error * KP;
+    int leftSpeed = BASE_SPEED - correction;
+    int rightSpeed = BASE_SPEED + correction;
+    miniAuto.setMotorSpeeds(leftSpeed, rightSpeed);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 2: Camera Vision -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Camera and Color Tracking (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Vision Applications:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Object detection and recognition</li>
+                            <li>• Color tracking and following</li>
+                            <li>• Visual navigation</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Basic color tracking
+void trackColoredObject() {
+    camera_fb_t* fb = esp_camera_fb_get();
+    int objectX, objectY;
+    bool found = detectColor(fb, &objectX, &objectY);
+    if (found) {
+        int error = objectX - (fb->width / 2);
+        if (abs(error) < 20) {
+            miniAuto.moveForward(100);
+        } else if (error < 0) {
+            miniAuto.turnLeft(80);
+        } else {
+            miniAuto.turnRight(80);
+        }
+    }
+    esp_camera_fb_return(fb);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 3: Gripper Control -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Robotic Gripper Control (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Gripper Applications:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Pick and place operations</li>
+                            <li>• Object sorting and manipulation</li>
+                            <li>• Interactive object handling</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`
+// Gripper control functions
+void pickUpObject() {
+    miniAuto.moveForward(80);
+    delay(1000);
+    miniAuto.closeGripper();
+    delay(500);
+    miniAuto.moveBackward(80);
+    delay(500);
+}
+
+void deliverObject() {
+    navigateToDeliveryZone();
+    miniAuto.openGripper();
+    delay(1000);
+}
+`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 4: Mission Integration -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Mission-Based Autonomous Systems (10 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Complex Behavior Integration:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Combine multiple sensors and actuators</li>
+                            <li>• Create mission-based state machines</li>
+                            <li>• Implement error recovery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: Advanced Autonomous Robot</h3>
+                    <p class="text-green-700 mb-4">Create an advanced robot combining line following, vision, and gripper control.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Requirements:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Implement line following with PID control</li>
+                            <li>• Add color detection and tracking</li>
+                            <li>• Include gripper control for objects</li>
+                            <li>• Create mission-based behavior</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Line following implementation</li>
+                            <li>• Vision system integration</li>
+                            <li>• Gripper control mastery</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">Competition Preparation</p>
+                            <p class="text-blue-700 text-sm">Prepare your robot for the final competition by optimizing all systems and creating a comprehensive autonomous behavior program.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week14" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 14
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week15" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 15 Quiz
+                        </a>
+                        <a href="/programming/lessons/week16" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 16 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

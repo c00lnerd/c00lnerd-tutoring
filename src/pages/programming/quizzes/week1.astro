@@ -1,0 +1,333 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 1 Quiz: Introduction to Programming & Python">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">Q1</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 1 Quiz</h1>
+                        <p class="text-gray-600">Introduction to Programming & Python</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <div class="bg-white rounded-xl shadow-lg p-6">
+                <form id="week1Quiz" class="space-y-8">
+                    <!-- Student Info -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4">Student Information</h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Name:</label>
+                                <input type="text" id="studentName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email:</label>
+                                <input type="email" id="studentEmail" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 1: Multiple Choice (2 points)</h3>
+                        <p class="text-gray-700 mb-4">What is programming?</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="q1" value="a" class="mr-3">
+                                <span>A) Playing video games on a computer</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q1" value="b" class="mr-3">
+                                <span>B) Giving step-by-step instructions to a computer</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q1" value="c" class="mr-3">
+                                <span>C) Fixing broken computers</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q1" value="d" class="mr-3">
+                                <span>D) Using social media apps</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 2: Multiple Choice (2 points)</h3>
+                        <p class="text-gray-700 mb-4">Which symbol is used to start a comment in Python?</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="q2" value="a" class="mr-3">
+                                <span>A) //</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q2" value="b" class="mr-3">
+                                <span>B) #</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q2" value="c" class="mr-3">
+                                <span>C) *</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q2" value="d" class="mr-3">
+                                <span>D) %</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 3: Code Analysis (3 points)</h3>
+                        <p class="text-gray-700 mb-4">What will this Python code output?</p>
+                        <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                            <div>print("Hello")</div>
+                            <div>print("World")</div>
+                        </div>
+                        <textarea id="q3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="3" placeholder="Write what you think the output will be..."></textarea>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 4: True/False (2 points)</h3>
+                        <p class="text-gray-700 mb-4">Comments in Python are executed by the computer and affect the program's output.</p>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="q4" value="true" class="mr-3">
+                                <span>True</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="q4" value="false" class="mr-3">
+                                <span>False</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 5: Code Writing (4 points)</h3>
+                        <p class="text-gray-700 mb-4">Write Python code that prints your favorite color and includes a comment explaining what the code does:</p>
+                        <textarea id="q5" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono" rows="4" placeholder="# Write your code here"></textarea>
+                    </div>
+
+                    <!-- Question 6 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 6: Short Answer (3 points)</h3>
+                        <p class="text-gray-700 mb-4">Explain why comments are important in programming. Give at least two reasons.</p>
+                        <textarea id="q6" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="4" placeholder="Write your answer here..."></textarea>
+                    </div>
+
+                    <!-- Question 7 -->
+                    <div class="border-l-4 border-green-500 pl-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 7: Application (4 points)</h3>
+                        <p class="text-gray-700 mb-4">How do you think programming will be useful when we start working with the miniAuto car? Write 2-3 sentences.</p>
+                        <textarea id="q7" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" rows="4" placeholder="Write your thoughts here..."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center pt-6">
+                        <button type="submit" class="bg-green-500 text-white px-8 py-3 rounded-lg hover:bg-green-600 transition-colors font-semibold">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Display -->
+                <div id="quizResults" class="hidden mt-8 p-6 bg-blue-50 rounded-lg">
+                    <h3 class="text-xl font-bold text-blue-800 mb-4">Quiz Results</h3>
+                    <div id="scoreDisplay" class="text-lg font-semibold mb-4"></div>
+                    <div id="feedback" class="space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; justify-content: center; align-items: center; margin-top: 2rem; gap: 1rem; flex-direction: column;">
+                <a href="/programming/lessons/week1" style="display: inline-block; background: #3182ce; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; min-width: 200px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.background='#2c5282'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#3182ce'; this.style.transform='translateY(0)';">
+                    ← Back to Lesson
+                </a>
+                <a href="/programming/semester1" style="display: inline-block; background: #38a169; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; min-width: 200px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.background='#2f855a'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#38a169'; this.style.transform='translateY(0)';">
+                    Semester Overview
+                </a>
+                <a href="/programming/lessons/week2" style="display: inline-block; background: #805ad5; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; min-width: 200px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.background='#6b46c1'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#805ad5'; this.style.transform='translateY(0)';">
+                    Next Lesson →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz answers and scoring
+        const correctAnswers = {
+            q1: 'b',
+            q2: 'b',
+            q4: 'false'
+        };
+
+        const pointValues = {
+            q1: 2, q2: 2, q3: 3, q4: 2, q5: 4, q6: 3, q7: 4
+        };
+
+        document.getElementById('week1Quiz').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email.');
+                return;
+            }
+
+            let totalScore = 0;
+            let maxScore = 20;
+            let feedback = [];
+
+            // Grade multiple choice and true/false
+            for (let question in correctAnswers) {
+                const selected = document.querySelector(`input[name="${question}"]:checked`);
+                if (selected && selected.value === correctAnswers[question]) {
+                    totalScore += pointValues[question];
+                    feedback.push(`✓ ${question.toUpperCase()}: Correct (${pointValues[question]} points)`);
+                } else {
+                    feedback.push(`✗ ${question.toUpperCase()}: Incorrect (0 points)`);
+                }
+            }
+
+            // Grade open-ended questions (simplified - in real implementation, teacher would grade these)
+            const q3Answer = document.getElementById('q3').value.trim();
+            const q5Answer = document.getElementById('q5').value.trim();
+            const q6Answer = document.getElementById('q6').value.trim();
+            const q7Answer = document.getElementById('q7').value.trim();
+
+            // Simple checks for open-ended questions
+            if (q3Answer.toLowerCase().includes('hello') && q3Answer.toLowerCase().includes('world')) {
+                totalScore += 3;
+                feedback.push('✓ Q3: Good understanding of print output (3 points)');
+            } else {
+                feedback.push('? Q3: Please review print statement output (0 points - needs teacher review)');
+            }
+
+            if (q5Answer.includes('print') && q5Answer.includes('#')) {
+                totalScore += 4;
+                feedback.push('✓ Q5: Good code structure with comment (4 points)');
+            } else {
+                feedback.push('? Q5: Make sure to include both print statement and comment (partial credit - needs teacher review)');
+            }
+
+            if (q6Answer.length > 20) {
+                totalScore += 2; // Partial credit for effort
+                feedback.push('? Q6: Good effort explaining comments (partial credit - needs teacher review)');
+            } else {
+                feedback.push('? Q6: Please provide more detailed explanation (needs teacher review)');
+            }
+
+            if (q7Answer.length > 20) {
+                totalScore += 2; // Partial credit for effort
+                feedback.push('? Q7: Good thinking about robotics applications (partial credit - needs teacher review)');
+            } else {
+                feedback.push('? Q7: Please provide more detailed thoughts (needs teacher review)');
+            }
+
+            // Display results
+            const resultsDiv = document.getElementById('quizResults');
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            const feedbackDiv = document.getElementById('feedback');
+
+            scoreDisplay.innerHTML = `Score: ${totalScore}/${maxScore} (${Math.round(totalScore/maxScore*100)}%)`;
+            
+            feedbackDiv.innerHTML = '';
+            feedback.forEach(item => {
+                const p = document.createElement('p');
+                p.innerHTML = item;
+                if (item.startsWith('✓')) {
+                    p.className = 'text-green-700';
+                } else if (item.startsWith('✗')) {
+                    p.className = 'text-red-700';
+                } else {
+                    p.className = 'text-yellow-700';
+                }
+                feedbackDiv.appendChild(p);
+            });
+
+            resultsDiv.classList.remove('hidden');
+
+            // Prepare data for email submission
+            const quizData = {
+                studentName,
+                studentEmail,
+                week: 1,
+                score: totalScore,
+                maxScore: maxScore,
+                answers: {
+                    q1: document.querySelector('input[name="q1"]:checked')?.value || 'No answer',
+                    q2: document.querySelector('input[name="q2"]:checked')?.value || 'No answer',
+                    q3: q3Answer,
+                    q4: document.querySelector('input[name="q4"]:checked')?.value || 'No answer',
+                    q5: q5Answer,
+                    q6: q6Answer,
+                    q7: q7Answer
+                },
+                feedback: feedback
+            };
+
+            // Send results via EmailJS (same pattern as experiments)
+            submitQuizResults(quizData);
+        });
+
+        function submitQuizResults(quizData) {
+            // Format message for email
+            const formattedMessage = `WEEK 1 QUIZ RESULTS - INTRODUCTION TO PROGRAMMING & PYTHON
+
+Student Information:
+• Name: ${quizData.studentName}
+• Email: ${quizData.studentEmail}
+
+Quiz Performance:
+• Score: ${quizData.score}/${quizData.maxScore} (${Math.round(quizData.score/quizData.maxScore*100)}%)
+• Week: ${quizData.week}
+
+Student Answers:
+• Q1 (Programming definition): ${quizData.answers.q1}
+• Q2 (Comment symbol): ${quizData.answers.q2}
+• Q3 (Code output): ${quizData.answers.q3}
+• Q4 (Comments true/false): ${quizData.answers.q4}
+• Q5 (Code writing): ${quizData.answers.q5}
+• Q6 (Comment importance): ${quizData.answers.q6}
+• Q7 (Robotics application): ${quizData.answers.q7}
+
+Automated Feedback:
+${quizData.feedback.join('\n')}
+
+---
+This is an automated submission from the C00lnerd Programming Quiz System.`;
+
+            // EmailJS configuration (same as experiments)
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            // Send email using EmailJS (exact same format as working experiments)
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: quizData.studentName,
+                from_email: quizData.studentEmail,
+                message: formattedMessage,
+                subject: `Week 1 Programming Quiz - ${quizData.studentName}`
+            })
+                .then(function(response) {
+                    console.log('Quiz submitted successfully!', response.status, response.text);
+                    alert('Quiz submitted successfully! Your instructor will receive your results.');
+                }, function(error) {
+                    console.log('Submission failed...', error);
+                    alert('There was an error submitting your quiz. Please save your answers and contact your instructor.');
+                });
+        }
+    </script>
+
+    <!-- EmailJS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</Layout>

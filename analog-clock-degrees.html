@@ -78,9 +78,14 @@
 
         .degree {
             position: absolute;
-            font-size: 14px;
-            color: #666;
+            font-size: 12px;
+            color: #333;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2px 4px;
+            border-radius: 3px;
             transform: translate(-50%, -50%);
+            z-index: 5;
         }
 
         .tick {
@@ -239,8 +244,8 @@
     <script>
         function createClockFace() {
             const clock = document.getElementById('clock');
-            const clockRect = clock.getBoundingClientRect();
-            const clockSize = Math.min(clockRect.width, clockRect.height);
+            // Use fixed dimensions that match the CSS
+            const clockSize = 350;
             const centerX = clockSize / 2;
             const centerY = clockSize / 2;
             
@@ -250,13 +255,13 @@
                 const angle = (i * 30) - 90; // -90 to start at 12 o'clock
                 const radian = (angle * Math.PI) / 180;
                 
-                // Position for numbers (closer to edge) - scale with clock size
-                const numberRadius = clockSize * 0.4;
+                // Position for numbers (inner ring) - scale with clock size
+                const numberRadius = clockSize * 0.28;
                 const numberX = centerX + numberRadius * Math.cos(radian);
                 const numberY = centerY + numberRadius * Math.sin(radian);
                 
-                // Position for degrees (further from center) - scale with clock size
-                const degreeRadius = clockSize * 0.31;
+                // Position for degrees (outer ring, but within clock face) - scale with clock size
+                const degreeRadius = clockSize * 0.38;
                 const degreeX = centerX + degreeRadius * Math.cos(radian);
                 const degreeY = centerY + degreeRadius * Math.sin(radian);
                 

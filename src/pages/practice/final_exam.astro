@@ -1,0 +1,866 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Final Exam">
+    <div class="container">
+        <h1>Physical Science Final Exam</h1>
+        <p class="subtitle">Comprehensive Assessment - Modules 1-15</p>
+        
+        <div class="exam-notice">
+            <h3>📚 Open Book/Notes Exam</h3>
+            <p>This is an <strong>open book and open notes</strong> exam. You may refer to your textbook, notes, and previous module materials while taking this exam. Take your time and think carefully about each question.</p>
+        </div>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz" onclick="startQuiz()">Start Final Exam</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill" id="progress"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()" style="display: none;">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Final Exam</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Final Exam Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Retake Exam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load EmailJS before initializing -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script type="text/javascript" is:inline>
+        window.onload = function() {
+            try {
+                emailjs.init("ct_s19oZHppLy9BlW");
+            } catch (error) {
+                console.error('Failed to initialize EmailJS:', error);
+            }
+        }
+    </script>
+
+    <script is:inline>
+        window.questions = [
+            {
+                question: "What is the scientific method? (Module 1)",
+                options: [
+                    "A way to organize laboratory equipment",
+                    "A systematic approach to solving problems and understanding the natural world",
+                    "A method only used in chemistry experiments",
+                    "A type of mathematical formula"
+                ],
+                correctAnswer: 1,
+                reference: "Module 1: Scientific Method"
+            },
+            {
+                question: "What are the three states of matter? (Module 2)",
+                options: [
+                    "Hot, cold, and warm",
+                    "Big, medium, and small",
+                    "Solid, liquid, and gas",
+                    "Fast, slow, and stationary"
+                ],
+                correctAnswer: 2,
+                reference: "Module 2: States of Matter"
+            },
+            {
+                question: "What is an atom? (Module 3)",
+                options: [
+                    "The largest unit of matter",
+                    "The basic building block of all matter",
+                    "A type of molecule",
+                    "A form of energy"
+                ],
+                correctAnswer: 1,
+                reference: "Module 3: Atomic Structure"
+            },
+            {
+                question: "What type of bond is formed when electrons are shared between atoms? (Module 4)",
+                options: [
+                    "Ionic bond",
+                    "Covalent bond",
+                    "Metallic bond",
+                    "Hydrogen bond"
+                ],
+                correctAnswer: 1,
+                reference: "Module 4: Chemical Bonding"
+            },
+            {
+                question: "What is a catalyst? (Module 5)",
+                options: [
+                    "A substance that slows down reactions",
+                    "A substance that speeds up reactions without being consumed",
+                    "A product of a chemical reaction",
+                    "A type of chemical bond"
+                ],
+                correctAnswer: 1,
+                reference: "Module 5: Chemical Reactions"
+            },
+            {
+                question: "What is velocity? (Module 6)",
+                options: [
+                    "How fast something moves",
+                    "Speed with direction",
+                    "The distance traveled",
+                    "The time it takes to move"
+                ],
+                correctAnswer: 1,
+                reference: "Module 6: Motion and Forces"
+            },
+            {
+                question: "What does Newton's First Law state? (Module 7)",
+                options: [
+                    "Force equals mass times acceleration",
+                    "For every action there is an equal and opposite reaction",
+                    "An object at rest stays at rest, and an object in motion stays in motion, unless acted upon by an unbalanced force",
+                    "Energy cannot be created or destroyed"
+                ],
+                correctAnswer: 2,
+                reference: "Module 7: Newton's Laws"
+            },
+            {
+                question: "What is kinetic energy? (Module 8)",
+                options: [
+                    "Energy of position",
+                    "Energy of motion",
+                    "Energy stored in chemical bonds",
+                    "Energy from the sun"
+                ],
+                correctAnswer: 1,
+                reference: "Module 8: Energy and Work"
+            },
+            {
+                question: "What is frequency in relation to waves? (Module 9)",
+                options: [
+                    "The height of a wave",
+                    "The distance between wave crests",
+                    "How many waves pass a point in one second",
+                    "The speed of the wave"
+                ],
+                correctAnswer: 2,
+                reference: "Module 9: Waves and Sound"
+            },
+            {
+                question: "What is the electromagnetic spectrum? (Module 10)",
+                options: [
+                    "Only visible light",
+                    "The range of all electromagnetic waves from radio waves to gamma rays",
+                    "Only X-rays and gamma rays",
+                    "The colors of the rainbow"
+                ],
+                correctAnswer: 1,
+                reference: "Module 10: Light and Electromagnetic Spectrum"
+            },
+            {
+                question: "What is static electricity? (Module 11)",
+                options: [
+                    "Electricity that moves through wires",
+                    "The buildup of electric charge on an object",
+                    "Electricity from batteries",
+                    "Magnetic fields"
+                ],
+                correctAnswer: 1,
+                reference: "Module 11: Electricity and Magnetism"
+            },
+            {
+                question: "What are the three main layers of the Earth? (Module 12)",
+                options: [
+                    "Atmosphere, hydrosphere, lithosphere",
+                    "Crust, mantle, core",
+                    "Land, water, air",
+                    "Top, middle, bottom"
+                ],
+                correctAnswer: 1,
+                reference: "Module 12: Earth's Interior"
+            },
+            {
+                question: "What causes erosion? (Module 13)",
+                options: [
+                    "Only wind",
+                    "Only water",
+                    "Wind, water, ice, and gravity",
+                    "Only gravity"
+                ],
+                correctAnswer: 2,
+                reference: "Module 13: Earth's Surface Changes"
+            },
+            {
+                question: "What does Bernoulli's principle state? (Module 14)",
+                options: [
+                    "Faster moving fluids have higher pressure",
+                    "Faster moving fluids have lower pressure",
+                    "All fluids move at the same speed",
+                    "Pressure is independent of fluid speed"
+                ],
+                correctAnswer: 1,
+                reference: "Module 14: Chemistry and Physics in Life Sciences"
+            },
+            {
+                question: "What is the first step in conducting scientific research? (Module 15)",
+                options: [
+                    "Writing your conclusion",
+                    "Finding topics that interest you and asking questions",
+                    "Publishing your results",
+                    "Buying expensive equipment"
+                ],
+                correctAnswer: 1,
+                reference: "Module 15: Physical Science Research"
+            },
+            {
+                question: "Which of the following is a good scientific hypothesis?",
+                options: [
+                    "I think plants are green",
+                    "If plants receive more sunlight, then they will grow taller because light provides energy for photosynthesis",
+                    "Plants need water",
+                    "Some plants are big"
+                ],
+                correctAnswer: 1,
+                reference: "Scientific Method - Hypothesis Formation"
+            },
+            {
+                question: "What happens to the particles in a substance when it changes from solid to liquid?",
+                options: [
+                    "They disappear",
+                    "They move faster and farther apart",
+                    "They stop moving completely",
+                    "They change into different particles"
+                ],
+                correctAnswer: 1,
+                reference: "States of Matter - Phase Changes"
+            },
+            {
+                question: "What determines the identity of an element?",
+                options: [
+                    "The number of neutrons",
+                    "The number of electrons",
+                    "The number of protons",
+                    "The atomic mass"
+                ],
+                correctAnswer: 2,
+                reference: "Atomic Structure - Atomic Number"
+            },
+            {
+                question: "In a chemical reaction, what is always conserved?",
+                options: [
+                    "The number of molecules",
+                    "The mass of the reactants and products",
+                    "The temperature",
+                    "The volume"
+                ],
+                correctAnswer: 1,
+                reference: "Chemical Reactions - Conservation of Mass"
+            },
+            {
+                question: "If you push on a wall with 50 N of force, how much force does the wall push back on you?",
+                options: [
+                    "0 N",
+                    "25 N",
+                    "50 N",
+                    "100 N"
+                ],
+                correctAnswer: 2,
+                reference: "Newton's Third Law - Action-Reaction Pairs"
+            },
+            {
+                question: "What type of energy does a stretched rubber band have?",
+                options: [
+                    "Kinetic energy",
+                    "Thermal energy",
+                    "Elastic potential energy",
+                    "Chemical energy"
+                ],
+                correctAnswer: 2,
+                reference: "Energy - Types of Potential Energy"
+            },
+            {
+                question: "What happens to the wavelength of a sound wave when its frequency increases?",
+                options: [
+                    "Wavelength increases",
+                    "Wavelength decreases",
+                    "Wavelength stays the same",
+                    "Wavelength becomes zero"
+                ],
+                correctAnswer: 1,
+                reference: "Waves - Frequency and Wavelength Relationship"
+            },
+            {
+                question: "Why can we see objects that don't produce their own light?",
+                options: [
+                    "They absorb all light",
+                    "They reflect light from other sources",
+                    "They create their own invisible light",
+                    "We can't actually see them"
+                ],
+                correctAnswer: 1,
+                reference: "Light - Reflection and Vision"
+            },
+            {
+                question: "What creates a magnetic field around a wire?",
+                options: [
+                    "The wire material",
+                    "The length of the wire",
+                    "Electric current flowing through the wire",
+                    "The temperature of the wire"
+                ],
+                correctAnswer: 2,
+                reference: "Electricity and Magnetism - Electromagnetic Fields"
+            },
+            {
+                question: "What evidence supports the theory of plate tectonics?",
+                options: [
+                    "Only earthquake patterns",
+                    "Matching fossils and rock types across oceans, earthquake patterns, and mountain formation",
+                    "Only mountain formation",
+                    "Only the shape of continents"
+                ],
+                correctAnswer: 1,
+                reference: "Earth's Interior - Plate Tectonics Evidence"
+            },
+            {
+                question: "What is the main difference between physical and chemical weathering?",
+                options: [
+                    "Physical weathering is faster",
+                    "Chemical weathering only happens in water",
+                    "Physical weathering breaks rocks without changing their composition; chemical weathering changes the rock's composition",
+                    "There is no difference"
+                ],
+                correctAnswer: 2,
+                reference: "Earth's Surface Changes - Weathering Types"
+            },
+            {
+                question: "What are the four main classes of biochemical compounds?",
+                options: [
+                    "Proteins, fats, sugars, vitamins",
+                    "Carbohydrates, proteins, lipids, nucleic acids",
+                    "DNA, RNA, enzymes, hormones",
+                    "Water, carbon dioxide, oxygen, nitrogen"
+                ],
+                correctAnswer: 1,
+                reference: "Chemistry and Physics in Life Sciences - Biochemical Compounds"
+            },
+            {
+                question: "When evaluating internet sources for research, which domain is generally most reliable?",
+                options: [
+                    ".com",
+                    ".net",
+                    ".edu",
+                    ".info"
+                ],
+                correctAnswer: 2,
+                reference: "Physical Science Research - Source Evaluation"
+            },
+            {
+                question: "What is the relationship between mass and weight?",
+                options: [
+                    "They are exactly the same thing",
+                    "Mass is the amount of matter; weight is the force of gravity on that mass",
+                    "Weight is always greater than mass",
+                    "Mass changes with location but weight doesn't"
+                ],
+                correctAnswer: 1,
+                reference: "Forces and Motion - Mass vs Weight"
+            },
+            {
+                question: "In photosynthesis, what are the reactants (inputs)?",
+                options: [
+                    "Glucose and oxygen",
+                    "Carbon dioxide, water, and light energy",
+                    "Carbon dioxide and oxygen",
+                    "Water and glucose"
+                ],
+                correctAnswer: 1,
+                reference: "Chemistry in Life Sciences - Photosynthesis"
+            }
+        ];
+
+        // Initialize quiz state
+        window.currentQuestion = 0;
+        window.userAnswers = new Array(window.questions.length).fill(null);
+        window.questionAttempts = new Array(window.questions.length).fill(0);
+        window.quizStarted = false;
+        window.userEmail = '';
+
+        // Load saved email
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            document.getElementById('email').value = savedEmail;
+        }
+
+        function startQuiz() {
+            const email = document.getElementById('email').value;
+            const saveResults = document.getElementById('save-results').checked;
+            
+            if (saveResults && email) {
+                localStorage.setItem('userEmail', email);
+                window.userEmail = email;
+            }
+            
+            document.getElementById('email-section').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            window.quizStarted = true;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = window.questions[window.currentQuestion];
+            document.getElementById('question-number').textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update progress bar
+            const progress = ((window.currentQuestion) / window.questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Show/hide navigation buttons
+            document.getElementById('prevBtn').style.display = window.currentQuestion > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Hide feedback
+            document.getElementById('feedback').style.display = 'none';
+            
+            // Restore previous answer if exists
+            if (window.userAnswers[window.currentQuestion] !== null) {
+                const buttons = document.querySelectorAll('.option-button');
+                buttons[window.userAnswers[window.currentQuestion]].classList.add('selected');
+                showFeedback(window.userAnswers[window.currentQuestion]);
+            }
+        }
+
+        function selectAnswer(optionIndex) {
+            const currentAttempts = window.questionAttempts[window.currentQuestion] || 0;
+            const question = window.questions[window.currentQuestion];
+            const options = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('feedback');
+            
+            // Clear previous selections
+            options.forEach(btn => btn.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Mark selected answer
+            options[optionIndex].classList.add('selected');
+            window.userAnswers[window.currentQuestion] = optionIndex;
+            window.questionAttempts[window.currentQuestion] = currentAttempts + 1;
+            
+            showFeedback(optionIndex);
+        }
+
+        function showFeedback(selectedIndex) {
+            const question = window.questions[window.currentQuestion];
+            const feedback = document.getElementById('feedback');
+            const options = document.querySelectorAll('.option-button');
+            
+            if (selectedIndex === question.correctAnswer) {
+                options[selectedIndex].classList.add('correct');
+                feedback.innerHTML = `<div class="correct">✓ Correct! ${question.reference}</div>`;
+                feedback.className = 'feedback correct';
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.correctAnswer].classList.add('correct');
+                feedback.innerHTML = `<div class="incorrect">✗ Incorrect. The correct answer is: ${question.options[question.correctAnswer]}<br>${question.reference}</div>`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            // Show next/submit button
+            if (window.currentQuestion < window.questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion() {
+            if (window.currentQuestion < window.questions.length - 1) {
+                const feedback = document.getElementById('feedback');
+                feedback.style.display = 'none';
+                window.currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (window.currentQuestion > 0) {
+                window.currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            let correctAnswers = 0;
+            window.questions.forEach((question, index) => {
+                if (window.userAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const percentage = Math.round((correctAnswers / window.questions.length) * 100);
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            document.getElementById('score').innerHTML = `
+                <h3>Your Final Exam Score: ${correctAnswers}/${window.questions.length} (${percentage}%)</h3>
+                <p>Grade: ${getLetterGrade(percentage)}</p>
+                <p class="congratulations">🎉 Congratulations on completing your Physical Science journey! 🎉</p>
+            `;
+            
+            showFinalResults();
+            
+            const saveResults = window.userEmail && window.userEmail.length > 0;
+            if (saveResults) {
+                sendResultsEmail(correctAnswers, percentage);
+            }
+        }
+
+        function getLetterGrade(percentage) {
+            if (percentage >= 90) return 'A';
+            if (percentage >= 80) return 'B';
+            if (percentage >= 70) return 'C';
+            if (percentage >= 60) return 'D';
+            return 'F';
+        }
+
+        function showFinalResults() {
+            const detailedResults = document.getElementById('incorrect-answers');
+            let resultsHTML = '<h3>Detailed Results:</h3>';
+
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                const attempts = window.questionAttempts[index] || 0;
+                
+                resultsHTML += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <strong>Question ${index + 1}:</strong> ${question.question}<br>
+                        <strong>Your answer:</strong> ${userAnswer !== null ? question.options[userAnswer] : 'Not answered'}<br>
+                        ${!isCorrect ? `<strong>Correct answer:</strong> ${question.options[question.correctAnswer]}<br>` : ''}
+                        <strong>Attempts:</strong> ${attempts}<br>
+                        <em>${question.reference}</em>
+                    </div>
+                `;
+            });
+
+            detailedResults.innerHTML = resultsHTML;
+        }
+
+        function sendResultsEmail(correctAnswers, percentage) {
+            const emailStatus = document.getElementById('email-status');
+            emailStatus.innerHTML = '<p>Sending final exam results to instructor...</p>';
+            
+            const templateParams = {
+                to_email: 'chuck@c00lnerd.com',
+                student_email: window.userEmail,
+                quiz_name: 'Physical Science Final Exam - Comprehensive Assessment (Modules 1-15)',
+                score: `${correctAnswers}/${window.questions.length}`,
+                percentage: `${percentage}%`,
+                grade: getLetterGrade(percentage),
+                timestamp: new Date().toLocaleString(),
+                detailed_results: JSON.stringify(window.userAnswers.map((answer, index) => ({
+                    question: window.questions[index].question,
+                    userAnswer: answer !== null ? window.questions[index].options[answer] : 'Not answered',
+                    correctAnswer: window.questions[index].options[window.questions[index].correctAnswer],
+                    isCorrect: answer === window.questions[index].correctAnswer,
+                    attempts: window.questionAttempts[index] || 0
+                })), null, 2)
+            };
+
+            emailjs.send('service_ot1jg6s', 'template_0nxqbk8', templateParams)
+                .then(function(response) {
+                    emailStatus.innerHTML = '<p style="color: green;">✓ Final exam results sent to instructor successfully!</p>';
+                })
+                .catch(function(error) {
+                    emailStatus.innerHTML = '<p style="color: red;">✗ Failed to send results to instructor.</p>';
+                    console.error('EmailJS error:', error);
+                });
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .exam-notice {
+            background-color: #e8f5e8;
+            border: 2px solid #27ae60;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .exam-notice h3 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .email-input {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .email-input input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .email-input div {
+            margin-bottom: 15px;
+        }
+
+        .email-input input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #e74c3c;
+            transition: width 0.3s ease;
+        }
+
+        #question-number {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        #question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option-button:hover {
+            background-color: #d5dbdb;
+            border-color: #95a5a6;
+        }
+
+        .option-button.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .option-button.correct {
+            background-color: #27ae60 !important;
+            color: white !important;
+            border-color: #229954 !important;
+        }
+
+        .option-button.incorrect {
+            background-color: #e74c3c !important;
+            color: white !important;
+            border-color: #c0392b !important;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .feedback.correct {
+            background-color: #d5f4e6;
+            border: 1px solid #27ae60;
+            color: #1e8449;
+        }
+
+        .feedback.incorrect {
+            background-color: #fadbd8;
+            border: 1px solid #e74c3c;
+            color: #c0392b;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-button:hover {
+            background-color: #c0392b;
+        }
+
+        .control-button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        #results {
+            text-align: center;
+        }
+
+        #score {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        #score h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .congratulations {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-top: 15px;
+        }
+
+        .result-buttons {
+            margin-top: 20px;
+        }
+
+        .email-status {
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .result-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            text-align: left;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .result-item.correct {
+            border-left-color: #27ae60;
+            background-color: #d5f4e6;
+        }
+
+        .result-item.incorrect {
+            border-left-color: #e74c3c;
+            background-color: #fadbd8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .control-button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</Layout>

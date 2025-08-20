@@ -1,0 +1,496 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 11 Quiz: DC Motors and Motor Control - C00lnerd Tutoring">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 11 Quiz: DC Motors and Motor Control</h1>
+                <p class="text-xl text-gray-600">Test your understanding of DC motors, H-bridges, and motor driver circuits</p>
+                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                    <p class="text-purple-800 font-medium">📝 10 questions covering motor control, PWM speed control, and H-bridge operation</p>
+                </div>
+            </div>
+
+            <!-- Student Information -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">Student Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="quiz11StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="quiz11StudentName" name="studentName" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label for="quiz11StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="quiz11StudentEmail" name="studentEmail" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <form id="quizForm" autocomplete="off" class="space-y-8">
+                <!-- Question 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Direct Motor Connection</h3>
+                    <p class="text-gray-700 mb-4">Why can't we connect DC motors directly to Arduino pins?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="A" class="mr-3">
+                            <span>A) Motors are too big to fit on the breadboard</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="B" class="mr-3">
+                            <span>B) Arduino pins can't provide enough current for most motors</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="C" class="mr-3">
+                            <span>C) Motors only work with AC power</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="D" class="mr-3">
+                            <span>D) Arduino doesn't have motor control functions</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: H-Bridge Purpose</h3>
+                    <p class="text-gray-700 mb-4">What is the main purpose of an H-bridge circuit?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="A" class="mr-3">
+                            <span>A) To increase motor speed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="B" class="mr-3">
+                            <span>B) To control motor direction by reversing polarity</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="C" class="mr-3">
+                            <span>C) To reduce motor noise</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="D" class="mr-3">
+                            <span>D) To convert AC to DC power</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: PWM Motor Speed</h3>
+                    <p class="text-gray-700 mb-4">How does PWM control motor speed?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="A" class="mr-3">
+                            <span>A) By changing the frequency of the motor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="B" class="mr-3">
+                            <span>B) By varying the average voltage applied to the motor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="C" class="mr-3">
+                            <span>C) By changing the motor's resistance</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="D" class="mr-3">
+                            <span>D) By adjusting the motor's magnetic field</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: L298N Motor Driver</h3>
+                    <p class="text-gray-700 mb-4">What is the maximum current per channel that an L298N motor driver can handle?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="A" class="mr-3">
+                            <span>A) 500mA</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="B" class="mr-3">
+                            <span>B) 1A</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="C" class="mr-3">
+                            <span>C) 2A</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="D" class="mr-3">
+                            <span>D) 5A</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: H-Bridge States</h3>
+                    <p class="text-gray-700 mb-4">Which H-bridge state causes the motor to brake (stop quickly)?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="A" class="mr-3">
+                            <span>A) All switches open (coast)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="B" class="mr-3">
+                            <span>B) Both bottom switches closed (short motor)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="C" class="mr-3">
+                            <span>C) Top-left and bottom-right closed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="D" class="mr-3">
+                            <span>D) Top-right and bottom-left closed</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Motor Current</h3>
+                    <p class="text-gray-700 mb-4">What happens to motor current when the motor is stalled (blocked from turning)?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="A" class="mr-3">
+                            <span>A) Current decreases to zero</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="B" class="mr-3">
+                            <span>C) Current increases significantly (stall current)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="C" class="mr-3">
+                            <span>C) Current remains the same</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="D" class="mr-3">
+                            <span>D) Current becomes negative</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Back EMF</h3>
+                    <p class="text-gray-700 mb-4">What is back EMF in DC motors?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="A" class="mr-3">
+                            <span>A) The voltage required to start the motor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="B" class="mr-3">
+                            <span>B) Voltage generated by the motor when it acts as a generator</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="C" class="mr-3">
+                            <span>C) The maximum voltage the motor can handle</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="D" class="mr-3">
+                            <span>D) The voltage drop across the motor windings</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Differential Drive</h3>
+                    <p class="text-gray-700 mb-4">In a differential drive robot, how do you make the robot turn right?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="A" class="mr-3">
+                            <span>A) Run both motors forward at the same speed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="B" class="mr-3">
+                            <span>B) Run left motor faster than right motor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="C" class="mr-3">
+                            <span>C) Run right motor faster than left motor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="D" class="mr-3">
+                            <span>D) Stop both motors completely</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Motor Driver Selection</h3>
+                    <p class="text-gray-700 mb-4">You're building a robot that needs to control four 12V DC motors, each drawing up to 1.5A of current. What specifications should you look for in a motor driver, and what safety features would be important?</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Question 10: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Troubleshooting</h3>
+                    <p class="text-gray-700 mb-4">A student reports that their DC motor runs very slowly even at maximum PWM value, gets hot quickly, and sometimes stops working entirely. The motor worked fine yesterday. What are three possible causes of this problem and how would you diagnose each one?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" 
+                            style="background-color: #7c3aed; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quiz Results Display -->
+        <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-center mb-6 text-purple-800">📊 Your Quiz Results</h2>
+                <div id="resultsContent"></div>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week11" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Week 11 Lesson
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week12" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 12 Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EmailJS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Quiz data with correct answers
+        const quizData = {
+            correctAnswers: {
+                q1: 'B', // Arduino pins can't provide enough current for most motors
+                q2: 'B', // To control motor direction by reversing polarity
+                q3: 'B', // By varying the average voltage applied to the motor
+                q4: 'C', // 2A
+                q5: 'B', // Both bottom switches closed (short motor)
+                q6: 'B', // Current increases significantly (stall current)
+                q7: 'B', // Voltage generated by the motor when it acts as a generator
+                q8: 'B'  // Run left motor faster than right motor
+            },
+            questionText: {
+                q1: "Why can't we connect DC motors directly to Arduino pins?",
+                q2: "What is the main purpose of an H-bridge circuit?",
+                q3: "How does PWM control motor speed?",
+                q4: "What is the maximum current per channel that an L298N motor driver can handle?",
+                q5: "Which H-bridge state causes the motor to brake (stop quickly)?",
+                q6: "What happens to motor current when the motor is stalled (blocked from turning)?",
+                q7: "What is back EMF in DC motors?",
+                q8: "In a differential drive robot, how do you make the robot turn right?",
+                q9: "You're building a robot that needs to control four 12V DC motors, each drawing up to 1.5A of current. What specifications should you look for in a motor driver, and what safety features would be important?",
+                q10: "A student reports that their DC motor runs very slowly even at maximum PWM value, gets hot quickly, and sometimes stops working entirely. The motor worked fine yesterday. What are three possible causes of this problem and how would you diagnose each one?"
+            }
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('quiz11StudentName').value;
+            const studentEmail = document.getElementById('quiz11StudentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email address.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const formData = new FormData(this);
+            const results = [];
+            let score = 0;
+            const totalQuestions = 8; // Multiple choice questions only for scoring
+            
+            // Check multiple choice answers (q1-q8)
+            for (let i = 1; i <= 8; i++) {
+                const questionKey = `q${i}`;
+                const userAnswer = formData.get(questionKey);
+                const correctAnswer = quizData.correctAnswers[questionKey];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: quizData.questionText[questionKey],
+                    userAnswer: userAnswer || 'No answer provided',
+                    correctAnswer: correctAnswer,
+                    isCorrect: isCorrect
+                });
+            }
+            
+            // Add short answer questions
+            results.push({
+                question: quizData.questionText.q9,
+                studentAnswer: formData.get('q9') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            results.push({
+                question: quizData.questionText.q10,
+                studentAnswer: formData.get('q10') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Build detailed message
+            let message = `WEEK 11 QUIZ RESULTS - DC Motors and Motor Control\n\n`;
+            message += `Student: ${studentName}\n`;
+            message += `Email: ${studentEmail}\n`;
+            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
+            
+            message += `DETAILED RESULTS:\n`;
+            message += `==================\n\n`;
+            
+            results.forEach((result, index) => {
+                if (result.isShortAnswer) {
+                    message += `${result.question}:\n`;
+                    message += `Answer: ${result.studentAnswer}\n\n`;
+                } else {
+                    const status = result.isCorrect ? '✓ CORRECT' : '✗ INCORRECT';
+                    message += `Q${index + 1}: ${result.question}\n`;
+                    message += `Student Answer: ${result.userAnswer}\n`;
+                    message += `Correct Answer: ${result.correctAnswer}\n`;
+                    message += `Status: ${status}\n\n`;
+                }
+            });
+            
+            message += `PERFORMANCE ANALYSIS:\n`;
+            message += `====================\n`;
+            if (percentage >= 90) {
+                message += `🌟 EXCELLENT! Outstanding understanding of DC motor control and driver circuits.\n`;
+                message += `Student demonstrates mastery of H-bridge operation, PWM control, and motor safety.\n`;
+            } else if (percentage >= 80) {
+                message += `🎉 VERY GOOD! Strong grasp of motor control fundamentals and circuit design.\n`;
+                message += `Student shows solid understanding with minor areas for review.\n`;
+            } else if (percentage >= 70) {
+                message += `👍 GOOD! Basic understanding of motor control with room for improvement.\n`;
+                message += `Recommend additional practice with H-bridge circuits and PWM control.\n`;
+            } else if (percentage >= 60) {
+                message += `⚠️ NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
+                message += `Focus on motor driver principles, current requirements, and safety considerations.\n`;
+            } else {
+                message += `🔄 REQUIRES ATTENTION! Limited understanding of motor control concepts.\n`;
+                message += `Recommend reviewing lesson materials and hands-on motor experiments.\n`;
+            }
+            
+            message += `\nNext Steps: Prepare for advanced robotics projects and Week 12: Stepper Motors\n`;
+            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+            
+            // Display results to student
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${totalQuestions} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #7c3aed; font-weight: bold;">
+                        🚗 Week 11: DC Motors and Motor Control
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((r, index) => {
+                        if (r.isShortAnswer) {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                                    <strong>${r.question}:</strong><br>
+                                    <strong>Your answer:</strong> ${r.studentAnswer}
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '✓' : '✗'}<br>
+                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
+                                    <strong>Correct answer:</strong> ${r.correctAnswer}
+                                </div>
+                            `;
+                        }
+                    }).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+            
+            // Send email using EmailJS
+            // Initialize EmailJS right before sending
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: 'C00lnerd Quiz System',
+                from_email: 'chuck@c00lnerd.com',
+                
+                message: message,
+                subject: `Week 11 Motor Control Quiz - ${studentName} (${percentage}%)`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+                alert('Quiz results sent successfully!');
+                
+                // Log to Google Sheets
+                console.log('Logging quiz results to Google Sheets...');
+                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentName: studentName,
+                        studentEmail: studentEmail,
+                        week: 'Week 11',
+                        topic: 'DC Motors & Motor Control',
+                        score: score,
+                        totalPoints: totalQuestions,
+                        percentage: percentage,
+                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                        timestamp: new Date().toISOString()
+                    })
+                })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+                
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+                alert('There was an issue sending your quiz results. Please contact your instructor.');
+            });
+        });
+    </script>
+</Layout>
+
+

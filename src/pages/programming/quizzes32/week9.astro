@@ -1,0 +1,496 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 9 Quiz: Basic Sensors and Input Devices - C00lnerd Tutoring">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 9 Quiz: Basic Sensors and Input Devices</h1>
+                <p class="text-xl text-gray-600">Test your understanding of sensors, digital/analog inputs, and data processing</p>
+                <div class="mt-4 p-4 bg-blue-100 rounded-lg">
+                    <p class="text-blue-800 font-medium">📝 10 questions covering sensors, buttons, potentiometers, and signal processing</p>
+                </div>
+            </div>
+
+            <!-- Student Information -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">Student Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="quiz9StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="quiz9StudentName" name="studentName" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="quiz9StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="quiz9StudentEmail" name="studentEmail" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <form id="quizForm" autocomplete="off" class="space-y-8">
+                <!-- Question 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Sensor Types</h3>
+                    <p class="text-gray-700 mb-4">What is the main difference between digital and analog sensors?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="A" class="mr-3">
+                            <span>A) Digital sensors are more expensive than analog sensors</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="B" class="mr-3">
+                            <span>B) Digital sensors output HIGH/LOW signals, analog sensors output variable voltages</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="C" class="mr-3">
+                            <span>C) Digital sensors work faster than analog sensors</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="D" class="mr-3">
+                            <span>D) There is no difference between them</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: Pull-up Resistors</h3>
+                    <p class="text-gray-700 mb-4">Why do we use INPUT_PULLUP when reading button states?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="A" class="mr-3">
+                            <span>A) To make the button press faster</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="B" class="mr-3">
+                            <span>B) To ensure the pin reads a defined state when button is not pressed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="C" class="mr-3">
+                            <span>C) To increase the button's voltage</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="D" class="mr-3">
+                            <span>D) To protect the Arduino from damage</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Button Debouncing</h3>
+                    <p class="text-gray-700 mb-4">What problem does button debouncing solve?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="A" class="mr-3">
+                            <span>A) It makes buttons last longer</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="B" class="mr-3">
+                            <span>B) It prevents multiple rapid signals from mechanical switch bounce</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="C" class="mr-3">
+                            <span>C) It increases button sensitivity</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="D" class="mr-3">
+                            <span>D) It reduces power consumption</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Potentiometer Range</h3>
+                    <p class="text-gray-700 mb-4">What range of values does analogRead() return when reading a potentiometer?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="A" class="mr-3">
+                            <span>A) 0 to 255</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="B" class="mr-3">
+                            <span>B) 0 to 1023</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="C" class="mr-3">
+                            <span>C) 0 to 5</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="D" class="mr-3">
+                            <span>D) 0 to 100</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: Sensor Applications</h3>
+                    <p class="text-gray-700 mb-4">Which sensor would be best for detecting motion in a security system?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="A" class="mr-3">
+                            <span>A) Temperature sensor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="B" class="mr-3">
+                            <span>B) Light sensor (LDR)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="C" class="mr-3">
+                            <span>C) PIR (Passive Infrared) sensor</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="D" class="mr-3">
+                            <span>D) Potentiometer</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Signal Filtering</h3>
+                    <p class="text-gray-700 mb-4">What is the purpose of applying a moving average filter to sensor readings?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="A" class="mr-3">
+                            <span>A) To make readings faster</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="B" class="mr-3">
+                            <span>B) To smooth out noise and create more stable readings</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="C" class="mr-3">
+                            <span>C) To increase sensor accuracy</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="D" class="mr-3">
+                            <span>D) To reduce power consumption</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Analog Pin Usage</h3>
+                    <p class="text-gray-700 mb-4">How many analog input pins does Arduino Uno have?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="A" class="mr-3">
+                            <span>A) 4 pins (A0-A3)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="B" class="mr-3">
+                            <span>B) 6 pins (A0-A5)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="C" class="mr-3">
+                            <span>C) 8 pins (A0-A7)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="D" class="mr-3">
+                            <span>D) 14 pins (same as digital)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Map Function</h3>
+                    <p class="text-gray-700 mb-4">What does the map() function do when working with sensor values?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="A" class="mr-3">
+                            <span>A) It stores sensor values in memory</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="B" class="mr-3">
+                            <span>B) It converts values from one range to another range</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="C" class="mr-3">
+                            <span>C) It displays sensor values on a screen</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="D" class="mr-3">
+                            <span>D) It filters out noise from sensors</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Sensor Selection</h3>
+                    <p class="text-gray-700 mb-4">You're building an automatic plant watering system. Describe what types of sensors you would use and explain how each sensor would contribute to the system's functionality.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Question 10: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Troubleshooting</h3>
+                    <p class="text-gray-700 mb-4">A student reports that their button sometimes registers multiple presses when they only pressed it once, and sometimes doesn't register a press at all. What are two likely causes of this problem and how would you fix each one?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" 
+                            style="background-color: #2563eb; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quiz Results Display -->
+        <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-center mb-6 text-blue-800">📊 Your Quiz Results</h2>
+                <div id="resultsContent"></div>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week9" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Week 9 Lesson
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week10" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 10 Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EmailJS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Quiz data with correct answers
+        const quizData = {
+            correctAnswers: {
+                q1: 'B', // Digital sensors output HIGH/LOW signals, analog sensors output variable voltages
+                q2: 'B', // To ensure the pin reads a defined state when button is not pressed
+                q3: 'B', // It prevents multiple rapid signals from mechanical switch bounce
+                q4: 'B', // 0 to 1023
+                q5: 'C', // PIR (Passive Infrared) sensor
+                q6: 'B', // To smooth out noise and create more stable readings
+                q7: 'B', // 6 pins (A0-A5)
+                q8: 'B'  // It converts values from one range to another range
+            },
+            questionText: {
+                q1: "What is the main difference between digital and analog sensors?",
+                q2: "Why do we use INPUT_PULLUP when reading button states?",
+                q3: "What problem does button debouncing solve?",
+                q4: "What range of values does analogRead() return when reading a potentiometer?",
+                q5: "Which sensor would be best for detecting motion in a security system?",
+                q6: "What is the purpose of applying a moving average filter to sensor readings?",
+                q7: "How many analog input pins does Arduino Uno have?",
+                q8: "What does the map() function do when working with sensor values?",
+                q9: "You're building an automatic plant watering system. Describe what types of sensors you would use and explain how each sensor would contribute to the system's functionality.",
+                q10: "A student reports that their button sometimes registers multiple presses when they only pressed it once, and sometimes doesn't register a press at all. What are two likely causes of this problem and how would you fix each one?"
+            }
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('quiz9StudentName').value;
+            const studentEmail = document.getElementById('quiz9StudentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email address.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const formData = new FormData(this);
+            const results = [];
+            let score = 0;
+            const totalQuestions = 8; // Multiple choice questions only for scoring
+            
+            // Check multiple choice answers (q1-q8)
+            for (let i = 1; i <= 8; i++) {
+                const questionKey = `q${i}`;
+                const userAnswer = formData.get(questionKey);
+                const correctAnswer = quizData.correctAnswers[questionKey];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: quizData.questionText[questionKey],
+                    userAnswer: userAnswer || 'No answer provided',
+                    correctAnswer: correctAnswer,
+                    isCorrect: isCorrect
+                });
+            }
+            
+            // Add short answer questions
+            results.push({
+                question: quizData.questionText.q9,
+                studentAnswer: formData.get('q9') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            results.push({
+                question: quizData.questionText.q10,
+                studentAnswer: formData.get('q10') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Build detailed message
+            let message = `WEEK 9 QUIZ RESULTS - Basic Sensors and Input Devices\n\n`;
+            message += `Student: ${studentName}\n`;
+            message += `Email: ${studentEmail}\n`;
+            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
+            
+            message += `DETAILED RESULTS:\n`;
+            message += `==================\n\n`;
+            
+            results.forEach((result, index) => {
+                if (result.isShortAnswer) {
+                    message += `${result.question}:\n`;
+                    message += `Answer: ${result.studentAnswer}\n\n`;
+                } else {
+                    const status = result.isCorrect ? '✓ CORRECT' : '✗ INCORRECT';
+                    message += `Q${index + 1}: ${result.question}\n`;
+                    message += `Student Answer: ${result.userAnswer}\n`;
+                    message += `Correct Answer: ${result.correctAnswer}\n`;
+                    message += `Status: ${status}\n\n`;
+                }
+            });
+            
+            message += `PERFORMANCE ANALYSIS:\n`;
+            message += `====================\n`;
+            if (percentage >= 90) {
+                message += `🌟 EXCELLENT! Outstanding understanding of sensors and input devices.\n`;
+                message += `Student demonstrates mastery of digital/analog concepts, debouncing, and signal processing.\n`;
+            } else if (percentage >= 80) {
+                message += `🎉 VERY GOOD! Strong grasp of sensor fundamentals and input processing.\n`;
+                message += `Student shows solid understanding with minor areas for review.\n`;
+            } else if (percentage >= 70) {
+                message += `👍 GOOD! Basic understanding of sensors with room for improvement.\n`;
+                message += `Recommend additional practice with button debouncing and analog signal processing.\n`;
+            } else if (percentage >= 60) {
+                message += `⚠️ NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
+                message += `Focus on digital vs analog concepts, pull-up resistors, and sensor applications.\n`;
+            } else {
+                message += `🔄 REQUIRES ATTENTION! Limited understanding of sensor concepts.\n`;
+                message += `Recommend reviewing lesson materials and hands-on sensor experiments.\n`;
+            }
+            
+            message += `\nNext Steps: Prepare for advanced sensor projects and Week 10: Output Devices\n`;
+            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+            
+            // Display results to student
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #2563eb;">${score}/${totalQuestions} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #2563eb;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #dbeafe; border-radius: 6px; color: #2563eb; font-weight: bold;">
+                        🔍 Week 9: Basic Sensors and Input Devices
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((r, index) => {
+                        if (r.isShortAnswer) {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                                    <strong>${r.question}:</strong><br>
+                                    <strong>Your answer:</strong> ${r.studentAnswer}
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '✓' : '✗'}<br>
+                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
+                                    <strong>Correct answer:</strong> ${r.correctAnswer}
+                                </div>
+                            `;
+                        }
+                    }).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+            
+            // Send email using EmailJS
+            // Initialize EmailJS right before sending
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: 'C00lnerd Quiz System',
+                from_email: 'chuck@c00lnerd.com',
+                
+                message: message,
+                subject: `Week 9 Sensors Quiz - ${studentName} (${percentage}%)`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+                alert('Quiz results sent successfully!');
+                
+                // Log to Google Sheets
+                console.log('Logging quiz results to Google Sheets...');
+                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentName: studentName,
+                        studentEmail: studentEmail,
+                        week: 'Week 9',
+                        topic: 'Arduino Programming Fundamentals',
+                        score: score,
+                        totalPoints: totalQuestions,
+                        percentage: percentage,
+                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                        timestamp: new Date().toISOString()
+                    })
+                })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+                
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+                alert('There was an issue sending your quiz results. Please contact your instructor.');
+            });
+        });
+    </script>
+</Layout>
+
+

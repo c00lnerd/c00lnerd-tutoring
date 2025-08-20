@@ -1,0 +1,1153 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Module 11 Quiz">
+    <div class="container">
+        <h1>Physical Science Module 11 Quiz</h1>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill" id="progress"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load EmailJS before initializing -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script type="text/javascript" is:inline>
+        // Wait for EmailJS to load before initializing
+        window.onload = function() {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init("ct_s19oZHppLy9BlW");
+                console.log("EmailJS initialized successfully");
+            } else {
+                console.error("EmailJS failed to load");
+            }
+        };
+    </script>
+
+    <script is:inline>
+        // Utility function to shuffle array and track original indices
+        function shuffleAnswers(question) {
+            const originalOptions = [...question.options];
+            const correctAnswerIndex = question.correctAnswer;
+            
+            // Create array of indices
+            const indices = originalOptions.map((_, index) => index);
+            
+            // Fisher-Yates shuffle
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            // Apply shuffle to options and find new correct answer index
+            const shuffledOptions = indices.map(i => originalOptions[i]);
+            const newCorrectAnswerIndex = indices.indexOf(correctAnswerIndex);
+            
+            return {
+                ...question,
+                options: shuffledOptions,
+                correctAnswer: newCorrectAnswerIndex,
+                originalOrder: indices
+            };
+        }
+
+        // Initialize randomized questions when quiz starts
+        function initializeQuiz() {
+            // Shuffle answers for each question
+            window.questions = originalQuestions.map(question => shuffleAnswers(question));
+            
+            // Initialize quiz state after questions are randomized
+            window.currentQuestion = 0;
+            window.userAnswers = new Array(window.questions.length).fill(null);
+            window.questionAttempts = new Array(window.questions.length).fill(0);
+            
+            console.log('Module 11 quiz initialized with randomized answers');
+        }
+
+        // Define questions first
+        const originalQuestions = [
+            {
+                question: "What are the four fundamental forces in nature?",
+                options: [
+                    "Electromagnetic, gravitational, strong nuclear, and weak nuclear forces that govern all interactions",
+                    "Electric, magnetic, gravitational, and nuclear forces found in everyday physics",
+                    "Attraction, repulsion, gravity, and friction",
+                    "Positive, negative, neutral, and magnetic"
+                ],
+                correctAnswer: 0,
+                explanation: "The four fundamental forces are electromagnetic, gravitational, strong nuclear, and weak nuclear forces."
+            },
+            {
+                question: "Who demonstrated that electricity and magnetism are different aspects of the same force?",
+                options: [
+                    "Isaac Newton",
+                    "Albert Einstein",
+                    "James Clerk Maxwell",
+                    "Michael Faraday"
+                ],
+                correctAnswer: 2,
+                explanation: "James Clerk Maxwell demonstrated that electricity and magnetism are different aspects of the electromagnetic force."
+            },
+            {
+                question: "What happens when you rub a balloon in your hair?",
+                options: [
+                    "The balloon becomes positively charged",
+                    "The balloon becomes negatively charged",
+                    "The balloon becomes neutral",
+                    "Nothing happens to the balloon's charge"
+                ],
+                correctAnswer: 1,
+                explanation: "When you rub a balloon in your hair, the balloon picks up electrons and becomes negatively charged."
+            },
+            {
+                question: "What is the first rule of electrical charge?",
+                options: [
+                    "Opposite charges attract one another",
+                    "Like charges repel one another",
+                    "All charges are neutral",
+                    "Charges cannot be created or destroyed"
+                ],
+                correctAnswer: 1,
+                explanation: "The first rule of electrical charge is that like charges repel one another."
+            },
+            {
+                question: "According to Coulomb's Law, what happens to the electric force when the distance between two charges is doubled?",
+                options: [
+                    "The force doubles",
+                    "The force is halved",
+                    "The force decreases by a factor of 4",
+                    "The force increases by a factor of 4"
+                ],
+                correctAnswer: 2,
+                explanation: "According to Coulomb's Law, the force is inversely proportional to the square of the distance. Doubling the distance decreases the force by a factor of 4."
+            },
+            {
+                question: "What happens to the electric force when the charge on one object is doubled?",
+                options: [
+                    "The force is halved",
+                    "The force doubles",
+                    "The force quadruples",
+                    "The force remains the same"
+                ],
+                correctAnswer: 1,
+                explanation: "The electric force is directly proportional to the charge. Doubling the charge doubles the force."
+            },
+            {
+                question: "What are photons?",
+                options: [
+                    "Large particles of matter",
+                    "Small packages of light energy that act like particles",
+                    "Magnetic field lines",
+                    "Electric current carriers"
+                ],
+                correctAnswer: 1,
+                explanation: "Photons are small 'packages' of light energy that act like particles."
+            },
+            {
+                question: "How is the electromagnetic force produced?",
+                options: [
+                    "Through gravitational attraction",
+                    "Through nuclear reactions",
+                    "Through the exchange of photons",
+                    "Through chemical bonding"
+                ],
+                correctAnswer: 2,
+                explanation: "The electromagnetic force is produced through the exchange of photons between charged particles."
+            },
+            {
+                question: "What is an electric field?",
+                options: [
+                    "The area around a magnet",
+                    "The effect a charge has on other charges in the space around it",
+                    "The path electrons take in a circuit",
+                    "The energy stored in a battery"
+                ],
+                correctAnswer: 1,
+                explanation: "An electric field is the effect a charge has on other charges in the space around it."
+            },
+            {
+                question: "In electric field diagrams, what do the arrows represent?",
+                options: [
+                    "The direction of electron flow",
+                    "The direction of the electric force on a positively charged object",
+                    "The direction of magnetic fields",
+                    "The direction of current flow"
+                ],
+                correctAnswer: 1,
+                explanation: "In electric field diagrams, the arrows represent the direction of the electric force on a positively charged object."
+            },
+            {
+                question: "What is static electricity?",
+                options: [
+                    "Electricity that flows through wires",
+                    "A buildup of electrical charges within or on the surface of a material",
+                    "Electricity generated by magnets",
+                    "Electricity that doesn't move"
+                ],
+                correctAnswer: 1,
+                explanation: "Static electricity is a buildup of electrical charges within or on the surface of a material."
+            },
+            {
+                question: "What happens when you bring a negatively charged balloon near your positively charged hair?",
+                options: [
+                    "They repel each other",
+                    "They attract each other",
+                    "Nothing happens",
+                    "They become neutral"
+                ],
+                correctAnswer: 1,
+                explanation: "Opposite charges attract each other, so the negatively charged balloon attracts the positively charged hair."
+            },
+            {
+                question: "When you see light from a candle flame, what is actually happening?",
+                options: [
+                    "The candle is reflecting sunlight",
+                    "Chemical reactions are releasing photons from charged particle interactions",
+                    "The candle is absorbing light energy",
+                    "Magnetic fields are creating visible light"
+                ],
+                correctAnswer: 1,
+                explanation: "Light from a candle flame comes from chemical reactions that release photons from interactions between charged particles."
+            },
+            {
+                question: "What makes electric field lines closer together near a charge?",
+                options: [
+                    "Weaker electric force",
+                    "Stronger electric force",
+                    "Neutral charge",
+                    "Magnetic interference"
+                ],
+                correctAnswer: 1,
+                explanation: "Electric field lines are closer together where the electric force is stronger, which is nearer to the charge."
+            },
+            {
+                question: "According to the module, what is true about the electromagnetic force compared to gravitational force?",
+                options: [
+                    "It is weaker than gravitational force",
+                    "It is about the same strength as gravitational force",
+                    "It is significantly stronger than gravitational force",
+                    "It only exists in space"
+                ],
+                correctAnswer: 2,
+                explanation: "The electromagnetic force is significantly stronger than the gravitational force within an atom."
+            },
+            {
+                question: "What did James Clerk Maxwell publish in 1873?",
+                options: [
+                    "The Theory of Relativity",
+                    "Treatise on Electricity and Magnetism",
+                    "The Origin of Species",
+                    "Principia Mathematica"
+                ],
+                correctAnswer: 1,
+                explanation: "Maxwell published 'Treatise on Electricity and Magnetism' in 1873, showing that electricity and magnetism are governed by the same force."
+            },
+            {
+                question: "What causes auroras (northern lights)?",
+                options: [
+                    "Reflection of sunlight off ice crystals",
+                    "Energetic electrically charged electrons accelerating along magnetic field lines",
+                    "Chemical reactions in the upper atmosphere",
+                    "Light from distant stars"
+                ],
+                correctAnswer: 1,
+                explanation: "Auroras are caused by energetic electrically charged electrons accelerating along magnetic field lines into the upper atmosphere."
+            },
+            {
+                question: "What happens to atoms when they lose electrons?",
+                options: [
+                    "They become negatively charged (anions)",
+                    "They become positively charged (cations)",
+                    "They remain neutral",
+                    "They become radioactive"
+                ],
+                correctAnswer: 1,
+                explanation: "When atoms lose electrons, they end up with a positive charge and are called positive ions or cations."
+            },
+            {
+                question: "In the balloon experiment, what causes the balloon to be attracted to the tape on the table?",
+                options: [
+                    "The balloon and tape have the same charge",
+                    "The balloon and tape have opposite charges",
+                    "Gravitational force",
+                    "Magnetic attraction"
+                ],
+                correctAnswer: 1,
+                explanation: "The balloon becomes negatively charged while the tape becomes positively charged, so opposite charges attract."
+            },
+            {
+                question: "What is the relationship between the amount of charge and the strength of the electric force?",
+                options: [
+                    "They are inversely related",
+                    "They are directly proportional",
+                    "There is no relationship",
+                    "The relationship depends on distance only"
+                ],
+                correctAnswer: 1,
+                explanation: "The electric force is directly proportional to the amount of charge - more charge means stronger force."
+            },
+            {
+                question: "What are the three methods of charging objects?",
+                options: [
+                    "Friction, conduction, and induction",
+                    "Positive, negative, and neutral",
+                    "Attraction, repulsion, and neutral",
+                    "Static, dynamic, and kinetic"
+                ],
+                correctAnswer: 0,
+                explanation: "The three methods of charging objects are friction (rubbing), conduction (contact), and induction (no contact)."
+            },
+            {
+                question: "What is charging by friction?",
+                options: [
+                    "Charging an object without touching it",
+                    "Charging an object by rubbing two items together where one transfers electrons to the other",
+                    "Charging an object by connecting it to a battery",
+                    "Charging an object by placing it in an electric field"
+                ],
+                correctAnswer: 1,
+                explanation: "Charging by friction occurs when you rub two items together and electrons transfer from one object to the other."
+            },
+            {
+                question: "What is charging by conduction?",
+                options: [
+                    "Charging an object by rubbing it",
+                    "Charging an object without direct contact",
+                    "Charging an object by allowing it to come into contact with an object that already has an electrical charge",
+                    "Charging an object using a battery"
+                ],
+                correctAnswer: 2,
+                explanation: "Charging by conduction occurs when you charge an object by allowing it to touch another object that already has an electrical charge."
+            },
+            {
+                question: "What is charging by induction?",
+                options: [
+                    "Charging an object by rubbing it with another material",
+                    "Charging an object by direct contact with a charged object",
+                    "Charging an object without direct contact between the object and a charge",
+                    "Charging an object using electromagnetic waves"
+                ],
+                correctAnswer: 2,
+                explanation: "Charging by induction allows you to charge an object without any direct contact between the object and the source of charge."
+            },
+            {
+                question: "What does an electroscope detect?",
+                options: [
+                    "The temperature of objects",
+                    "The presence of electrical charge",
+                    "The weight of objects",
+                    "The magnetic field strength"
+                ],
+                correctAnswer: 1,
+                explanation: "An electroscope is a device that detects the presence of electrical charge."
+            },
+            {
+                question: "In an electrical circuit, what provides the energy for electrons to flow?",
+                options: [
+                    "The wires",
+                    "The light bulb",
+                    "The battery",
+                    "The switch"
+                ],
+                correctAnswer: 2,
+                explanation: "A battery provides the energy for electrons to flow through an electrical circuit by converting chemical energy to electrical energy."
+            },
+            {
+                question: "What is voltage?",
+                options: [
+                    "The number of electrons in a circuit",
+                    "The speed of electrons",
+                    "A measure of how hard the battery 'pushes' electrons through an electrical circuit",
+                    "The resistance in a circuit"
+                ],
+                correctAnswer: 2,
+                explanation: "Voltage tells you how hard the battery 'pushes' electrons through an electrical circuit - the energy per electron."
+            },
+            {
+                question: "What is electric current?",
+                options: [
+                    "The voltage in a circuit",
+                    "The amount of charge that travels past a fixed point in an electric circuit each second",
+                    "The resistance of a wire",
+                    "The power consumed by a device"
+                ],
+                correctAnswer: 1,
+                explanation: "Electric current is the amount of charge that travels past a fixed point in an electric circuit each second."
+            },
+            {
+                question: "What unit is used to measure electric current?",
+                options: [
+                    "Volts",
+                    "Watts",
+                    "Amperes (amps)",
+                    "Ohms"
+                ],
+                correctAnswer: 2,
+                explanation: "Electric current is measured in Amperes, which are abbreviated as 'amps' or 'A'."
+            },
+            {
+                question: "What is conventional current?",
+                options: [
+                    "Current that flows from negative to positive",
+                    "Current that flows from positive to negative (the way current is drawn in circuit diagrams)",
+                    "Current that only flows in batteries",
+                    "Current that changes direction constantly"
+                ],
+                correctAnswer: 1,
+                explanation: "Conventional current flows from the positive side of the battery to the negative side - this is how current is drawn in circuit diagrams, even though electrons actually flow the opposite direction."
+            },
+            {
+                question: "Why do we still use conventional current in circuit diagrams even though we know electrons flow the opposite direction?",
+                options: [
+                    "Because it's easier to understand",
+                    "Because Benjamin Franklin's historical assumption became the standard, and changing would break with tradition",
+                    "Because conventional current is more accurate",
+                    "Because electrons don't actually flow in circuits"
+                ],
+                correctAnswer: 1,
+                explanation: "Benjamin Franklin's assumption about current direction became the standard way to draw circuits, and we continue to use it to maintain consistency with tradition, even though we now know electrons flow the opposite direction."
+            },
+            {
+                question: "What happens when you touch a Van de Graaff generator?",
+                options: [
+                    "Nothing happens",
+                    "You get a mild electric shock",
+                    "Your hair stands up due to like charges repelling",
+                    "You become permanently charged"
+                ],
+                correctAnswer: 2,
+                explanation: "When you touch a Van de Graaff generator, charge is transferred to you, and your hair strands all acquire the same charge, causing them to repel each other and stand up."
+            },
+            {
+                question: "What causes a static discharge (spark) when you touch a doorknob?",
+                options: [
+                    "The doorknob is magnetic",
+                    "Electrons jump between you and the doorknob to equalize charge",
+                    "The doorknob is hot",
+                    "Air pressure changes"
+                ],
+                correctAnswer: 1,
+                explanation: "A static discharge occurs when electrons jump between you and the doorknob to equalize the electrical charge difference."
+            },
+            {
+                question: "In a simple electrical circuit with a battery and light bulb, electrons flow:",
+                options: [
+                    "From the positive terminal to the negative terminal through the external circuit",
+                    "From the negative terminal to the positive terminal through the external circuit",
+                    "Only inside the battery",
+                    "In both directions simultaneously"
+                ],
+                correctAnswer: 1,
+                explanation: "Electrons actually flow from the negative terminal of the battery to the positive terminal through the external circuit, opposite to conventional current direction."
+            },
+            {
+                question: "Why are metals good conductors of electricity?",
+                options: [
+                    "Because they are heavy",
+                    "Because they have loosely bound valence electrons that can easily move",
+                    "Because they are shiny",
+                    "Because they are magnetic"
+                ],
+                correctAnswer: 1,
+                explanation: "Metals are good conductors because they have loosely bound valence electrons that can easily move back and forth through the metal lattice structure."
+            },
+            {
+                question: "What are electrical insulators?",
+                options: [
+                    "Materials that conduct electricity very well",
+                    "Materials in which electrons cannot easily flow",
+                    "Materials that store electrical charge",
+                    "Materials that generate electricity"
+                ],
+                correctAnswer: 1,
+                explanation: "Electrical insulators are materials in which electrons cannot easily flow, such as plastic or rubber coatings on wires."
+            },
+            {
+                question: "Why are metal wires usually coated with plastic or rubber?",
+                options: [
+                    "To make them look better",
+                    "To make them lighter",
+                    "To keep the metal's valence electrons where they need to be and protect you from getting a shock",
+                    "To make them stronger"
+                ],
+                correctAnswer: 2,
+                explanation: "The plastic or rubber coating acts as an electrical insulator to keep the metal's valence electrons contained and protect people from electrical shock."
+            },
+            {
+                question: "What is electrical resistance?",
+                options: [
+                    "The speed of electrons in a wire",
+                    "A material's ability to impede the flow of charge",
+                    "The voltage in a circuit",
+                    "The number of electrons in a conductor"
+                ],
+                correctAnswer: 1,
+                explanation: "Resistance is a material's ability to impede (slow down or resist) the flow of electrical charge."
+            },
+            {
+                question: "What happens to the kinetic energy of electrons as they move through a wire with resistance?",
+                options: [
+                    "It increases",
+                    "It stays the same",
+                    "Some of it is converted to thermal energy (heat)",
+                    "It is completely destroyed"
+                ],
+                correctAnswer: 2,
+                explanation: "As electrons collide with atoms in the wire, some of their kinetic energy is converted to thermal energy, which can be used for work like cooking, but also means less energy is available to move electrons."
+            },
+            {
+                question: "In a metal lattice structure, what allows electrons to flow easily?",
+                options: [
+                    "The electrons are tightly bound to atoms",
+                    "The cations (positive ions) are surrounded by loosely bound shared valence electrons",
+                    "The metal is very dense",
+                    "The metal is at a high temperature"
+                ],
+                correctAnswer: 1,
+                explanation: "In a metal lattice, cations (positive metal ions) are surrounded by loosely bound shared valence electrons that can easily move, making metals good conductors."
+            }
+        ];
+
+        // Quiz state
+        window.currentQuestion = 0;
+        window.userAnswers = new Array(originalQuestions.length).fill(null);
+        window.questionAttempts = new Array(window.questions.length).fill(0);
+        window.quizStarted = false;
+
+        document.getElementById('start-quiz').addEventListener('click', function startQuiz() {
+            const email = document.getElementById('email').value;
+            const saveResults = document.getElementById('save-results').checked;
+            window.userEmail = email;
+            window.saveResults = saveResults;
+            
+            // Initialize quiz with randomized answers
+            initializeQuiz();
+            
+            document.getElementById('email-section').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            
+            showQuestion();
+            updateProgressBar();
+        });
+
+        function showQuestion() {
+            const question = window.questions[window.currentQuestion];
+            document.getElementById('question-number').textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                button.style.display = 'block';
+                button.style.width = '100%';
+                button.style.marginBottom = '10px';
+                optionsContainer.appendChild(button);
+                
+                // Add a line break after each button to ensure vertical stacking
+                optionsContainer.appendChild(document.createElement('br'));
+            });
+            
+            // Update progress bar
+            const progressFill = document.querySelector('.progress-bar .fill');
+            if (progressFill) {
+                const progress = ((window.currentQuestion + 1) / window.questions.length) * 100;
+                progressFill.style.width = `${progress}%`;
+            }
+            
+            // Show/hide navigation buttons
+            document.getElementById('prevBtn').style.display = window.currentQuestion > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Hide feedback
+            document.getElementById('feedback').style.display = 'none';
+            
+            // Restore previous answer if exists
+            if (window.userAnswers[window.currentQuestion] !== null) {
+                const buttons = document.querySelectorAll('.option-button');
+                buttons[window.userAnswers[window.currentQuestion]].classList.add('selected');
+                showFeedback();
+            }
+        }
+
+        function selectAnswer(optionIndex) {
+            const currentAttempts = window.questionAttempts[window.currentQuestion] || 0;
+            const question = window.questions[window.currentQuestion];
+            const options = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('feedback');
+            
+            // Clear previous selections
+            options.forEach(btn => btn.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Mark selected answer
+            options[optionIndex].classList.add('selected');
+            window.userAnswers[window.currentQuestion] = optionIndex;
+            window.questionAttempts[window.currentQuestion] = currentAttempts + 1;
+            
+            showFeedback();
+        }
+
+        function selectAnswer(selectedIndex) {
+            const options = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('feedback');
+            const currentQuestion = window.questions[window.currentQuestion];
+            
+            // Clear previous selections and feedback
+            options.forEach(btn => btn.classList.remove('selected', 'correct', 'incorrect'));
+            feedback.className = 'feedback';
+            feedback.style.display = 'none';
+            
+            // Mark selected answer
+            options[selectedIndex].classList.add('selected');
+            window.userAnswers[window.currentQuestion] = selectedIndex;
+            
+            // Show feedback
+            const isCorrect = selectedIndex === currentQuestion.correctAnswer;
+            feedback.classList.add(isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = isCorrect ? 
+                `<p>Correct! ${currentQuestion.explanation}</p>` : 
+                `<p>Incorrect. The correct answer is: ${currentQuestion.options[currentQuestion.correctAnswer]}. ${currentQuestion.explanation}</p>`;
+            feedback.style.display = 'block';
+            
+            // Mark correct and incorrect answers
+            options[currentQuestion.correctAnswer].classList.add('correct');
+            if (!isCorrect) {
+                options[selectedIndex].classList.add('incorrect');
+            }
+            
+            // Show next button if not last question
+            if (window.currentQuestion < window.questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion() {
+            if (window.currentQuestion < window.questions.length - 1) {
+                // Reset feedback and button states
+                const feedback = document.getElementById('feedback');
+                feedback.style.display = 'none';
+                
+                window.currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (window.currentQuestion > 0) {
+                window.currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            // Calculate score
+            let correct = 0;
+            window.questions.forEach((question, index) => {
+                if (window.userAnswers[index] === question.correctAnswer) {
+                    correct++;
+                }
+            });
+            
+            const percentage = Math.round((correct / window.questions.length) * 100);
+            
+            // Hide quiz container and show results
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            document.getElementById('score').innerHTML = `
+                <h3>Your Score: ${correct}/${window.questions.length} (${percentage}%)</h3>
+                <p class="score-message">${getScoreMessage(percentage)}</p>
+            `;
+            
+            // Send email if requested
+            if (window.saveResults && window.userEmail) {
+                sendResultsEmail(correct, percentage);
+            } else {
+                document.getElementById('email-status').innerHTML = '<p>Results not sent (email not provided or sending disabled)</p>';
+            }
+            
+            showFinalResults();
+            setupDownload(correct, percentage);
+        }
+
+        function getScoreMessage(percentage) {
+            if (percentage >= 90) return "Excellent work! You have a strong understanding of electricity and magnetism.";
+            if (percentage >= 80) return "Good job! You understand most concepts about electromagnetic forces.";
+            if (percentage >= 70) return "Not bad! Review the concepts you missed to strengthen your understanding.";
+            if (percentage >= 60) return "You're getting there! Consider reviewing the module material.";
+            return "Keep studying! Review the module material and try again.";
+        }
+
+        function showFinalResults() {
+            const detailedResults = document.getElementById('incorrect-answers');
+            let resultsHTML = '<h3>Detailed Results:</h3>';
+
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                const attempts = window.questionAttempts[index];
+                
+                resultsHTML += `
+                    <div class="question-result ${isCorrect ? 'correct' : 'incorrect'}">
+                        <p><strong>Question ${index + 1}:</strong> ${question.question}</p>
+                        <p><strong>Your Answer:</strong> ${question.options[userAnswer] || 'Not answered'}</p>
+                        <p><strong>Correct Answer:</strong> ${question.options[question.correct]}</p>
+                        <p><strong>Attempts:</strong> ${attempts}</p>
+                        ${!isCorrect ? `<p><strong>Explanation:</strong> ${question.explanation}</p>` : ''}
+                    </div>
+                `;
+            });
+
+            detailedResults.innerHTML = resultsHTML;
+        }
+
+        function sendResultsEmail(correct, percentage) {
+            const emailStatus = document.getElementById('email-status');
+            emailStatus.innerHTML = '<p>Sending results...</p>';
+            
+            // Format email message like other working quizzes
+            let emailMessage = `Physical Science Module 11 Quiz Results\n\n`;
+            emailMessage += `Student: ${window.userEmail}\n`;
+            emailMessage += `Quiz: Electricity and Magnetism\n`;
+            emailMessage += `Score: ${correct}/${window.questions.length} (${percentage}%)\n`;
+            emailMessage += `Percentage: ${percentage}%\n`;
+            emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            // Add incorrect answers details
+            const incorrectAnswers = window.userAnswers.reduce((incorrect, answer, index) => {
+                if (answer !== window.questions[index].correctAnswer) {
+                    incorrect.push({
+                        question: window.questions[index].question,
+                        userAnswer: answer !== null ? window.questions[index].options[answer] : 'Not answered',
+                        correctAnswer: window.questions[index].options[window.questions[index].correctAnswer],
+                        attempts: window.questionAttempts[index] || 0
+                    });
+                }
+                return incorrect;
+            }, []);
+            
+            if (incorrectAnswers.length > 0) {
+                emailMessage += "Incorrect Answers:\n\n";
+                incorrectAnswers.forEach((item, index) => {
+                    emailMessage += `${index + 1}. ${item.question}\n`;
+                    emailMessage += `   Your answer: ${item.userAnswer}\n`;
+                    emailMessage += `   Correct answer: ${item.correctAnswer}\n`;
+                    emailMessage += `   Attempts: ${item.attempts}\n\n`;
+                });
+            } else {
+                emailMessage += "Perfect score! All answers were correct.\n";
+            }
+            
+            const templateParams = {
+                to_email: window.userEmail,
+                message: emailMessage,
+                score: correct,
+                total: window.questions.length,
+                percentage: percentage
+            };
+
+            // Post to Google Sheets first
+            const sheetsData = {
+                timestamp: new Date().toISOString(),
+                studentEmail: window.userEmail,
+                quizTitle: 'Physical Science Module 11 Quiz',
+                score: correct,
+                totalQuestions: window.questions.length,
+                percentage: percentage.toString(),
+                incorrectCount: window.questions.length - correct,
+                timeCompleted: new Date().toLocaleString()
+            };
+
+            try {
+                fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                }).then(() => {
+                    console.log('Google Sheets: Data logged successfully');
+                }).catch(error => {
+                    console.error('Google Sheets: Error logging data:', error);
+                });
+            } catch (error) {
+                console.error('Google Sheets: Error logging data:', error);
+            }
+
+            // Send EmailJS notification to instructor with standardized format
+            const updatedTemplateParams = {
+                from_name: 'Physical Science Quiz System',
+                student_email: window.userEmail,
+                to_name: 'Instructor',
+                subject: 'Physical Science Module 11 Quiz Results',
+                submission_date: new Date().toLocaleString(),
+                message: emailMessage,
+                reply_to: window.userEmail
+            };
+
+            emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams)
+                .then(function(response) {
+                    console.log('Email sent successfully:', response);
+                    emailStatus.innerHTML = '<p class="success">✅ Results sent to instructor via email! ✅ Data logged to Google Sheets</p>';
+                }, function(error) {
+                    console.error('Email failed:', error);
+                    emailStatus.innerHTML = '<p class="error">✗ Failed to send results to instructor.</p>';
+                });
+        }
+
+        function generateEmailDetails() {
+            let details = "Detailed Results:\n\n";
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                const attempts = window.questionAttempts[index];
+                
+                details += `Question ${index + 1}: ${question.question}\n`;
+                details += `Student Answer: ${question.options[userAnswer] || 'Not answered'}\n`;
+                details += `Correct Answer: ${question.options[question.correct]}\n`;
+                details += `Result: ${isCorrect ? 'Correct' : 'Incorrect'}\n`;
+                details += `Attempts: ${attempts}\n\n`;
+            });
+            return details;
+        }
+
+        function setupDownload(correct, percentage) {
+            document.getElementById('download-results').onclick = function() {
+                const content = `Physical Science Module 11 Quiz Results
+Electricity and Magnetism
+
+Student Email: ${window.userEmail || 'Not provided'}
+Score: ${correct}/${window.questions.length} (${percentage}%)
+Date: ${new Date().toLocaleDateString()}
+
+${generateEmailDetails()}`;
+
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Module11_Quiz_Results_${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            };
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .module-description {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .email-input {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .email-input input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .email-input div {
+            margin-bottom: 15px;
+        }
+
+        .email-input input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+
+        #question-number {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        #question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .options {
+            margin-bottom: 20px;
+            display: block;
+            width: 100%;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            text-align: left;
+            background: #fff;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            float: none;
+            clear: both;
+        }
+
+        .option-button:hover {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .option-button.selected {
+            background: #e9ecef;
+            border: 1px solid #212529;
+            font-weight: 500;
+        }
+
+        .option-button.correct {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .option-button.incorrect {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .feedback {
+            margin: 15px 0;
+            padding: 12px 15px;
+            border-radius: 4px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .feedback .explanation {
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: background 0.3s ease;
+        }
+
+        .control-button:hover {
+            background: #2980b9;
+        }
+
+        .control-button:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        #results {
+            text-align: center;
+        }
+
+        #results h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        #results h3 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .score-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #7f8c8d;
+        }
+
+        .email-status {
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .email-status .success {
+            color: #27ae60;
+            background: #d5f4e6;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .email-status .error {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .result-buttons {
+            margin-top: 20px;
+        }
+
+        #incorrect-answers {
+            text-align: left;
+            margin-top: 30px;
+        }
+
+        .question-result {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .question-result.correct {
+            background: #d5f4e6;
+            border-left-color: #27ae60;
+        }
+
+        .question-result.incorrect {
+            background: #fadbd8;
+            border-left-color: #e74c3c;
+        }
+
+        .question-result p {
+            margin: 8px 0;
+        }
+
+        .question-result strong {
+            color: #2c3e50;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .option-button {
+                padding: 12px;
+                font-size: 14px;
+            }
+            
+            .control-button {
+                padding: 10px 20px;
+                font-size: 14px;
+                margin: 5px;
+            }
+        }
+    </style>
+</Layout>

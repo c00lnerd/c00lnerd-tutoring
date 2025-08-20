@@ -1,0 +1,428 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 19: Machine Learning and AI Fundamentals">
+    <style>
+        .code-block {
+            background: #1a1a1a;
+            color: #f8f8f2;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border-left: 4px solid #667eea;
+        }
+        .code-block pre {
+            margin: 0;
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem 2rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 19</h1>
+            <h2 style="font-size: 1.8rem; margin: 0 0 1rem 0; opacity: 0.9;">Machine Learning and AI Fundamentals</h2>
+            <p style="font-size: 1.1rem; margin: 0; opacity: 0.8;">Teaching Robots to Learn and Make Smart Decisions</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🎯 Learning Objectives</h2>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Understand what machine learning means in simple terms</li>
+                <li>Learn how robots can recognize patterns and make predictions</li>
+                <li>Explore basic decision-making algorithms for robots</li>
+                <li>Practice creating simple learning systems using data</li>
+                <li>Discover how AI helps robots adapt to new situations</li>
+                <li>Apply basic machine learning concepts to miniAuto robot behavior</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: What is Machine Learning? -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🧠 Section 1: What is Machine Learning?</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Learning from Experience</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Machine learning is like teaching a robot to get better at tasks by showing it lots of examples. Instead of programming every possible situation, we let the robot learn patterns from data and make its own decisions based on what it has seen before.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Pattern Recognition</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Humans are naturally good at recognizing patterns - like knowing it might rain when you see dark clouds. Machine learning helps robots do the same thing with sensor data, finding patterns that help them make good decisions.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Training with Data</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">To teach a robot, we collect lots of examples (called training data). For instance, if we want a robot to recognize obstacles, we show it thousands of pictures labeled "obstacle" or "safe path" until it learns to tell the difference.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Types of Learning:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Supervised Learning:</strong> Learning from examples with correct answers</li>
+                <li><strong>Unsupervised Learning:</strong> Finding patterns in data without being told what to look for</li>
+                <li><strong>Reinforcement Learning:</strong> Learning through trial and error with rewards and penalties</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Pattern Recognition Example:</h4>
+            <div class="code-block">
+<pre>{`// Simple pattern recognition for robot behavior
+class SimplePatternLearner {
+private:
+    struct DataPoint {
+        float sensorValue;
+        bool shouldTurn;  // true = turn, false = go straight
+    };
+    
+    static const int MAX_DATA = 50;
+    DataPoint trainingData[MAX_DATA];
+    int dataCount = 0;
+    
+public:
+    // Add a training example
+    void addTrainingExample(float sensor, bool correctAction) {
+        if (dataCount < MAX_DATA) {
+            trainingData[dataCount].sensorValue = sensor;
+            trainingData[dataCount].shouldTurn = correctAction;
+            dataCount++;
+        }
+    }
+    
+    // Make a prediction based on learned patterns
+    bool predictAction(float currentSensor) {
+        // Find the closest training example
+        float closestDistance = 1000;
+        bool bestAction = false;
+        
+        for (int i = 0; i < dataCount; i++) {
+            float distance = abs(currentSensor - trainingData[i].sensorValue);
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                bestAction = trainingData[i].shouldTurn;
+            }
+        }
+        
+        return bestAction;
+    }
+    
+    // Simple confidence measure
+    float getConfidence(float currentSensor) {
+        // Count how many similar examples we have
+        int similarCount = 0;
+        for (int i = 0; i < dataCount; i++) {
+            if (abs(currentSensor - trainingData[i].sensorValue) < 5) {
+                similarCount++;
+            }
+        }
+        return (float)similarCount / dataCount;
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 2: Decision Making Algorithms -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🤔 Section 2: Decision Making Algorithms</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Teaching Robots to Choose</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Decision-making algorithms help robots choose the best action from several options. This is like having a set of rules that help the robot think through different choices and pick the one most likely to succeed.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Decision Trees</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">A decision tree is like a flowchart that asks yes/no questions to reach a decision. For example: "Is there an obstacle ahead?" → Yes → "Is it closer than 20cm?" → Yes → "Turn left"</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Scoring Systems</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">We can give each possible action a score based on how good we think it is. The robot then chooses the action with the highest score. This is like rating different paths from 1-10 and always taking the best-rated path.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Decision Making Strategies:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Rule-Based:</strong> Follow a set of if-then rules</li>
+                <li><strong>Score-Based:</strong> Rate each option and choose the best</li>
+                <li><strong>Probability-Based:</strong> Consider how likely different outcomes are</li>
+                <li><strong>Learning-Based:</strong> Use past experience to guide decisions</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Decision Making System:</h4>
+            <div class="code-block">
+<pre>{`// Simple decision making for robot navigation
+class SmartDecisionMaker {
+private:
+    struct ActionScore {
+        String actionName;
+        float score;
+    };
+    
+public:
+    // Evaluate different movement options
+    String chooseBestAction(float frontDistance, float leftDistance, float rightDistance) {
+        ActionScore options[4];
+        
+        // Option 1: Go forward
+        options[0].actionName = "forward";
+        options[0].score = calculateForwardScore(frontDistance);
+        
+        // Option 2: Turn left
+        options[1].actionName = "left";
+        options[1].score = calculateTurnScore(leftDistance);
+        
+        // Option 3: Turn right
+        options[2].actionName = "right";
+        options[2].score = calculateTurnScore(rightDistance);
+        
+        // Option 4: Back up
+        options[3].actionName = "backward";
+        options[3].score = 1.0; // Always low priority
+        
+        // Find the best option
+        String bestAction = "stop";
+        float bestScore = 0;
+        
+        for (int i = 0; i < 4; i++) {
+            if (options[i].score > bestScore) {
+                bestScore = options[i].score;
+                bestAction = options[i].actionName;
+            }
+        }
+        
+        return bestAction;
+    }
+    
+private:
+    float calculateForwardScore(float distance) {
+        // Higher score for more distance
+        if (distance > 50) return 10.0;
+        if (distance > 30) return 7.0;
+        if (distance > 15) return 3.0;
+        return 0.0; // Too close, don't go forward
+    }
+    
+    float calculateTurnScore(float distance) {
+        // Moderate score for turning
+        if (distance > 25) return 8.0;
+        if (distance > 15) return 5.0;
+        return 2.0;
+    }
+    
+    // Learn from outcomes to improve future decisions
+    void updateScores(String lastAction, bool wasSuccessful) {
+        // This would adjust our scoring based on results
+        if (wasSuccessful) {
+            Serial.println("Good choice: " + lastAction);
+        } else {
+            Serial.println("Need to improve: " + lastAction);
+        }
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 3: Adaptive Learning Systems -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🔄 Section 3: Adaptive Learning Systems</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Robots That Get Better Over Time</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Adaptive learning means the robot continues to improve its performance as it gains more experience. Like how you get better at video games the more you play, robots can get better at their tasks through practice and feedback.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Feedback Loops</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">A feedback loop is when the robot checks if its actions worked well and uses that information to make better decisions next time. If turning left worked well in a situation, it's more likely to turn left in similar situations.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Memory and Experience</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">The robot keeps track of what happened in different situations and what actions worked best. This creates a "memory" of experiences that helps guide future decisions, making the robot smarter over time.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Adaptive Learning Features:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Performance Tracking:</strong> Monitor how well different strategies work</li>
+                <li><strong>Strategy Adjustment:</strong> Modify behavior based on results</li>
+                <li><strong>Environment Adaptation:</strong> Adjust to new or changing conditions</li>
+                <li><strong>Continuous Improvement:</strong> Get better with more experience</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Adaptive Learning System:</h4>
+            <div class="code-block">
+<pre>{`// Adaptive learning system for robot behavior
+class AdaptiveLearner {
+private:
+    struct Experience {
+        float situation[3];  // sensor readings
+        String action;       // what we did
+        float result;        // how well it worked (0-10)
+    };
+    
+    static const int MAX_EXPERIENCES = 100;
+    Experience memory[MAX_EXPERIENCES];
+    int experienceCount = 0;
+    
+    // Performance tracking
+    float actionSuccess[4] = {5.0, 5.0, 5.0, 5.0}; // forward, left, right, back
+    
+public:
+    // Learn from a completed action
+    void learnFromExperience(float sensors[3], String action, float outcome) {
+        // Store the experience
+        if (experienceCount < MAX_EXPERIENCES) {
+            for (int i = 0; i < 3; i++) {
+                memory[experienceCount].situation[i] = sensors[i];
+            }
+            memory[experienceCount].action = action;
+            memory[experienceCount].result = outcome;
+            experienceCount++;
+        }
+        
+        // Update action success rates
+        updateActionSuccess(action, outcome);
+    }
+    
+    // Make smarter decisions based on experience
+    String makeSmartDecision(float currentSensors[3]) {
+        // Find similar past situations
+        float bestScore = 0;
+        String bestAction = "forward";
+        
+        String actions[] = {"forward", "left", "right", "backward"};
+        
+        for (int a = 0; a < 4; a++) {
+            float score = predictActionSuccess(currentSensors, actions[a]);
+            if (score > bestScore) {
+                bestScore = score;
+                bestAction = actions[a];
+            }
+        }
+        
+        return bestAction;
+    }
+    
+private:
+    void updateActionSuccess(String action, float outcome) {
+        int actionIndex = getActionIndex(action);
+        if (actionIndex >= 0) {
+            // Gradually update success rate
+            actionSuccess[actionIndex] = (actionSuccess[actionIndex] * 0.9) + (outcome * 0.1);
+        }
+    }
+    
+    float predictActionSuccess(float sensors[3], String action) {
+        // Look for similar situations in memory
+        float totalScore = 0;
+        int similarCount = 0;
+        
+        for (int i = 0; i < experienceCount; i++) {
+            if (memory[i].action == action) {
+                // Check if situation is similar
+                float similarity = calculateSimilarity(sensors, memory[i].situation);
+                if (similarity > 0.7) { // 70% similar
+                    totalScore += memory[i].result;
+                    similarCount++;
+                }
+            }
+        }
+        
+        if (similarCount > 0) {
+            return totalScore / similarCount;
+        } else {
+            // No similar experience, use general action success
+            return actionSuccess[getActionIndex(action)];
+        }
+    }
+    
+    float calculateSimilarity(float sensors1[3], float sensors2[3]) {
+        float totalDiff = 0;
+        for (int i = 0; i < 3; i++) {
+            totalDiff += abs(sensors1[i] - sensors2[i]);
+        }
+        // Convert difference to similarity (0-1)
+        return max(0.0, 1.0 - (totalDiff / 300.0));
+    }
+    
+    int getActionIndex(String action) {
+        if (action == "forward") return 0;
+        if (action == "left") return 1;
+        if (action == "right") return 2;
+        if (action == "backward") return 3;
+        return -1;
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem; border-left: 5px solid #28a745;">
+            <h2 style="color: #155724; margin-bottom: 1rem;">🔧 Hands-On Activity: Learning Robot Navigator</h2>
+            <p style="margin-bottom: 1.5rem; color: #155724; font-weight: 500;">Build a robot that learns to navigate better over time by remembering what works and what doesn't in different situations.</p>
+            
+            <h3 style="color: #155724; margin-bottom: 1rem;">Project: Smart Navigation System</h3>
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: #495057; margin-bottom: 1rem;">Materials Needed:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>miniAuto robot with multiple distance sensors</li>
+                    <li>Obstacle course or maze setup</li>
+                    <li>Computer for programming and data collection</li>
+                    <li>Notebook for tracking robot performance</li>
+                </ul>
+                
+                <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Step-by-Step Instructions:</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li><strong>Basic Setup:</strong> Program basic obstacle avoidance with decision scoring</li>
+                    <li><strong>Data Collection:</strong> Record sensor readings and actions taken</li>
+                    <li><strong>Performance Tracking:</strong> Measure success rate of different actions</li>
+                    <li><strong>Learning Implementation:</strong> Add code to remember successful strategies</li>
+                    <li><strong>Testing:</strong> Run multiple trials and observe improvement over time</li>
+                    <li><strong>Analysis:</strong> Compare early performance to later performance</li>
+                </ol>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107;">
+                <strong style="color: #856404;">💡 Pro Tip:</strong>
+                <span style="color: #856404;"> Start with simple scoring (success = 10, collision = 0) and gradually make your learning system more sophisticated as you see it working!</span>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">📋 Assessment & Homework</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Programming Challenges</h3>
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <ol style="margin-left: 1rem; line-height: 1.8;">
+                    <li><strong>Pattern Finder:</strong> Create a system that can identify patterns in sensor data</li>
+                    <li><strong>Decision Scorer:</strong> Build a scoring system for different robot actions</li>
+                    <li><strong>Memory System:</strong> Implement a simple memory that remembers successful actions</li>
+                    <li><strong>Learning Tracker:</strong> Create a program that shows how performance improves over time</li>
+                </ol>
+            </div>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Research Assignment</h3>
+            <div style="background: #e7f3ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <p style="margin-bottom: 1rem; line-height: 1.6;"><strong>Topic:</strong> AI in Everyday Life</p>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">Research and write a one-page report on how machine learning is used in one of these areas:</p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Recommendation systems (Netflix, Spotify, YouTube)</li>
+                    <li>Voice assistants (Siri, Alexa, Google Assistant)</li>
+                    <li>Navigation apps (Google Maps, Waze)</li>
+                    <li>Social media and photo tagging</li>
+                    <li>Online shopping and advertising</li>
+                </ul>
+            </div>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Practical Exercises</h3>
+            <div style="background: #f0f8f0; padding: 1.5rem; border-radius: 8px;">
+                <ul style="margin-left: 1rem; line-height: 1.8;">
+                    <li>Test your learning system in different environments</li>
+                    <li>Compare robot performance before and after learning</li>
+                    <li>Experiment with different scoring methods for actions</li>
+                    <li>Challenge: Can you make your robot learn to prefer certain paths?</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week18" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 18: Computer Vision
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week19" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz →
+            </a>
+        </div>
+    </div>
+</Layout>

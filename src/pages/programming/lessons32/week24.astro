@@ -1,0 +1,407 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 24: Face Recognition and Biometric Systems">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 24: Face Recognition and Biometric Systems</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Teaching Robots to Recognize People and Faces</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🎯</span> Learning Objectives
+            </h2>
+            <ul style="line-height: 1.8; color: #4a5568;">
+                <li><strong>Understand biometric technology:</strong> Learn how computers can identify people using biological features</li>
+                <li><strong>Explore face detection vs. recognition:</strong> Understand the difference between finding faces and identifying specific people</li>
+                <li><strong>Program ESP32-S3 camera:</strong> Use the built-in camera module for real-time image processing</li>
+                <li><strong>Build recognition systems:</strong> Create robots that can remember and identify specific individuals</li>
+                <li><strong>Consider privacy and ethics:</strong> Understand the responsible use of biometric technology</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Introduction to Biometrics -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">👤</span> Introduction to Biometrics
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">What are Biometrics?</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Biometrics are unique biological characteristics that can be used to identify individuals. Unlike passwords or ID cards that can be lost or stolen, biometric features are part of who you are and are very difficult to fake or duplicate.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Common Types of Biometrics:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Facial recognition:</strong> Analyzing facial features and structure</li>
+                    <li><strong>Fingerprints:</strong> Unique patterns on fingertips</li>
+                    <li><strong>Iris scanning:</strong> Patterns in the colored part of the eye</li>
+                    <li><strong>Voice recognition:</strong> Unique characteristics of speech patterns</li>
+                    <li><strong>Hand geometry:</strong> Size and shape of hands and fingers</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Face Detection vs. Face Recognition</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    It's important to understand the difference between these two related technologies:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Face Detection:</strong> Finding and locating faces in an image (answers "Is there a face here?")</li>
+                    <li><strong>Face Recognition:</strong> Identifying who the person is (answers "Whose face is this?")</li>
+                    <li><strong>Face Verification:</strong> Confirming if a face matches a specific person (answers "Is this John?")</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: How Face Recognition Works -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🔍</span> How Face Recognition Works
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">The Face Recognition Process</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Face recognition systems work through several steps:
+                </p>
+                
+                <ol style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li><strong>Image Capture:</strong> Camera takes a photo or video frame</li>
+                    <li><strong>Face Detection:</strong> System finds faces in the image</li>
+                    <li><strong>Face Alignment:</strong> Adjusts face position and angle for consistency</li>
+                    <li><strong>Feature Extraction:</strong> Measures key facial features (eyes, nose, mouth distances)</li>
+                    <li><strong>Face Encoding:</strong> Converts measurements into a unique "face print"</li>
+                    <li><strong>Comparison:</strong> Compares face print to known faces in database</li>
+                    <li><strong>Decision:</strong> Determines if there's a match and who it is</li>
+                </ol>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Key Facial Features Measured:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Distance between eyes</li>
+                    <li>Width of nose</li>
+                    <li>Depth of eye sockets</li>
+                    <li>Shape of cheekbones</li>
+                    <li>Length of jaw line</li>
+                    <li>Overall face shape and proportions</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Challenges in Face Recognition</h3>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Lighting conditions:</strong> Shadows, bright light, or darkness affect accuracy</li>
+                    <li><strong>Facial expressions:</strong> Smiling, frowning, or talking changes facial features</li>
+                    <li><strong>Angles and poses:</strong> Profile views or tilted heads are harder to recognize</li>
+                    <li><strong>Aging and changes:</strong> People's faces change over time</li>
+                    <li><strong>Accessories:</strong> Glasses, hats, or masks can hide facial features</li>
+                    <li><strong>Image quality:</strong> Blurry or low-resolution images reduce accuracy</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: Programming ESP32-S3 Face Recognition -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">💻</span> Programming ESP32-S3 Face Recognition
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Setting Up the Camera</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    The ESP32-S3 has built-in camera support that makes face recognition possible. Here's how to initialize the camera:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`#include "esp_camera.h"
+#include "esp_face_detect.h"
+#include "esp_face_recognition.h"
+
+void setupCamera() {
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM;
+  config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM;
+  config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM;
+  config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM;
+  config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk = XCLK_GPIO_NUM;
+  config.pin_pclk = PCLK_GPIO_NUM;
+  config.pin_vsync = VSYNC_GPIO_NUM;
+  config.pin_href = HREF_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn = PWDN_GPIO_NUM;
+  config.pin_reset = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000;
+  config.pixel_format = PIXFORMAT_JPEG;
+  config.frame_size = FRAMESIZE_QVGA; // 320x240
+  config.jpeg_quality = 10;
+  config.fb_count = 1;
+
+  // Initialize camera
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    return;
+  }
+  
+  Serial.println("Camera initialized successfully!");
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Basic Face Detection</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Let's start with detecting faces in the camera image:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`void detectFaces() {
+  // Capture image from camera
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    return;
+  }
+
+  // Convert image format for face detection
+  dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
+  if (!image_matrix) {
+    esp_camera_fb_return(fb);
+    Serial.println("Memory allocation failed");
+    return;
+  }
+
+  // Convert JPEG to RGB
+  bool converted = fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
+  esp_camera_fb_return(fb);
+  
+  if (!converted) {
+    dl_matrix3du_free(image_matrix);
+    Serial.println("Image conversion failed");
+    return;
+  }
+
+  // Detect faces
+  box_array_t *net_boxes = face_detect(image_matrix);
+  
+  if (net_boxes) {
+    Serial.printf("Found %d faces\\n", net_boxes->len);
+    
+    // Print information about each detected face
+    for (int i = 0; i < net_boxes->len; i++) {
+      box_t *box = &(net_boxes->box[i]);
+      Serial.printf("Face %d: x=%d, y=%d, w=%d, h=%d\\n", 
+                   i+1, box->box_p[0], box->box_p[1], 
+                   box->box_p[2] - box->box_p[0], 
+                   box->box_p[3] - box->box_p[1]);
+    }
+    
+    free(net_boxes->box);
+    free(net_boxes);
+  } else {
+    Serial.println("No faces detected");
+  }
+  
+  dl_matrix3du_free(image_matrix);
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Face Recognition System</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Now let's add face recognition to identify specific people:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Face recognition variables
+face_id_list id_list = {0};
+String knownNames[10]; // Store names for recognized faces
+int enrolledFaces = 0;
+
+void enrollNewFace(String name) {
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) return;
+
+  dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
+  fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
+  esp_camera_fb_return(fb);
+
+  // Detect face for enrollment
+  box_array_t *net_boxes = face_detect(image_matrix);
+  
+  if (net_boxes && net_boxes->len > 0) {
+    // Use the first detected face for enrollment
+    int8_t left_sample_face = enroll_face(&id_list, image_matrix, &(net_boxes->box[0]));
+    
+    if (left_sample_face >= 0) {
+      knownNames[enrolledFaces] = name;
+      enrolledFaces++;
+      Serial.println("Face enrolled successfully: " + name);
+    } else {
+      Serial.println("Face enrollment failed");
+    }
+    
+    free(net_boxes->box);
+    free(net_boxes);
+  }
+  
+  dl_matrix3du_free(image_matrix);
+}
+
+void recognizeFaces() {
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) return;
+
+  dl_matrix3du_t *image_matrix = dl_matrix3du_alloc(1, fb->width, fb->height, 3);
+  fmt2rgb888(fb->buf, fb->len, fb->format, image_matrix->item);
+  esp_camera_fb_return(fb);
+
+  // Detect faces
+  box_array_t *net_boxes = face_detect(image_matrix);
+  
+  if (net_boxes) {
+    for (int i = 0; i < net_boxes->len; i++) {
+      // Try to recognize each detected face
+      int8_t face_id = recognize_face(&id_list, image_matrix, &(net_boxes->box[i]));
+      
+      if (face_id >= 0) {
+        Serial.println("Recognized: " + knownNames[face_id]);
+        greetPerson(knownNames[face_id]);
+      } else {
+        Serial.println("Unknown person detected");
+        askForIntroduction();
+      }
+    }
+    
+    free(net_boxes->box);
+    free(net_boxes);
+  }
+  
+  dl_matrix3du_free(image_matrix);
+}
+
+void greetPerson(String name) {
+  Serial.println("Hello, " + name + "!");
+  flashLED(3); // Flash LED 3 times
+}
+
+void askForIntroduction() {
+  Serial.println("I don't recognize you. What's your name?");
+  flashLED(1); // Single flash for unknown person
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🛠️</span> Hands-On Activity: Personal Security Robot
+            </h2>
+            
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Project Overview</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Create a security robot that can recognize family members or classmates and respond differently to known vs. unknown people.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Implementation Steps:</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Setup camera:</strong> Initialize ESP32-S3 camera module</li>
+                    <li><strong>Test face detection:</strong> Verify camera can detect faces</li>
+                    <li><strong>Enroll faces:</strong> Add 2-3 known people to the system</li>
+                    <li><strong>Program responses:</strong> Different actions for known/unknown people</li>
+                    <li><strong>Test system:</strong> Verify recognition accuracy and responses</li>
+                    <li><strong>Add features:</strong> LED patterns, sounds, or movement responses</li>
+                </ol>
+            </div>
+
+            <div style="background: #ffeaa7; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">⚠️ Privacy and Safety Considerations</h3>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Consent:</strong> Always ask permission before enrolling someone's face</li>
+                    <li><strong>Data storage:</strong> Understand that face data is stored on the device</li>
+                    <li><strong>Lighting:</strong> Ensure good lighting for accurate recognition</li>
+                    <li><strong>Testing:</strong> Test with different angles and expressions</li>
+                    <li><strong>Backup plan:</strong> Include manual override for system access</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 5: Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📝</span> Assessment & Homework
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Reflection Questions</h3>
+                <ol style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>Explain the difference between face detection and face recognition.</li>
+                    <li>What are three challenges that can make face recognition less accurate?</li>
+                    <li>Describe the seven steps in the face recognition process.</li>
+                    <li>Why is consent important when using face recognition technology?</li>
+                    <li>What are two advantages and two disadvantages of biometric security systems?</li>
+                </ol>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Programming Challenge</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    <strong>Smart Doorbell System:</strong> Design a program for a robot doorbell that can recognize family members and visitors.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Requirements:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Automatically detect when someone approaches</li>
+                    <li>Recognize family members and greet them by name</li>
+                    <li>Ask unknown visitors to identify themselves</li>
+                    <li>Send different notifications for family vs. visitors</li>
+                    <li>Include privacy protections and consent mechanisms</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Research Project</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Research a real-world application of face recognition technology and write a one-page report covering:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>How the technology is being used (security, convenience, etc.)</li>
+                    <li>What benefits it provides to users</li>
+                    <li>What privacy or ethical concerns have been raised</li>
+                    <li>How the organization addresses these concerns</li>
+                    <li>Your opinion on whether this use is appropriate and why</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week23" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 23: Robot Swarms
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week24" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz 📝
+            </a>
+        </div>
+    </div>
+</Layout>

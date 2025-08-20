@@ -1,0 +1,486 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 2: Arduino IDE & First Programs">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">2</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 2: Arduino IDE & First Programs</h1>
+                        <p class="text-gray-600">Master the Arduino development environment and create your first programs</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Week Course • Semester 1</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                    <div>
+                        <h3 class="font-semibold text-blue-600 mb-2">By the end of this lesson, you will:</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li>• Navigate the Arduino IDE with confidence</li>
+                            <li>• Understand program structure (setup and loop)</li>
+                            <li>• Create and upload your first Arduino programs</li>
+                            <li>• Use serial communication for debugging</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-green-600 mb-2">Skills You'll Develop:</h3>
+                        <ul class="space-y-1 text-gray-700">
+                            <li>• IDE navigation and customization</li>
+                            <li>• Code writing and editing techniques</li>
+                            <li>• Program compilation and uploading</li>
+                            <li>• Serial Monitor usage for output</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Programming Environment Exploration -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Section 1: Programming Environment Exploration</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Understanding Programming Environments</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            A programming environment is where you write, test, and debug your code. Let's explore the key components that make programming efficient and enjoyable:
+                        </p>
+                        
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Essential Programming Environment Features:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li>• <strong>Code Editor:</strong> Where you write your programs with syntax highlighting</li>
+                                <li>• <strong>File Management:</strong> Organize and save your projects</li>
+                                <li>• <strong>Error Detection:</strong> Identifies mistakes in your code before running</li>
+                                <li>• <strong>Output Console:</strong> Shows results and messages from your programs</li>
+                                <li>• <strong>Debugging Tools:</strong> Help you find and fix problems in your code</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Online Simulator Benefits</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            For now, we'll use online simulators that provide all these features without requiring any software installation:
+                        </p>
+                        
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Why Start with Simulators:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li>• <strong>Instant Access:</strong> No downloads or installations required</li>
+                                <li>• <strong>Safe Learning:</strong> Experiment without fear of breaking anything</li>
+                                <li>• <strong>Visual Feedback:</strong> See your code control virtual components</li>
+                                <li>• <strong>Built-in Examples:</strong> Learn from pre-made projects and tutorials</li>
+                                <li>• <strong>Sharing Capability:</strong> Easily share your projects with others</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Arduino Program Structure -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Section 2: Arduino Program Structure</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">The Two Essential Functions</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            Every Arduino program (called a "sketch") must have two main functions. Understanding these is crucial for all Arduino programming:
+                        </p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                            <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">setup() Function</h4>
+                                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                    <li>• Runs only once when the program starts</li>
+                                    <li>• Used for initialization tasks</li>
+                                    <li>• Set pin modes, start serial communication</li>
+                                    <li>• Initialize variables and libraries</li>
+                                </ul>
+                            </div>
+                            
+                            <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">loop() Function</h4>
+                                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                    <li>• Runs continuously after setup() completes</li>
+                                    <li>• Contains the main program logic</li>
+                                    <li>• Repeats forever until power is removed</li>
+                                    <li>• Where sensors are read and outputs controlled</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Basic Program Template</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            Here's the basic structure that every Arduino program follows:
+                        </p>
+                        
+<pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Global variables and constants go here
+int ledPin = 13;
+int delayTime = 1000;
+
+void setup() {
+  // Initialization code runs once
+  Serial.begin(9600);           // Start serial communication
+  pinMode(ledPin, OUTPUT);      // Set pin 13 as output
+  Serial.println("Program starting...");
+}
+
+void loop() {
+  // Main program code runs repeatedly
+  digitalWrite(ledPin, HIGH);   // Turn LED on
+  delay(delayTime);            // Wait
+  digitalWrite(ledPin, LOW);    // Turn LED off
+  delay(delayTime);            // Wait
+  Serial.println("LED blinked");
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Your First Programs -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Section 3: Your First Programs</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Program 1: Digital Counter & Timer</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            Let's start with a program that demonstrates counting, timing, and serial communication - all without requiring any hardware:
+                        </p>
+                        
+<pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Digital Counter & Timer Program
+int counter = 0;              // Main counter variable
+int cycleCount = 0;           // Tracks complete cycles
+unsigned long startTime;      // Program start time
+
+void setup() {
+  Serial.begin(9600);         // Start serial communication at 9600 baud
+  startTime = millis();       // Record when program started
+  Serial.println("=== Digital Counter & Timer Started ===");
+  Serial.println("This program demonstrates counting and timing");
+  Serial.println("Watch the Serial Monitor for updates!");
+  Serial.println();
+}
+
+void loop() {
+  // Calculate runtime
+  unsigned long runtime = millis() - startTime;
+  
+  // Display counter status
+  Serial.print("Counter: ");
+  Serial.print(counter);
+  Serial.print(" | Runtime: ");
+  Serial.print(runtime / 1000);
+  Serial.println(" seconds");
+  
+  counter++;                  // Increment counter
+  delay(1000);               // Wait 1 second
+  
+  // Reset counter after 10 counts
+  if (counter >= 10) {
+    cycleCount++;
+    Serial.println("--- Cycle Complete! ---");
+    Serial.print("Total cycles completed: ");
+    Serial.println(cycleCount);
+    Serial.println();
+    counter = 0;              // Reset counter
+  }
+}`}</code></pre>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Program 2: Data Processing & Simulation</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            This program demonstrates data processing, mathematical calculations, and formatted output - all using simulated data:
+                        </p>
+                        
+<pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Data Processing & Simulation Program
+unsigned long startTime;
+int dataPoint = 0;
+float temperature = 23.5;
+float humidity = 45.0;
+int readings = 0;
+
+void setup() {
+  Serial.begin(9600);
+  startTime = millis();         // Record start time
+  
+  Serial.println("=== Environmental Data Simulator ===");
+  Serial.println("This program simulates and processes sensor data");
+  Serial.println("No hardware required - all data is calculated!");
+  Serial.println();
+}
+
+void loop() {
+  // Calculate runtime
+  unsigned long runtime = millis() - startTime;
+  readings++;
+  
+  // Simulate realistic sensor data using math
+  temperature = 22.0 + sin(readings * 0.1) * 5.0;  // Oscillating temperature
+  humidity = 50.0 + cos(readings * 0.15) * 15.0;   // Oscillating humidity
+  dataPoint = random(100, 1000);                   // Random data point
+  
+  // Display formatted data with calculations
+  Serial.println("--- Environmental Reading ---");
+  Serial.print("Reading #");
+  Serial.print(readings);
+  Serial.print(" | Runtime: ");
+  Serial.print(runtime / 1000);
+  Serial.println(" seconds");
+  
+  Serial.print("Temperature: ");
+  Serial.print(temperature, 1);  // 1 decimal place
+  Serial.println(" °C");
+  
+  Serial.print("Humidity: ");
+  Serial.print(humidity, 1);
+  Serial.println(" %");
+  
+  Serial.print("Data Point: ");
+  Serial.println(dataPoint);
+  
+  // Calculate and display average temperature
+  static float tempSum = 0;
+  tempSum += temperature;
+  float avgTemp = tempSum / readings;
+  Serial.print("Average Temp: ");
+  Serial.print(avgTemp, 2);
+  Serial.println(" °C");
+  
+  Serial.println();             // Empty line for readability
+  delay(2000);                  // Wait 2 seconds between readings
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Hands-On Activity -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Section 4: Hands-On Activity - Create Your Simulation Program</h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Your Programming Challenge</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            Now it's time to create your own Arduino simulation program! Choose one of these themes and create a program that uses only Serial Monitor output - no hardware required:
+                        </p>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 mb-6">
+                            <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🚦 Traffic Light Simulator</h4>
+                                <p class="text-red-700 text-sm">Simulate traffic light sequences with timing and status messages in the Serial Monitor</p>
+                            </div>
+                            
+                            <div style="background: #fdf2f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                <h4 class="font-semibold text-pink-800 mb-2">💓 Heartbeat Monitor Simulator</h4>
+                                <p class="text-pink-700 text-sm">Simulate heartbeat patterns with variable timing and pulse counting via text output</p>
+                            </div>
+                            
+                            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🌡️ Weather Station Simulator</h4>
+                                <p class="text-blue-700 text-sm">Create realistic weather data using mathematical functions and display formatted reports</p>
+                            </div>
+                            
+                            <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🎮 Game Score Tracker</h4>
+                                <p class="text-green-700 text-sm">Simulate a game scoring system with player stats, levels, and achievements</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Program Requirements</h3>
+                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Your simulation program must include:</h4>
+                            <ul class="space-y-1 text-yellow-700">
+                                <li>✓ Proper setup() and loop() structure</li>
+                                <li>✓ Serial communication with formatted output</li>
+                                <li>✓ At least two variables to track program state</li>
+                                <li>✓ Mathematical calculations or data processing</li>
+                                <li>✓ Appropriate delay() timing for realistic simulation</li>
+                                <li>✓ Comments explaining what your code does</li>
+                                <li>✓ Use of millis() for timing or counters for tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Example: Weather Station Simulator</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">Here's an example to inspire your creativity:</p>
+                        
+<pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Weather Station Simulator Example
+float temperature = 20.0;
+float humidity = 50.0;
+float pressure = 1013.25;
+int readings = 0;
+unsigned long lastUpdate = 0;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("=== Weather Station Simulator ===");
+  Serial.println("Generating realistic weather data...");
+  Serial.println("No sensors required - all mathematically calculated!");
+  Serial.println();
+}
+
+void loop() {
+  // Update every 3 seconds
+  if (millis() - lastUpdate >= 3000) {
+    readings++;
+    
+    // Simulate realistic weather changes using math
+    temperature = 18.0 + sin(readings * 0.05) * 8.0 + random(-10, 11) / 10.0;
+    humidity = 45.0 + cos(readings * 0.08) * 20.0 + random(-50, 51) / 10.0;
+    pressure = 1010.0 + sin(readings * 0.03) * 15.0 + random(-20, 21) / 10.0;
+    
+    // Keep values in realistic ranges
+    humidity = constrain(humidity, 20.0, 90.0);
+    pressure = constrain(pressure, 980.0, 1040.0);
+    
+    // Display formatted weather report
+    Serial.println("--- WEATHER REPORT ---");
+    Serial.print("Reading #");
+    Serial.print(readings);
+    Serial.print(" | Time: ");
+    Serial.print(millis() / 1000);
+    Serial.println(" seconds");
+    
+    Serial.print("Temperature: ");
+    Serial.print(temperature, 1);
+    Serial.println(" °C");
+    
+    Serial.print("Humidity: ");
+    Serial.print(humidity, 1);
+    Serial.println(" %");
+    
+    Serial.print("Pressure: ");
+    Serial.print(pressure, 2);
+    Serial.println(" hPa");
+    
+    // Weather condition analysis
+    if (temperature > 25) {
+      Serial.println("Condition: HOT ☀️");
+    } else if (temperature < 10) {
+      Serial.println("Condition: COLD ❄️");
+    } else {
+      Serial.println("Condition: MILD 🌤️");
+    }
+    
+    Serial.println();
+    lastUpdate = millis();
+  }
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 5: Assessment & Homework -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center;">📝 Assessment & Homework</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Quick Assessment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">• Demonstrate Arduino IDE navigation and usage</li>
+                        <li style="margin-bottom: 0.5rem;">• Explain setup() vs loop() function purposes</li>
+                        <li style="margin-bottom: 0.5rem;">• Show Serial Monitor debugging techniques</li>
+                        <li style="margin-bottom: 0.5rem;">• Create a themed program with variables</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">• Enhance your themed program with new features</li>
+                        <li style="margin-bottom: 0.5rem;">• Practice Serial Monitor data analysis</li>
+                        <li style="margin-bottom: 0.5rem;">• Research Arduino programming best practices</li>
+                        <li style="margin-bottom: 0.5rem;">• Document your code with meaningful comments</li>
+                    </ul>
+                </div>
+            </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Homework Assignments</h3>
+                        <div class="space-y-4">
+                            <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Assignment 1: Program Enhancement</h4>
+                                <p class="text-yellow-700 text-sm mb-2">
+                                    Take your themed program from the hands-on activity and add these features:
+                                </p>
+                                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                    <li>• Add a counter that tracks total cycles</li>
+                                    <li>• Include a startup message with your name</li>
+                                    <li>• Add at least one more variable to control timing</li>
+                                    <li>• Include status updates every 10 cycles</li>
+                                </ul>
+                            </div>
+                            
+                            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Assignment 2: Serial Monitor Exploration</h4>
+                                <p class="text-purple-700 text-sm mb-2">
+                                    Experiment with the Serial Monitor and document:
+                                </p>
+                                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                    <li>• Different baud rates (9600, 115200) and their effects</li>
+                                    <li>• Using Serial.print() vs Serial.println()</li>
+                                    <li>• Formatting numbers with different decimal places</li>
+                                    <li>• Creating organized output with spacing and lines</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Submission Guidelines</h3>
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li><strong>Code Files:</strong> Save your programs with descriptive names (e.g., "TrafficLight_YourName.ino")</li>
+                                <li><strong>Documentation:</strong> Include comments explaining your code and design choices</li>
+                                <li><strong>Serial Output:</strong> Copy and paste sample Serial Monitor output with your submission</li>
+                                <li><strong>Reflection:</strong> Write 2-3 sentences about what you learned and any challenges faced</li>
+                                <li><strong>Due Date:</strong> Submit before next week's lesson</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week1" style="background-color: #6b7280; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 1
+                    </a>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <a href="/programming/quizzes32/week2" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        📝 Take Quiz
+                    </a>
+                    <a href="/programming/lessons32/week3" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 3 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+
+

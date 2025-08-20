@@ -1,0 +1,324 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 4 Quiz: Loops and Iteration">
+    <main style="min-height: 100vh; background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%); padding: 3rem 0;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <div style="background: #8b5cf6; color: white; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; margin-right: 1rem;">Q4</div>
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 2rem; font-weight: bold; color: var(--black); margin: 0;">Week 4 Quiz</h1>
+                        <p style="color: var(--gray); margin: 0;">Loops and Iteration</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem;">
+                <form id="week4Quiz" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Student Info -->
+                    <div style="background: var(--gray-light); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 1rem;">Student Information</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Name:</label>
+                                <input type="text" id="studentName" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Email:</label>
+                                <input type="email" id="studentEmail" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div style="border-left: 4px solid #8b5cf6; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 1: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which loop is best for iterating over a sequence like a list or string?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="a" style="margin-right: 0.75rem;">
+                                <span>A) while loop</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="b" style="margin-right: 0.75rem;">
+                                <span>B) for loop</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="c" style="margin-right: 0.75rem;">
+                                <span>C) do-while loop</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="d" style="margin-right: 0.75rem;">
+                                <span>D) if loop</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="border-left: 4px solid #8b5cf6; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 2: Short Answer (3 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Write a for loop that prints the numbers 1 through 5:</p>
+                        <textarea id="q2" name="q2" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: monospace; font-size: 0.9rem;" placeholder="Type your Python code here..."></textarea>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div style="border-left: 4px solid #8b5cf6; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 3: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">What does the range(3, 8) function generate?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="a" style="margin-right: 0.75rem;">
+                                <span>A) 3, 4, 5, 6, 7, 8</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="b" style="margin-right: 0.75rem;">
+                                <span>B) 3, 4, 5, 6, 7</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="c" style="margin-right: 0.75rem;">
+                                <span>C) 0, 1, 2, 3, 4, 5, 6, 7</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="d" style="margin-right: 0.75rem;">
+                                <span>D) 4, 5, 6, 7, 8</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="border-left: 4px solid #8b5cf6; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 4: True/False (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">A while loop will continue executing as long as its condition is True.</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="true" style="margin-right: 0.75rem;">
+                                <span>True</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="false" style="margin-right: 0.75rem;">
+                                <span>False</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div style="border-left: 4px solid #8b5cf6; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 5: Multiple Choice (1 point)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which keyword is used to exit a loop early?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="a" style="margin-right: 0.75rem;">
+                                <span>A) exit</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="b" style="margin-right: 0.75rem;">
+                                <span>B) break</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="c" style="margin-right: 0.75rem;">
+                                <span>C) stop</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="d" style="margin-right: 0.75rem;">
+                                <span>D) end</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" style="background: #8b5cf6; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Display -->
+                <div id="quizResults" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px;">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #1e40af; margin-bottom: 1rem;">Quiz Results</h3>
+                    <div id="scoreDisplay" style="font-size: 1.1rem; margin-bottom: 1rem;"></div>
+                    <div id="feedback" style="color: var(--gray);"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 2rem;">
+                <a href="/programming/lessons/week4" 
+                   style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+                          color: white; 
+                          padding: 12px 24px; 
+                          border-radius: 8px; 
+                          text-decoration: none; 
+                          font-weight: 600; 
+                          transition: all 0.3s ease; 
+                          box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3); 
+                          min-width: 200px; 
+                          text-align: center;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
+                    ← Back to Week 4 Lesson
+                </a>
+                
+                <a href="/programming/semester1" 
+                   style="background: linear-gradient(135deg, #6b7280 0%, #374151 100%); 
+                          color: white; 
+                          padding: 12px 24px; 
+                          border-radius: 8px; 
+                          text-decoration: none; 
+                          font-weight: 600; 
+                          transition: all 0.3s ease; 
+                          box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3); 
+                          min-width: 200px; 
+                          text-align: center;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(107, 114, 128, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(107, 114, 128, 0.3)'">
+                    📚 Semester Overview
+                </a>
+                
+                <a href="/programming/lessons/week5" 
+                   style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); 
+                          color: white; 
+                          padding: 12px 24px; 
+                          border-radius: 8px; 
+                          text-decoration: none; 
+                          font-weight: 600; 
+                          transition: all 0.3s ease; 
+                          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); 
+                          min-width: 200px; 
+                          text-align: center;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
+                    Next: Week 5 Lesson →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz answers and scoring
+        const correctAnswers = {
+            q1: 'b',  // for loop
+            q3: 'b',  // 3, 4, 5, 6, 7
+            q4: 'true',  // while loop continues while true
+            q5: 'b'   // break
+        };
+
+        const totalPoints = 10;
+
+        document.getElementById('week4Quiz').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email.');
+                return;
+            }
+
+            let score = 0;
+            let feedback = [];
+
+            // Check multiple choice answers
+            Object.keys(correctAnswers).forEach(questionId => {
+                const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
+                    score += questionId === 'q1' || questionId === 'q3' || questionId === 'q4' ? 2 : 1;
+                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct`);
+                } else {
+                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect`);
+                }
+            });
+
+            // Check short answer (Q2) - basic validation
+            const q2Answer = document.getElementById('q2').value.toLowerCase().trim();
+            if (q2Answer.includes('for') && q2Answer.includes('range') && q2Answer.includes('print')) {
+                score += 3;
+                feedback.push('✓ Question 2: Correct - Good loop structure');
+            } else {
+                feedback.push('✗ Question 2: Missing key elements (for loop with range and print)');
+            }
+
+            const percentage = Math.round((score / totalPoints) * 100);
+            
+            // Display results
+            document.getElementById('scoreDisplay').innerHTML = `
+                <strong>Score: ${score}/${totalPoints} (${percentage}%)</strong>
+            `;
+            
+            document.getElementById('feedback').innerHTML = feedback.join('<br>');
+            document.getElementById('quizResults').style.display = 'block';
+
+            // Prepare quiz data for submission
+            const quizData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 4,
+                topic: 'Loops and Iteration',
+                score: score,
+                totalPoints: totalPoints,
+                percentage: percentage,
+                answers: {
+                    q1: document.querySelector('input[name="q1"]:checked')?.value || 'No answer',
+                    q2: document.getElementById('q2').value || 'No answer',
+                    q3: document.querySelector('input[name="q3"]:checked')?.value || 'No answer',
+                    q4: document.querySelector('input[name="q4"]:checked')?.value || 'No answer',
+                    q5: document.querySelector('input[name="q5"]:checked')?.value || 'No answer'
+                },
+                submittedAt: new Date().toISOString()
+            };
+
+            // Submit to teacher via EmailJS
+            submitQuizResults(quizData);
+        });
+
+        function submitQuizResults(quizData) {
+            const formattedMessage = `WEEK 4 QUIZ RESULTS - LOOPS AND ITERATION
+
+Student Information:
+• Name: ${quizData.studentName}
+• Email: ${quizData.studentEmail}
+
+Quiz Performance:
+• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+• Topic: ${quizData.topic}
+• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+
+Student Responses:
+• Q1 (Loop Types): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
+• Q2 (For Loop Code): ${quizData.answers.q2}
+• Q3 (Range Function): ${quizData.answers.q3} ${quizData.answers.q3 === 'b' ? '✓' : '✗'}
+• Q4 (While Loop Behavior): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
+• Q5 (Break Statement): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+
+Performance Analysis:
+${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of loops and iteration concepts.' : 
+  quizData.percentage >= 70 ? '👍 Good progress! Student grasps loop concepts but may need practice with syntax.' :
+  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with for and while loops.' :
+  '📚 Needs improvement. Recommend additional review of loop structures and iteration concepts.'}`;
+
+            const templateParams = {
+                student_name: quizData.studentName,
+                student_email: quizData.studentEmail,
+                quiz_topic: `Week 4: ${quizData.topic}`,
+                quiz_score: `${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)`,
+                quiz_details: formattedMessage,
+                submission_date: new Date(quizData.submittedAt).toLocaleString()
+            };
+
+            emailjs.send('service_8nkw5qs', 'template_quiz_results', templateParams)
+                .then(function(response) {
+                    console.log('Quiz results sent successfully!', response.status, response.text);
+                }, function(error) {
+                    console.log('Failed to send quiz results...', error);
+                });
+        }
+
+        // Initialize EmailJS
+        emailjs.init("iOqKKbwdIjSk0kcv0");
+    </script>
+</Layout>

@@ -1,0 +1,305 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 10.1: Visible Light">
+    <main class="container mx-auto px-4 py-8">
+        <div class="experiment-header">
+            <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">EXPERIMENT 10.1</h1>
+            <h2 class="text-2xl font-bold text-center text-blue-700 mb-8">VISIBLE LIGHT</h2>
+        </div>
+
+        <!-- Student Information Section -->
+        <section class="mb-8 p-6 bg-gray-50 rounded-lg shadow-md">
+            <h3 class="text-xl font-bold text-blue-700 mb-4">STUDENT INFORMATION</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="studentName" class="block text-sm font-medium text-gray-700 mb-2">Student Name:</label>
+                    <input type="text" id="studentName" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your full name" required>
+                </div>
+                <div>
+                    <label for="studentEmail" class="block text-sm font-medium text-gray-700 mb-2">Student Email:</label>
+                    <input type="email" id="studentEmail" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your email address" required>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PURPOSE:</h3>
+            <p class="mb-4">To observe the visible light spectrum and understand how white light can be separated into its component colors.</p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">BACKGROUND:</h3>
+            <p class="mb-4">
+                Visible light is a small portion of the electromagnetic spectrum that human eyes can detect. 
+                When white light (like sunlight) passes through a prism or water droplets, it separates into 
+                different colors based on their wavelengths, creating a rainbow effect. This phenomenon is 
+                called dispersion. The colors of the visible spectrum, from longest to shortest wavelength, 
+                can be remembered using the mnemonic "ROY G. BIV" (Red, Orange, Yellow, Green, Blue, Indigo, Violet).
+            </p>
+            <p class="mb-4">
+                In this experiment, you will create your own rainbow by using water as a prism to separate 
+                white light into its component colors. This demonstrates how rainbows form in nature when 
+                sunlight passes through raindrops in the atmosphere.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">MATERIALS:</h3>
+            <ul class="list-disc pl-8 mb-4">
+                <li>A shallow pan (a glass baking dish works well)</li>
+                <li>A small mirror</li>
+                <li>Water</li>
+                <li>A white sheet of paper or a white wall</li>
+                <li>Direct sunlight or a bright flashlight</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">QUESTION:</h3>
+            <p class="mb-4">How can water be used to separate white light into its component colors?</p>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PROCEDURE:</h3>
+            <ol class="list-decimal pl-8 mb-4">
+                <li class="mb-2">
+                    Fill the shallow pan about halfway with water.
+                </li>
+                <li class="mb-2">
+                    Place the mirror in the water at an angle (approximately 45 degrees), with part of the mirror above the water's surface.
+                </li>
+                <li class="mb-2">
+                    Position the pan so that direct sunlight (or flashlight) hits the submerged part of the mirror.
+                </li>
+                <li class="mb-2">
+                    Hold the white sheet of paper or position yourself so you can see the reflection on a white wall.
+                </li>
+                <li class="mb-2">
+                    Adjust the angle of the mirror and the position of the paper until you see a rainbow spectrum appear.
+                </li>
+                <li class="mb-2">
+                    Observe the colors in the spectrum and record them in order in your data table.
+                </li>
+                <li class="mb-2">
+                    Try changing the angle of the mirror or the distance of the paper from the mirror. Record how these changes affect the rainbow.
+                </li>
+            </ol>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">DATA:</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-purple-100 border border-purple-300">
+                    <thead>
+                        <tr class="bg-purple-200">
+                            <th class="py-2 px-4 border-b border-purple-300 text-center">Colors Observed (in order)</th>
+                            <th class="py-2 px-4 border-b border-purple-300 text-center">Effect of Changing Mirror Angle</th>
+                            <th class="py-2 px-4 border-b border-purple-300 text-center">Effect of Changing Paper Distance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="py-2 px-4 border-b border-purple-300 text-center">
+                                <textarea id="colors-observed" rows="4" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                            </td>
+                            <td class="py-2 px-4 border-b border-purple-300 text-center">
+                                <textarea id="mirror-angle-effect" rows="4" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                            </td>
+                            <td class="py-2 px-4 border-b border-purple-300 text-center">
+                                <textarea id="paper-distance-effect" rows="4" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">VIDEO DEMONSTRATION:</h3>
+            <div class="bg-gray-100 p-6 rounded-lg shadow-md mb-6">
+                <h4 class="text-lg font-semibold mb-4">Light Dispersion Through a Prism</h4>
+                
+                <div class="flex justify-center mb-4">
+                    <video 
+                        controls 
+                        class="w-full max-w-4xl rounded-lg shadow-lg"
+                        style="max-height: 500px;"
+                        preload="metadata"
+                    >
+                        <source src="/videos/light dispersion in a prism.mp4" type="video/mp4">
+                        Your browser does not support the video tag. Please use a modern browser to view this demonstration.
+                    </video>
+                </div>
+                
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h5 class="font-semibold text-blue-800 mb-2">What to Observe:</h5>
+                    <ul class="list-disc pl-6 text-blue-700">
+                        <li>White light entering the prism</li>
+                        <li>The separation of light into different colors (dispersion)</li>
+                        <li>The order of colors in the spectrum: Red, Orange, Yellow, Green, Blue, Indigo, Violet (ROY G. BIV)</li>
+                        <li>How the angle of the prism affects the dispersion</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">ANALYSIS QUESTIONS:</h3>
+            <ol class="list-decimal pl-8 mb-4">
+                <li class="mb-4">
+                    <p class="mb-2">What colors did you observe in your rainbow, and in what order did they appear?</p>
+                    <textarea id="analysis-q1" rows="3" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                </li>
+                <li class="mb-4">
+                    <p class="mb-2">How does this experiment demonstrate the wave nature of light?</p>
+                    <textarea id="analysis-q2" rows="3" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                </li>
+                <li class="mb-4">
+                    <p class="mb-2">Why does white light separate into different colors when it passes through water?</p>
+                    <textarea id="analysis-q3" rows="3" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                </li>
+                <li class="mb-4">
+                    <p class="mb-2">How is this experiment similar to the formation of rainbows in nature?</p>
+                    <textarea id="analysis-q4" rows="3" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                </li>
+                <li class="mb-4">
+                    <p class="mb-2">Based on your observations, which color has the longest wavelength and which has the shortest?</p>
+                    <textarea id="analysis-q5" rows="3" class="w-full p-2 border border-gray-300 rounded"></textarea>
+                </li>
+            </ol>
+        </section>
+
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">CONCLUSIONS:</h3>
+            <p class="mb-4">
+                Summarize what you learned about the visible light spectrum and how white light can be separated into its component colors.
+                Explain how this relates to the wave nature of light and the concept of wavelength.
+            </p>
+            <textarea id="conclusions" rows="6" class="w-full p-2 border border-gray-300 rounded"></textarea>
+        </section>
+
+        <section id="email-section" class="mb-8 p-6 bg-blue-50 rounded-lg">
+            <h3 class="text-xl font-bold text-blue-700 mb-4">Submit Your Results to Your Teacher:</h3>
+            <button id="submit-results" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Submit Results</button>
+            <div id="submission-message" class="mt-4 hidden"></div>
+        </section>
+    </main>
+
+    <!-- Load EmailJS before initializing -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    
+    <script is:inline>
+        // Initialize EmailJS
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                emailjs.init("ct_s19oZHppLy9BlW");
+                console.log('EmailJS initialized');
+            } catch (error) {
+                console.error('Failed to initialize EmailJS:', error);
+            }
+
+            // Check for saved email in localStorage
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                document.getElementById('studentEmail').value = savedEmail;
+            }
+        });
+
+        // Video demonstration - no interactive simulation needed
+
+        // Email submission
+        document.getElementById('submit-results').addEventListener('click', function() {
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim();
+            
+            if (!studentName || !studentEmail) {
+                showSubmissionMessage('Please enter both your name and email address.', 'error');
+                return;
+            }
+            
+            // Save email to localStorage
+            localStorage.setItem('studentEmail', studentEmail);
+            
+            // Collect data from all input fields
+            const experimentData = {
+                colors_observed: document.getElementById('colors-observed').value,
+                mirror_angle_effect: document.getElementById('mirror-angle-effect').value,
+                paper_distance_effect: document.getElementById('paper-distance-effect').value,
+                analysis_q1: document.getElementById('analysis-q1').value,
+                analysis_q2: document.getElementById('analysis-q2').value,
+                analysis_q3: document.getElementById('analysis-q3').value,
+                analysis_q4: document.getElementById('analysis-q4').value,
+                analysis_q5: document.getElementById('analysis-q5').value,
+                conclusions: document.getElementById('conclusions').value,
+                video_observations: 'Student watched light dispersion video demonstration'
+            };
+            
+            // Prepare comprehensive experiment data for email
+            const experimentDataString = `
+EXPERIMENT: Light and Color (Visible Light Spectrum)
+
+STUDENT: ${studentName}
+EMAIL: ${studentEmail}
+
+OBSERVATIONS:
+• Colors observed: ${experimentData.colors_observed || 'Not provided'}
+• Mirror angle effect: ${experimentData.mirror_angle_effect || 'Not provided'}
+• Paper distance effect: ${experimentData.paper_distance_effect || 'Not provided'}
+
+ANALYSIS QUESTIONS:
+• Q1: ${experimentData.analysis_q1 || 'Not answered'}
+• Q2: ${experimentData.analysis_q2 || 'Not answered'}
+• Q3: ${experimentData.analysis_q3 || 'Not answered'}
+• Q4: ${experimentData.analysis_q4 || 'Not answered'}
+• Q5: ${experimentData.analysis_q5 || 'Not answered'}
+
+CONCLUSIONS:
+${experimentData.conclusions || 'No conclusions provided'}
+
+VIDEO OBSERVATIONS:
+${experimentData.video_observations}
+            `.trim();
+
+            // Send email with EmailJS using proven parameter mapping
+            showSubmissionMessage('Sending your results...', 'info');
+            
+            emailjs.send("service_ot1jg6s", "template_y556rhr", {
+                student_name: studentName,
+                student_email: studentEmail,
+                experiment_title: 'Experiment 10.1: Light and Color (Visible Light Spectrum)',
+                hypothesis: 'Exploring how white light separates into component colors through dispersion',
+                missing_elements: `Colors: ${experimentData.colors_observed ? '✓' : '✗'}, Analysis: ${experimentData.analysis_q1 ? '✓' : '✗'}, Conclusions: ${experimentData.conclusions ? '✓' : '✗'}`,
+                conclusion: experimentDataString,
+                subject: `Physical Science Experiment 10.1 Results - ${studentName}`
+            })
+            .then(function(response) {
+                console.log('Email sent successfully:', response);
+                showSubmissionMessage('Your results have been submitted successfully!', 'success');
+            })
+            .catch(function(error) {
+                console.error('Email sending failed:', error);
+                showSubmissionMessage('Failed to submit results. Please try again or contact your instructor.', 'error');
+            });
+        });
+        
+        function showSubmissionMessage(message, type) {
+            const submissionMessage = document.getElementById('submission-message');
+            if (!submissionMessage) return;
+            
+            submissionMessage.textContent = message;
+            submissionMessage.className = 'mt-4 p-3 rounded';
+            
+            if (type === 'success') {
+                submissionMessage.classList.add('bg-green-100', 'text-green-800');
+            } else if (type === 'error') {
+                submissionMessage.classList.add('bg-red-100', 'text-red-800');
+            } else {
+                submissionMessage.classList.add('bg-blue-100', 'text-blue-800');
+            }
+            
+            submissionMessage.classList.remove('hidden');
+        }
+    </script>
+</Layout>

@@ -1,0 +1,951 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Module 7 Quiz">
+    <div class="container">
+        <h1>Physical Science Module 7 Quiz</h1>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .email-input {
+        margin-bottom: 20px;
+    }
+    .email-input input[type="email"] {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 250px;
+    }
+    .question {
+        margin-bottom: 20px;
+    }
+    .options {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    .option-button {
+        display: block;
+        width: 100%;
+        padding: 12px 15px;
+        text-align: left;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        margin-bottom: 8px;
+        transition: all 0.2s ease;
+    }
+    .option-button:hover {
+        background: #f8f9fa;
+        border-color: #adb5bd;
+    }
+    .option-button.selected {
+        background: #e9ecef;
+        border: 1px solid #212529;
+        font-weight: 500;
+    }
+    .option-button.correct {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .feedback {
+        margin: 15px 0;
+        padding: 12px 15px;
+        border-radius: 4px;
+        font-size: 15px;
+        display: none;
+    }
+    .feedback.correct {
+        display: block;
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+    }
+    .feedback.incorrect {
+        display: block;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+    }
+    .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .controls button {
+        padding: 8px 20px;
+        font-size: 16px;
+        background: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .controls button:hover {
+        background: #e9ecef;
+        border-color: #adb5bd;
+    }
+    #start-quiz {
+        background: #2196f3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .email-status {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 5px;
+        display: none;
+    }
+    .email-status.success {
+        background-color: #c8e6c9;
+        border: 1px solid #4caf50;
+    }
+    .email-status.error {
+        background-color: #ffcdd2;
+        border: 1px solid #f44336;
+    }
+    .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #f0f0f0;
+        margin: 10px 0;
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    .progress-bar .fill {
+        height: 100%;
+        background: #2196f3;
+        transition: width 0.3s ease;
+    }
+    #question-number {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 15px;
+    }
+    #question-text {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script is:inline>
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
+        } catch (err) {
+            console.error('Error initializing EmailJS:', err);
+        }
+    };
+
+    // Utility function to shuffle array and track original indices
+    function shuffleAnswers(question) {
+        const originalOptions = [...question.options];
+        const correctAnswerIndex = question.correctAnswer;
+        
+        // Create array of indices
+        const indices = originalOptions.map((_, index) => index);
+        
+        // Fisher-Yates shuffle
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        // Apply shuffle to options and find new correct answer index
+        const shuffledOptions = indices.map(i => originalOptions[i]);
+        const newCorrectAnswerIndex = indices.indexOf(correctAnswerIndex);
+        
+        return {
+            ...question,
+            options: shuffledOptions,
+            correctAnswer: newCorrectAnswerIndex,
+            originalOrder: indices
+        };
+    }
+
+    // Initialize randomized questions when quiz starts
+    function initializeQuiz() {
+        // Shuffle answers for each question
+        window.questions = originalQuestions.map(question => shuffleAnswers(question));
+        
+        // Initialize quiz state after questions are randomized
+        window.currentQuestion = 0;
+        window.userAnswers = new Array(window.questions.length).fill(undefined);
+        window.questionAttempts = new Array(window.questions.length).fill(0);
+        
+        console.log('Module 7 quiz initialized with randomized answers');
+    }
+
+    const originalQuestions = [
+        {
+            question: "What is the acceleration due to gravity near the surface of the Earth in metric units? (Page 234)",
+            options: [
+                "5.2 meters per second squared in standard conditions",
+                "9.8 meters per second squared which is the standard value",
+                "15.6 meters per second squared under high pressure",
+                "32.2 meters per second squared in imperial units"
+            ],
+            correctAnswer: 1,
+            explanation: "The acceleration due to gravity near Earth's surface is approximately 9.8 m/s²."
+        },
+        {
+            question: "Using the equation d = ½ × a × t², calculate how far an object falls in 2 seconds (using g = 9.8 m/s²). (Page 234)",
+            options: [
+                "19.6 meters",
+                "4.9 meters",
+                "39.2 meters",
+                "9.8 meters"
+            ],
+            correctAnswer: 0,
+            explanation: "Using d = ½ × 9.8 × 2² = ½ × 9.8 × 4 = 19.6 meters"
+        },
+        {
+            question: "What was Aristotle's incorrect belief about motion? (Page 237)",
+            options: [
+                "Objects in motion stay in motion",
+                "A continuous force is required to keep an object moving at constant speed",
+                "Gravity affects all objects equally",
+                "Objects naturally come to rest due to friction"
+            ],
+            correctAnswer: 1,
+            explanation: "Aristotle incorrectly believed that a continual unbalanced force is required to keep an object moving at a constant speed."
+        },
+        {
+            question: "What is inertia? (Page 237)",
+            options: [
+                "The speed of an object",
+                "The force of gravity",
+                "The tendency of an object to resist changes in its velocity",
+                "The acceleration of a falling object"
+            ],
+            correctAnswer: 2,
+            explanation: "Inertia is the tendency of an object to resist changes in its velocity."
+        },
+        {
+            question: "What was Galileo's major contribution to understanding motion? (Page 238)",
+            options: [
+                "He invented the stopwatch",
+                "He discovered gravity",
+                "He proposed that objects would continue moving unless stopped by a force",
+                "He proved that heavier objects fall faster"
+            ],
+            correctAnswer: 2,
+            explanation: "Galileo argued that an object would continue moving at a constant speed forever unless it was stopped by a force, contrary to Aristotle's belief."
+        },
+        {
+            question: "According to Newton's First Law, what happens to an object in motion when no forces act on it? (Page 240)",
+            options: [
+                "It gradually slows down",
+                "It continues moving in a straight line at constant speed",
+                "It accelerates",
+                "It stops immediately"
+            ],
+            correctAnswer: 1,
+            explanation: "Newton's first law states that an object in motion will stay in motion at constant velocity unless acted upon by an outside force."
+        },
+        {
+            question: "In the coin and card experiment, why does the coin fall straight down when the card is flicked quickly? (Page 243)",
+            options: [
+                "Because gravity pulls harder on the coin",
+                "Because the coin has more mass than the card",
+                "Because no force was applied to the coin, only to the card",
+                "Because the coin moves faster than the card"
+            ],
+            correctAnswer: 2,
+            explanation: "When you flick the card, you apply a force to the card but not to the coin. Since no force acts on the coin, it remains motionless until gravity pulls it down."
+        },
+        {
+            question: "Why does a raw egg continue spinning after being briefly stopped while a hard-boiled egg stops? (Page 243)",
+            options: [
+                "The raw egg is heavier",
+                "The hard-boiled egg has more friction",
+                "The liquid inside the raw egg maintains its inertia and continues moving",
+                "The raw egg has less mass"
+            ],
+            correctAnswer: 2,
+            explanation: "Since the raw egg is filled with liquid, both the liquid inside and the shell outside were in motion. When briefly stopped, it wasn't long enough to overcome the inertia of the liquid inside."
+        },
+        {
+            question: "What happens when you're riding in a car and the driver suddenly applies the brakes? (Page 240)",
+            options: [
+                "You are thrown backward",
+                "You continue moving forward until your seatbelt stops you",
+                "You move sideways",
+                "You immediately stop with the car"
+            ],
+            correctAnswer: 1,
+            explanation: "Due to inertia, your body continues moving at its initial velocity until an outside force (the seatbelt) acts on you to change your motion."
+        },
+        {
+            question: "What was Newton's major achievement regarding the laws of motion? (Page 239)",
+            options: [
+                "He invented new experiments",
+                "He proved Galileo wrong",
+                "He unified the laws governing motion both on Earth and in the heavens",
+                "He discovered gravity exists"
+            ],
+            correctAnswer: 2,
+            explanation: "Newton established scientific laws that govern 99% of what we see and feel every day, unifying the laws of motion for both celestial and terrestrial objects."
+        },
+        {
+            question: "What is Newton's Second Law expressed as an equation? (Page 246)",
+            options: [
+                "F = ma",
+                "F = mv",
+                "F = mg",
+                "F = m/a"
+            ],
+            correctAnswer: 0,
+            explanation: "Newton's second law states that net force equals mass times acceleration (F = ma)."
+        },
+        {
+            question: "If you double the force applied to an object while keeping its mass constant, what happens to its acceleration? (Page 246)",
+            options: [
+                "The acceleration doubles",
+                "The acceleration stays the same",
+                "The acceleration halves",
+                "The acceleration becomes zero"
+            ],
+            correctAnswer: 0,
+            explanation: "According to F = ma, acceleration is directly proportional to force when mass is constant. If you double the force, the acceleration doubles."
+        },
+        {
+            question: "If you kick a soccer ball that has twice the mass with the same force, what happens to its acceleration compared to the original ball? (Page 246)",
+            options: [
+                "The acceleration doubles",
+                "The acceleration stays the same",
+                "The acceleration becomes half",
+                "The acceleration becomes zero"
+            ],
+            correctAnswer: 2,
+            explanation: "Objects with more mass have more inertia. If mass doubles while force stays constant, acceleration becomes half according to F = ma."
+        },
+        {
+            question: "According to Newton's Third Law, when a hammer strikes a nail, what is true about the forces? (Pages 252-253)",
+            options: [
+                "The hammer applies more force than the nail",
+                "The nail applies more force than the hammer",
+                "The forces are equal and opposite",
+                "There is only one force involved"
+            ],
+            correctAnswer: 2,
+            explanation: "Newton's third law states that for every action force, there is an equal and opposite reaction force. When a hammer strikes a nail, the nail exerts an equal force back on the hammer."
+        },
+        {
+            question: "Why does a person jumping on a trampoline bounce up? (Page 253)",
+            options: [
+                "Because gravity temporarily stops working",
+                "Because the trampoline's reaction force pushes back with equal force",
+                "Because trampolines naturally move upward",
+                "Because air pressure pushes the person up"
+            ],
+            correctAnswer: 1,
+            explanation: "When someone jumps on a trampoline, they exert a downward force. According to Newton's third law, the trampoline exerts an equal and opposite reaction force upward, causing the person to bounce up."
+        },
+        {
+            question: "If a 1,500 kg car needs to accelerate at 0.03 m/s² to the east, what net force must be applied? (Page 247)",
+            options: [
+                "45 N to the east",
+                "45 N to the west",
+                "50 N to the east",
+                "50 N to the west"
+            ],
+            correctAnswer: 0,
+            explanation: "Using F = ma: F = (1500 kg)(0.03 m/s²) = 45 N. Since acceleration is to the east, the force must also be to the east."
+        },
+        {
+            question: "A 1,000 kg car experiences a net force of 4,000 N forward. What is its acceleration? (Page 248)",
+            options: [
+                "2 m/s² forward",
+                "4 m/s² forward",
+                "6 m/s² forward",
+                "8 m/s² forward"
+            ],
+            correctAnswer: 1,
+            explanation: "Using F = ma and solving for a: a = F/m = 4000 N/1000 kg = 4 m/s². Direction is the same as the force."
+        },
+        {
+            question: "An astronaut has a mass of 121 kg. What is their weight on Earth (g = 9.8 m/s²)? (Pages 251-252)",
+            options: [
+                "1185.8 N",
+                "1000 N",
+                "900 N",
+                "800 N"
+            ],
+            correctAnswer: 0,
+            explanation: "Using W = mg: W = (121 kg)(9.8 m/s²) = 1185.8 N"
+        },
+        {
+            question: "What are the four fundamental forces in physics? (Page 256)",
+            options: [
+                "Electromagnetic, strong nuclear, weak nuclear, and gravitational forces",
+                "Mechanical, thermal, electrical, and magnetic forces",
+                "Friction, tension, normal, and gravitational forces",
+                "Elastic, inelastic, contact, and non-contact forces"
+            ],
+            correctAnswer: 0,
+            explanation: "Physicists think there are only four different kinds of force in creation: the electromagnetic force, the strong nuclear force, the weak nuclear force, and gravitational force."
+        },
+        {
+            question: "Which of the following is true about the strong nuclear force? (Page 257)",
+            options: [
+                "It is the weakest of the fundamental forces",
+                "It acts over very large distances",
+                "It is about 100 times stronger than the electromagnetic force",
+                "It repels protons from each other"
+            ],
+            correctAnswer: 2,
+            explanation: "The strong nuclear force is the strongest of the four fundamental forces. Although it only acts over a very small distance, it is about 100 times stronger than the repulsive electromagnetic force."
+        },
+        {
+            question: "What is unique about the electromagnetic force compared to other fundamental forces? (Pages 256-257)",
+            options: [
+                "It is the strongest force",
+                "It can be either attractive or repulsive",
+                "It only works on protons",
+                "It only works at short distances"
+            ],
+            correctAnswer: 1,
+            explanation: "The electromagnetic force is the only force that can be either attractive or repulsive. Like charges repel and opposite charges attract."
+        },
+        {
+            question: "According to Einstein's General Theory of Relativity, what causes objects to move toward each other? (Page 261-262)",
+            options: [
+                "Direct gravitational attraction between objects",
+                "The curvature of space around massive objects",
+                "Magnetic attraction between objects",
+                "The strong nuclear force"
+            ],
+            correctAnswer: 1,
+            explanation: "Einstein's theory states that objects do not move towards each other because of gravitational attraction, but because they are following the curve of space around an object."
+        },
+        {
+            question: "What happens to gravitational force when the distance between two objects doubles? (Page 260)",
+            options: [
+                "It doubles",
+                "It stays the same",
+                "It becomes 1/4 as strong",
+                "It becomes 1/2 as strong"
+            ],
+            correctAnswer: 2,
+            explanation: "Gravitational force is inversely proportional to the square of the distance. When the distance doubles, the gravitational force decreases by 2² or 4."
+        },
+        {
+            question: "In the vinegar and baking soda experiment, how does Newton's Third Law explain the stopper popping out? (Page 254-255)",
+            options: [
+                "The vinegar pushes harder than the baking soda",
+                "The gas pressure pushes the stopper out while the stopper pushes back with equal force",
+                "The stopper is lighter than the gas",
+                "Gravity pulls the stopper down"
+            ],
+            correctAnswer: 1,
+            explanation: "When CO2 forms, it creates pressure that pushes on the stopper. According to Newton's Third Law, the stopper pushes back with equal force until the gas pressure becomes great enough to push it out."
+        },
+        {
+            question: "How do rockets demonstrate Newton's Third Law? (Page 255-256)",
+            options: [
+                "The rocket pushes against the air",
+                "The rocket is pulled up by gravity",
+                "The gases pushed out create an equal and opposite force pushing the rocket up",
+                "The rocket becomes lighter as fuel burns"
+            ],
+            correctAnswer: 2,
+            explanation: "When a rocket expels gases (action force), those gases push back on the rocket with an equal and opposite reaction force, propelling it forward."
+        },
+        {
+            question: "What is the role of the weak nuclear force? (Page 258)",
+            options: [
+                "It holds protons and neutrons together",
+                "It governs radioactive decay and can change quarks from one type to another",
+                "It creates magnetic fields",
+                "It causes gravity between objects"
+            ],
+            correctAnswer: 1,
+            explanation: "The weak force governs certain radioactive processes in atoms where one type of quark changes into another type of quark. This can cause a proton to change into a neutron, or vice versa."
+        },
+        {
+            question: "What is a force? (Page 226)",
+            options: [
+                "A push or pull that acts on an object",
+                "The speed of an object",
+                "The distance an object travels",
+                "The time taken to move"
+            ],
+            correctAnswer: 0,
+            explanation: "Force is defined as a push or pull that acts on an object."
+        },
+        {
+            question: "What is the SI unit for force? (Page 227)",
+            options: [
+                "Kilogram (kg)",
+                "Newton (N)",
+                "Meter (m)",
+                "Second (s)"
+            ],
+            correctAnswer: 1,
+            explanation: "The SI unit for force is the newton (N), which is the force required to make an object with a mass of 1 kilogram accelerate at 1 meter per second squared."
+        },
+        {
+            question: "What happens when forces on an object are balanced? (Page 227)",
+            options: [
+                "The object accelerates",
+                "The object changes direction",
+                "There is no change in the object's motion",
+                "The object slows down"
+            ],
+            correctAnswer: 2,
+            explanation: "When forces are balanced (net force = 0), there is no change in the object's motion."
+        },
+        {
+            question: "What type of quantity is force? (Page 227)",
+            options: [
+                "A scalar quantity",
+                "A vector quantity",
+                "A derived quantity",
+                "A base quantity"
+            ],
+            correctAnswer: 1,
+            explanation: "Like acceleration and velocity, force is a vector quantity that has both magnitude and direction."
+        },
+        {
+            question: "What happens when forces on an object are unbalanced? (Page 243)",
+            options: [
+                "The object remains stationary",
+                "The forces cancel each other out",
+                "The object accelerates",
+                "Nothing happens to the object"
+            ],
+            correctAnswer: 2,
+            explanation: "When forces are unbalanced (net force ≠ 0), the object accelerates."
+        },
+        {
+            question: "What is friction? (Page 229)",
+            options: [
+                "A force that only acts on moving objects",
+                "A force that results when surfaces of objects rub against each other",
+                "A force that only acts in one direction",
+                "A force that makes objects move faster"
+            ],
+            correctAnswer: 1,
+            explanation: "Friction is a force that results when surfaces of objects rub against each other and opposes motion."
+        },
+        {
+            question: "Which type of friction acts on objects that are not moving? (Page 230)",
+            options: [
+                "Kinetic friction",
+                "Static friction",
+                "Rolling friction",
+                "Fluid friction"
+            ],
+            correctAnswer: 1,
+            explanation: "Static friction is the frictional force that acts on stationary objects and opposes the initiation of motion."
+        },
+        {
+            question: "What is kinetic friction also called? (Page 231)",
+            options: [
+                "Static friction",
+                "Rolling friction",
+                "Sliding friction",
+                "Fluid friction"
+            ],
+            correctAnswer: 2,
+            explanation: "Kinetic friction is also called sliding friction or dynamic friction."
+        },
+        {
+            question: "Which type of friction is typically the smallest? (Page 231)",
+            options: [
+                "Static friction",
+                "Sliding friction",
+                "Rolling friction",
+                "Fluid friction"
+            ],
+            correctAnswer: 2,
+            explanation: "Rolling friction is considerably less than even sliding friction, which is why it's always easier to use a dolly to move boxes."
+        },
+        {
+            question: "What is fluid friction? (Page 231)",
+            options: [
+                "Friction between solid surfaces",
+                "Friction between rolling objects",
+                "Friction that occurs in liquids and gases",
+                "Friction that only occurs in water"
+            ],
+            correctAnswer: 2,
+            explanation: "Fluid friction occurs in liquids and gases (fluids). Examples include air resistance and water resistance."
+        },
+        {
+            question: "Why do swimmers wear swim caps? (Page 231)",
+            options: [
+                "To keep their hair dry",
+                "To reduce fluid friction",
+                "To stay warm in the water",
+                "To look professional"
+            ],
+            correctAnswer: 1,
+            explanation: "Swimmers wear swim caps to reduce the fluid friction they experience in the water and shave off a fraction of a second from their time."
+        },
+        {
+            question: "What is free fall? (Page 232)",
+            options: [
+                "Any falling motion",
+                "Falling with a parachute",
+                "The motion of an object when it is falling solely under the influence of gravity",
+                "Falling at terminal velocity"
+            ],
+            correctAnswer: 2,
+            explanation: "Free fall is the motion of an object when it is falling solely under the influence of gravity."
+        },
+        {
+            question: "Why do heavy and light objects fall at the same rate in a vacuum? (Page 232-234)",
+            options: [
+                "Because they have different masses",
+                "Because gravity pulls harder on heavier objects",
+                "Because they have different weights",
+                "Because they experience different forces"
+            ],
+            correctAnswer: 0,
+            explanation: "One of the properties of free fall is that all objects experience the same acceleration regardless of their weight or physical makeup."
+        },
+        {
+            question: "What causes objects of different weights to fall at different speeds in air? (Page 233)",
+            options: [
+                "Gravity pulls harder on heavier objects",
+                "Light objects accelerate faster",
+                "Air resistance affects light objects more than heavy ones",
+                "The objects have different shapes"
+            ],
+            correctAnswer: 2,
+            explanation: "Heavy objects fall faster than light objects not because their acceleration due to gravity is larger, but because they are not as strongly affected by air resistance."
+        },
+        {
+            question: "Why is friction important for walking? (Page 229)",
+            options: [
+                "It makes walking more difficult",
+                "It prevents your feet from sliding out from under you",
+                "It makes you move faster",
+                "It reduces the force of gravity"
+            ],
+            correctAnswer: 1,
+            explanation: "Without friction, walking would be impossible because every step would be like walking on a sheet of ice."
+        }
+    ];
+
+    // Initialize quiz state after questions are defined
+    window.currentQuestion = 0;
+    window.userAnswers = new Array(originalQuestions.length).fill(undefined);
+    window.questionAttempts = new Array(window.questions.length).fill(0);
+
+    function startQuiz() {
+        const emailInput = document.getElementById('email');
+        const saveResults = document.getElementById('save-results');
+        
+        // Validate email if save results is checked
+        if (saveResults.checked && (!emailInput.value || !emailInput.value.includes('@'))) {
+            alert('Please enter a valid email address or uncheck "Save results"');
+            return;
+        }
+        
+        // Store user preferences
+        window.userEmail = emailInput.value;
+        window.saveResults = saveResults.checked;
+        
+        // Initialize quiz with randomized answers
+        initializeQuiz();
+        
+        // Hide email section and show quiz
+        document.getElementById('email-section').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        
+        // Show first question
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const options = document.querySelector('.options');
+        const feedback = document.getElementById('feedback');
+        
+        questionNumber.textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+        questionText.textContent = window.questions[window.currentQuestion].question;
+        
+        // Clear previous options and feedback
+        options.innerHTML = '';
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        
+        // Create option buttons
+        window.questions[window.currentQuestion].options.forEach((option, index) => {
+            const button = document.createElement('button');
+            button.className = 'option-button';
+            button.textContent = option;
+            button.onclick = () => selectAnswer(index);
+            options.appendChild(button);
+        });
+        
+        // Update navigation buttons
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const submitBtn = document.getElementById('submitBtn');
+        
+        prevBtn.style.display = window.currentQuestion > 0 ? 'block' : 'none';
+        nextBtn.style.display = window.currentQuestion < window.questions.length - 1 ? 'block' : 'none';
+        submitBtn.style.display = window.currentQuestion === window.questions.length - 1 ? 'block' : 'none';
+        
+        // If this question was already answered, show the previous answer
+        if (window.userAnswers[window.currentQuestion] !== undefined) {
+            const options = document.querySelectorAll('.option-button');
+            const selectedOption = options[window.userAnswers[window.currentQuestion]];
+            if (selectedOption) {
+                selectedOption.classList.add('selected');
+                if (window.userAnswers[window.currentQuestion] === window.questions[window.currentQuestion].correctAnswer) {
+                    selectedOption.classList.add('correct');
+                    feedback.className = 'feedback correct';
+                    feedback.textContent = window.questions[window.currentQuestion].explanation;
+                }
+            }
+        }
+    }
+
+    function selectAnswer(selectedIndex) {
+        const options = document.querySelectorAll('.option-button');
+        const feedback = document.getElementById('feedback');
+        const currentQuestion = window.questions[window.currentQuestion];
+        
+        // Only allow selection if not already answered correctly
+        if (window.userAnswers[window.currentQuestion] !== currentQuestion.correctAnswer) {
+            window.questionAttempts[window.currentQuestion]++;
+            
+            // Clear previous selection
+            options.forEach(option => {
+                option.classList.remove('selected', 'correct', 'incorrect');
+            });
+            
+            // Mark new selection
+            options[selectedIndex].classList.add('selected');
+            
+            // Check if answer is correct
+            if (selectedIndex === currentQuestion.correctAnswer) {
+                options[selectedIndex].classList.add('correct');
+                feedback.className = 'feedback correct';
+                feedback.textContent = currentQuestion.explanation;
+                window.userAnswers[window.currentQuestion] = selectedIndex;
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                feedback.className = 'feedback incorrect';
+                feedback.textContent = "Incorrect. Try again.";
+                
+                // If max attempts reached, show correct answer
+                if (window.questionAttempts[window.currentQuestion] >= 2) {
+                    options[currentQuestion.correctAnswer].classList.add('correct');
+                    feedback.textContent = currentQuestion.explanation;
+                    window.userAnswers[window.currentQuestion] = selectedIndex; // Store the last attempt
+                }
+            }
+        }
+        
+        updateProgressBar();
+    }
+
+    function previousQuestion() {
+        if (window.currentQuestion > 0) {
+            window.currentQuestion--;
+            showQuestion();
+        }
+    }
+
+    function nextQuestion() {
+        if (window.currentQuestion < window.questions.length - 1) {
+            window.currentQuestion++;
+            showQuestion();
+        }
+    }
+
+    function updateProgressBar() {
+        const progressBar = document.querySelector('.progress-bar .fill');
+        if (progressBar) {
+            const progress = ((window.currentQuestion + 1) / window.questions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+    }
+
+    function submitQuiz() {
+        const score = window.userAnswers.reduce((total, answer, index) => {
+            return total + (answer === window.questions[index].correctAnswer ? 1 : 0);
+        }, 0);
+
+        const quizContainer = document.getElementById('quiz-container');
+        const resultsDiv = document.getElementById('results');
+        const scoreDiv = document.getElementById('score');
+        const incorrectAnswersDiv = document.getElementById('incorrect-answers');
+        
+        quizContainer.style.display = 'none';
+        resultsDiv.style.display = 'block';
+        
+        const percentage = (score / window.questions.length) * 100;
+        scoreDiv.textContent = `Your score: ${score}/${window.questions.length} (${percentage.toFixed(1)}%)`;
+        
+        // Show incorrect answers
+        incorrectAnswersDiv.innerHTML = '';
+        window.userAnswers.forEach((answer, index) => {
+            if (answer !== window.questions[index].correctAnswer) {
+                const questionDiv = document.createElement('div');
+                questionDiv.innerHTML = `
+                    <p><strong>Question ${index + 1}:</strong> ${window.questions[index].question}</p>
+                    <p class="wrong-answer">Your answer: ${window.questions[index].options[answer]}</p>
+                    <p class="right-answer">Correct answer: ${window.questions[index].options[window.questions[index].correctAnswer]}</p>
+                `;
+                incorrectAnswersDiv.appendChild(questionDiv);
+            }
+        });
+
+        // Send results via EmailJS and Google Sheets if enabled
+        if (window.saveResults && window.userEmail) {
+            try {
+                // Post to Google Sheets
+                const sheetsData = {
+                    timestamp: new Date().toISOString(),
+                    studentEmail: window.userEmail,
+                    quizTitle: 'Physical Science Module 7 Quiz',
+                    score: score,
+                    totalQuestions: window.questions.length,
+                    percentage: percentage.toFixed(1),
+                    incorrectCount: window.questions.length - score,
+                    timeCompleted: new Date().toLocaleString()
+                };
+
+                fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                }).then(() => {
+                    console.log('Google Sheets: Data logged successfully');
+                }).catch(error => {
+                    console.error('Google Sheets: Error logging data:', error);
+                });
+
+                // Prepare detailed incorrect answers for instructor email
+                const incorrectAnswers = window.userAnswers.map((answer, index) => {
+                    if (answer !== window.questions[index].correctAnswer) {
+                        return `Question ${index + 1}: ${window.questions[index].question}\nYour Answer: ${window.questions[index].options[answer]}\nCorrect Answer: ${window.questions[index].options[window.questions[index].correctAnswer]}\n`;
+                    }
+                    return null;
+                }).filter(item => item !== null).join('\n');
+
+                // Send EmailJS notification to instructor
+                const templateParams = {
+                    from_name: 'Physical Science Quiz System',
+                    student_email: window.userEmail,
+                    to_name: 'Instructor',
+                    subject: 'Physical Science Module 7 Quiz Results',
+                    message: `Student Email: ${window.userEmail}\n\nQuiz: Module 7: Forces and Motion\nScore: ${score}/${window.questions.length} (${percentage.toFixed(1)}%)\n\nIncorrect Answers:\n${incorrectAnswers}`,
+                    reply_to: window.userEmail
+                };
+
+                emailjs.send('service_ot1jg6s', 'template_0nxqbk8', templateParams)
+                    .then(() => {
+                        const emailStatus = document.getElementById('email-status');
+                        emailStatus.textContent = '✅ Results sent to instructor via email! ✅ Data logged to Google Sheets';
+                        emailStatus.className = 'email-status success';
+                        emailStatus.style.display = 'block';
+                    })
+                    .catch(() => {
+                        const emailStatus = document.getElementById('email-status');
+                        emailStatus.textContent = 'Failed to send results. Please try again.';
+                        emailStatus.className = 'email-status error';
+                        emailStatus.style.display = 'block';
+                    });
+            } catch (error) {
+                console.error('Error in quiz submission:', error);
+                const emailStatus = document.getElementById('email-status');
+                emailStatus.textContent = 'Error processing results. Please try again.';
+                emailStatus.className = 'email-status error';
+                emailStatus.style.display = 'block';
+            }
+        }
+    }
+
+    // Add download results functionality
+    document.getElementById('download-results').addEventListener('click', function() {
+        const score = window.userAnswers.reduce((total, answer, index) => {
+            return total + (answer === window.questions[index].correctAnswer ? 1 : 0);
+        }, 0);
+        
+        const percentage = (score / window.questions.length) * 100;
+        
+        let resultsText = `Module 7 Quiz Results\n\n`;
+        resultsText += `Score: ${score}/${window.questions.length} (${percentage.toFixed(1)}%)\n\n`;
+        
+        window.questions.forEach((question, index) => {
+            resultsText += `Question ${index + 1}: ${question.question}\n`;
+            resultsText += `Your answer: ${question.options[window.userAnswers[index]]}\n`;
+            resultsText += `Correct answer: ${question.options[question.correctAnswer]}\n`;
+            resultsText += `${window.userAnswers[index] === question.correctAnswer ? "✓ Correct" : "✗ Incorrect"}\n\n`;
+        });
+        
+        const blob = new Blob([resultsText], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'module7_quiz_results.txt';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    });
+
+    // Add event listener for start quiz button
+    document.getElementById('start-quiz').addEventListener('click', startQuiz);
+</script>

@@ -1,0 +1,831 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Module 15 Quiz">
+    <div class="container">
+        <h1>Physical Science Module 15 Quiz</h1>
+        <p class="subtitle">Physical Science Research</p>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill" id="progress"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()" style="display: none;">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load EmailJS before initializing -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script type="text/javascript" is:inline>
+        window.onload = function() {
+            try {
+                emailjs.init("ct_s19oZHppLy9BlW");
+            } catch (error) {
+                console.error('Failed to initialize EmailJS:', error);
+            }
+        }
+    </script>
+
+    <script is:inline>
+        // Utility function to shuffle array and track original indices
+        function shuffleAnswers(question) {
+            const originalOptions = [...question.options];
+            const correctAnswerIndex = question.correctAnswer;
+            
+            // Create array of indices
+            const indices = originalOptions.map((_, index) => index);
+            
+            // Fisher-Yates shuffle
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            // Apply shuffle to options and find new correct answer index
+            const shuffledOptions = indices.map(i => originalOptions[i]);
+            const newCorrectAnswerIndex = indices.indexOf(correctAnswerIndex);
+            
+            return {
+                ...question,
+                options: shuffledOptions,
+                correctAnswer: newCorrectAnswerIndex,
+                originalOrder: indices
+            };
+        }
+
+        // Initialize randomized questions when quiz starts
+        function initializeQuiz() {
+            // Shuffle answers for each question
+            window.questions = originalQuestions.map(question => shuffleAnswers(question));
+            
+            // Initialize quiz state after questions are randomized
+            window.currentQuestion = 0;
+            window.userAnswers = new Array(window.questions.length).fill(null);
+            window.questionAttempts = new Array(window.questions.length).fill(0);
+            
+            console.log('Module 15 quiz initialized with randomized answers');
+        }
+
+        const originalQuestions = [
+            {
+                question: "What is the main purpose of scientific research?",
+                options: [
+                    "To prove existing theories are wrong and discredit past work",
+                    "To understand the world and answer questions about it",
+                    "To write long papers for school",
+                    "To impress other scientists"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Research fundamentals"
+            },
+            {
+                question: "According to the module, what is the best way to start choosing a research topic?",
+                options: [
+                    "Pick the easiest topic you can find",
+                    "Choose something that fascinates you and you want to learn more about",
+                    "Select the most complex topic available",
+                    "Ask your teacher to assign you a topic"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Choosing research topics"
+            },
+            {
+                question: "What should you do first when beginning research on a topic?",
+                options: [
+                    "Start writing your paper immediately",
+                    "Look through your student notebook and textbook to find topics of interest",
+                    "Search the internet randomly",
+                    "Ask friends what they think"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Getting started with research"
+            },
+            {
+                question: "When evaluating a website for credibility, which domain endings are generally most reliable?",
+                options: [
+                    ".com and .net",
+                    ".gov, .edu, and .org",
+                    ".info and .biz",
+                    "All domain endings are equally reliable"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Source evaluation criteria"
+            },
+            {
+                question: "What should you check about an author when evaluating a source?",
+                options: [
+                    "Only their name",
+                    "Their credentials and whether they are an authority on the topic",
+                    "How many articles they've written",
+                    "What school they attended"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Author evaluation"
+            },
+            {
+                question: "Why is it important to check the publication date of a source?",
+                options: [
+                    "Newer sources are always better",
+                    "Older sources are always more reliable",
+                    "Some information may no longer be valid if the source is too old",
+                    "The date doesn't matter for research"
+                ],
+                correctAnswer: 2,
+                reference: "Reference: Publication dates"
+            },
+            {
+                question: "What is the main concern with using Wikipedia as a research source?",
+                options: [
+                    "It's too difficult to understand",
+                    "Anyone can edit the pages, so accuracy may vary",
+                    "It doesn't have enough information",
+                    "It's only available in English"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Wikipedia limitations"
+            },
+            {
+                question: "What is plagiarism?",
+                options: [
+                    "Using too many sources in your research",
+                    "Writing too long of a research paper",
+                    "Using someone else's words without giving them credit",
+                    "Asking questions during research"
+                ],
+                correctAnswer: 2,
+                reference: "Reference: Avoiding plagiarism"
+            },
+            {
+                question: "How can you avoid plagiarism when using information from sources?",
+                options: [
+                    "Copy the text exactly as written",
+                    "Write the information in your own words and cite your sources",
+                    "Don't use any sources at all",
+                    "Only use one source for your entire paper"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Proper citation and paraphrasing"
+            },
+            {
+                question: "What should be the last sentence of your introductory paragraph?",
+                options: [
+                    "A random fact about your topic",
+                    "Your thesis statement",
+                    "A question for the reader",
+                    "Your conclusion"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Thesis statement placement"
+            },
+            {
+                question: "What is the purpose of a thesis statement?",
+                options: [
+                    "To confuse the reader",
+                    "To be the 'hook' that tells the reader what points they will learn",
+                    "To end your paper",
+                    "To list your sources"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Thesis statement purpose"
+            },
+            {
+                question: "How many main points should you typically cover in your research paper?",
+                options: [
+                    "As many as possible",
+                    "Three main points",
+                    "Only one main point",
+                    "At least ten main points"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Research paper structure"
+            },
+            {
+                question: "What should you NOT do in your concluding paragraph?",
+                options: [
+                    "Summarize your main points",
+                    "Introduce new information",
+                    "Explain how your topic impacts you",
+                    "Restate your thesis"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Concluding paragraph guidelines"
+            },
+            {
+                question: "Which of the following is an alternative way to present your research besides writing a paper?",
+                options: [
+                    "PowerPoint presentation",
+                    "Poster",
+                    "Children's storybook",
+                    "All of the above"
+                ],
+                correctAnswer: 3,
+                reference: "Reference: Alternative research presentations"
+            },
+            {
+                question: "What should you do after completing your first draft?",
+                options: [
+                    "Submit it immediately",
+                    "Proofread for spelling and grammar errors",
+                    "Start a completely new paper",
+                    "Throw it away and start over"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Proofreading process"
+            },
+            {
+                question: "How many credible sources should you use for in-depth research?",
+                options: [
+                    "One source is enough",
+                    "Two sources maximum",
+                    "At least three credible sources",
+                    "Sources aren't necessary"
+                ],
+                correctAnswer: 2,
+                reference: "Reference: Research source requirements"
+            },
+            {
+                question: "What is the benefit of using graphic organizers during research?",
+                options: [
+                    "They make your paper look more colorful",
+                    "They help you organize information and ensure you don't miss anything significant",
+                    "They are required by all teachers",
+                    "They replace the need for actual research"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Graphic organizers and outlines"
+            },
+            {
+                question: "When should you start writing your introductory paragraph?",
+                options: [
+                    "Before you do any research",
+                    "After you have your thesis statement and main points organized",
+                    "At the very end of your paper",
+                    "It doesn't matter when you write it"
+                ],
+                correctAnswer: 1,
+                reference: "Reference: Writing process order"
+            },
+            {
+                question: "What type of sentences should you use to connect paragraphs?",
+                options: [
+                    "Very short sentences",
+                    "Questions only",
+                    "Transition sentences",
+                    "Sentences that repeat the same information"
+                ],
+                correctAnswer: 2,
+                reference: "Reference: Transition sentences"
+            },
+            {
+                question: "What is the final step in the research process according to the module?",
+                options: [
+                    "Writing your paper",
+                    "Finding sources",
+                    "Celebrating your accomplishment of completing your physical science course",
+                    "Starting a new research project immediately"
+                ],
+                correctAnswer: 2,
+                reference: "Reference: Final step in research process"
+            }
+        ];
+
+        // Initialize quiz state - will be initialized by initializeQuiz()
+        window.currentQuestion = 0;
+        window.quizStarted = false;
+        window.userEmail = '';
+
+        // Load saved email
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            document.getElementById('email').value = savedEmail;
+        }
+
+        function startQuiz() {
+            const email = document.getElementById('email').value;
+            const saveResults = document.getElementById('save-results').checked;
+            
+            window.userEmail = email;
+            window.saveResults = saveResults;
+            
+            // Initialize quiz with randomized answers
+            initializeQuiz();
+            
+            document.getElementById('email-section').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = window.questions[window.currentQuestion];
+            document.getElementById('question-number').textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update progress bar
+            const progress = ((window.currentQuestion) / window.questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Show/hide navigation buttons
+            document.getElementById('prevBtn').style.display = window.currentQuestion > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Hide feedback
+            document.getElementById('feedback').style.display = 'none';
+            
+            // Restore previous answer if exists
+            if (window.userAnswers[window.currentQuestion] !== null) {
+                const buttons = document.querySelectorAll('.option-button');
+                buttons[window.userAnswers[window.currentQuestion]].classList.add('selected');
+                showFeedback(window.userAnswers[window.currentQuestion]);
+            }
+        }
+
+        function selectAnswer(optionIndex) {
+            const currentAttempts = window.questionAttempts[window.currentQuestion] || 0;
+            const question = window.questions[window.currentQuestion];
+            const options = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('feedback');
+            
+            // Clear previous selections
+            options.forEach(btn => btn.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Mark selected answer
+            options[optionIndex].classList.add('selected');
+            window.userAnswers[window.currentQuestion] = optionIndex;
+            window.questionAttempts[window.currentQuestion] = currentAttempts + 1;
+            
+            showFeedback(optionIndex);
+        }
+
+        function showFeedback(selectedIndex) {
+            const question = window.questions[window.currentQuestion];
+            const feedback = document.getElementById('feedback');
+            const options = document.querySelectorAll('.option-button');
+            
+            if (selectedIndex === question.correctAnswer) {
+                options[selectedIndex].classList.add('correct');
+                feedback.innerHTML = `<div class="correct">✓ Correct! ${question.reference}</div>`;
+                feedback.className = 'feedback correct';
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.correctAnswer].classList.add('correct');
+                feedback.innerHTML = `<div class="incorrect">✗ Incorrect. The correct answer is: ${question.options[question.correctAnswer]}<br>${question.reference}</div>`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            // Show next/submit button
+            if (window.currentQuestion < window.questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion() {
+            if (window.currentQuestion < window.questions.length - 1) {
+                const feedback = document.getElementById('feedback');
+                feedback.style.display = 'none';
+                window.currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (window.currentQuestion > 0) {
+                window.currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            let correctAnswers = 0;
+            window.questions.forEach((question, index) => {
+                if (window.userAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const percentage = Math.round((correctAnswers / window.questions.length) * 100);
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            document.getElementById('score').innerHTML = `
+                <h3>Your Score: ${correctAnswers}/${window.questions.length} (${percentage}%)</h3>
+                <p>Grade: ${getLetterGrade(percentage)}</p>
+            `;
+            
+            showFinalResults();
+            
+            const saveResults = window.userEmail && window.userEmail.length > 0;
+            if (saveResults) {
+                sendResultsEmail(correctAnswers, percentage);
+            }
+        }
+
+        function getLetterGrade(percentage) {
+            if (percentage >= 90) return 'A';
+            if (percentage >= 80) return 'B';
+            if (percentage >= 70) return 'C';
+            if (percentage >= 60) return 'D';
+            return 'F';
+        }
+
+        function showFinalResults() {
+            const detailedResults = document.getElementById('incorrect-answers');
+            let resultsHTML = '<h3>Detailed Results:</h3>';
+
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                const attempts = window.questionAttempts[index] || 0;
+                
+                resultsHTML += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <strong>Question ${index + 1}:</strong> ${question.question}<br>
+                        <strong>Your answer:</strong> ${userAnswer !== null ? question.options[userAnswer] : 'Not answered'}<br>
+                        ${!isCorrect ? `<strong>Correct answer:</strong> ${question.options[question.correctAnswer]}<br>` : ''}
+                        <strong>Attempts:</strong> ${attempts}<br>
+                        <em>${question.reference}</em>
+                    </div>
+                `;
+            });
+
+            detailedResults.innerHTML = resultsHTML;
+        }
+
+        function sendResultsEmail(correctAnswers, percentage) {
+            const emailStatus = document.getElementById('email-status');
+            emailStatus.innerHTML = '<p>Sending results to instructor...</p>';
+            
+            // Format email message like other working quizzes
+            let emailMessage = `Physical Science Module 15 Quiz Results\n\n`;
+            emailMessage += `Student: ${window.userEmail}\n`;
+            emailMessage += `Quiz: Physical Science Research\n`;
+            emailMessage += `Score: ${correctAnswers}/${window.questions.length} (${percentage}%)\n`;
+            emailMessage += `Percentage: ${percentage}%\n`;
+            emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            // Add incorrect answers details
+            const incorrectAnswers = window.userAnswers.reduce((incorrect, answer, index) => {
+                if (answer !== window.questions[index].correctAnswer) {
+                    incorrect.push({
+                        question: window.questions[index].question,
+                        userAnswer: answer !== null ? window.questions[index].options[answer] : 'Not answered',
+                        correctAnswer: window.questions[index].options[window.questions[index].correctAnswer],
+                        attempts: window.questionAttempts[index] || 0
+                    });
+                }
+                return incorrect;
+            }, []);
+            
+            if (incorrectAnswers.length > 0) {
+                emailMessage += "Incorrect Answers:\n\n";
+                incorrectAnswers.forEach((item, index) => {
+                    emailMessage += `${index + 1}. ${item.question}\n`;
+                    emailMessage += `   Your answer: ${item.userAnswer}\n`;
+                    emailMessage += `   Correct answer: ${item.correctAnswer}\n`;
+                    emailMessage += `   Attempts: ${item.attempts}\n\n`;
+                });
+            } else {
+                emailMessage += "Perfect score! All answers were correct.\n";
+            }
+            
+            const templateParams = {
+                to_email: window.userEmail,
+                message: emailMessage,
+                score: correctAnswers,
+                total: window.questions.length,
+                percentage: percentage
+            };
+
+            // Post to Google Sheets first
+            const sheetsData = {
+                timestamp: new Date().toISOString(),
+                studentEmail: window.userEmail,
+                quizTitle: 'Physical Science Module 15 Quiz',
+                score: correctAnswers,
+                totalQuestions: window.questions.length,
+                percentage: percentage.toString(),
+                incorrectCount: window.questions.length - correctAnswers,
+                timeCompleted: new Date().toLocaleString()
+            };
+
+            try {
+                fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                }).then(() => {
+                console.log('Google Sheets: Data logged successfully');
+            }).catch(error => {
+                console.error('Google Sheets: Error logging data:', error);
+            });
+            } catch (error) {
+                console.error('Error sending data to Google Sheets:', error);
+            }
+
+            // Send EmailJS notification to instructor with standardized format
+            const updatedTemplateParams = {
+                from_name: 'Physical Science Quiz System',
+                student_email: window.userEmail,
+                to_name: 'Instructor',
+                subject: 'Physical Science Module 15 Quiz Results',
+                submission_date: new Date().toLocaleString(),
+                message: emailMessage,
+                reply_to: window.userEmail
+            };
+
+            emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams)
+                .then(function(response) {
+                    emailStatus.innerHTML = '<p style="color: green;">✅ Results sent to instructor via email! ✅ Data logged to Google Sheets</p>';
+                })
+                .catch(function(error) {
+                    emailStatus.innerHTML = '<p style="color: red;">✗ Failed to send results to instructor.</p>';
+                    console.error('EmailJS error:', error);
+                });
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .email-input {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .email-input input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .email-input div {
+            margin-bottom: 15px;
+        }
+
+        .email-input input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #3498db;
+            transition: width 0.3s ease;
+        }
+
+        #question-number {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        #question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background-color: #ecf0f1;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .option-button:hover {
+            background-color: #d5dbdb;
+            border-color: #95a5a6;
+        }
+
+        .option-button.selected {
+            background-color: #3498db;
+            color: white;
+            border-color: #2980b9;
+        }
+
+        .option-button.correct {
+            background-color: #27ae60 !important;
+            color: white !important;
+            border-color: #229954 !important;
+        }
+
+        .option-button.incorrect {
+            background-color: #e74c3c !important;
+            color: white !important;
+            border-color: #c0392b !important;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .feedback.correct {
+            background-color: #d5f4e6;
+            border: 1px solid #27ae60;
+            color: #1e8449;
+        }
+
+        .feedback.incorrect {
+            background-color: #fadbd8;
+            border: 1px solid #e74c3c;
+            color: #c0392b;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-button:hover {
+            background-color: #2980b9;
+        }
+
+        .control-button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        #results {
+            text-align: center;
+        }
+
+        #score {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        #score h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .result-buttons {
+            margin-top: 20px;
+        }
+
+        .email-status {
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .result-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            text-align: left;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .result-item.correct {
+            border-left-color: #27ae60;
+            background-color: #d5f4e6;
+        }
+
+        .result-item.incorrect {
+            border-left-color: #e74c3c;
+            background-color: #fadbd8;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .control-button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</Layout>

@@ -1,0 +1,322 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 2 Quiz: Variables and Data Types">
+    <main style="min-height: 100vh; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 3rem 0;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <div style="background: var(--accent); color: white; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; margin-right: 1rem;">Q2</div>
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 2rem; font-weight: bold; color: var(--black); margin: 0;">Week 2 Quiz</h1>
+                        <p style="color: var(--gray); margin: 0;">Variables and Data Types</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem;">
+                <form id="week2Quiz" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Student Info -->
+                    <div style="background: var(--gray-light); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 1rem;">Student Information</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Name:</label>
+                                <input type="text" id="studentName" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Email:</label>
+                                <input type="email" id="studentEmail" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div style="border-left: 4px solid var(--accent); padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 1: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which of the following is a valid variable name in Python?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="a" style="margin-right: 0.75rem;">
+                                <span>A) 2name</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="b" style="margin-right: 0.75rem;">
+                                <span>B) student_name</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="c" style="margin-right: 0.75rem;">
+                                <span>C) class</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="d" style="margin-right: 0.75rem;">
+                                <span>D) my-variable</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="border-left: 4px solid var(--accent); padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 2: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">What data type is the value 3.14?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="a" style="margin-right: 0.75rem;">
+                                <span>A) int</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="b" style="margin-right: 0.75rem;">
+                                <span>B) float</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="c" style="margin-right: 0.75rem;">
+                                <span>C) str</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="d" style="margin-right: 0.75rem;">
+                                <span>D) bool</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div style="border-left: 4px solid var(--accent); padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 3: Short Answer (3 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Write a Python statement that asks the user for their age and stores it in a variable called 'age':</p>
+                        <textarea id="q3" name="q3" rows="3" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: monospace; font-size: 0.9rem;" placeholder="Type your answer here..."></textarea>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="border-left: 4px solid var(--accent); padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 4: True/False (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">The input() function always returns a string, even if the user enters a number.</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="true" style="margin-right: 0.75rem;">
+                                <span>True</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="false" style="margin-right: 0.75rem;">
+                                <span>False</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div style="border-left: 4px solid var(--accent); padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 5: Multiple Choice (1 point)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which function would you use to convert a string to an integer?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="a" style="margin-right: 0.75rem;">
+                                <span>A) str()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="b" style="margin-right: 0.75rem;">
+                                <span>B) int()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="c" style="margin-right: 0.75rem;">
+                                <span>C) float()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="d" style="margin-right: 0.75rem;">
+                                <span>D) input()</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" style="background: var(--accent); color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Display -->
+                <div id="quizResults" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px;">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #1e40af; margin-bottom: 1rem;">Quiz Results</h3>
+                    <div id="scoreDisplay" style="font-size: 1.1rem; margin-bottom: 1rem;"></div>
+                    <div id="feedback" style="color: var(--gray);"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+                <a href="/programming/lessons/week2" style="background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
+                    ← Back to Lesson
+                </a>
+                <a href="/programming/semester1" style="background: var(--gray); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
+                    Semester Overview
+                </a>
+                <a href="/programming/lessons/week3" style="background: var(--accent-dark); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
+                    Next Lesson →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz answers and scoring
+        const correctAnswers = {
+            q1: 'b',  // student_name
+            q2: 'b',  // float
+            q4: 'true',  // input() returns string
+            q5: 'b'   // int()
+        };
+
+        // Point values for each question
+        const questionPoints = {
+            q1: 2,  // Multiple Choice
+            q2: 2,  // Multiple Choice
+            q3: 3,  // Short Answer
+            q4: 2,  // True/False
+            q5: 1   // Multiple Choice
+        };
+
+        const totalPoints = 10;
+
+        document.getElementById('week2Quiz').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim();
+            
+            // Validate student information with specific messages
+            if (!studentName && !studentEmail) {
+                alert('⚠️ Please enter both your name and email address before submitting the quiz.');
+                document.getElementById('studentName').focus();
+                return;
+            } else if (!studentName) {
+                alert('⚠️ Please enter your name before submitting the quiz.');
+                document.getElementById('studentName').focus();
+                return;
+            } else if (!studentEmail) {
+                alert('⚠️ Please enter your email address before submitting the quiz.');
+                document.getElementById('studentEmail').focus();
+                return;
+            }
+            
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(studentEmail)) {
+                alert('⚠️ Please enter a valid email address (e.g., student@example.com).');
+                document.getElementById('studentEmail').focus();
+                return;
+            }
+
+            let score = 0;
+            let feedback = [];
+
+            // Check multiple choice answers (Q1, Q2, Q4, Q5)
+            Object.keys(correctAnswers).forEach(questionId => {
+                const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+                const questionNum = questionId.slice(1);
+                const points = questionPoints[questionId];
+                
+                if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
+                    score += points;
+                    feedback.push(`✓ Question ${questionNum}: Correct (${points} points)`);
+                } else {
+                    feedback.push(`✗ Question ${questionNum}: Incorrect (0 points)`);
+                }
+            });
+
+            // Check short answer (Q3) - improved validation
+            const q3Answer = document.getElementById('q3').value.toLowerCase().trim();
+            const hasInput = q3Answer.includes('input(') || q3Answer.includes('input (');
+            const hasAge = q3Answer.includes('age');
+            const hasAssignment = q3Answer.includes('=');
+            
+            if (hasInput && hasAge && hasAssignment) {
+                score += questionPoints.q3;
+                feedback.push(`✓ Question 3: Correct - Good use of input() function and variable assignment (${questionPoints.q3} points)`);
+            } else {
+                let missing = [];
+                if (!hasInput) missing.push('input() function');
+                if (!hasAge) missing.push('age variable');
+                if (!hasAssignment) missing.push('variable assignment (=)');
+                feedback.push(`✗ Question 3: Missing key elements: ${missing.join(', ')} (0 points)`);
+            }
+
+            const percentage = Math.round((score / totalPoints) * 100);
+            
+            // Display results
+            document.getElementById('scoreDisplay').innerHTML = `
+                <strong>Score: ${score}/${totalPoints} (${percentage}%)</strong>
+            `;
+            
+            document.getElementById('feedback').innerHTML = feedback.join('<br>');
+            document.getElementById('quizResults').style.display = 'block';
+
+            // Prepare quiz data for submission
+            const quizData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 2,
+                score: score,
+                maxScore: totalPoints,
+                answers: {
+                    q1: document.querySelector('input[name="q1"]:checked')?.value || 'No answer',
+                    q2: document.querySelector('input[name="q2"]:checked')?.value || 'No answer',
+                    q3: document.getElementById('q3').value,
+                    q4: document.querySelector('input[name="q4"]:checked')?.value || 'No answer',
+                    q5: document.querySelector('input[name="q5"]:checked')?.value || 'No answer'
+                },
+                feedback: feedback
+            };
+
+            // Submit quiz results via email
+            submitQuizResults(quizData);
+        });
+
+        function submitQuizResults(quizData) {
+            // Format message for email (same format as Week 1)
+            const formattedMessage = `WEEK 2 QUIZ RESULTS - VARIABLES AND DATA TYPES
+
+Student Information:
+• Name: ${quizData.studentName}
+• Email: ${quizData.studentEmail}
+
+Quiz Performance:
+• Score: ${quizData.score}/${quizData.maxScore} (${Math.round(quizData.score/quizData.maxScore*100)}%)
+• Week: ${quizData.week}
+
+Student Answers:
+• Q1 (Variable names): ${quizData.answers.q1}
+• Q2 (Data types): ${quizData.answers.q2}
+• Q3 (Input function): ${quizData.answers.q3}
+• Q4 (Input returns string): ${quizData.answers.q4}
+• Q5 (Type conversion): ${quizData.answers.q5}
+
+Automated Feedback:
+${quizData.feedback.join('\n')}
+
+---
+This is an automated submission from the C00lnerd Programming Quiz System.`;
+
+            // EmailJS configuration (same as Week 1)
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            // Send email using EmailJS (exact same format as working Week 1)
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: quizData.studentName,
+                from_email: quizData.studentEmail,
+                message: formattedMessage,
+                subject: `Week 2 Programming Quiz - ${quizData.studentName}`
+            })
+                .then(function(response) {
+                    console.log('Quiz submitted successfully!', response.status, response.text);
+                    alert('Quiz submitted successfully! Your instructor will receive your results.');
+                }, function(error) {
+                    console.log('Submission failed...', error);
+                    alert('There was an error submitting your quiz. Please save your answers and contact your instructor.');
+                });
+        }
+    </script>
+</Layout>

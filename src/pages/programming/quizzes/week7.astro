@@ -1,0 +1,318 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 7 Quiz: File Handling and Data Processing">
+    <main style="min-height: 100vh; background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%); padding: 3rem 0;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <div style="background: #388e3c; color: white; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; margin-right: 1rem;">Q7</div>
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 2rem; font-weight: bold; color: var(--black); margin: 0;">Week 7 Quiz</h1>
+                        <p style="color: var(--gray); margin: 0;">File Handling and Data Processing</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem;">
+                <form id="week7Quiz" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Student Info -->
+                    <div style="background: var(--gray-light); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 1rem;">Student Information</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Name:</label>
+                                <input type="text" id="studentName" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Email:</label>
+                                <input type="email" id="studentEmail" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div style="border-left: 4px solid #388e3c; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 1: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which function is used to open a file in Python?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="a" style="margin-right: 0.75rem;">
+                                <span>A) file.open()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="b" style="margin-right: 0.75rem;">
+                                <span>B) open()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="c" style="margin-right: 0.75rem;">
+                                <span>C) read()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="d" style="margin-right: 0.75rem;">
+                                <span>D) load()</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="border-left: 4px solid #388e3c; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 2: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">What file mode should you use to write to a file (overwriting existing content)?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="a" style="margin-right: 0.75rem;">
+                                <span>A) 'r'</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="b" style="margin-right: 0.75rem;">
+                                <span>B) 'w'</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="c" style="margin-right: 0.75rem;">
+                                <span>C) 'a'</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="d" style="margin-right: 0.75rem;">
+                                <span>D) 'x'</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div style="border-left: 4px solid #388e3c; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 3: Short Answer (3 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Write code to read all lines from a file called 'data.txt' and store them in a list called 'lines':</p>
+                        <textarea id="q3" name="q3" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: monospace; font-size: 0.9rem;" placeholder="Type your Python code here..."></textarea>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="border-left: 4px solid #388e3c; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 4: True/False (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">It's important to close files after opening them to free up system resources.</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="true" style="margin-right: 0.75rem;">
+                                <span>True</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="false" style="margin-right: 0.75rem;">
+                                <span>False</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div style="border-left: 4px solid #388e3c; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 5: Multiple Choice (1 point)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which statement about CSV files is correct?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="a" style="margin-right: 0.75rem;">
+                                <span>A) CSV stands for Computer Separated Values</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="b" style="margin-right: 0.75rem;">
+                                <span>B) CSV files use commas to separate data values</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="c" style="margin-right: 0.75rem;">
+                                <span>C) CSV files can only contain numbers</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="d" style="margin-right: 0.75rem;">
+                                <span>D) CSV files are binary format</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" style="background: #388e3c; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Display -->
+                <div id="quizResults" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #e8f5e8; border-radius: 8px;">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #2e7d32; margin-bottom: 1rem;">Quiz Results</h3>
+                    <div id="scoreDisplay" style="font-size: 1.1rem; margin-bottom: 1rem;"></div>
+                    <div id="feedback" style="color: var(--gray);"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; align-items: center;">
+                <a href="/programming/lessons/week7" style="
+                    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    min-width: 200px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
+                    ← Back to Lesson
+                </a>
+                <a href="/programming/semester1" style="
+                    background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    min-width: 200px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(107, 114, 128, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(107, 114, 128, 0.3)'">
+                    Semester Overview
+                </a>
+                <a href="/programming/lessons/week8" style="
+                    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                    color: white;
+                    padding: 0.75rem 1.5rem;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    min-width: 200px;
+                    text-align: center;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+                " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
+                    Next Lesson →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz answers and scoring
+        const correctAnswers = {
+            q1: 'b',  // open()
+            q2: 'b',  // 'w'
+            q4: 'true',  // files should be closed
+            q5: 'b'   // CSV uses commas
+        };
+
+        const totalPoints = 10;
+
+        document.getElementById('week7Quiz').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email.');
+                return;
+            }
+
+            let score = 0;
+            let feedback = [];
+
+            // Check multiple choice answers
+            Object.keys(correctAnswers).forEach(questionId => {
+                const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
+                    score += questionId === 'q1' || questionId === 'q2' || questionId === 'q4' ? 2 : 1;
+                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct`);
+                } else {
+                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect`);
+                }
+            });
+
+            // Check short answer (Q3) - basic validation for file reading
+            const q3Answer = document.getElementById('q3').value.toLowerCase().trim();
+            if ((q3Answer.includes('open') && q3Answer.includes('data.txt') && q3Answer.includes('readlines')) ||
+                (q3Answer.includes('with open') && q3Answer.includes('data.txt') && q3Answer.includes('lines'))) {
+                score += 3;
+                feedback.push('✓ Question 3: Correct - Good file reading approach');
+            } else {
+                feedback.push('✗ Question 3: Missing key elements (open, data.txt, readlines or similar)');
+            }
+
+            const percentage = Math.round((score / totalPoints) * 100);
+            
+            // Display results
+            document.getElementById('scoreDisplay').innerHTML = `
+                <strong>Score: ${score}/${totalPoints} (${percentage}%)</strong>
+            `;
+            
+            document.getElementById('feedback').innerHTML = feedback.join('<br>');
+            document.getElementById('quizResults').style.display = 'block';
+
+            // Prepare quiz data for submission
+            const quizData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 7,
+                topic: 'File Handling and Data Processing',
+                score: score,
+                totalPoints: totalPoints,
+                percentage: percentage,
+                answers: {
+                    q1: document.querySelector('input[name="q1"]:checked')?.value || 'No answer',
+                    q2: document.querySelector('input[name="q2"]:checked')?.value || 'No answer',
+                    q3: document.getElementById('q3').value || 'No answer',
+                    q4: document.querySelector('input[name="q4"]:checked')?.value || 'No answer',
+                    q5: document.querySelector('input[name="q5"]:checked')?.value || 'No answer'
+                },
+                submittedAt: new Date().toISOString()
+            };
+
+            // Submit to teacher via EmailJS
+            submitQuizResults(quizData);
+        });
+
+        function submitQuizResults(quizData) {
+            const formattedMessage = `WEEK 7 QUIZ RESULTS - FILE HANDLING AND DATA PROCESSING
+
+Student Information:
+• Name: ${quizData.studentName}
+• Email: ${quizData.studentEmail}
+
+Quiz Performance:
+• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+• Topic: ${quizData.topic}
+• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+
+Student Responses:
+• Q1 (File Opening): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
+• Q2 (File Modes): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '✓' : '✗'}
+• Q3 (Reading Files): ${quizData.answers.q3}
+• Q4 (File Closing): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
+• Q5 (CSV Files): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+
+Performance Analysis:
+${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of file handling concepts.' : 
+  quizData.percentage >= 70 ? '👍 Good work! Student grasps file operations but may need practice with file modes or syntax.' :
+  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with file operations.' :
+  '📚 Needs improvement. Recommend additional review of file opening, reading, and closing operations.'}`;
+
+            // Send email using the working inline format
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: quizData.studentName,
+                from_email: quizData.studentEmail,
+                message: formattedMessage,
+                subject: `Week 7 Programming Quiz - ${quizData.studentName}`
+            })
+            .then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+            });
+        }
+
+        // Initialize EmailJS
+        emailjs.init("ct_s19oZHppLy9BlW");
+    </script>
+</Layout>

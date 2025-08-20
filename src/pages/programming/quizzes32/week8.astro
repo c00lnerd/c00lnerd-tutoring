@@ -1,0 +1,496 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 8 Quiz: Introduction to Arduino Hardware - C00lnerd Tutoring">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 8 Quiz: Introduction to Arduino Hardware</h1>
+                <p class="text-xl text-gray-600">Test your understanding of Arduino boards, components, and hardware concepts</p>
+                <div class="mt-4 p-4 bg-orange-100 rounded-lg">
+                    <p class="text-orange-800 font-medium">📝 10 questions covering Arduino hardware, power, pins, and expansion</p>
+                </div>
+            </div>
+
+            <!-- Student Information -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-orange-800 mb-6">Student Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="quiz8StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="quiz8StudentName" name="studentName" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    </div>
+                    <div>
+                        <label for="quiz8StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="quiz8StudentEmail" name="studentEmail" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <form id="quizForm" autocomplete="off" class="space-y-8">
+                <!-- Question 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Operating Voltage</h3>
+                    <p class="text-gray-700 mb-4">What is the operating voltage of Arduino Uno?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="A" class="mr-3">
+                            <span>A) 3.3V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="B" class="mr-3">
+                            <span>B) 5V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="C" class="mr-3">
+                            <span>C) 9V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="D" class="mr-3">
+                            <span>D) 12V</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: Digital I/O Pins</h3>
+                    <p class="text-gray-700 mb-4">How many digital I/O pins does Arduino Uno have?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="A" class="mr-3">
+                            <span>A) 6</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="B" class="mr-3">
+                            <span>B) 14</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="C" class="mr-3">
+                            <span>C) 20</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="D" class="mr-3">
+                            <span>D) 54</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Input Voltage Range</h3>
+                    <p class="text-gray-700 mb-4">What is the recommended external power input voltage range for Arduino Uno?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="A" class="mr-3">
+                            <span>A) 3-5V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="B" class="mr-3">
+                            <span>B) 5-9V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="C" class="mr-3">
+                            <span>C) 7-12V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="D" class="mr-3">
+                            <span>D) 12-24V</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: PWM Pins</h3>
+                    <p class="text-gray-700 mb-4">Which pins on Arduino Uno support PWM output?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="A" class="mr-3">
+                            <span>A) All digital pins (0-13)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="B" class="mr-3">
+                            <span>B) Pins 3, 5, 6, 9, 10, 11</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="C" class="mr-3">
+                            <span>C) Only analog pins A0-A5</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="D" class="mr-3">
+                            <span>D) Pins 0, 1, 2, 4, 7, 8</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: Microcontroller</h3>
+                    <p class="text-gray-700 mb-4">What microcontroller does Arduino Uno use?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="A" class="mr-3">
+                            <span>A) ATmega168</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="B" class="mr-3">
+                            <span>B) ATmega328P</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="C" class="mr-3">
+                            <span>C) ATmega2560</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="D" class="mr-3">
+                            <span>D) ATmega32u4</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Current Limits</h3>
+                    <p class="text-gray-700 mb-4">What is the maximum current that each Arduino pin can safely source or sink?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="A" class="mr-3">
+                            <span>A) 20mA</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="B" class="mr-3">
+                            <span>B) 40mA</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="C" class="mr-3">
+                            <span>C) 100mA</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="D" class="mr-3">
+                            <span>D) 500mA</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Arduino Shields</h3>
+                    <p class="text-gray-700 mb-4">What is the main advantage of using Arduino shields?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="A" class="mr-3">
+                            <span>A) They make Arduino run faster</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="B" class="mr-3">
+                            <span>B) They provide plug-and-play functionality without complex wiring</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="C" class="mr-3">
+                            <span>C) They increase the memory capacity</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="D" class="mr-3">
+                            <span>D) They reduce power consumption</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Arduino Models</h3>
+                    <p class="text-gray-700 mb-4">Which Arduino model is best suited for projects requiring many I/O pins?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="A" class="mr-3">
+                            <span>A) Arduino Nano</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="B" class="mr-3">
+                            <span>B) Arduino Uno</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="C" class="mr-3">
+                            <span>C) Arduino Mega 2560</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="D" class="mr-3">
+                            <span>D) Arduino Leonardo</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Power Safety</h3>
+                    <p class="text-gray-700 mb-4">Explain three important safety considerations when powering an Arduino board. Include voltage limits, current limits, and polarity concerns.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Question 10: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Board Selection</h3>
+                    <p class="text-gray-700 mb-4">You're designing a wearable fitness tracker that needs to be very small and monitor heart rate, steps, and temperature. Which Arduino board would you choose and why? Consider size, power consumption, and I/O requirements.</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" 
+                            style="background-color: #ea580c; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Quiz Results Display -->
+        <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-center mb-6 text-orange-800">📊 Your Quiz Results</h2>
+                <div id="resultsContent"></div>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week8" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Week 8 Lesson
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week9" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 9 Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EmailJS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script>
+        // Quiz data with correct answers
+        const quizData = {
+            correctAnswers: {
+                q1: 'B', // 5V
+                q2: 'B', // 14
+                q3: 'C', // 7-12V
+                q4: 'B', // Pins 3, 5, 6, 9, 10, 11
+                q5: 'B', // ATmega328P
+                q6: 'B', // 40mA
+                q7: 'B', // They provide plug-and-play functionality without complex wiring
+                q8: 'C'  // Arduino Mega 2560
+            },
+            questionText: {
+                q1: "What is the operating voltage of Arduino Uno?",
+                q2: "How many digital I/O pins does Arduino Uno have?",
+                q3: "What is the recommended external power input voltage range for Arduino Uno?",
+                q4: "Which pins on Arduino Uno support PWM output?",
+                q5: "What microcontroller does Arduino Uno use?",
+                q6: "What is the maximum current that each Arduino pin can safely source or sink?",
+                q7: "What is the main advantage of using Arduino shields?",
+                q8: "Which Arduino model is best suited for projects requiring many I/O pins?",
+                q9: "Explain three important safety considerations when powering an Arduino board. Include voltage limits, current limits, and polarity concerns.",
+                q10: "You're designing a wearable fitness tracker that needs to be very small and monitor heart rate, steps, and temperature. Which Arduino board would you choose and why? Consider size, power consumption, and I/O requirements."
+            }
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('quiz8StudentName').value;
+            const studentEmail = document.getElementById('quiz8StudentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email address.');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const formData = new FormData(this);
+            const results = [];
+            let score = 0;
+            const totalQuestions = 8; // Multiple choice questions only for scoring
+            
+            // Check multiple choice answers (q1-q8)
+            for (let i = 1; i <= 8; i++) {
+                const questionKey = `q${i}`;
+                const userAnswer = formData.get(questionKey);
+                const correctAnswer = quizData.correctAnswers[questionKey];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: quizData.questionText[questionKey],
+                    userAnswer: userAnswer || 'No answer provided',
+                    correctAnswer: correctAnswer,
+                    isCorrect: isCorrect
+                });
+            }
+            
+            // Add short answer questions
+            results.push({
+                question: quizData.questionText.q9,
+                studentAnswer: formData.get('q9') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            results.push({
+                question: quizData.questionText.q10,
+                studentAnswer: formData.get('q10') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Build detailed message
+            let message = `WEEK 8 QUIZ RESULTS - Introduction to Arduino Hardware\n\n`;
+            message += `Student: ${studentName}\n`;
+            message += `Email: ${studentEmail}\n`;
+            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
+            
+            message += `DETAILED RESULTS:\n`;
+            message += `==================\n\n`;
+            
+            results.forEach((result, index) => {
+                if (result.isShortAnswer) {
+                    message += `${result.question}:\n`;
+                    message += `Answer: ${result.studentAnswer}\n\n`;
+                } else {
+                    const status = result.isCorrect ? '✓ CORRECT' : '✗ INCORRECT';
+                    message += `Q${index + 1}: ${result.question}\n`;
+                    message += `Student Answer: ${result.userAnswer}\n`;
+                    message += `Correct Answer: ${result.correctAnswer}\n`;
+                    message += `Status: ${status}\n\n`;
+                }
+            });
+            
+            message += `PERFORMANCE ANALYSIS:\n`;
+            message += `====================\n`;
+            if (percentage >= 90) {
+                message += `🌟 EXCELLENT! Outstanding understanding of Arduino hardware and components.\n`;
+                message += `Student demonstrates mastery of board specifications, power requirements, and hardware selection.\n`;
+            } else if (percentage >= 80) {
+                message += `🎉 VERY GOOD! Strong grasp of Arduino hardware fundamentals.\n`;
+                message += `Student shows solid understanding with minor areas for review.\n`;
+            } else if (percentage >= 70) {
+                message += `👍 GOOD! Basic understanding of Arduino hardware with room for improvement.\n`;
+                message += `Recommend additional practice with board specifications and power calculations.\n`;
+            } else if (percentage >= 60) {
+                message += `⚠️ NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
+                message += `Focus on Arduino pin configurations, voltage requirements, and safety considerations.\n`;
+            } else {
+                message += `🔄 REQUIRES ATTENTION! Limited understanding of Arduino hardware concepts.\n`;
+                message += `Recommend reviewing lesson materials and hands-on exploration of Arduino boards.\n`;
+            }
+            
+            message += `\nNext Steps: Prepare for hands-on hardware projects and Week 9: Basic Sensors\n`;
+            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+            
+            // Display results to student
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #ea580c;">${score}/${totalQuestions} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #ea580c;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #fed7aa; border-radius: 6px; color: #ea580c; font-weight: bold;">
+                        🔧 Week 8: Introduction to Arduino Hardware
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((r, index) => {
+                        if (r.isShortAnswer) {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                                    <strong>${r.question}:</strong><br>
+                                    <strong>Your answer:</strong> ${r.studentAnswer}
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '✓' : '✗'}<br>
+                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
+                                    <strong>Correct answer:</strong> ${r.correctAnswer}
+                                </div>
+                            `;
+                        }
+                    }).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+            
+            // Send email using EmailJS
+            // Initialize EmailJS right before sending
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: 'C00lnerd Quiz System',
+                from_email: 'chuck@c00lnerd.com',
+                
+                message: message,
+                subject: `Week 8 Arduino Quiz - ${studentName} (${percentage}%)`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+                alert('Quiz results sent successfully!');
+                
+                // Log to Google Sheets
+                console.log('Logging quiz results to Google Sheets...');
+                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        studentName: studentName,
+                        studentEmail: studentEmail,
+                        week: 'Week 8',
+                        topic: 'Introduction to Arduino Hardware',
+                        score: score,
+                        totalPoints: totalQuestions,
+                        percentage: percentage,
+                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                        timestamp: new Date().toISOString()
+                    })
+                })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+                
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+                alert('There was an issue sending your quiz results. Please contact your instructor.');
+            });
+        });
+    </script>
+</Layout>
+
+

@@ -1,0 +1,382 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 5: Functions and Modular Programming">
+    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">5</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 5: Functions and Modular Programming</h1>
+                        <p class="text-gray-600">Creating reusable code blocks</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Define and call custom functions
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Use parameters and return values effectively
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand variable scope (local vs global)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Apply modular programming principles
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Code organization and reusability
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Problem decomposition
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Software engineering fundamentals
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Function Basics -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        Function Basics (20 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Why Functions?</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• Avoid repeating code (DRY - Don't Repeat Yourself)</li>
+                            <li>• Break complex problems into smaller pieces</li>
+                            <li>• Make code easier to read and maintain</li>
+                            <li>• Enable code reuse across projects</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                        <div class="text-gray-400"># Function definition</div>
+                        <div>def greet_robot():</div>
+                        <div class="ml-4">print("🤖 Hello from the robot!")</div>
+                        <div class="ml-4">print("Ready for commands!")</div>
+                        <div class="mt-2 text-gray-400"># Function call</div>
+                        <div>greet_robot()  # This runs the function</div>
+                        <div>greet_robot()  # Can call multiple times</div>
+                        <div class="mt-2 text-gray-400"># Function with calculation</div>
+                        <div>def calculate_battery_life():</div>
+                        <div class="ml-4">voltage = 12.5</div>
+                        <div class="ml-4">current = 2.1</div>
+                        <div class="ml-4">power = voltage * current</div>
+                        <div class="ml-4">print(f"Power consumption: {'{power}'} watts")</div>
+                        <div class="mt-1">calculate_battery_life()</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">Instructor Notes:</h4>
+                        <p class="text-blue-700">Compare functions to recipes - they're instructions you can follow multiple times. Show how robot actions could be functions: move_forward(), turn_left(), check_sensors().</p>
+                    </div>
+                </div>
+
+                <!-- Section 2: Parameters and Arguments -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Parameters and Arguments (20 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Making Functions Flexible:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• Parameters are variables in function definition</li>
+                            <li>• Arguments are actual values passed when calling</li>
+                            <li>• Functions can have multiple parameters</li>
+                            <li>• Default values make parameters optional</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                        <div class="text-gray-400"># Function with parameters</div>
+                        <div>def move_robot(direction, steps):</div>
+                        <div class="ml-4">print(f"Moving {'{direction}'} for {'{steps}'} steps")</div>
+                        <div class="ml-4">for i in range(steps):</div>
+                        <div class="ml-8">print(f"Step {'{i+1}'}: Moving {'{direction}'}")</div>
+                        <div class="mt-2 text-gray-400"># Function calls with arguments</div>
+                        <div>move_robot("forward", 3)</div>
+                        <div>move_robot("left", 2)</div>
+                        <div>move_robot("backward", 1)</div>
+                        <div class="mt-2 text-gray-400"># Function with default parameter</div>
+                        <div>def check_sensor(sensor_type="distance"):</div>
+                        <div class="ml-4">print(f"Checking {'{sensor_type}'} sensor...")</div>
+                        <div class="ml-4">if sensor_type == "distance":</div>
+                        <div class="ml-8">print("Distance: 25 cm")</div>
+                        <div class="ml-4">elif sensor_type == "temperature":</div>
+                        <div class="ml-8">print("Temperature: 22°C")</div>
+                        <div class="mt-1">check_sensor()  # Uses default</div>
+                        <div>check_sensor("temperature")  # Override default</div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Return Values -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Return Values (15 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Functions That Give Back:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• return statement sends value back to caller</li>
+                            <li>• Functions can return any data type</li>
+                            <li>• Can return multiple values as tuple</li>
+                            <li>• Functions without return give back None</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400"># Function that returns a value</div>
+                        <div>def calculate_distance(speed, time):</div>
+                        <div class="ml-4">distance = speed * time</div>
+                        <div class="ml-4">return distance</div>
+                        <div class="mt-1 text-gray-400"># Using the returned value</div>
+                        <div>robot_distance = calculate_distance(5, 10)</div>
+                        <div>print(f"Robot traveled: {'{robot_distance}'} meters")</div>
+                        <div class="mt-2 text-gray-400"># Function returning multiple values</div>
+                        <div>def get_sensor_readings():</div>
+                        <div class="ml-4">temperature = 23.5</div>
+                        <div class="ml-4">humidity = 65</div>
+                        <div class="ml-4">pressure = 1013</div>
+                        <div class="ml-4">return temperature, humidity, pressure</div>
+                        <div class="mt-1">temp, hum, press = get_sensor_readings()</div>
+                        <div>print(f"Temp: {'{temp}'}°C, Humidity: {'{hum}'}%")</div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Variable Scope -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Variable Scope (10 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Local vs Global Variables:</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 class="font-medium text-gray-800 mb-2">Local Variables:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• Created inside functions</li>
+                                    <li>• Only accessible within that function</li>
+                                    <li>• Destroyed when function ends</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-gray-800 mb-2">Global Variables:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• Created outside functions</li>
+                                    <li>• Accessible everywhere</li>
+                                    <li>• Use sparingly for better code</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400"># Global variable</div>
+                        <div>robot_name = "AutoBot"</div>
+                        <div class="mt-1">def introduce_robot():</div>
+                        <div class="ml-4 text-gray-400"># Local variable</div>
+                        <div class="ml-4">greeting = "Hello, I am"</div>
+                        <div class="ml-4">print(f"{'{greeting}'} {'{robot_name}'}")</div>
+                        <div class="mt-1">def set_robot_mode():</div>
+                        <div class="ml-4">mode = "autonomous"  # Local variable</div>
+                        <div class="ml-4">print(f"Mode set to: {'{mode}'}")</div>
+                        <div class="mt-1">introduce_robot()</div>
+                        <div>set_robot_mode()</div>
+                        <div class="text-gray-400"># print(greeting)  # Error! greeting is local</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: Robot Control Library</h3>
+                    <p class="text-green-700 mb-4">Students will create a library of functions to control different aspects of a robot.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Requirements:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• Create at least 5 different robot control functions</li>
+                            <li>• Include functions with parameters and return values</li>
+                            <li>• Use default parameters in at least one function</li>
+                            <li>• Create a main program that uses all functions</li>
+                            <li>• Include proper documentation (comments)</li>
+                            <li>• Demonstrate understanding of variable scope</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tri-Platform Instructions -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-green-800 mb-3">🤖🛠️ How to Code This Project (Choose Your Platform):</h4>
+                        
+                        <!-- Platform-Specific Instructions -->
+                        <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-4 mb-4">
+                            <!-- Pythonista 3 Instructions -->
+                            <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-400">
+                                <h5 class="font-semibold text-purple-800 mb-2 flex items-center">
+                                    <span class="mr-2">📱</span> Pythonista 3:
+                                </h5>
+                                <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                                    <li>Open Pythonista 3</li>
+                                    <li>Tap "+" → "Empty Script"</li>
+                                    <li>Name it "robot_library.py"</li>
+                                    <li>Type the code below</li>
+                                    <li>Tap ▶️ to run</li>
+                                    <li>Test all functions</li>
+                                </ol>
+                                <div class="bg-purple-100 p-2 rounded mt-3 text-xs text-purple-700">
+                                    <strong>Tip:</strong> Test functions with different parameters
+                                </div>
+                            </div>
+
+                            <!-- Pydroid 3 Instructions -->
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <span class="mr-2">🤖</span> Pydroid 3:
+                                </h5>
+                                <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                                    <li>Open Pydroid 3</li>
+                                    <li>Tap "+" → "Python file"</li>
+                                    <li>Name it "robot_library.py"</li>
+                                    <li>Type the code below</li>
+                                    <li>Tap ▶️ yellow play button</li>
+                                    <li>Test all functions</li>
+                                </ol>
+                                <div class="bg-green-100 p-2 rounded mt-3 text-xs text-green-700">
+                                    <strong>Tip:</strong> Watch global variables change
+                                </div>
+                            </div>
+
+                            <!-- PC/Mac Instructions -->
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <span class="mr-2">💻</span> PC/Mac:
+                                </h5>
+                                <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                                    <li>Open IDLE or editor</li>
+                                    <li>Create new file</li>
+                                    <li>Save as "robot_library.py"</li>
+                                    <li>Type the code below</li>
+                                    <li>Press F5 to run</li>
+                                    <li>Test all functions</li>
+                                </ol>
+                                <div class="bg-blue-100 p-2 rounded mt-3 text-xs text-blue-700">
+                                    <strong>Tip:</strong> Use functions interactively in shell
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400"># Robot Control Library</div>
+                        <div class="text-gray-400"># Global robot status</div>
+                        <div>robot_battery = 100</div>
+                        <div>robot_position = [0, 0]</div>
+                        <div class="mt-1">def move_forward(steps=1):</div>
+                        <div class="ml-4">global robot_battery, robot_position</div>
+                        <div class="ml-4">if robot_battery < 10:</div>
+                        <div class="ml-8">return "Low battery! Cannot move."</div>
+                        <div class="ml-4">robot_position[1] += steps</div>
+                        <div class="ml-4">robot_battery -= steps * 2</div>
+                        <div class="ml-4">print(f"Moved forward {'{steps}'} steps")</div>
+                        <div class="mt-1">def turn_robot(direction):</div>
+                        <div class="ml-4">valid_directions = ["left", "right"]</div>
+                        <div class="ml-4">if direction in valid_directions:</div>
+                        <div class="ml-8">print(f"Turned {'{direction}'}")</div>
+                        <div class="ml-4">else:</div>
+                        <div class="ml-8">return "Invalid direction"</div>
+                        <div class="mt-1">def check_battery():</div>
+                        <div class="ml-4">return robot_battery</div>
+                        <div class="mt-1">def get_position():</div>
+                        <div class="ml-4">x, y = robot_position</div>
+                        <div class="ml-4">print(f"New position: ({'{x}'}, {'{y}'})")</div>
+                        <div class="mt-1">def scan_area(range_meters=10):</div>
+                        <div class="ml-4">objects_found = ["tree", "rock", "path"]</div>
+                        <div class="ml-4">print(f"Scanning {'{range_meters}'}m range: {'{objects_found}'} objects")</div>
+                        <div class="mt-1 text-gray-400"># Main program</div>
+                        <div>print("🤖 Robot Control System Active")</div>
+                        <div>move_forward(3)</div>
+                        <div>turn_robot("right")</div>
+                        <div>get_position()</div>
+                        <div>print(f"Battery: {'{check_battery()}'}%")</div>
+                        <div>scan_area(15)</div>
+                        <div>print(scan_area(15))</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• Can student define and call functions?</li>
+                            <li>• Do they understand parameters vs arguments?</li>
+                            <li>• Are they using return values correctly?</li>
+                            <li>• Do they grasp variable scope concepts?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-blue-800 font-medium mb-2">Smart Device Controller</p>
+                            <p class="text-blue-700 text-sm">Create a modular program that controls various smart devices (lights, thermostat, security system). Each device should have its own functions with appropriate parameters and return values. Include error handling and status reporting.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week4" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 4
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week5" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 5 Quiz
+                        </a>
+                        <a href="/programming/lessons/week6" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 6 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

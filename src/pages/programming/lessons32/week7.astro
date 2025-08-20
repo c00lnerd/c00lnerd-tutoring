@@ -1,0 +1,472 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 7: Serial Communication - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 7: Serial Communication</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Master data exchange between Arduino and computer</p>
+                <div class="mt-4 p-4 bg-green-100 rounded-lg">
+                    <p class="text-green-800 font-medium">📡 Learn to send and receive data for debugging and control</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Understand serial communication principles
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Use Serial.begin(), Serial.print(), and Serial.println()
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Read user input with Serial.available() and Serial.read()
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Create interactive programs with Serial Monitor
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Baud rate and data transmission speed
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                ASCII characters and data formatting
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Debugging techniques with serial output
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-600 mr-2">•</span>
+                                Command parsing and user interfaces
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Introduction to Serial Communication -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">📡 Section 1: Introduction to Serial Communication</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What is Serial Communication?</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Serial communication is a method of transmitting data one bit at a time over a single communication line. 
+                        In Arduino, it's primarily used to communicate between the microcontroller and a computer through the USB cable.
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Serial Communication Concepts:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Baud Rate:</strong> Speed of data transmission (bits per second)</li>
+                            <li><strong>TX (Transmit):</strong> Pin used to send data from Arduino</li>
+                            <li><strong>RX (Receive):</strong> Pin used to receive data to Arduino</li>
+                            <li><strong>ASCII:</strong> Character encoding standard for text</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Common Baud Rates</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The baud rate determines how fast data is transmitted. Both the Arduino and Serial Monitor 
+                        must use the same baud rate to communicate properly.
+                    </p>
+                    
+                    <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Standard Baud Rates:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>9600:</strong> Most common, good for beginners</li>
+                            <li><strong>115200:</strong> Fast, good for data-heavy applications</li>
+                            <li><strong>57600:</strong> Medium speed, reliable</li>
+                            <li><strong>38400:</strong> Older standard, still widely used</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Basic Serial Output -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">📤 Section 2: Basic Serial Output</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Setting Up Serial Communication</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Before using serial communication, you must initialize it in the setup() function using Serial.begin(). 
+                        The parameter specifies the baud rate.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Serial Setup
+void setup() {
+  Serial.begin(9600);  // Initialize serial at 9600 baud
+  Serial.println("Arduino is ready!");
+  Serial.println("Serial communication started");
+}
+
+void loop() {
+  // Your main program code here
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Serial Output Functions</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Arduino provides several functions for sending data to the Serial Monitor. Each has different 
+                        formatting and line-ending behavior.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Serial Output Examples
+void setup() {
+  Serial.begin(9600);
+  
+  // Different ways to send data
+  Serial.print("Hello");        // Sends text without newline
+  Serial.print(" ");            // Add a space
+  Serial.print("World");        // More text
+  Serial.println("!");          // Sends text with newline
+  
+  // Sending numbers
+  int sensorValue = 512;
+  Serial.print("Sensor reading: ");
+  Serial.println(sensorValue);
+  
+  // Sending variables with labels
+  float temperature = 23.5;
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println(" degrees C");
+  
+  // Formatting numbers
+  Serial.println(3.14159, 2);   // Shows 3.14 (2 decimal places)
+  Serial.println(255, HEX);     // Shows FF (hexadecimal)
+  Serial.println(255, BIN);     // Shows 11111111 (binary)
+}
+
+void loop() {
+  // Empty for this example
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: Reading Serial Input -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">📥 Section 3: Reading Serial Input</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Checking for Available Data</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Before reading serial data, you should check if any data is available using Serial.available(). 
+                        This function returns the number of bytes waiting to be read.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Serial Input Reading
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Type something and press Enter:");
+}
+
+void loop() {
+  // Check if data is available
+  if (Serial.available() > 0) {
+    // Read one character
+    char receivedChar = Serial.read();
+    
+    // Echo it back
+    Serial.print("You typed: ");
+    Serial.println(receivedChar);
+  }
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Reading Strings and Numbers</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        For more complex input, you can read entire strings or parse numbers from serial input. 
+                        Arduino provides convenient functions for these operations.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Reading Strings and Numbers
+void setup() {
+  Serial.begin(9600);
+  Serial.println("=== Serial Input Demo ===");
+  Serial.println("Commands:");
+  Serial.println("LED ON - Turn LED on");
+  Serial.println("LED OFF - Turn LED off");
+  Serial.println("DELAY ### - Set delay time");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    // Read the entire string until newline
+    String command = Serial.readString();
+    command.trim();  // Remove whitespace
+    
+    // Convert to uppercase for easier comparison
+    command.toUpperCase();
+    
+    // Process commands
+    if (command == "LED ON") {
+      Serial.println("LED turned ON");
+      // digitalWrite(ledPin, HIGH);
+    }
+    else if (command == "LED OFF") {
+      Serial.println("LED turned OFF");
+      // digitalWrite(ledPin, LOW);
+    }
+    else if (command.startsWith("DELAY ")) {
+      // Extract number from command
+      int delayTime = command.substring(6).toInt();
+      Serial.print("Delay set to: ");
+      Serial.print(delayTime);
+      Serial.println(" milliseconds");
+    }
+    else {
+      Serial.println("Unknown command. Try LED ON, LED OFF, or DELAY ###");
+    }
+  }
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 4: Debugging with Serial -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">🐛 Section 4: Debugging with Serial</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Serial Debugging Techniques</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Serial communication is invaluable for debugging Arduino programs. You can track variable values, 
+                        program flow, and identify issues in your code.
+                    </p>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Debugging Best Practices:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>Add descriptive labels to your output</li>
+                            <li>Show variable values at key points</li>
+                            <li>Use timestamps for timing analysis</li>
+                            <li>Include program state information</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Debugging Example</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Here's an example showing how to use serial output for debugging a sensor reading program:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Serial Debugging Example
+const int sensorPin = A0;
+const int ledPin = 9;
+int sensorValue = 0;
+int brightness = 0;
+unsigned long lastReading = 0;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("=== Sensor Debug Program ===");
+  Serial.println("Time(ms) | Raw | Voltage | Brightness | Status");
+  Serial.println("---------|-----|---------|------------|-------");
+}
+
+void loop() {
+  // Read sensor every 500ms
+  if (millis() - lastReading >= 500) {
+    // Read and process sensor
+    sensorValue = analogRead(sensorPin);
+    float voltage = sensorValue * (5.0 / 1023.0);
+    brightness = map(sensorValue, 0, 1023, 0, 255);
+    
+    // Apply brightness to LED
+    analogWrite(ledPin, brightness);
+    
+    // Debug output with formatting
+    Serial.print(millis());
+    Serial.print("     | ");
+    Serial.print(sensorValue);
+    Serial.print(" | ");
+    Serial.print(voltage, 2);
+    Serial.print("V    | ");
+    Serial.print(brightness);
+    Serial.print("        | ");
+    
+    // Status based on brightness
+    if (brightness < 50) {
+      Serial.println("Dark");
+    } else if (brightness < 150) {
+      Serial.println("Medium");
+    } else {
+      Serial.println("Bright");
+    }
+    
+    lastReading = millis();
+  }
+  
+  // Check for user input
+  if (Serial.available() > 0) {
+    String command = Serial.readString();
+    command.trim();
+    
+    if (command.equalsIgnoreCase("reset")) {
+      Serial.println("\n=== RESET ===");
+      Serial.println("Time(ms) | Raw | Voltage | Brightness | Status");
+      Serial.println("---------|-----|---------|------------|-------");
+    }
+    else if (command.equalsIgnoreCase("help")) {
+      Serial.println("\nCommands:");
+      Serial.println("RESET - Clear debug output");
+      Serial.println("HELP - Show this help");
+    }
+  }
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">🛠️ Hands-On Activity: Interactive Calculator</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Serial Calculator</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create an interactive calculator that accepts mathematical expressions through the Serial Monitor 
+                        and returns the results. This kit-independent project will demonstrate serial communication concepts.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Instructions</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Create a program that accepts simple math commands via Serial Monitor</li>
+                        <li>Support basic operations: ADD, SUBTRACT, MULTIPLY, DIVIDE</li>
+                        <li>Include input validation and error handling</li>
+                        <li>Provide a help system and command list</li>
+                        <li>Add memory functions (store and recall values)</li>
+                        <li>Test with various inputs and edge cases</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Expected Features</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Basic Operations</h4>
+                            <ul class="text-blue-700 text-sm space-y-1">
+                                <li>ADD 5 3 → Result: 8</li>
+                                <li>SUBTRACT 10 4 → Result: 6</li>
+                                <li>MULTIPLY 7 6 → Result: 42</li>
+                                <li>DIVIDE 15 3 → Result: 5</li>
+                            </ul>
+                        </div>
+                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Advanced Features</h4>
+                            <ul class="text-green-700 text-sm space-y-1">
+                                <li>HELP → Show command list</li>
+                                <li>CLEAR → Clear screen</li>
+                                <li>MEMORY 42 → Store value</li>
+                                <li>RECALL → Get stored value</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">📝 Assessment & Homework</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>What function initializes serial communication in Arduino?</li>
+                        <li>What's the difference between Serial.print() and Serial.println()?</li>
+                        <li>How do you check if serial data is available to read?</li>
+                        <li>What baud rate is most commonly used for Arduino projects?</li>
+                        <li>How can serial communication help with debugging?</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Homework Challenges</h3>
+                    <div class="space-y-4">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 1: Data Logger</h4>
+                            <p class="text-blue-700">
+                                Create a program that logs sensor readings with timestamps to the Serial Monitor. 
+                                Include options to start/stop logging and change the logging interval.
+                            </p>
+                        </div>
+                        
+                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 2: Menu System</h4>
+                            <p class="text-green-700">
+                                Design a menu-driven interface that allows users to configure Arduino settings 
+                                (like LED patterns, delays, sensor thresholds) through serial commands.
+                            </p>
+                        </div>
+                        
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 3: Protocol Design</h4>
+                            <p class="text-purple-700">
+                                Create a simple communication protocol for sending structured data between 
+                                Arduino and computer, including error checking and acknowledgments.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week7" style="background-color: #059669; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 7 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week6" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 6
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week8" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 8 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+
+

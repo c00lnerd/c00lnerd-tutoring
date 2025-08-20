@@ -1,0 +1,188 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 9: Digital Inputs/Outputs and LEDs">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">9</div>
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-800">Week 9: Digital Inputs/Outputs and LEDs</h1>
+                        <p class="text-gray-600 mt-2">Learn to control LEDs and read buttons for robot interaction</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-green-700 mb-3">Knowledge Goals:</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understanding digital HIGH/LOW signals
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                pinMode() and digitalWrite() functions
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Button reading with pull-up resistors
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">Skill Goals:</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Building circuits on breadboards
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Input/output programming
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Hardware debugging skills
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Digital Outputs -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        Digital Outputs and LEDs (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Digital Output Basics:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• pinMode() sets pin as INPUT or OUTPUT</li>
+                            <li>• digitalWrite() sets pin HIGH (5V) or LOW (0V)</li>
+                            <li>• LEDs need current-limiting resistors</li>
+                            <li>• Perfect for robot status indicators</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Basic LED control
+int ledPin = 13;  // Built-in LED on pin 13
+
+void setup() {
+    pinMode(ledPin, OUTPUT);  // Set as output
+    Serial.begin(9600);
+    Serial.println("🤖 LED Control System Ready!");
+}
+
+void loop() {
+    digitalWrite(ledPin, HIGH);  // Turn LED on
+    Serial.println("💡 LED ON");
+    delay(1000);
+    
+    digitalWrite(ledPin, LOW);   // Turn LED off
+    Serial.println("⚫ LED OFF");
+    delay(1000);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 2: Digital Inputs -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Digital Inputs and Buttons (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Button Input Basics:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• digitalRead() reads HIGH or LOW from pins</li>
+                            <li>• INPUT_PULLUP enables internal pull-up resistor</li>
+                            <li>• Button pressed = LOW, released = HIGH (with pull-up)</li>
+                            <li>• Essential for robot user interfaces</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 3: Breadboard Basics -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Breadboard and Circuit Building (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Breadboard Basics:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Solderless prototyping platform for testing circuits</li>
+                            <li>• Horizontal rows are connected internally</li>
+                            <li>• Power rails run vertically on the sides</li>
+                            <li>• Use jumper wires to make connections</li>
+                            <li>• Perfect for robot control circuits</li>
+                        </ul>
+                    </div>
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Safety and Best Practices:</h4>
+                        <ul class="space-y-2 text-blue-700">
+                            <li>• Always disconnect power when building circuits</li>
+                            <li>• Use appropriate resistor values for LEDs (220Ω-1kΩ)</li>
+                            <li>• Keep wires organized and neat</li>
+                            <li>• Double-check connections before powering on</li>
+                            <li>• Test one component at a time</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Can student build circuits on breadboard?</li>
+                            <li>• Do they understand digital I/O programming?</li>
+                            <li>• Can they combine inputs and outputs effectively?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">LED Control System</p>
+                            <p class="text-blue-700 text-sm">Create a simple LED control system using buttons. Include multiple LEDs with different patterns and user control options.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week8" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 8
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week9" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 9 Quiz
+                        </a>
+                        <a href="/programming/lessons/week10" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 10 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

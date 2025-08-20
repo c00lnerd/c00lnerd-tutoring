@@ -1,0 +1,304 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 8 Quiz: Introduction to Arduino and Hardware">
+    <main style="min-height: 100vh; background: linear-gradient(135deg, #fff3e0 0%, #ffcc80 100%); padding: 3rem 0;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <div style="background: #f57c00; color: white; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; margin-right: 1rem;">Q8</div>
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 2rem; font-weight: bold; color: var(--black); margin: 0;">Week 8 Quiz</h1>
+                        <p style="color: var(--gray); margin: 0;">Introduction to Arduino and Hardware</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem;">
+                <form id="week8Quiz" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Student Info -->
+                    <div style="background: var(--gray-light); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 1rem;">Student Information</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Name:</label>
+                                <input type="text" id="studentName" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Email:</label>
+                                <input type="email" id="studentEmail" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div style="border-left: 4px solid #f57c00; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 1: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">What is Arduino?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="a" style="margin-right: 0.75rem;">
+                                <span>A) A programming language</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="b" style="margin-right: 0.75rem;">
+                                <span>B) An open-source microcontroller platform</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="c" style="margin-right: 0.75rem;">
+                                <span>C) A type of sensor</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="d" style="margin-right: 0.75rem;">
+                                <span>D) A computer operating system</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="border-left: 4px solid #f57c00; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 2: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which functions are required in every Arduino sketch?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="a" style="margin-right: 0.75rem;">
+                                <span>A) start() and end()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="b" style="margin-right: 0.75rem;">
+                                <span>B) setup() and loop()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="c" style="margin-right: 0.75rem;">
+                                <span>C) begin() and run()</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q2" value="d" style="margin-right: 0.75rem;">
+                                <span>D) init() and main()</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div style="border-left: 4px solid #f57c00; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 3: Short Answer (3 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Write Arduino code to turn on an LED connected to pin 13:</p>
+                        <textarea id="q3" name="q3" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: monospace; font-size: 0.9rem;" placeholder="Type your Arduino code here..."></textarea>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="border-left: 4px solid #f57c00; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 4: True/False (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Digital pins on Arduino can only output HIGH (5V) or LOW (0V) values.</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="true" style="margin-right: 0.75rem;">
+                                <span>True</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="false" style="margin-right: 0.75rem;">
+                                <span>False</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div style="border-left: 4px solid #f57c00; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 5: Multiple Choice (1 point)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">What is the purpose of the setup() function in Arduino?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="a" style="margin-right: 0.75rem;">
+                                <span>A) It runs continuously in a loop</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="b" style="margin-right: 0.75rem;">
+                                <span>B) It runs once when the program starts</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="c" style="margin-right: 0.75rem;">
+                                <span>C) It handles errors</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="d" style="margin-right: 0.75rem;">
+                                <span>D) It connects to the internet</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" style="background: #f57c00; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Display -->
+                <div id="quizResults" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #fff3e0; border-radius: 8px;">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #e65100; margin-bottom: 1rem;">Quiz Results</h3>
+                    <div id="scoreDisplay" style="font-size: 1.1rem; margin-bottom: 1rem;"></div>
+                    <div id="feedback" style="color: var(--gray);"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+                <a href="/programming/lessons/week8" style="background: #f57c00; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
+                    ← Back to Lesson
+                </a>
+                <a href="/programming/semester1" style="background: var(--gray); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
+                    Semester Overview
+                </a>
+                <a href="/programming/lessons/week9" style="background: #e65100; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
+                    Next Lesson →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        // Quiz answers and scoring
+        const correctAnswers = {
+            q1: 'b',  // open-source microcontroller platform
+            q2: 'b',  // setup() and loop()
+            q4: 'true',  // digital pins output HIGH/LOW
+            q5: 'b'   // setup() runs once at start
+        };
+
+        const totalPoints = 10;
+
+        document.getElementById('week8Quiz').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email.');
+                return;
+            }
+
+            let score = 0;
+            let feedback = [];
+
+            // Check Q1 (2 points)
+            const q1Answer = document.querySelector('input[name="q1"]:checked') as HTMLInputElement;
+            if (q1Answer && q1Answer.value === correctAnswers.q1) {
+                score += 2;
+                feedback.push('✓ Question 1: Correct - Arduino is an open-source microcontroller platform');
+            } else {
+                feedback.push('✗ Question 1: Incorrect - Arduino is an open-source microcontroller platform');
+            }
+
+            // Check Q2 (2 points)
+            const q2Answer = document.querySelector('input[name="q2"]:checked') as HTMLInputElement;
+            if (q2Answer && q2Answer.value === correctAnswers.q2) {
+                score += 2;
+                feedback.push('✓ Question 2: Correct - Arduino uses setup() and loop() functions');
+            } else {
+                feedback.push('✗ Question 2: Incorrect - Arduino uses setup() and loop() functions');
+            }
+
+            // Check Q4 (2 points)
+            const q4Answer = document.querySelector('input[name="q4"]:checked') as HTMLInputElement;
+            if (q4Answer && q4Answer.value === correctAnswers.q4) {
+                score += 2;
+                feedback.push('✓ Question 4: Correct - Digital pins output HIGH (5V) or LOW (0V)');
+            } else {
+                feedback.push('✗ Question 4: Incorrect - Digital pins output HIGH (5V) or LOW (0V)');
+            }
+
+            // Check Q5 (2 points)
+            const q5Answer = document.querySelector('input[name="q5"]:checked') as HTMLInputElement;
+            if (q5Answer && q5Answer.value === correctAnswers.q5) {
+                score += 2;
+                feedback.push('✓ Question 5: Correct - setup() runs once at start');
+            } else {
+                feedback.push('✗ Question 5: Incorrect - setup() runs once at start');
+            }
+
+            // Check short answer (Q3) - basic validation for Arduino LED code
+            const q3Answer = (document.getElementById('q3') as HTMLTextAreaElement).value.toLowerCase().trim();
+            if ((q3Answer.includes('pinmode') && q3Answer.includes('13') && q3Answer.includes('output')) &&
+                (q3Answer.includes('digitalwrite') && q3Answer.includes('high'))) {
+                score += 3;
+                feedback.push('✓ Question 3: Correct - Good Arduino LED control code');
+            } else {
+                feedback.push('✗ Question 3: Missing key elements (pinMode, digitalWrite, pin 13, HIGH)');
+            }
+
+            const percentage = Math.round((score / totalPoints) * 100);
+            
+            // Display results
+            (document.getElementById('scoreDisplay') as HTMLElement).innerHTML = `
+                <strong>Score: ${score}/${totalPoints} (${percentage}%)</strong>
+            `;
+            
+            (document.getElementById('feedback') as HTMLElement).innerHTML = feedback.join('<br>');
+            (document.getElementById('quizResults') as HTMLElement).style.display = 'block';
+
+            // Prepare quiz data for submission
+            const quizData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 8,
+                topic: 'Introduction to Arduino and Hardware',
+                score: score,
+                totalPoints: totalPoints,
+                percentage: percentage,
+                answers: {
+                    q1: (document.querySelector('input[name="q1"]:checked') as HTMLInputElement)?.value || 'No answer',
+                    q2: (document.querySelector('input[name="q2"]:checked') as HTMLInputElement)?.value || 'No answer',
+                    q3: (document.getElementById('q3') as HTMLTextAreaElement).value || 'No answer',
+                    q4: (document.querySelector('input[name="q4"]:checked') as HTMLInputElement)?.value || 'No answer',
+                    q5: (document.querySelector('input[name="q5"]:checked') as HTMLInputElement)?.value || 'No answer'
+                },
+                submittedAt: new Date().toISOString()
+            };
+
+            // Submit to teacher via EmailJS
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: quizData.studentName,
+                from_email: quizData.studentEmail,
+                message: `WEEK 8 QUIZ RESULTS - INTRODUCTION TO ARDUINO AND HARDWARE
+
+Student Information:
+• Name: ${quizData.studentName}
+• Email: ${quizData.studentEmail}
+
+Quiz Performance:
+• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+• Topic: ${quizData.topic}
+• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+
+Student Responses:
+• Q1 (Arduino Definition): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
+• Q2 (Required Functions): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '✓' : '✗'}
+• Q3 (LED Control Code): ${quizData.answers.q3}
+• Q4 (Digital Pin Values): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
+• Q5 (Setup Function): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+
+Performance Analysis:
+${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of Arduino basics and hardware concepts.' : 
+  quizData.percentage >= 70 ? '👍 Good work! Student grasps Arduino fundamentals but may need practice with code syntax.' :
+  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with Arduino programming.' :
+  '📚 Needs improvement. Recommend additional review of Arduino platform, functions, and basic programming.'}`,
+                subject: `Week 8 Arduino Quiz - ${quizData.studentName}`
+            })
+            .then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+            });
+        });
+
+        // Initialize EmailJS
+        emailjs.init("ct_s19oZHppLy9BlW");
+    </script>
+</Layout>

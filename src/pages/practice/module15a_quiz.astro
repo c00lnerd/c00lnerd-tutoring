@@ -1,0 +1,841 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="AI Education Assessment - Safe and Ethical Use of AI in Education">
+    <div class="container">
+        <h1>AI Education Assessment</h1>
+        <p class="subtitle">Safe and Ethical Use of AI in Education</p>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill" id="progress"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()" style="display: none;">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Retake Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load EmailJS before initializing -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script type="text/javascript" is:inline>
+        window.onload = function() {
+            try {
+                emailjs.init("ct_s19oZHppLy9BlW");
+            } catch (error) {
+                console.error('Failed to initialize EmailJS:', error);
+            }
+        }
+    </script>
+
+    <script is:inline>
+        window.questions = [
+            {
+                question: "What does 'SAI' stand for in the context of educational AI?",
+                options: [
+                    "Super Artificial Intelligence",
+                    "Safe Artificial Intelligence",
+                    "Standard Artificial Intelligence",
+                    "Scientific Artificial Intelligence"
+                ],
+                correctAnswer: 1,
+                explanation: "SAI stands for Safe Artificial Intelligence, emphasizing the importance of using AI tools responsibly and ethically in educational settings."
+            },
+            {
+                question: "Which of the following is the most ethical way to use AI for homework help?",
+                options: [
+                    "Having AI complete your entire assignment",
+                    "Using AI to generate ideas and then developing them with your own research and thinking",
+                    "Copying AI responses word-for-word without citation",
+                    "Using AI to write your conclusion without reading the content"
+                ],
+                correctAnswer: 1,
+                explanation: "The most ethical approach is using AI as a brainstorming tool while doing your own research, critical thinking, and original work."
+            },
+            {
+                question: "What is bias in AI, and why is it problematic in education?",
+                options: [
+                    "AI's preference for certain topics over others",
+                    "Unfair or prejudiced perspectives in AI responses that can perpetuate stereotypes or misinformation",
+                    "AI's inability to understand complex questions",
+                    "AI's tendency to give short answers"
+                ],
+                correctAnswer: 1,
+                explanation: "Bias in AI refers to unfair or prejudiced perspectives that can lead to stereotypes, misinformation, or discriminatory content, which is harmful in educational contexts."
+            },
+            {
+                question: "How can you reduce bias when writing prompts for AI?",
+                options: [
+                    "Use very short prompts",
+                    "Always ask for the AI's personal opinion",
+                    "Use neutral, specific language and ask for multiple perspectives",
+                    "Only ask yes/no questions"
+                ],
+                correctAnswer: 2,
+                explanation: "To reduce bias, use neutral and specific language, ask for evidence-based responses, and request multiple perspectives on complex topics."
+            },
+            {
+                question: "What should you do if an AI gives you information that seems questionable or biased?",
+                options: [
+                    "Accept it as fact since AI is always accurate",
+                    "Verify the information through credible sources and cross-reference multiple viewpoints",
+                    "Ignore the response completely",
+                    "Ask the AI to confirm it's correct"
+                ],
+                correctAnswer: 1,
+                explanation: "Always verify AI-generated information through credible sources and cross-reference with multiple viewpoints, especially if something seems questionable."
+            },
+            {
+                question: "Which of these is an example of academic dishonesty when using AI?",
+                options: [
+                    "Using AI to help brainstorm research topics",
+                    "Asking AI to explain a difficult concept",
+                    "Submitting an AI-written essay as your own work without disclosure",
+                    "Using AI to check your grammar"
+                ],
+                correctAnswer: 2,
+                explanation: "Submitting AI-generated content as your own original work without proper disclosure constitutes academic dishonesty and plagiarism."
+            },
+            {
+                question: "What is the best practice for citing AI assistance in your work?",
+                options: [
+                    "Never mention AI use",
+                    "Only cite if you copy text directly",
+                    "Be transparent about how AI was used and include appropriate attribution",
+                    "Only cite if your teacher asks"
+                ],
+                correctAnswer: 2,
+                explanation: "Best practice is to be transparent about AI use, explain how it assisted your work, and provide appropriate attribution according to your institution's guidelines."
+            },
+            {
+                question: "Why is it important to fact-check AI-generated information?",
+                options: [
+                    "AI is always wrong",
+                    "AI can generate plausible-sounding but incorrect information, and may not have access to the most recent data",
+                    "AI only works with old information",
+                    "AI is biased against certain subjects"
+                ],
+                correctAnswer: 1,
+                explanation: "AI can generate convincing but incorrect information and may not have access to the most current data, making fact-checking essential."
+            },
+            {
+                question: "What is a 'hallucination' in AI terminology?",
+                options: [
+                    "When AI becomes self-aware",
+                    "When AI generates false or fabricated information presented as fact",
+                    "When AI refuses to answer questions",
+                    "When AI gives creative responses"
+                ],
+                correctAnswer: 1,
+                explanation: "AI hallucination refers to when AI generates false, fabricated, or nonsensical information while presenting it confidently as factual."
+            },
+            {
+                question: "Which approach helps ensure you're learning while using AI assistance?",
+                options: [
+                    "Always accept AI answers without question",
+                    "Use AI to replace all research and thinking",
+                    "Engage critically with AI responses, ask follow-up questions, and verify information",
+                    "Only use AI for final answers"
+                ],
+                correctAnswer: 2,
+                explanation: "Critical engagement with AI responses, asking follow-up questions, and verification helps ensure you're actively learning rather than passively consuming."
+            },
+            {
+                question: "What should you consider about data privacy when using AI tools?",
+                options: [
+                    "AI tools never store your data",
+                    "All AI tools have the same privacy policies",
+                    "Be aware that your inputs may be stored, used for training, or accessed by others",
+                    "Privacy doesn't matter with AI tools"
+                ],
+                correctAnswer: 2,
+                explanation: "Many AI tools store user inputs, may use them for training, or share them with third parties, so it's important to understand privacy policies and avoid sharing sensitive information."
+            },
+            {
+                question: "How can AI be helpful for students with different learning needs?",
+                options: [
+                    "It can't help with learning differences",
+                    "It can provide personalized explanations, different formats, and adaptive support",
+                    "It only helps advanced students",
+                    "It replaces the need for human teachers"
+                ],
+                correctAnswer: 1,
+                explanation: "AI can provide personalized explanations, content in different formats, and adaptive support that can be particularly helpful for students with diverse learning needs."
+            },
+            {
+                question: "What is the difference between using AI as a tool versus using it as a replacement for learning?",
+                options: [
+                    "There is no difference",
+                    "Tools require payment, replacements are free",
+                    "Using AI as a tool enhances your thinking and research; using it as a replacement prevents learning and skill development",
+                    "Tools are faster than replacements"
+                ],
+                correctAnswer: 2,
+                explanation: "Using AI as a tool enhances your own thinking and research capabilities, while using it as a replacement prevents you from developing critical thinking and learning skills."
+            },
+            {
+                question: "Which of these prompts is more likely to produce biased results?",
+                options: [
+                    "'Explain the causes of World War I from multiple historical perspectives'",
+                    "'Why are teenagers today so lazy and entitled?'",
+                    "'What are the pros and cons of renewable energy?'",
+                    "'Describe the scientific method step by step'"
+                ],
+                correctAnswer: 1,
+                explanation: "The second prompt contains loaded language and assumptions ('lazy and entitled') that are likely to produce biased or stereotypical responses."
+            },
+            {
+                question: "What should you do before relying on AI for important academic work?",
+                options: [
+                    "Nothing, AI is always reliable",
+                    "Check your school's AI policy, understand the tool's limitations, and plan how to verify information",
+                    "Only use it for unimportant assignments",
+                    "Ask permission from the AI"
+                ],
+                correctAnswer: 1,
+                explanation: "Before using AI for academic work, check institutional policies, understand the tool's limitations, and have a plan for verification and ethical use."
+            },
+            {
+                question: "How can you tell if an AI response might be biased or unreliable?",
+                options: [
+                    "If it's longer than one paragraph",
+                    "If it presents only one perspective, uses absolute statements, or lacks evidence",
+                    "If it uses technical language",
+                    "If it mentions multiple sources"
+                ],
+                correctAnswer: 1,
+                explanation: "Signs of potential bias or unreliability include presenting only one perspective, making absolute statements without evidence, or showing clear prejudice toward certain groups or ideas."
+            },
+            {
+                question: "What is the best way to use AI for research assistance?",
+                options: [
+                    "Have AI write your entire research paper",
+                    "Use AI to help generate research questions, find starting points, and explain concepts, then do independent verification",
+                    "Only use AI for the bibliography",
+                    "Use AI to replace library research entirely"
+                ],
+                correctAnswer: 1,
+                explanation: "AI is most helpful for generating research questions, providing starting points, and explaining concepts, but should be combined with independent research and verification."
+            },
+            {
+                question: "Why is transparency important when using AI in academic work?",
+                options: [
+                    "It's not important",
+                    "It maintains academic integrity, allows for proper evaluation, and helps others understand your process",
+                    "It's only required for graduate students",
+                    "It makes the work look more impressive"
+                ],
+                correctAnswer: 1,
+                explanation: "Transparency maintains academic integrity, allows instructors to properly evaluate your work, and helps others understand and learn from your research process."
+            },
+            {
+                question: "What should you do if you notice AI giving consistently biased responses about certain topics?",
+                options: [
+                    "Continue using it anyway",
+                    "Try different AI tools, rephrase prompts, and always cross-reference with diverse sources",
+                    "Stop using AI completely",
+                    "Report it to the police"
+                ],
+                correctAnswer: 1,
+                explanation: "If you notice bias, try different AI tools, rephrase your prompts to be more neutral, and always cross-reference information with diverse, credible sources."
+            },
+            {
+                question: "Which statement best describes the future of AI in education?",
+                options: [
+                    "AI will completely replace teachers and textbooks",
+                    "AI will be banned from all educational settings",
+                    "AI will likely become a valuable tool that enhances learning when used ethically and responsibly",
+                    "AI will only be used for administrative tasks"
+                ],
+                correctAnswer: 2,
+                explanation: "The future likely involves AI as a valuable educational tool that enhances learning experiences when used ethically, responsibly, and in combination with human guidance."
+            }
+        ];
+
+        // Initialize quiz state
+        window.questions = originalQuestions; // Initialize window.questions
+        window.currentQuestion = 0;
+        window.userAnswers = new Array(window.questions.length).fill(null);
+        window.questionAttempts = new Array(window.questions.length).fill(0);
+        window.quizStarted = false;
+        window.userEmail = '';
+
+        // Load saved email
+        const savedEmail = localStorage.getItem('userEmail');
+        if (savedEmail) {
+            document.getElementById('email').value = savedEmail;
+        }
+
+        function startQuiz() {
+            const email = document.getElementById('email').value;
+            const saveResults = document.getElementById('save-results').checked;
+            
+            if (saveResults && email) {
+                localStorage.setItem('userEmail', email);
+                window.userEmail = email;
+            }
+            
+            document.getElementById('email-section').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            window.quizStarted = true;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = window.questions[window.currentQuestion];
+            document.getElementById('question-number').textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update progress bar
+            const progress = ((window.currentQuestion) / window.questions.length) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Show/hide navigation buttons
+            document.getElementById('prevBtn').style.display = window.currentQuestion > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Hide feedback
+            document.getElementById('feedback').style.display = 'none';
+            
+            // Restore previous answer if exists
+            if (window.userAnswers[window.currentQuestion] !== null) {
+                const buttons = document.querySelectorAll('.option-button');
+                buttons[window.userAnswers[window.currentQuestion]].classList.add('selected');
+                showFeedback(window.userAnswers[window.currentQuestion]);
+            }
+        }
+
+        function selectAnswer(optionIndex) {
+            const currentAttempts = window.questionAttempts[window.currentQuestion] || 0;
+            const question = window.questions[window.currentQuestion];
+            const options = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('feedback');
+            
+            // Clear previous selections
+            options.forEach(btn => btn.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Mark selected answer
+            options[optionIndex].classList.add('selected');
+            window.userAnswers[window.currentQuestion] = optionIndex;
+            window.questionAttempts[window.currentQuestion] = currentAttempts + 1;
+            
+            showFeedback(optionIndex);
+        }
+
+        function showFeedback(selectedIndex) {
+            const question = window.questions[window.currentQuestion];
+            const feedback = document.getElementById('feedback');
+            const options = document.querySelectorAll('.option-button');
+            
+            if (selectedIndex === question.correctAnswer) {
+                options[selectedIndex].classList.add('correct');
+                feedback.innerHTML = `<div class="correct">✓ Correct! ${question.explanation}</div>`;
+                feedback.className = 'feedback correct';
+            } else {
+                options[selectedIndex].classList.add('incorrect');
+                options[question.correctAnswer].classList.add('correct');
+                feedback.innerHTML = `<div class="incorrect">✗ Incorrect. The correct answer is: ${question.options[question.correctAnswer]}<br><br>${question.explanation}</div>`;
+                feedback.className = 'feedback incorrect';
+            }
+            
+            feedback.style.display = 'block';
+            
+            // Show next/submit button
+            if (window.currentQuestion < window.questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion() {
+            if (window.currentQuestion < window.questions.length - 1) {
+                const feedback = document.getElementById('feedback');
+                feedback.style.display = 'none';
+                window.currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (window.currentQuestion > 0) {
+                window.currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            let correctAnswers = 0;
+            window.questions.forEach((question, index) => {
+                if (window.userAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const percentage = Math.round((correctAnswers / window.questions.length) * 100);
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            document.getElementById('score').innerHTML = `
+                <h3>Your Score: ${correctAnswers}/${window.questions.length} (${percentage}%)</h3>
+                <p>Understanding ethical AI use is crucial for responsible learning!</p>
+            `;
+            
+            showDetailedResults();
+            
+            const saveResults = window.userEmail && window.userEmail.length > 0;
+            if (saveResults) {
+                sendResultsEmail(correctAnswers, percentage);
+            }
+        }
+
+        function showDetailedResults() {
+            const detailedResults = document.getElementById('incorrect-answers');
+            let resultsHTML = '<h3>Detailed Results:</h3>';
+
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                const attempts = window.questionAttempts[index] || 0;
+                
+                resultsHTML += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <strong>Question ${index + 1}:</strong> ${question.question}<br>
+                        <strong>Your answer:</strong> ${userAnswer !== null ? question.options[userAnswer] : 'Not answered'}<br>
+                        ${!isCorrect ? `<strong>Correct answer:</strong> ${question.options[question.correctAnswer]}<br>` : ''}
+                        <strong>Attempts:</strong> ${attempts}<br>
+                        <em>Explanation: ${question.explanation}</em>
+                    </div>
+                `;
+            });
+
+            detailedResults.innerHTML = resultsHTML;
+        }
+
+        function sendResultsEmail(correctAnswers, percentage) {
+            const emailStatus = document.getElementById('email-status');
+            emailStatus.innerHTML = '<p>Sending results to instructor...</p>';
+            
+            // Format email message like other working quizzes
+            let emailMessage = `AI Education Assessment Results\n\n`;
+            emailMessage += `Student: ${window.userEmail}\n`;
+            emailMessage += `Quiz: Safe and Ethical Use of AI in Education\n`;
+            emailMessage += `Score: ${correctAnswers}/${window.questions.length} (${percentage}%)\n`;
+            emailMessage += `Percentage: ${percentage}%\n`;
+            emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            // Add incorrect answers details
+            const incorrectAnswers = window.userAnswers.reduce((incorrect, answer, index) => {
+                if (answer !== window.questions[index].correctAnswer) {
+                    incorrect.push({
+                        question: window.questions[index].question,
+                        userAnswer: answer !== null ? window.questions[index].options[answer] : 'Not answered',
+                        correctAnswer: window.questions[index].options[window.questions[index].correctAnswer],
+                        attempts: window.questionAttempts[index] || 0
+                    });
+                }
+                return incorrect;
+            }, []);
+            
+            if (incorrectAnswers.length > 0) {
+                emailMessage += "Incorrect Answers:\n\n";
+                incorrectAnswers.forEach((item, index) => {
+                    emailMessage += `${index + 1}. ${item.question}\n`;
+                    emailMessage += `   Your answer: ${item.userAnswer}\n`;
+                    emailMessage += `   Correct answer: ${item.correctAnswer}\n`;
+                    emailMessage += `   Attempts: ${item.attempts}\n\n`;
+                });
+            } else {
+                emailMessage += "Perfect score! All answers were correct.\n";
+            }
+            
+            const templateParams = {
+                to_email: window.userEmail,
+                message: emailMessage,
+                score: correctAnswers,
+                total: window.questions.length,
+                percentage: percentage
+            };
+
+            // Post to Google Sheets first
+            const sheetsData = {
+                timestamp: new Date().toISOString(),
+                studentEmail: window.userEmail,
+                quizTitle: 'Physical Science Module 15a Quiz',
+                score: correctAnswers,
+                totalQuestions: window.questions.length,
+                percentage: percentage.toString(),
+                incorrectCount: window.questions.length - correctAnswers,
+                timeCompleted: new Date().toLocaleString()
+            };
+
+            try {
+                fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                }).then(() => {
+                    console.log('Google Sheets: Data logged successfully');
+                }).catch(error => {
+                    console.error('Google Sheets: Error logging data:', error);
+                });
+            } catch (error) {
+                console.error('Google Sheets: Error logging data:', error);
+            }
+
+            // Send EmailJS notification to instructor with standardized format
+            const updatedTemplateParams = {
+                from_name: 'Physical Science Quiz System',
+                student_email: window.userEmail,
+                to_name: 'Instructor',
+                subject: 'Physical Science Module 15a Quiz Results',
+                submission_date: new Date().toLocaleString(),
+                message: emailMessage,
+                reply_to: window.userEmail
+            };
+
+            emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams)
+                .then(function(response) {
+                    emailStatus.innerHTML = '<p style="color: green;">✅ Results sent to instructor via email! ✅ Data logged to Google Sheets</p>';
+                })
+                .catch(function(error) {
+                    emailStatus.innerHTML = '<p style="color: red;">✗ Failed to send results to instructor.</p>';
+                    console.error('EmailJS error:', error);
+                });
+        }
+
+        // Download results functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.getElementById('download-results');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    downloadResults();
+                });
+            }
+        });
+
+        function downloadResults() {
+            let correctAnswers = 0;
+            window.questions.forEach((question, index) => {
+                if (window.userAnswers[index] === question.correctAnswer) {
+                    correctAnswers++;
+                }
+            });
+            
+            const percentage = Math.round((correctAnswers / window.questions.length) * 100);
+            
+            let resultsText = `AI Education Assessment Results - Safe and Ethical Use of AI in Education\n`;
+            resultsText += `Date: ${new Date().toLocaleDateString()}\n`;
+            resultsText += `Score: ${correctAnswers}/${window.questions.length} (${percentage}%)\n\n`;
+            
+            resultsText += `Detailed Results:\n`;
+            resultsText += `================\n\n`;
+            
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                const attempts = window.questionAttempts[index] || 0;
+                
+                resultsText += `Question ${index + 1}: ${question.question}\n`;
+                resultsText += `Your answer: ${userAnswer !== null ? question.options[userAnswer] : 'Not answered'}\n`;
+                if (!isCorrect) {
+                    resultsText += `Correct answer: ${question.options[question.correctAnswer]}\n`;
+                }
+                resultsText += `Status: ${isCorrect ? 'Correct' : 'Incorrect'}\n`;
+                resultsText += `Attempts: ${attempts}\n`;
+                resultsText += `Explanation: ${question.explanation}\n\n`;
+            });
+            
+            const blob = new Blob([resultsText], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AI_Education_Assessment_Results_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .email-input {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .email-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .email-input input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        .email-input div {
+            margin-bottom: 15px;
+        }
+
+        .email-input input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #e74c3c;
+            transition: width 0.3s ease;
+        }
+
+        #question-number {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        #question-text {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .option-button:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .option-button.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #0056b3;
+        }
+
+        .option-button.correct {
+            background-color: #28a745 !important;
+            color: white !important;
+            border-color: #1e7e34 !important;
+        }
+
+        .option-button.incorrect {
+            background-color: #dc3545 !important;
+            color: white !important;
+            border-color: #bd2130 !important;
+        }
+
+        .feedback {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .feedback.correct {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .control-button {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .control-button:hover {
+            background-color: #c0392b;
+        }
+
+        .control-button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        #results {
+            text-align: center;
+        }
+
+        #score {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        #score h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .result-buttons {
+            margin-top: 20px;
+        }
+
+        .email-status {
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .result-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            text-align: left;
+            border-left: 4px solid #bdc3c7;
+        }
+
+        .result-item.correct {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+
+        .result-item.incorrect {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            
+            .control-button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</Layout>

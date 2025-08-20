@@ -1,0 +1,355 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 13: Introduction to miniAuto Platform">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">13</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 13: Introduction to miniAuto Platform</h1>
+                        <p class="text-gray-600">Meeting your robot companion</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand miniAuto hardware components
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Assemble and configure the robot
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Load and test default programs
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Connect to mobile app control
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Hardware assembly and troubleshooting
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                System integration skills
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Wireless communication setup
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: miniAuto Overview -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        miniAuto Platform Overview (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">miniAuto Key Components:</h4>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <h5 class="font-medium mb-2">Core Hardware:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• ESP32 microcontroller (WiFi + Bluetooth)</li>
+                                    <li>• Dual DC motors with encoders</li>
+                                    <li>• Ultrasonic distance sensor</li>
+                                    <li>• Camera module for AI vision</li>
+                                    <li>• LED indicators and buzzer</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium mb-2">Advanced Features:</h5>
+                                <ul class="space-y-1 text-gray-700 text-sm">
+                                    <li>• Line following sensors</li>
+                                    <li>• Robotic gripper attachment</li>
+                                    <li>• Wireless glove controller</li>
+                                    <li>• Mobile app connectivity</li>
+                                    <li>• AI vision processing</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Why miniAuto is Perfect for Learning:</h4>
+                        <ul class="space-y-2 text-blue-700">
+                            <li>• Combines all concepts we've learned (sensors, motors, programming)</li>
+                            <li>• Real-world robotics platform with professional features</li>
+                            <li>• Expandable and customizable for creative projects</li>
+                            <li>• Perfect preparation for robotics competitions</li>
+                        </ul>
+                    </div>
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Connection to Previous Lessons:</h4>
+                        <ul class="space-y-2 text-green-700">
+                            <li>• Week 8-9: Arduino programming → ESP32 programming</li>
+                            <li>• Week 10: Analog sensors → Camera and line sensors</li>
+                            <li>• Week 11: Motor control → Precise wheel control</li>
+                            <li>• Week 12: Ultrasonic sensors → Built-in obstacle detection</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 2: Assembly Process -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Assembly and Setup Process (25 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Assembly Steps (Hands-On):</h4>
+                        <ol class="space-y-2 text-gray-700 list-decimal list-inside">
+                            <li>Attach motors to chassis frame</li>
+                            <li>Mount wheels and ensure proper alignment</li>
+                            <li>Install ESP32 controller board</li>
+                            <li>Connect motor driver and power distribution</li>
+                            <li>Mount ultrasonic sensor on front</li>
+                            <li>Install camera module (if included)</li>
+                            <li>Connect all wiring harnesses</li>
+                            <li>Install battery pack and test power</li>
+                        </ol>
+                    </div>
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Safety and Best Practices:</h4>
+                        <ul class="space-y-2 text-yellow-700">
+                            <li>• Always disconnect power when making connections</li>
+                            <li>• Check polarity on all connections (red = positive, black = negative)</li>
+                            <li>• Ensure screws are tight but don't over-tighten</li>
+                            <li>• Keep workspace organized with small parts in containers</li>
+                            <li>• Test each component before final assembly</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Initial system test code
+#include "miniAuto.h"  // miniAuto library
+
+void setup() {
+    Serial.begin(115200);
+    miniAuto.init();  // Initialize all systems
+    Serial.println("🤖 miniAuto System Test");
+    // Test all major components
+    testMotors();
+    testSensors();
+    testLEDs();
+    testBuzzer();
+    Serial.println("✅ All systems operational!");
+}
+
+void testMotors() {
+    Serial.println("Testing motors...");
+    miniAuto.moveForward(100);
+    delay(1000);
+    miniAuto.stop();
+    Serial.println("✓ Motors OK");
+}
+
+void testSensors() {
+    Serial.println("Testing sensors...");
+    float distance = miniAuto.getDistance();
+    Serial.print("Distance: ");
+    Serial.println(distance);
+    Serial.println("✓ Sensors OK");
+}
+
+void loop() {
+    // System monitoring
+    Serial.print("Battery: ");
+    Serial.print(miniAuto.getBatteryVoltage());
+    Serial.println("V");
+    delay(5000);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 3: Default Programs -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Default Programs and Features (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Built-in Demonstration Programs:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Remote Control:</strong> Mobile app or wireless glove control</li>
+                            <li>• <strong>Obstacle Avoidance:</strong> Autonomous navigation</li>
+                            <li>• <strong>Line Following:</strong> Track following behavior</li>
+                            <li>• <strong>AI Vision Games:</strong> Object recognition and tracking</li>
+                            <li>• <strong>Dance Mode:</strong> Choreographed movement patterns</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Loading and testing default programs
+void demonstrateFeatures() {
+    Serial.println("🎮 Starting feature demonstration");
+    // 1. Basic movement test
+    Serial.println("1. Movement Test");
+    miniAuto.moveForward(150);
+    delay(2000);
+    miniAuto.turnRight(150);
+    delay(1000);
+    miniAuto.stop();
+    // 2. Sensor demonstration
+    Serial.println("2. Sensor Test");
+    for (int i = 0; i < 10; i++) {
+        float dist = miniAuto.getDistance();
+        Serial.print("Distance: ");
+        Serial.print(dist);
+        Serial.println(" cm");
+        miniAuto.setLED(dist < 20 ? RED : GREEN);
+        delay(500);
+    }
+    // 3. Sound and light show
+    Serial.println("3. Light and Sound");
+    miniAuto.playTone(440, 500);  // A note
+    miniAuto.setLED(BLUE);
+    delay(500);
+    miniAuto.playTone(523, 500);  // C note
+    miniAuto.setLED(RED);
+    delay(500);
+    miniAuto.setLED(OFF);
+    Serial.println("✅ Demonstration complete!");
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 4: Mobile App Connection -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Mobile App and Wireless Control (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">App Connection Process:</h4>
+                        <ol class="space-y-2 text-gray-700 list-decimal list-inside">
+                            <li>Download miniAuto app from app store</li>
+                            <li>Enable WiFi hotspot mode on robot</li>
+                            <li>Connect phone to robot's WiFi network</li>
+                            <li>Launch app and establish connection</li>
+                            <li>Test basic movement controls</li>
+                            <li>Explore advanced features (camera view, sensors)</li>
+                        </ol>
+                    </div>
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">App Features to Explore:</h4>
+                        <ul class="space-y-2 text-blue-700">
+                            <li>• <strong>Manual Control:</strong> Joystick and button interface</li>
+                            <li>• <strong>Live Camera Feed:</strong> See what the robot sees</li>
+                            <li>• <strong>Sensor Dashboard:</strong> Real-time sensor readings</li>
+                            <li>• <strong>Programming Mode:</strong> Block-based programming interface</li>
+                            <li>• <strong>Competition Modes:</strong> Line following, obstacle course</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: miniAuto First Contact</h3>
+                    <p class="text-green-700 mb-4">Students will complete the full setup process and create their first custom program for their miniAuto robot.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Setup Checklist:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>□ Complete physical assembly</li>
+                            <li>□ Load and test system diagnostic program</li>
+                            <li>□ Establish mobile app connection</li>
+                            <li>□ Test all basic movements via app</li>
+                            <li>□ Verify sensor readings</li>
+                            <li>□ Create custom "robot introduction" program</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Custom Program Requirements:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Robot introduces itself with movement and sounds</li>
+                            <li>• Demonstrates key capabilities (movement, sensors, lights)</li>
+                            <li>• Responds to environment (obstacles, distance)</li>
+                            <li>• Includes personality elements (unique behaviors)</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Troubleshooting Guide:</h4>
+                        <ul class="space-y-2 text-yellow-700">
+                            <li>• <strong>No movement:</strong> Check battery, motor connections</li>
+                            <li>• <strong>App won't connect:</strong> Verify WiFi settings, restart robot</li>
+                            <li>• <strong>Sensors not working:</strong> Check wiring, test with multimeter</li>
+                            <li>• <strong>Erratic behavior:</strong> Check for loose connections, interference</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Is the robot properly assembled and functional?</li>
+                            <li>• Can student establish app connectivity?</li>
+                            <li>• Are all major systems working (motors, sensors, LEDs)?</li>
+                            <li>• Can they create and load custom programs?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">Robot Personality Development</p>
+                            <p class="text-blue-700 text-sm">Create a unique "personality" for your miniAuto robot. Program distinct behaviors, movement patterns, and responses that make your robot unique. Include at least 3 different "moods" or behavior modes that can be triggered by different conditions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week12" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 12
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week13" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 13 Quiz
+                        </a>
+                        <a href="/programming/lessons/week14" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 14 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

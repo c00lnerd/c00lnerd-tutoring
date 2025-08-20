@@ -1,0 +1,385 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 12: Ultrasonic Sensors and Obstacle Detection">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">12</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 12: Ultrasonic Sensors and Obstacle Detection</h1>
+                        <p class="text-gray-600">Teaching robots to "see" with sound</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand ultrasonic sensor principles
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Measure distances accurately
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Implement obstacle detection algorithms
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Create autonomous navigation behaviors
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Sensor timing and pulse measurement
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Autonomous decision making
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Real-time sensor processing
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Ultrasonic Sensor Principles -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        How Ultrasonic Sensors Work (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Ultrasonic Distance Measurement:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Sends high-frequency sound pulse (40kHz)</li>
+                            <li>• Measures time for echo to return</li>
+                            <li>• Calculates distance using speed of sound</li>
+                            <li>• Works like bat echolocation</li>
+                        </ul>
+                    </div>
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Distance Formula:</h4>
+                        <p class="text-blue-700 font-mono">Distance = (Time × Speed of Sound) ÷ 2</p>
+                        <p class="text-blue-700 text-sm mt-2">Speed of sound ≈ 343 m/s = 0.0343 cm/µs</p>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// HC-SR04 Ultrasonic Sensor
+#define TRIG_PIN 7
+#define ECHO_PIN 8
+
+void setup() {
+    Serial.begin(9600);
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+    Serial.println("🔊 Ultrasonic Distance Sensor Ready");
+}
+
+float getDistance() {
+    // Send trigger pulse
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+    // Measure echo pulse duration
+    long duration = pulseIn(ECHO_PIN, HIGH);
+    // Calculate distance in cm
+    float distance = (duration * 0.0343) / 2;
+    return distance;
+}
+
+void loop() {
+    float dist = getDistance();
+    Serial.print("Distance: ");
+    Serial.print(dist);
+    Serial.println(" cm");
+    delay(500);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 2: Obstacle Detection Logic -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Obstacle Detection and Decision Making (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Detection Strategies:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Set threshold distances for different actions</li>
+                            <li>• Use multiple measurements for reliability</li>
+                            <li>• Implement different response behaviors</li>
+                            <li>• Handle sensor errors and invalid readings</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Obstacle detection with thresholds
+#define STOP_DISTANCE 10    // Stop if closer than 10cm
+#define SLOW_DISTANCE 30    // Slow down if closer than 30cm
+#define WARN_DISTANCE 50    // Warning if closer than 50cm
+
+enum RobotState {
+    MOVING_FAST,
+    MOVING_SLOW,
+    STOPPED,
+    TURNING
+};
+
+RobotState currentState = MOVING_FAST;
+
+void checkObstacles() {
+    float distance = getDistance();
+    // Validate reading (HC-SR04 range: 2-400cm)
+    if (distance < 2 || distance > 400) {
+        Serial.println("⚠️ Invalid sensor reading");
+        return;
+    }
+    // Decision making based on distance
+    if (distance <= STOP_DISTANCE) {
+        currentState = STOPPED;
+        stopRobot();
+        Serial.println("🛑 EMERGENCY STOP - Obstacle too close!");
+        delay(1000);
+        // Try to turn away
+        currentState = TURNING;
+        turnRight(150);
+        delay(500);
+    } else if (distance <= SLOW_DISTANCE) {
+        currentState = MOVING_SLOW;
+        moveForward(100);  // Reduced speed
+        Serial.println("🐌 Slowing down - Obstacle detected");
+    } else if (distance <= WARN_DISTANCE) {
+        currentState = MOVING_FAST;
+        moveForward(200);  // Normal speed
+        Serial.println("⚠️ Obstacle ahead - Monitoring");
+    } else {
+        currentState = MOVING_FAST;
+        moveForward(255);  // Full speed
+        Serial.println("🚀 Path clear - Full speed");
+    }
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 3: Advanced Navigation -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Advanced Navigation Behaviors (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Smart Navigation Strategies:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Wall following behavior</li>
+                            <li>• Random walk with obstacle avoidance</li>
+                            <li>• Multi-sensor fusion</li>
+                            <li>• Escape from corners and dead ends</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`
+unsigned long lastTurnTime = 0;
+int consecutiveObstacles = 0;
+
+void smartNavigation() {
+    float frontDistance = getDistance();
+    // Check if we're stuck in a corner
+    if (frontDistance <= STOP_DISTANCE) {
+        consecutiveObstacles++;
+        Serial.print("Obstacle count: ");
+        Serial.println(consecutiveObstacles);
+        if (consecutiveObstacles >= 3) {
+            // Escape sequence - back up and turn around
+            Serial.println(" Executing escape sequence");
+            moveBackward(150);
+            delay(1000);
+            turnRight(200);
+            delay(1500);  // 180 degree turn
+            consecutiveObstacles = 0;
+        } else {
+            // Simple avoidance
+            stopRobot();
+            delay(500);
+            // Random turn direction
+            if (random(0, 2) == 0) {
+                turnLeft(150);
+                Serial.println(" Turning left");
+            } else {
+                turnRight(150);
+                Serial.println(" Turning right");
+            }
+            delay(800);
+        }
+        lastTurnTime = millis();
+    } else {
+        // Clear path - reset obstacle counter
+        consecutiveObstacles = 0;
+        moveForward(200);
+    }
+}
+
+// Wall following behavior
+void followWall() {
+    // Keep a constant distance from wall
+    float wallDistance = getDistance();
+    float targetDistance = 20.0;  // 20cm from wall
+    float tolerance = 5.0;
+    if (wallDistance < targetDistance - tolerance) {
+        // Too close to wall - turn away
+        setMotorSpeed(200, 150);  // Curve away
+    } else if (wallDistance > targetDistance + tolerance) {
+        // Too far from wall - turn toward
+        setMotorSpeed(150, 200);  // Curve toward
+    } else {
+        // Perfect distance - go straight
+        setMotorSpeed(200, 200);
+    }
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 4: Sensor Reliability -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Sensor Reliability and Error Handling (10 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Common Issues:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Soft materials absorb sound (carpet, curtains)</li>
+                            <li>• Angled surfaces reflect sound away</li>
+                            <li>• Very close objects (< 2cm) can't be detected</li>
+                            <li>• Interference from other ultrasonic devices</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Robust distance measurement
+float getReliableDistance() {
+    float readings[5];
+    int validReadings = 0;
+    // Take multiple readings
+    for (int i = 0; i < 5; i++) {
+        float dist = getDistance();
+        if (dist >= 2 && dist <= 400) {
+            readings[validReadings] = dist;
+            validReadings++;
+        }
+        delay(50);  // Wait between readings
+    }
+    // Return median of valid readings
+    if (validReadings >= 3) {
+        // Sort readings
+        for (int i = 0; i < validReadings - 1; i++) {
+            for (int j = i + 1; j < validReadings; j++) {
+                if (readings[i] > readings[j]) {
+                    float temp = readings[i];
+                    readings[i] = readings[j];
+                    readings[j] = temp;
+                }
+            }
+        }
+        return readings[validReadings / 2];  // Median
+    } else {
+        Serial.println("⚠️ Sensor unreliable - using default");
+        return 100;  // Safe default distance
+    }
+}`}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: Autonomous Explorer Robot</h3>
+                    <p class="text-green-700 mb-4">Students will create an autonomous robot that explores an environment while avoiding obstacles, demonstrating real miniAuto-like behavior.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Requirements:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Implement ultrasonic distance measurement</li>
+                            <li>• Create multi-level obstacle detection (stop, slow, warn)</li>
+                            <li>• Add intelligent navigation behaviors</li>
+                            <li>• Include escape sequences for corners</li>
+                            <li>• Log exploration data to Serial monitor</li>
+                            <li>• Combine with previous motor control knowledge</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Advanced Challenge:</h4>
+                        <p class="text-yellow-700">Add a "mapping" feature that remembers obstacle locations and creates a simple map of the explored area using coordinate tracking.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• Can student measure distances accurately?</li>
+                            <li>• Do they understand obstacle detection logic?</li>
+                            <li>• Are they implementing reliable sensor reading?</li>
+                            <li>• Can they create autonomous navigation behaviors?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">Smart Parking Assistant</p>
+                            <p class="text-blue-700 text-sm">Create a parking assistance system that uses ultrasonic sensors to guide a robot into a "parking space" between obstacles. Include distance feedback, warning systems, and automatic stopping when perfectly positioned.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week11" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 11
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week12" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 12 Quiz
+                        </a>
+                        <a href="/programming/lessons/week13" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 13 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

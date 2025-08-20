@@ -1,0 +1,276 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 12: Ultrasonic Sensors and Distance Measurement - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 12: Ultrasonic Sensors and Distance Measurement</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Measure distance and detect obstacles using ultrasonic sensors</p>
+                <div class="mt-4 p-4 bg-cyan-100 rounded-lg">
+                    <p class="text-cyan-800 font-medium">📡 From motors to sensors - giving robots spatial awareness</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Understand ultrasonic sensor principles and operation
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Measure distances accurately using HC-SR04 sensors
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Implement obstacle detection and avoidance systems
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Combine sensors with motors for autonomous behavior
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Sound waves and time-of-flight measurement
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Trigger and echo signal timing
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Distance calculation and calibration
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-cyan-600 mr-2">•</span>
+                                Sensor fusion and decision making
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Ultrasonic Sensor Fundamentals -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🔊 Section 1: Ultrasonic Sensor Fundamentals</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How Ultrasonic Sensors Work</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Ultrasonic sensors use high-frequency sound waves to measure distance. They work like 
+                        sonar systems - sending out sound pulses and measuring the time for echoes to return.
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">HC-SR04 Specifications:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Range:</strong> 2cm to 400cm</li>
+                            <li><strong>Accuracy:</strong> ±3mm</li>
+                            <li><strong>Frequency:</strong> 40kHz ultrasonic</li>
+                            <li><strong>Distance Formula:</strong> Distance = (Time × 0.0343) ÷ 2</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Basic Distance Measurement -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">📏 Section 2: Basic Distance Measurement</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Simple Distance Reading</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Basic program to read distance from an HC-SR04 sensor:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic HC-SR04 Distance Measurement
+const int trigPin = 9;    // Trigger pin
+const int echoPin = 10;   // Echo pin
+
+long duration;
+int distance;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(9600);
+  Serial.println("HC-SR04 Distance Sensor");
+}
+
+void loop() {
+  // Clear trigger
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  
+  // Send 10µs pulse
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Read echo duration
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate distance
+  distance = duration * 0.0343 / 2;
+  
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  
+  delay(500);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: Obstacle Detection -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🚧 Section 3: Obstacle Detection</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Obstacle Detection System</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Combine sensors with LEDs and buzzers for obstacle alerts:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Obstacle Detection System
+const int trigPin = 9;
+const int echoPin = 10;
+const int redLED = 13;
+const int yellowLED = 12;
+const int greenLED = 11;
+const int buzzer = 8;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(redLED, OUTPUT);
+  pinMode(yellowLED, OUTPUT);
+  pinMode(greenLED, OUTPUT);
+  pinMode(buzzer, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int distance = getDistance();
+  
+  // Turn off all LEDs
+  digitalWrite(redLED, LOW);
+  digitalWrite(yellowLED, LOW);
+  digitalWrite(greenLED, LOW);
+  noTone(buzzer);
+  
+  if (distance <= 10) {
+    // DANGER
+    digitalWrite(redLED, HIGH);
+    tone(buzzer, 1000);
+    Serial.println("DANGER - Very close!");
+  } else if (distance <= 30) {
+    // WARNING
+    digitalWrite(yellowLED, HIGH);
+    tone(buzzer, 500);
+    Serial.println("WARNING - Obstacle detected");
+  } else {
+    // SAFE
+    digitalWrite(greenLED, HIGH);
+    Serial.println("SAFE - Path clear");
+  }
+  
+  delay(200);
+}
+
+int getDistance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  long duration = pulseIn(echoPin, HIGH);
+  return duration * 0.0343 / 2;
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Smart Parking Assistant</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Ultrasonic Parking Sensor</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create a parking assistance system with progressive alerts as objects get closer.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Requirements</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Multi-zone distance detection (safe, caution, warning, danger)</li>
+                        <li>Progressive LED indicators</li>
+                        <li>Variable-frequency buzzer alerts</li>
+                        <li>Serial Monitor status display</li>
+                        <li>Error detection and handling</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">📝 Assessment & Homework</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>How do ultrasonic sensors measure distance?</li>
+                        <li>What is the speed of sound in air?</li>
+                        <li>Why do we divide by 2 in the distance calculation?</li>
+                        <li>What is the operating range of the HC-SR04?</li>
+                        <li>How can you improve measurement reliability?</li>
+                    </ol>
+                </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week12" style="background-color: #0891b2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #0e7490; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#0e7490'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#0891b2'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 12 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week11" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 11
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week13" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 13 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+

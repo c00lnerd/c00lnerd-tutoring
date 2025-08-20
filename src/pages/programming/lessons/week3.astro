@@ -1,0 +1,376 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 3: Conditionals and Decision Making">
+    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">3</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Week 3: Conditionals and Decision Making</h1>
+                        <p class="text-gray-600">Making programs that can make decisions</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">By the end of this lesson, students will:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Use if, elif, and else statements effectively
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Apply comparison operators (==, !=, &lt;, &gt;, &lt;=, &gt;=)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Combine conditions with logical operators (and, or, not)
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Create nested conditional structures
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-gray-800 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-600">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Logical thinking and decision trees
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Program flow control
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Boolean logic understanding
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Basic If Statements -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        Basic If Statements (15 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Key Concepts:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• If statements let programs make decisions</li>
+                            <li>• Code inside if block runs only when condition is True</li>
+                            <li>• Indentation is crucial in Python</li>
+                            <li>• Conditions evaluate to True or False</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                        <div class="text-gray-400"># Basic if statement</div>
+                        <div>age = int(input("Enter your age: "))</div>
+                        <div>if age >= 16:</div>
+                        <div class="ml-4">print("You can drive!")</div>
+                        <div>print("This always runs")</div>
+                        <div class="mt-2 text-gray-400"># Multiple conditions</div>
+                        <div>temperature = 75</div>
+                        <div>if temperature > 80:</div>
+                        <div class="ml-4">print("It's hot outside!")</div>
+                        <div>if temperature < 60:</div>
+                        <div class="ml-4">print("It's cold outside!")</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">Instructor Notes:</h4>
+                        <p class="text-blue-700">Emphasize indentation! Show what happens with incorrect indentation. Use real-world decision examples like "If it's raining, take an umbrella."</p>
+                    </div>
+                </div>
+
+                <!-- Section 2: Comparison Operators -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Comparison Operators (15 minutes)
+                    </h3>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Comparison Operators:</h4>
+                            <ul class="space-y-1 text-gray-700 text-sm">
+                                <li>• <code>==</code> equal to</li>
+                                <li>• <code>!=</code> not equal to</li>
+                                <li>• <code>&lt;</code> less than</li>
+                                <li>• <code>&gt;</code> greater than</li>
+                                <li>• <code>&lt;=</code> less than or equal</li>
+                                <li>• <code>&gt;=</code> greater than or equal</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold mb-2">Common Mistakes:</h4>
+                            <ul class="space-y-1 text-gray-700 text-sm">
+                                <li>• Using = instead of ==</li>
+                                <li>• Comparing different types</li>
+                                <li>• Case sensitivity with strings</li>
+                                <li>• Forgetting quotes around strings</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400"># Comparison examples</div>
+                        <div>score = 85</div>
+                        <div>if score >= 90:</div>
+                        <div class="ml-4">print("A grade!")</div>
+                        <div class="mt-2">name = input("Enter your name: ")</div>
+                        <div>if name == "Python":</div>
+                        <div class="ml-4">print("That's a programming language!")</div>
+                        <div class="mt-2 text-gray-400"># Be careful with strings</div>
+                        <div>if name.lower() == "python":  # Case insensitive</div>
+                        <div class="ml-4">print("Found Python!")</div>
+                    </div>
+                </div>
+
+                <!-- Section 3: If-Elif-Else Chains -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        If-Elif-Else Chains (20 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Decision Chain Structure:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• <strong>if</strong>: First condition to check</li>
+                            <li>• <strong>elif</strong>: Additional conditions (else if)</li>
+                            <li>• <strong>else</strong>: Default action if nothing else matches</li>
+                            <li>• Only ONE block executes in the entire chain</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                        <div class="text-gray-400"># Grade calculator</div>
+                        <div>score = int(input("Enter your test score: "))</div>
+                        <div class="mt-1">if score >= 90:</div>
+                        <div class="ml-4">print("Excellent! You got an A")</div>
+                        <div>elif score >= 80:</div>
+                        <div class="ml-4">print("Good job! You got a B")</div>
+                        <div>elif score >= 70:</div>
+                        <div class="ml-4">print("Not bad! You got a C")</div>
+                        <div>elif score >= 60:</div>
+                        <div class="ml-4">print("You passed with a D")</div>
+                        <div>else:</div>
+                        <div class="ml-4">print("You need to study more. F grade.")</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-800 mb-2">Teaching Tip:</h4>
+                        <p class="text-yellow-700">Draw a flowchart on the board showing how the program flows through the conditions. Only one path is taken!</p>
+                    </div>
+                </div>
+
+                <!-- Section 4: Logical Operators -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Logical Operators and Nested Conditions (15 minutes)
+                    </h3>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Logical Operators:</h4>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <h5 class="font-medium text-gray-800 mb-2">and:</h5>
+                                <p class="text-sm text-gray-700">Both conditions must be True</p>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-gray-800 mb-2">or:</h5>
+                                <p class="text-sm text-gray-700">At least one condition must be True</p>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-gray-800 mb-2">not:</h5>
+                                <p class="text-sm text-gray-700">Reverses True/False</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400"># Logical operators</div>
+                        <div>age = 17</div>
+                        <div>has_license = True</div>
+                        <div class="mt-1">if age >= 16 and has_license:</div>
+                        <div class="ml-4">print("You can drive!")</div>
+                        <div class="mt-2">weather = "sunny"</div>
+                        <div>temperature = 75</div>
+                        <div>if weather == "sunny" or temperature > 80:</div>
+                        <div class="ml-4">print("Great day to be outside!")</div>
+                        <div class="mt-2 text-gray-400"># Nested conditions</div>
+                        <div>if age >= 13:</div>
+                        <div class="ml-4">if age < 20:</div>
+                        <div class="ml-8">print("You're a teenager!")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity (25 minutes)</h2>
+                
+                <div class="bg-green-50 p-6 rounded-lg">
+                    <h3 class="text-xl font-semibold text-green-800 mb-4">Project: Robot Decision System</h3>
+                    <p class="text-green-700 mb-4">Students will create a program that helps a robot make decisions based on sensor readings and conditions.</p>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Requirements:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• Ask for robot's battery level (0-100)</li>
+                            <li>• Ask for obstacle distance (in cm)</li>
+                            <li>• Ask if it's daytime (yes/no)</li>
+                            <li>• Use if-elif-else to determine robot action</li>
+                            <li>• Include at least one logical operator (and/or)</li>
+                            <li>• Add comments explaining the decision logic</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold mb-2">Decision Logic:</h4>
+                        <ul class="space-y-1 text-gray-700 text-sm">
+                            <li>• Battery < 20%: "Return to charging station"</li>
+                            <li>• Obstacle < 10cm: "Stop and turn around"</li>
+                            <li>• Battery > 50% and daytime: "Continue mission"</li>
+                            <li>• Battery > 50% and nighttime: "Activate night vision"</li>
+                            <li>• Otherwise: "Conserve energy and wait"</li>
+                        </ul>
+                    </div>
+
+                    <!-- Tri-Platform Instructions -->
+                    <div class="mb-6">
+                        <h4 class="font-semibold text-green-800 mb-3">🤖📱 How to Code This Project (Choose Your Platform):</h4>
+                        
+                        <!-- Platform-Specific Instructions -->
+                        <div class="grid lg:grid-cols-3 md:grid-cols-2 gap-4 mb-4">
+                            <!-- Pythonista 3 Instructions -->
+                            <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-400">
+                                <h5 class="font-semibold text-purple-800 mb-2 flex items-center">
+                                    <span class="mr-2">📱</span> Pythonista 3:
+                                </h5>
+                                <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                                    <li>Open Pythonista 3</li>
+                                    <li>Tap "+" → "Empty Script"</li>
+                                    <li>Name it "robot_decision.py"</li>
+                                    <li>Type the code below</li>
+                                    <li>Tap ▶️ to run</li>
+                                    <li>Test different inputs</li>
+                                </ol>
+                                <div class="bg-purple-100 p-2 rounded mt-3 text-xs text-purple-700">
+                                    <strong>Tip:</strong> Test edge cases (battery=19, distance=9)
+                                </div>
+                            </div>
+
+                            <!-- Pydroid 3 Instructions -->
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <span class="mr-2">🤖</span> Pydroid 3:
+                                </h5>
+                                <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                                    <li>Open Pydroid 3</li>
+                                    <li>Tap "+" → "Python file"</li>
+                                    <li>Name it "robot_decision.py"</li>
+                                    <li>Type the code below</li>
+                                    <li>Tap ▶️ yellow play button</li>
+                                    <li>Test different inputs</li>
+                                </ol>
+                                <div class="bg-green-100 p-2 rounded mt-3 text-xs text-green-700">
+                                    <strong>Tip:</strong> Use "Terminal" for quick testing
+                                </div>
+                            </div>
+
+                            <!-- PC/Mac Instructions -->
+                            <div class="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-400">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <span class="mr-2">💻</span> PC/Mac:
+                                </h5>
+                                <ol class="space-y-2 text-sm text-gray-700 list-decimal list-inside">
+                                    <li>Open IDLE or editor</li>
+                                    <li>Create new file</li>
+                                    <li>Save as "robot_decision.py"</li>
+                                    <li>Type the code below</li>
+                                    <li>Press F5 to run</li>
+                                    <li>Test different inputs</li>
+                                </ol>
+                                <div class="bg-blue-100 p-2 rounded mt-3 text-xs text-blue-700">
+                                    <strong>Tip:</strong> Run multiple times to test logic
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <div class="text-gray-400"># Robot Decision System</div>
+                        <div>print("Robot Status Check")</div>
+                        <div>battery = int(input("Battery level (0-100): "))</div>
+                        <div>distance = int(input("Obstacle distance (cm): "))</div>
+                        <div>daytime = input("Is it daytime? (yes/no): ").lower()</div>
+                        <div class="mt-1 text-gray-400"># Decision logic</div>
+                        <div>if battery < 20:</div>
+                        <div class="ml-4">print("🔋 Return to charging station")</div>
+                        <div>elif distance < 10:</div>
+                        <div class="ml-4">print("🛑 Stop and turn around")</div>
+                        <div>elif battery > 50 and daytime == "yes":</div>
+                        <div class="ml-4">print("🚀 Continue mission")</div>
+                        <div>elif battery > 50 and daytime == "no":</div>
+                        <div class="ml-4">print("🌙 Activate night vision")</div>
+                        <div>else:</div>
+                        <div class="ml-4">print("⏸️ Conserve energy and wait")</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>• Can student write proper if-elif-else chains?</li>
+                            <li>• Do they understand comparison operators?</li>
+                            <li>• Are they using logical operators correctly?</li>
+                            <li>• Is their code properly indented?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <p class="text-blue-800 font-medium mb-2">Smart Home Controller</p>
+                            <p class="text-blue-700 text-sm">Create a program that controls smart home devices based on time, temperature, and occupancy. Use nested conditions and logical operators to make intelligent decisions about lighting, heating, and security.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week2" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 2
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week3" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 3 Quiz
+                        </a>
+                        <a href="/programming/lessons/week4" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 4 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

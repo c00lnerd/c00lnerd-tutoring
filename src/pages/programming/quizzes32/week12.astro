@@ -1,0 +1,515 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 12 Quiz: Ultrasonic Sensors and Distance Measurement - C00lnerd Tutoring">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 12 Quiz</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Ultrasonic Sensors and Distance Measurement</p>
+        </div>
+
+        <!-- Student Information Form -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+            <h3 class="text-xl font-bold text-cyan-800 mb-4">Student Information</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label for="quiz32StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name:</label>
+                    <input type="text" id="quiz32StudentName" autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent" placeholder="Enter your full name" required>
+                </div>
+                <div>
+                    <label for="quiz32StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address:</label>
+                    <input type="email" id="quiz32StudentEmail" autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent" placeholder="Enter your email" required>
+                </div>
+            </div>
+
+            <form id="quizForm">
+                <!-- Question 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Ultrasonic Sensor Operation</h3>
+                    <p class="text-gray-700 mb-4">How do ultrasonic sensors measure distance?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="A" class="mr-3">
+                            <span>A) By measuring light reflection time</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="B" class="mr-3">
+                            <span>B) By sending sound waves and measuring echo return time</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="C" class="mr-3">
+                            <span>C) By measuring electrical resistance changes</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="D" class="mr-3">
+                            <span>D) By detecting magnetic field variations</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: HC-SR04 Frequency</h3>
+                    <p class="text-gray-700 mb-4">What is the operating frequency of the HC-SR04 ultrasonic sensor?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="A" class="mr-3">
+                            <span>A) 20 kHz</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="B" class="mr-3">
+                            <span>B) 40 kHz</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="C" class="mr-3">
+                            <span>C) 60 kHz</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="D" class="mr-3">
+                            <span>D) 100 kHz</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Distance Calculation</h3>
+                    <p class="text-gray-700 mb-4">Why do we divide by 2 in the ultrasonic distance calculation?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="A" class="mr-3">
+                            <span>A) To convert from microseconds to seconds</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="B" class="mr-3">
+                            <span>B) Because sound travels to the object and back (round trip)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="C" class="mr-3">
+                            <span>C) To account for temperature variations</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="D" class="mr-3">
+                            <span>D) To improve measurement accuracy</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Sensor Range</h3>
+                    <p class="text-gray-700 mb-4">What is the maximum range of the HC-SR04 sensor?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="A" class="mr-3">
+                            <span>A) 200 cm</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="B" class="mr-3">
+                            <span>B) 300 cm</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="C" class="mr-3">
+                            <span>C) 400 cm</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="D" class="mr-3">
+                            <span>D) 500 cm</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: Arduino Function</h3>
+                    <p class="text-gray-700 mb-4">Which Arduino function is used to measure the duration of the echo pulse?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="A" class="mr-3">
+                            <span>A) digitalRead()</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="B" class="mr-3">
+                            <span>B) analogRead()</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="C" class="mr-3">
+                            <span>C) pulseIn()</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="D" class="mr-3">
+                            <span>D) millis()</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Trigger Pulse</h3>
+                    <p class="text-gray-700 mb-4">What trigger pulse duration is required for the HC-SR04?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="A" class="mr-3">
+                            <span>A) 5 microseconds</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="B" class="mr-3">
+                            <span>B) 10 microseconds</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="C" class="mr-3">
+                            <span>C) 15 microseconds</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="D" class="mr-3">
+                            <span>D) 20 microseconds</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Obstacle Avoidance</h3>
+                    <p class="text-gray-700 mb-4">In obstacle avoidance systems, what typically happens when an obstacle is detected?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="A" class="mr-3">
+                            <span>A) The robot continues forward at reduced speed</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="B" class="mr-3">
+                            <span>B) The robot stops, backs up, and turns to avoid the obstacle</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="C" class="mr-3">
+                            <span>C) The robot shuts down completely</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="D" class="mr-3">
+                            <span>D) The robot increases speed to push through</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Speed of Sound</h3>
+                    <p class="text-gray-700 mb-4">What is the speed of sound in air at room temperature?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="A" class="mr-3">
+                            <span>A) 300 m/s</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="B" class="mr-3">
+                            <span>B) 343 m/s</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="C" class="mr-3">
+                            <span>C) 400 m/s</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="D" class="mr-3">
+                            <span>D) 500 m/s</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Multi-zone Parking Sensor</h3>
+                    <p class="text-gray-700 mb-4">Explain how you would implement a multi-zone parking sensor system using an ultrasonic sensor. Describe the different zones and their corresponding alerts.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Question 10: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Measurement Accuracy</h3>
+                    <p class="text-gray-700 mb-4">What factors could affect the accuracy of ultrasonic distance measurements, and how would you handle these issues in your code?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" 
+                            style="background-color: #0891b2; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section (Hidden Initially) -->
+            <div id="resultsSection" class="bg-white rounded-lg shadow-lg p-8 mb-8 hidden">
+                <h3 class="text-xl font-bold text-green-600 mb-4">Quiz Results</h3>
+                <div id="resultsContent"></div>
+                <div class="mt-6 text-center">
+                    <button onclick="printResults()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg mr-4">
+                        Print Results
+                    </button>
+                    <button onclick="resetQuiz()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">
+                        Retake Quiz
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week12" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Lesson
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week13" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 13 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+    <script is:inline>
+        // Quiz answers
+        const correctAnswers = {
+            q1: 'B', // Sound waves and echo time
+            q2: 'B', // 40 kHz
+            q3: 'B', // Round trip (to object and back)
+            q4: 'C', // 400 cm
+            q5: 'C', // pulseIn()
+            q6: 'B', // 10 microseconds
+            q7: 'B', // Stop, back up, and turn
+            q8: 'B'  // 343 m/s
+        };
+
+        const explanations = {
+            q1: 'Ultrasonic sensors work by sending high-frequency sound waves and measuring the time it takes for the echo to return after bouncing off objects.',
+            q2: 'The HC-SR04 operates at 40 kHz, which is above the human hearing range (ultrasonic).',
+            q3: 'We divide by 2 because the sound wave travels to the object and back to the sensor (round trip), so the measured time represents twice the actual distance.',
+            q4: 'The HC-SR04 has a maximum range of 400 cm (4 meters) with a minimum range of 2 cm.',
+            q5: 'The pulseIn() function measures the duration of a pulse, perfect for measuring the echo pulse duration from ultrasonic sensors.',
+            q6: 'The HC-SR04 requires a 10-microsecond HIGH pulse on the trigger pin to initiate a measurement.',
+            q7: 'Effective obstacle avoidance involves stopping, backing away from the obstacle, then turning to find a clear path.',
+            q8: 'The speed of sound in air at room temperature (20°C) is approximately 343 meters per second.'
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('quiz32StudentName').value;
+            const studentEmail = document.getElementById('quiz32StudentEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email address.');
+                return;
+            }
+
+            let score = 0;
+            let totalQuestions = 8; // Multiple choice questions
+            let results = [];
+
+            // Check multiple choice answers
+            for (let i = 1; i <= 8; i++) {
+                const questionName = 'q' + i;
+                const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+                
+                if (selectedAnswer) {
+                    const isCorrect = selectedAnswer.value === correctAnswers[questionName];
+                    if (isCorrect) score++;
+                    
+                    results.push({
+                        question: i,
+                        selected: selectedAnswer.value,
+                        correct: correctAnswers[questionName],
+                        isCorrect: isCorrect,
+                        explanation: explanations[questionName]
+                    });
+                } else {
+                    results.push({
+                        question: i,
+                        selected: 'No answer',
+                        correct: correctAnswers[questionName],
+                        isCorrect: false,
+                        explanation: explanations[questionName]
+                    });
+                }
+            }
+
+            // Get short answer responses
+            const q9Answer = document.querySelector('textarea[name="q9"]').value;
+            const q10Answer = document.querySelector('textarea[name="q10"]').value;
+
+            // Calculate percentage
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Display results
+            displayResults(score, totalQuestions, percentage, results, q9Answer, q10Answer);
+            
+            // Send email to instructor
+            sendQuizResults(studentName, studentEmail, score, totalQuestions, percentage, results, q9Answer, q10Answer);
+        });
+
+        function displayResults(score, total, percentage, results, q9Answer, q10Answer) {
+            // Determine grade
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #0891b2;">${score}/${total} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #0891b2;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #cffafe; border-radius: 6px; color: #0891b2; font-weight: bold;">
+                        📡 Week 12: Ultrasonic Sensors and Distance Measurement
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((result, index) => {
+                        return `
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '✓' : '✗'}<br>
+                                <strong>Your answer:</strong> ${result.selected}<br>
+                                <strong>Correct answer:</strong> ${result.correct}
+                            </div>
+                        `;
+                    }).join('')}
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                        <strong>Question 9 - Multi-zone Parking Sensor Design:</strong><br>
+                        <strong>Your answer:</strong> ${q9Answer || 'No response provided'}
+                    </div>
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                        <strong>Question 10 - Measurement Accuracy Factors:</strong><br>
+                        <strong>Your answer:</strong> ${q10Answer || 'No response provided'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function sendQuizResults(studentName, studentEmail, score, total, percentage, results, q9Answer, q10Answer) {
+
+            // Initialize EmailJS
+            console.log('🚀 Starting EmailJS section...');
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            let emailContent = `Week 12 Quiz Results - Ultrasonic Sensors and Distance Measurement\n\n`;
+            emailContent += `Student: ${studentName}\n`;
+            emailContent += `Email: ${studentEmail}\n`;
+            emailContent += `Score: ${score}/${total} (${percentage}%)\n`;
+            emailContent += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            emailContent += `MULTIPLE CHOICE RESULTS:\n`;
+            results.forEach(result => {
+                emailContent += `Question ${result.question}: ${result.isCorrect ? 'CORRECT' : 'INCORRECT'}\n`;
+                emailContent += `  Student answer: ${result.selected}\n`;
+                emailContent += `  Correct answer: ${result.correct}\n\n`;
+            });
+            
+            emailContent += `SHORT ANSWER RESPONSES:\n\n`;
+            emailContent += `Question 9 - Multi-zone Parking Sensor Design:\n`;
+            emailContent += `${q9Answer || 'No response provided'}\n\n`;
+            
+            emailContent += `Question 10 - Measurement Accuracy Factors:\n`;
+            emailContent += `${q10Answer || 'No response provided'}\n\n`;
+            
+            emailContent += `PERFORMANCE ANALYSIS:\n`;
+            if (percentage >= 90) {
+                emailContent += `Excellent work! ${studentName} demonstrates strong understanding of ultrasonic sensors and distance measurement principles.`;
+            } else if (percentage >= 80) {
+                emailContent += `Good performance! ${studentName} shows solid grasp of ultrasonic sensor concepts with room for minor improvements.`;
+            } else if (percentage >= 70) {
+                emailContent += `Satisfactory work. ${studentName} understands basic concepts but may need additional practice with sensor applications.`;
+            } else {
+                emailContent += `${studentName} may need additional support with ultrasonic sensor principles and practical applications.`;
+            }
+
+            console.log('Sending quiz results via EmailJS...');
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: 'C00lnerd Quiz System',
+                from_email: 'chuck@c00lnerd.com',
+                
+                message: emailContent,
+                subject: `Week 12 Programming Quiz - ${studentName}`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+                alert('Quiz submitted successfully! Your results have been sent to your instructor.');
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+                alert('There was an issue sending your quiz results. Please contact your instructor.');
+            });
+
+            // Log to Google Sheets
+            console.log('Logging quiz results to Google Sheets...');
+            const totalQuestions = 10;
+            
+            // Extract individual answers from results array
+            const answersObj = {};
+            results.forEach((result, index) => {
+                answersObj[`q${index + 1}`] = result.selected;
+            });
+            answersObj.q9 = q9Answer;
+            answersObj.q10 = q10Answer;
+            
+            // Calculate grade
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const sheetsData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 'Week 12',
+                topic: 'Ultrasonic Sensors & Distance Measurement',
+                score: score,
+                totalPoints: totalQuestions,
+                percentage: percentage,
+                grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                timestamp: new Date().toISOString()
+            };
+
+            fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(sheetsData)
+            })
+            .then(() => {
+                console.log('Quiz results logged to Google Sheets successfully!');
+            })
+            .catch(error => {
+                console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error);
+            });
+        }
+
+        function printResults() {
+            window.print();
+        }
+
+        function resetQuiz() {
+            document.getElementById('quizForm').reset();
+            document.getElementById('resultsSection').classList.add('hidden');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</Layout>

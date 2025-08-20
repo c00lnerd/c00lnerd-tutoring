@@ -1,0 +1,259 @@
+---
+title: "Week 26: Color Recognition & Computer Vision"
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Week 26: Color Recognition & Computer Vision</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1200px; margin: 0 auto; padding: 20px; background-color: #f5f7fa; }
+            .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+            .hidden { display: none; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="margin: 0; font-size: 2.5rem; font-weight: bold;">Week 26: Color Recognition & Computer Vision</h1>
+                <p style="margin: 1rem 0 0 0; font-size: 1.2rem; opacity: 0.9;">Teaching robots to see and understand colors in the world around them</p>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div style="background: #f8fafc; border-left: 6px solid #667eea; padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center;">🎯 Learning Objectives</h2>
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div>
+                            <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">By the end of this lesson, students will:</h3>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">✅ Understand color theory and RGB/HSV color spaces</li>
+                                <li style="margin-bottom: 0.5rem;">✅ Learn computer vision basics and image processing</li>
+                                <li style="margin-bottom: 0.5rem;">✅ Program ESP32-S3 camera for color detection</li>
+                                <li style="margin-bottom: 0.5rem;">✅ Implement color tracking and following algorithms</li>
+                                <li style="margin-bottom: 0.5rem;">✅ Build practical color recognition applications</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Skills Developed:</h3>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">🔍 Computer vision programming</li>
+                                <li style="margin-bottom: 0.5rem;">🎨 Color space manipulation</li>
+                                <li style="margin-bottom: 0.5rem;">📸 Camera interfacing and control</li>
+                                <li style="margin-bottom: 0.5rem;">🤖 Real-time image processing</li>
+                                <li style="margin-bottom: 0.5rem;">🎯 Object detection and tracking</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div style="background: #f8fafc; border-left: 6px solid #667eea; padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Lesson Content</h2>
+                
+                <!-- Section 1: Color Theory -->
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">1. Understanding Color and Computer Vision</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Color recognition allows robots to identify, track, and respond to colored objects. This enables applications 
+                        like traffic light recognition, object sorting, and color-based navigation.
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Color Theory:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">🔴 <strong>RGB:</strong> Red, Green, Blue (0-255)</li>
+                                <li style="margin-bottom: 0.5rem;">🌈 <strong>HSV:</strong> Hue, Saturation, Value</li>
+                                <li style="margin-bottom: 0.5rem;">🎨 <strong>Perception:</strong> How cameras see color</li>
+                                <li style="margin-bottom: 0.5rem;">💡 <strong>Lighting:</strong> Affects detection</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Computer Vision:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">📷 <strong>Images:</strong> Pixels and resolution</li>
+                                <li style="margin-bottom: 0.5rem;">🔍 <strong>Processing:</strong> Filtering and enhancement</li>
+                                <li style="margin-bottom: 0.5rem;">🎯 <strong>Detection:</strong> Finding colored regions</li>
+                                <li style="margin-bottom: 0.5rem;">📊 <strong>Analysis:</strong> Shape and size measurement</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: ESP32-S3 Programming -->
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">2. ESP32-S3 Camera Programming</h3>
+                    
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Basic Color Detection:</h4>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">${`#include "esp_camera.h"
+
+// Color range structure
+struct ColorRange {
+  uint8_t r_min, r_max;
+  uint8_t g_min, g_max;
+  uint8_t b_min, b_max;
+};
+
+// Red color range
+ColorRange redRange = {150, 255, 0, 100, 0, 100};
+
+bool detectColor(uint8_t r, uint8_t g, uint8_t b, ColorRange range) {
+  return (r >= range.r_min && r <= range.r_max &&
+          g >= range.g_min && g <= range.g_max &&
+          b >= range.b_min && b <= range.b_max);
+}`}</pre>
+
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Color Tracking Algorithm:</h4>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">${`void followColorObject() {
+  camera_fb_t * fb = esp_camera_fb_get();
+  if (!fb) return;
+  
+  uint16_t* pixels = (uint16_t*)fb->buf;
+  int sumX = 0, sumY = 0, count = 0;
+  
+  // Find color centroid
+  for (int y = 0; y < fb->height; y++) {
+    for (int x = 0; x < fb->width; x++) {
+      int index = y * fb->width + x;
+      uint16_t pixel = pixels[index];
+      
+      uint8_t r = (pixel >> 11) << 3;
+      uint8_t g = ((pixel >> 5) & 0x3F) << 2;
+      uint8_t b = (pixel & 0x1F) << 3;
+      
+      if (detectColor(r, g, b, redRange)) {
+        sumX += x;
+        sumY += y;
+        count++;
+      }
+    }
+  }
+  
+  if (count > 50) {
+    int centerX = sumX / count;
+    int error = centerX - 160; // Image center
+    
+    // Control robot based on object position
+    if (abs(error) < 20) {
+      moveForward(100);
+    } else if (error > 0) {
+      turnRight(50);
+    } else {
+      turnLeft(50);
+    }
+  }
+  
+  esp_camera_fb_return(fb);
+}`}</pre>
+                </div>
+
+                <!-- Section 3: Applications -->
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">3. Practical Applications</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Traffic Light Recognition:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">🔴 Red: Stop completely</li>
+                                <li style="margin-bottom: 0.5rem;">🟡 Yellow: Slow down</li>
+                                <li style="margin-bottom: 0.5rem;">🟢 Green: Proceed forward</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Object Sorting:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">📦 Detect object color</li>
+                                <li style="margin-bottom: 0.5rem;">🤖 Sort into categories</li>
+                                <li style="margin-bottom: 0.5rem;">📍 Move to correct location</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div style="background: #f0f9ff; border-left: 6px solid #0ea5e9; padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                <h2 style="color: #0c4a6e; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🛠️ Hands-On Activity: Color-Following Robot</h2>
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1.5rem;">
+                        Build a robot that detects, tracks, and follows colored objects using the ESP32-S3 camera.
+                    </p>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Materials:</h4>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                                <li style="margin-bottom: 0.5rem;">🤖 miniAuto robot with ESP32-S3</li>
+                                <li style="margin-bottom: 0.5rem;">📷 Camera module</li>
+                                <li style="margin-bottom: 0.5rem;">🔴 Colored objects</li>
+                                <li style="margin-bottom: 0.5rem;">💡 Good lighting</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Steps:</h4>
+                            <ol style="color: #4a5568; line-height: 1.8; padding-left: 1rem;">
+                                <li style="margin-bottom: 0.5rem;">Initialize camera</li>
+                                <li style="margin-bottom: 0.5rem;">Calibrate color ranges</li>
+                                <li style="margin-bottom: 0.5rem;">Test detection</li>
+                                <li style="margin-bottom: 0.5rem;">Implement following</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                        <p style="color: #92400e; margin: 0; font-weight: 500;">
+                            <strong>Safety:</strong> Keep speeds low, test in open areas, have emergency stop ready.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div style="background: #f8fafc; border-left: 6px solid #667eea; padding: 2rem; border-radius: 10px; margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📝 Assessment & Homework</h2>
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Assessment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">✅ Explain RGB vs HSV color spaces</li>
+                        <li style="margin-bottom: 0.5rem;">✅ How does ESP32-S3 detect colors?</li>
+                        <li style="margin-bottom: 0.5rem;">✅ What affects color recognition accuracy?</li>
+                        <li style="margin-bottom: 0.5rem;">✅ Design a color-based sorting system</li>
+                    </ul>
+
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; margin-top: 1.5rem;">Homework Assignment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">📝 Research real-world color recognition applications</li>
+                        <li style="margin-bottom: 0.5rem;">🎨 Test different lighting conditions on color detection</li>
+                        <li style="margin-bottom: 0.5rem;">🤖 Program a simple traffic light response system</li>
+                        <li style="margin-bottom: 0.5rem;">📊 Document which colors work best/worst and why</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid #e5e7eb;">
+                <div style="display: flex; gap: 1rem;">
+                    <a href="/programming/" style="background-color: #6b7280; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Semester Overview
+                    </a>
+                    <a href="/programming/lessons32/week25" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous Lesson
+                    </a>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <a href="/programming/quizzes32/week26" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Quiz →
+                    </a>
+                    <a href="/programming/lessons32/week27" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

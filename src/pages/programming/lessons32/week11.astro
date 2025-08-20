@@ -1,0 +1,492 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 11: DC Motors and Motor Control - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 11: DC Motors and Motor Control</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Control DC motors for movement, speed, and direction</p>
+                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                    <p class="text-purple-800 font-medium">🚗 From servos to continuous rotation - powering movement</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Understand DC motor principles and characteristics
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Control motor speed using PWM signals
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Implement motor direction control with H-bridges
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Use motor driver ICs for safe motor control
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Motor driver circuits and protection
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                H-bridge operation and control
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                PWM speed control and direction switching
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Current limiting and motor protection
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: DC Motor Fundamentals -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">⚙️ Section 1: DC Motor Fundamentals</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding DC Motors</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        DC (Direct Current) motors convert electrical energy into mechanical rotation. 
+                        Unlike servos which move to specific positions, DC motors provide continuous 
+                        rotation and are perfect for wheels, fans, pumps, and other applications requiring motion.
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">DC Motor Characteristics:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                            <div>
+                                <h5 class="font-medium text-blue-700 mb-1">Electrical Properties:</h5>
+                                <ul class="text-blue-600 text-sm space-y-1">
+                                    <li>• Voltage: 3V, 5V, 6V, 12V common</li>
+                                    <li>• Current: Varies with load (50mA-2A+)</li>
+                                    <li>• Speed proportional to voltage</li>
+                                    <li>• Direction controlled by polarity</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-blue-700 mb-1">Mechanical Properties:</h5>
+                                <ul class="text-blue-600 text-sm space-y-1">
+                                    <li>• RPM: Revolutions per minute</li>
+                                    <li>• Torque: Rotational force</li>
+                                    <li>• Efficiency: Power conversion ratio</li>
+                                    <li>• Load characteristics: Speed vs torque</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Why We Need Motor Drivers</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Arduino pins can only provide 40mA of current, but most DC motors need much more. 
+                        Motor drivers act as amplifiers, using Arduino's control signals to switch higher 
+                        current from external power supplies.
+                    </p>
+                    
+                    <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">⚠️ Direct Connection Problems:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Insufficient Current:</strong> Arduino can't provide enough power</li>
+                            <li><strong>Voltage Drop:</strong> Motor won't reach full speed</li>
+                            <li><strong>Damage Risk:</strong> Excessive current can damage Arduino</li>
+                            <li><strong>Back EMF:</strong> Motor generates voltage when stopping</li>
+                            <li><strong>No Direction Control:</strong> Can't reverse motor easily</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Motor Driver Circuits -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔌 Section 2: Motor Driver Circuits</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">H-Bridge Motor Control</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        An H-bridge is a circuit that allows voltage to be applied across a motor in either 
+                        direction, enabling both forward and reverse rotation. It's called an H-bridge because 
+                        the circuit diagram resembles the letter "H".
+                    </p>
+                    
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">H-Bridge Operation States:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Forward:</strong> Top-left and bottom-right switches closed</li>
+                            <li><strong>Reverse:</strong> Top-right and bottom-left switches closed</li>
+                            <li><strong>Brake:</strong> Both bottom switches closed (short motor)</li>
+                            <li><strong>Coast:</strong> All switches open (motor freewheels)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">L298N Motor Driver</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The L298N is a popular dual H-bridge motor driver IC that can control two DC motors 
+                        or one stepper motor. It includes built-in protection and can handle up to 2A per channel.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// L298N Motor Driver Control Example
+// Motor A connections
+const int motorA_pin1 = 2;    // Direction control
+const int motorA_pin2 = 3;    // Direction control  
+const int motorA_enable = 9;  // Speed control (PWM)
+
+// Motor B connections
+const int motorB_pin1 = 4;    // Direction control
+const int motorB_pin2 = 5;    // Direction control
+const int motorB_enable = 10; // Speed control (PWM)
+
+void setup() {
+  // Set motor control pins as outputs
+  pinMode(motorA_pin1, OUTPUT);
+  pinMode(motorA_pin2, OUTPUT);
+  pinMode(motorA_enable, OUTPUT);
+  pinMode(motorB_pin1, OUTPUT);
+  pinMode(motorB_pin2, OUTPUT);
+  pinMode(motorB_enable, OUTPUT);
+  
+  Serial.begin(9600);
+  Serial.println("L298N Motor Driver Test");
+}
+
+void loop() {
+  // Test Motor A forward
+  Serial.println("Motor A Forward");
+  motorA_forward(200);  // Speed 0-255
+  delay(2000);
+  
+  // Test Motor A reverse
+  Serial.println("Motor A Reverse");
+  motorA_reverse(150);
+  delay(2000);
+  
+  // Stop Motor A
+  Serial.println("Motor A Stop");
+  motorA_stop();
+  delay(1000);
+}
+
+void motorA_forward(int speed) {
+  digitalWrite(motorA_pin1, HIGH);
+  digitalWrite(motorA_pin2, LOW);
+  analogWrite(motorA_enable, speed);
+}
+
+void motorA_reverse(int speed) {
+  digitalWrite(motorA_pin1, LOW);
+  digitalWrite(motorA_pin2, HIGH);
+  analogWrite(motorA_enable, speed);
+}
+
+void motorA_stop() {
+  digitalWrite(motorA_pin1, LOW);
+  digitalWrite(motorA_pin2, LOW);
+  analogWrite(motorA_enable, 0);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: Speed and Direction Control -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🎛️ Section 3: Speed and Direction Control</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">PWM Speed Control</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Motor speed is controlled using PWM (Pulse Width Modulation) on the enable pins. 
+                        Higher PWM values result in higher average voltage and faster motor speed.
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Interactive Motor Speed Control
+const int motorPin1 = 2;
+const int motorPin2 = 3;
+const int enablePin = 9;
+const int potPin = A0;        // Potentiometer for speed
+const int directionPin = 7;   // Button for direction
+
+int motorSpeed = 0;
+bool motorDirection = true;   // true = forward, false = reverse
+bool lastButtonState = HIGH;
+
+void setup() {
+  pinMode(motorPin1, OUTPUT);
+  pinMode(motorPin2, OUTPUT);
+  pinMode(enablePin, OUTPUT);
+  pinMode(directionPin, INPUT_PULLUP);
+  
+  Serial.begin(9600);
+  Serial.println("Interactive Motor Control");
+  Serial.println("Turn pot for speed, press button to change direction");
+}
+
+void loop() {
+  // Read speed from potentiometer
+  int potValue = analogRead(potPin);
+  motorSpeed = map(potValue, 0, 1023, 0, 255);
+  
+  // Check direction button
+  bool currentButtonState = digitalRead(directionPin);
+  if (lastButtonState == HIGH && currentButtonState == LOW) {
+    motorDirection = !motorDirection;
+    Serial.print("Direction changed to: ");
+    Serial.println(motorDirection ? "Forward" : "Reverse");
+    delay(50); // Debounce
+  }
+  lastButtonState = currentButtonState;
+  
+  // Control motor based on direction and speed
+  if (motorDirection) {
+    // Forward
+    digitalWrite(motorPin1, HIGH);
+    digitalWrite(motorPin2, LOW);
+  } else {
+    // Reverse
+    digitalWrite(motorPin1, LOW);
+    digitalWrite(motorPin2, HIGH);
+  }
+  
+  // Set speed
+  analogWrite(enablePin, motorSpeed);
+  
+  // Display status
+  Serial.print("Speed: ");
+  Serial.print(motorSpeed);
+  Serial.print(" | Direction: ");
+  Serial.print(motorDirection ? "Forward" : "Reverse");
+  Serial.print(" | Percentage: ");
+  Serial.print((motorSpeed * 100) / 255);
+  Serial.println("%");
+  
+  delay(100);
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Control Functions</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create reusable functions for common motor operations:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Motor Control Function Library
+class DCMotor {
+  private:
+    int pin1, pin2, enablePin;
+    
+  public:
+    DCMotor(int p1, int p2, int en) {
+      pin1 = p1;
+      pin2 = p2;
+      enablePin = en;
+      pinMode(pin1, OUTPUT);
+      pinMode(pin2, OUTPUT);
+      pinMode(enablePin, OUTPUT);
+    }
+    
+    void forward(int speed) {
+      digitalWrite(pin1, HIGH);
+      digitalWrite(pin2, LOW);
+      analogWrite(enablePin, constrain(speed, 0, 255));
+    }
+    
+    void reverse(int speed) {
+      digitalWrite(pin1, LOW);
+      digitalWrite(pin2, HIGH);
+      analogWrite(enablePin, constrain(speed, 0, 255));
+    }
+    
+    void stop() {
+      digitalWrite(pin1, LOW);
+      digitalWrite(pin2, LOW);
+      analogWrite(enablePin, 0);
+    }
+    
+    void brake() {
+      digitalWrite(pin1, HIGH);
+      digitalWrite(pin2, HIGH);
+      analogWrite(enablePin, 255);
+    }
+};
+
+// Create motor objects
+DCMotor leftMotor(2, 3, 9);
+DCMotor rightMotor(4, 5, 10);
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("DC Motor Class Demo");
+}
+
+void loop() {
+  // Move both motors forward
+  leftMotor.forward(200);
+  rightMotor.forward(200);
+  delay(2000);
+  
+  // Turn right (left motor forward, right motor reverse)
+  leftMotor.forward(150);
+  rightMotor.reverse(150);
+  delay(1000);
+  
+  // Stop both motors
+  leftMotor.stop();
+  rightMotor.stop();
+  delay(1000);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-gradient-to-r from-orange-50 to-purple-50 rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: Robot Movement Control</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Remote Control Robot Base</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create a comprehensive motor control system that simulates a robot base with 
+                        two DC motors. Implement various movement patterns and control methods using 
+                        Serial Monitor commands and sensor inputs.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Requirements</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Control two DC motors for differential drive</li>
+                        <li>Implement forward, reverse, left, right, and stop commands</li>
+                        <li>Add speed control using potentiometer or serial commands</li>
+                        <li>Create automated movement patterns (square, circle, figure-8)</li>
+                        <li>Include safety features and emergency stop</li>
+                        <li>Add status feedback and motor monitoring</li>
+                        <li>Implement smooth acceleration and deceleration</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Expected Features</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                        <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Movement Control</h4>
+                            <ul class="text-orange-700 text-sm space-y-1">
+                                <li>Differential drive control</li>
+                                <li>Variable speed adjustment</li>
+                                <li>Smooth direction changes</li>
+                                <li>Automated movement patterns</li>
+                            </ul>
+                        </div>
+                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">User Interface</h4>
+                            <ul class="text-purple-700 text-sm space-y-1">
+                                <li>Serial command system</li>
+                                <li>Real-time status display</li>
+                                <li>Emergency stop function</li>
+                                <li>Movement pattern selection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>Why can't we connect DC motors directly to Arduino pins?</li>
+                        <li>What is an H-bridge and how does it control motor direction?</li>
+                        <li>How does PWM control motor speed?</li>
+                        <li>What are the four basic states of H-bridge operation?</li>
+                        <li>What safety considerations are important when working with motors?</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Homework Challenges</h3>
+                    <div class="space-y-4">
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 1: Speed Ramping</h4>
+                            <p class="text-blue-700">
+                                Create a motor control system with smooth acceleration and deceleration. 
+                                Motors should gradually increase to target speed and slowly stop.
+                            </p>
+                        </div>
+                        
+                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 2: Obstacle Avoidance</h4>
+                            <p class="text-green-700">
+                                Build a simple obstacle avoidance system using button sensors to simulate 
+                                bumper switches. Robot should back up and turn when obstacle detected.
+                            </p>
+                        </div>
+                        
+                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 3: Line Following Simulation</h4>
+                            <p class="text-yellow-700">
+                                Create a line-following simulation using potentiometers to represent line 
+                                sensors. Adjust motor speeds to keep the "robot" centered on the line.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week11" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 11 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week10" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 10
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week12" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 12 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+

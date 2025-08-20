@@ -1,0 +1,609 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 5: Analog Inputs & Sensors - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 5: Analog Inputs & Sensors</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Reading Analog Values and Working with Sensors</p>
+                <div class="mt-4 p-4 bg-blue-100 rounded-lg">
+                    <p class="text-blue-800 font-medium">🎯 Learning Focus: ADC, analog sensors, and data processing</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this week, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Understand analog vs digital signals
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Use analogRead() to read sensor values
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Work with potentiometers and light sensors
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Map and scale analog values
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Analog-to-Digital Conversion (ADC)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                10-bit resolution (0-1023)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Voltage dividers and sensors
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Data filtering and smoothing
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Understanding Analog Signals -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📊 Section 1: Understanding Analog Signals</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Analog vs Digital</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        While digital signals have only two states (HIGH/LOW), analog signals can have any value within a range. Arduino can read analog voltages from 0V to 5V using its Analog-to-Digital Converter (ADC).
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Arduino ADC Specifications:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Resolution:</strong> 10-bit (1024 possible values: 0-1023)</li>
+                            <li>• <strong>Voltage Range:</strong> 0V to 5V (or 3.3V on some boards)</li>
+                            <li>• <strong>Analog Pins:</strong> A0, A1, A2, A3, A4, A5 on Arduino Uno</li>
+                            <li>• <strong>Conversion Time:</strong> ~100 microseconds</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic Analog Reading</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The <code>analogRead()</code> function returns a value between 0 and 1023, representing the voltage on the analog pin.
+                    </p>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Analog Reading
+const int analogPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Analog Reading Program Started");
+}
+
+void loop() {
+  int sensorValue = analogRead(analogPin);
+  
+  // Convert to voltage (0-5V)
+  float voltage = sensorValue * (5.0 / 1023.0);
+  
+  Serial.print("Raw Value: ");
+  Serial.print(sensorValue);
+  Serial.print(" | Voltage: ");
+  Serial.print(voltage);
+  Serial.println("V");
+  
+  delay(500);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 2: Working with Potentiometers -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🎛️ Section 2: Working with Potentiometers</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Potentiometer Basics</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        A potentiometer is a variable resistor that creates a voltage divider. As you turn the knob, the output voltage changes proportionally.
+                    </p>
+                    
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Potentiometer Connections:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Pin 1:</strong> Connect to 5V</li>
+                            <li>• <strong>Pin 2 (Wiper):</strong> Connect to analog input (A0)</li>
+                            <li>• <strong>Pin 3:</strong> Connect to Ground</li>
+                        </ul>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Potentiometer Control LED Brightness
+const int potPin = A0;
+const int ledPin = 9;  // PWM pin for analogWrite
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Potentiometer LED Control Started");
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  
+  // Map potentiometer value (0-1023) to LED brightness (0-255)
+  int brightness = map(potValue, 0, 1023, 0, 255);
+  
+  analogWrite(ledPin, brightness);
+  
+  Serial.print("Pot Value: ");
+  Serial.print(potValue);
+  Serial.print(" | LED Brightness: ");
+  Serial.println(brightness);
+  
+  delay(100);
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">The map() Function</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The <code>map()</code> function is essential for scaling values from one range to another. It's perfect for converting sensor readings to useful output values.
+                    </p>
+                    
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">map() Syntax:</h4>
+                        <code style="color: #4a5568;">map(value, fromLow, fromHigh, toLow, toHigh)</code>
+                        <p class="text-gray-600 mt-2">Maps a value from one range to another proportionally</p>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Multiple Mapping Examples
+const int potPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Mapping Examples");
+}
+
+void loop() {
+  int potValue = analogRead(potPin);
+  
+  // Map to different ranges
+  int percentage = map(potValue, 0, 1023, 0, 100);
+  int servoAngle = map(potValue, 0, 1023, 0, 180);
+  int frequency = map(potValue, 0, 1023, 100, 2000);
+  
+  Serial.print("Raw: ");
+  Serial.print(potValue);
+  Serial.print(" | Percentage: ");
+  Serial.print(percentage);
+  Serial.print("% | Servo: ");
+  Serial.print(servoAngle);
+  Serial.print("° | Freq: ");
+  Serial.print(frequency);
+  Serial.println("Hz");
+  
+  delay(200);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: Light Sensors and Environmental Sensing -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">☀️ Section 3: Light Sensors and Environmental Sensing</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Photoresistor (LDR) Basics</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        A Light Dependent Resistor (LDR) changes its resistance based on light intensity. We use it in a voltage divider circuit to create a light sensor.
+                    </p>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">LDR Circuit Setup:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• LDR connected between 5V and analog pin</li>
+                            <li>• 10kΩ resistor between analog pin and ground</li>
+                            <li>• Creates voltage divider that varies with light</li>
+                        </ul>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Light Sensor with Automatic LED Control
+const int ldrPin = A0;
+const int ledPin = 13;
+const int threshold = 500;  // Adjust based on your environment
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Automatic Light Control Started");
+}
+
+void loop() {
+  int lightLevel = analogRead(ldrPin);
+  
+  // Convert to percentage (higher value = more light)
+  int lightPercent = map(lightLevel, 0, 1023, 0, 100);
+  
+  // Turn on LED when it's dark
+  if (lightLevel < threshold) {
+    digitalWrite(ledPin, HIGH);
+    Serial.print("DARK - LED ON | ");
+  } else {
+    digitalWrite(ledPin, LOW);
+    Serial.print("BRIGHT - LED OFF | ");
+  }
+  
+  Serial.print("Light Level: ");
+  Serial.print(lightLevel);
+  Serial.print(" (");
+  Serial.print(lightPercent);
+  Serial.println("%)");
+  
+  delay(200);
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Temperature Sensing with TMP36</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The TMP36 is an analog temperature sensor that outputs a voltage proportional to temperature.
+                    </p>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Temperature Sensor Reading
+const int tempPin = A1;
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Temperature Sensor Started");
+}
+
+void loop() {
+  int sensorValue = analogRead(tempPin);
+  
+  // Convert to voltage
+  float voltage = sensorValue * (5.0 / 1023.0);
+  
+  // Convert voltage to temperature (TMP36 formula)
+  float temperatureC = (voltage - 0.5) * 100.0;
+  float temperatureF = (temperatureC * 9.0 / 5.0) + 32.0;
+  
+  Serial.print("Raw: ");
+  Serial.print(sensorValue);
+  Serial.print(" | Voltage: ");
+  Serial.print(voltage);
+  Serial.print("V | Temp: ");
+  Serial.print(temperatureC);
+  Serial.print("°C (");
+  Serial.print(temperatureF);
+  Serial.println("°F)");
+  
+  delay(1000);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 4: Data Filtering and Smoothing -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔧 Section 4: Data Filtering and Smoothing</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Why Filter Sensor Data?</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Raw sensor readings often contain noise and fluctuations. Filtering helps create stable, reliable readings for better control and decision-making.
+                    </p>
+                    
+                    <div style="background: #faf5ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Common Filtering Techniques:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Moving Average:</strong> Average of last N readings</li>
+                            <li>• <strong>Exponential Smoothing:</strong> Weighted average favoring recent values</li>
+                            <li>• <strong>Threshold Filtering:</strong> Ignore small changes</li>
+                        </ul>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Moving Average Filter
+const int sensorPin = A0;
+const int numReadings = 10;
+
+int readings[numReadings];
+int readIndex = 0;
+int total = 0;
+int average = 0;
+
+void setup() {
+  Serial.begin(9600);
+  
+  // Initialize all readings to 0
+  for (int i = 0; i < numReadings; i++) {
+    readings[i] = 0;
+  }
+  
+  Serial.println("Moving Average Filter Started");
+}
+
+void loop() {
+  // Subtract the last reading
+  total = total - readings[readIndex];
+  
+  // Read new value
+  readings[readIndex] = analogRead(sensorPin);
+  
+  // Add new reading to total
+  total = total + readings[readIndex];
+  
+  // Advance to next position
+  readIndex = readIndex + 1;
+  if (readIndex >= numReadings) {
+    readIndex = 0;
+  }
+  
+  // Calculate average
+  average = total / numReadings;
+  
+  Serial.print("Raw: ");
+  Serial.print(readings[readIndex == 0 ? numReadings-1 : readIndex-1]);
+  Serial.print(" | Filtered: ");
+  Serial.println(average);
+  
+  delay(100);
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Simple Exponential Smoothing</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        A simpler alternative that gives more weight to recent readings while still smoothing out noise.
+                    </p>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Exponential Smoothing Filter
+const int sensorPin = A0;
+float smoothedValue = 0;
+const float alpha = 0.1;  // Smoothing factor (0-1)
+
+void setup() {
+  Serial.begin(9600);
+  smoothedValue = analogRead(sensorPin);  // Initialize
+  Serial.println("Exponential Smoothing Started");
+}
+
+void loop() {
+  int rawValue = analogRead(sensorPin);
+  
+  // Apply exponential smoothing
+  smoothedValue = (alpha * rawValue) + ((1 - alpha) * smoothedValue);
+  
+  Serial.print("Raw: ");
+  Serial.print(rawValue);
+  Serial.print(" | Smoothed: ");
+  Serial.println(smoothedValue);
+  
+  delay(100);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: Environmental Monitor</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Multi-Sensor Environmental Monitor</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Build a system that monitors light levels and temperature, with automatic responses and data logging.
+                    </p>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Required Components:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Arduino Uno</li>
+                            <li>• Photoresistor (LDR)</li>
+                            <li>• TMP36 temperature sensor (or potentiometer for simulation)</li>
+                            <li>• 2 LEDs (different colors)</li>
+                            <li>• 10kΩ resistor, 2 × 220Ω resistors</li>
+                            <li>• Breadboard and jumper wires</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge Tasks:</h4>
+                        <ol class="text-blue-700 space-y-1 list-decimal list-inside">
+                            <li>Read both light and temperature sensors</li>
+                            <li>Implement moving average filtering</li>
+                            <li>Control LEDs based on sensor thresholds</li>
+                            <li>Display formatted data to Serial Monitor</li>
+                            <li>Add data logging with timestamps</li>
+                        </ol>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Environmental Monitor Solution
+const int ldrPin = A0;
+const int tempPin = A1;
+const int lightLED = 12;
+const int tempLED = 13;
+
+// Filtering variables
+const int numReadings = 5;
+int lightReadings[numReadings];
+int tempReadings[numReadings];
+int readIndex = 0;
+int lightTotal = 0;
+int tempTotal = 0;
+
+// Thresholds
+const int lightThreshold = 300;
+const float tempThreshold = 25.0;  // Celsius
+
+void setup() {
+  pinMode(lightLED, OUTPUT);
+  pinMode(tempLED, OUTPUT);
+  Serial.begin(9600);
+  
+  // Initialize arrays
+  for (int i = 0; i < numReadings; i++) {
+    lightReadings[i] = 0;
+    tempReadings[i] = 0;
+  }
+  
+  Serial.println("Environmental Monitor Started");
+  Serial.println("Time,Light,Temp(C),Light_LED,Temp_LED");
+}
+
+void loop() {
+  // Read sensors
+  int rawLight = analogRead(ldrPin);
+  int rawTemp = analogRead(tempPin);
+  
+  // Update moving averages
+  lightTotal = lightTotal - lightReadings[readIndex];
+  tempTotal = tempTotal - tempReadings[readIndex];
+  
+  lightReadings[readIndex] = rawLight;
+  tempReadings[readIndex] = rawTemp;
+  
+  lightTotal = lightTotal + lightReadings[readIndex];
+  tempTotal = tempTotal + tempReadings[readIndex];
+  
+  readIndex = (readIndex + 1) % numReadings;
+  
+  // Calculate averages
+  int avgLight = lightTotal / numReadings;
+  int avgTemp = tempTotal / numReadings;
+  
+  // Convert temperature to Celsius
+  float voltage = avgTemp * (5.0 / 1023.0);
+  float temperatureC = (voltage - 0.5) * 100.0;
+  
+  // Control LEDs based on thresholds
+  bool lightLEDState = avgLight < lightThreshold;
+  bool tempLEDState = temperatureC > tempThreshold;
+  
+  digitalWrite(lightLED, lightLEDState);
+  digitalWrite(tempLED, tempLEDState);
+  
+  // Data logging format
+  Serial.print(millis());
+  Serial.print(",");
+  Serial.print(avgLight);
+  Serial.print(",");
+  Serial.print(temperatureC);
+  Serial.print(",");
+  Serial.print(lightLEDState ? "ON" : "OFF");
+  Serial.print(",");
+  Serial.println(tempLEDState ? "ON" : "OFF");
+  
+  delay(1000);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Assessment and Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Week 5 Quiz Topics:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                Analog vs digital signals
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                ADC resolution and range
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                analogRead() function
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                map() function usage
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                Sensor interfacing and filtering
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignments:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">1.</span>
+                                Complete the environmental monitor project
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">2.</span>
+                                Create a voltage meter using analog input
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">3.</span>
+                                Experiment with different filtering techniques
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">4.</span>
+                                Research other analog sensors (flex, force, etc.)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">5.</span>
+                                Design a simple data logger system
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">💡 Pro Tips for Success:</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Always check sensor datasheets for proper connections</li>
+                        <li>• Use the Serial Plotter to visualize sensor data</li>
+                        <li>• Calibrate sensors in your specific environment</li>
+                        <li>• Consider power supply stability for accurate readings</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week4" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Week 4: Digital I/O Basics
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week5" style="background-color: #7c3aed; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Quiz 📝
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week6" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Week 6: PWM & Analog Outputs →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+

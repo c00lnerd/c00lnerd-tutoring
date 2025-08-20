@@ -1,0 +1,428 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 18 Quiz: Computer Vision and Image Processing">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 18 Quiz</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Computer Vision and Image Processing</p>
+        </div>
+
+        <!-- Student Information -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">Student Information</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Name:</label>
+                    <input type="text" id="quiz18StudentName" style="width: 100%; padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;" autocomplete="off">
+                </div>
+                <div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email:</label>
+                    <input type="email" id="quiz18StudentEmail" style="width: 100%; padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;" autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Questions -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 2rem;">Quiz Questions</h2>
+
+            <!-- Question 1 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">1. What are the three color values that make up each pixel in a color image?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q1" value="A" style="margin-right: 0.5rem;"> A) Red, Yellow, Blue
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q1" value="B" style="margin-right: 0.5rem;"> B) Red, Green, Blue
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q1" value="C" style="margin-right: 0.5rem;"> C) Red, Green, Yellow
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q1" value="D" style="margin-right: 0.5rem;"> D) Blue, Yellow, Purple
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">2. What RGB values would represent pure white?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q2" value="A" style="margin-right: 0.5rem;"> A) (0, 0, 0)
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q2" value="B" style="margin-right: 0.5rem;"> B) (255, 255, 255)
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q2" value="C" style="margin-right: 0.5rem;"> C) (128, 128, 128)
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q2" value="D" style="margin-right: 0.5rem;"> D) (255, 0, 0)
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">3. How do you convert a color pixel to grayscale?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q3" value="A" style="margin-right: 0.5rem;"> A) Use only the red value
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q3" value="B" style="margin-right: 0.5rem;"> B) Use only the blue value
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q3" value="C" style="margin-right: 0.5rem;"> C) Average the red, green, and blue values
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q3" value="D" style="margin-right: 0.5rem;"> D) Multiply all three values together
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">4. What does increasing the brightness of an image do to the pixel values?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q4" value="A" style="margin-right: 0.5rem;"> A) Adds the same amount to all pixel values
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q4" value="B" style="margin-right: 0.5rem;"> B) Multiplies all pixel values by 2
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q4" value="C" style="margin-right: 0.5rem;"> C) Subtracts the same amount from all pixel values
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q4" value="D" style="margin-right: 0.5rem;"> D) Changes only the red values
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 5 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">5. Why do we use color ranges instead of exact color values when detecting objects?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q5" value="A" style="margin-right: 0.5rem;"> A) It makes the program run faster
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q5" value="B" style="margin-right: 0.5rem;"> B) It uses less memory
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q5" value="C" style="margin-right: 0.5rem;"> C) It accounts for lighting variations and camera differences
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q5" value="D" style="margin-right: 0.5rem;"> D) It makes the code shorter
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 6 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">6. What is the purpose of edge detection in image processing?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q6" value="A" style="margin-right: 0.5rem;"> A) To make images brighter
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q6" value="B" style="margin-right: 0.5rem;"> B) To find boundaries between different colored areas
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q6" value="C" style="margin-right: 0.5rem;"> C) To remove noise from images
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q6" value="D" style="margin-right: 0.5rem;"> D) To convert images to grayscale
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 7 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">7. In image coordinates, where is the point (0,0) typically located?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q7" value="A" style="margin-right: 0.5rem;"> A) Bottom-left corner
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q7" value="B" style="margin-right: 0.5rem;"> B) Top-left corner
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q7" value="C" style="margin-right: 0.5rem;"> C) Center of the image
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q7" value="D" style="margin-right: 0.5rem;"> D) Top-right corner
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 8 -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">8. If a pixel has RGB values of (200, 50, 50), what color would it appear to be?</h3>
+                <div style="margin-left: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q8" value="A" style="margin-right: 0.5rem;"> A) Blue
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q8" value="B" style="margin-right: 0.5rem;"> B) Green
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q8" value="C" style="margin-right: 0.5rem;"> C) Red
+                    </label>
+                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
+                        <input type="radio" name="q8" value="D" style="margin-right: 0.5rem;"> D) Yellow
+                    </label>
+                </div>
+            </div>
+
+            <!-- Question 9 - Short Answer -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">9. Explain how a robot could use computer vision to follow a colored line on the ground. (Short Answer)</h3>
+                <textarea name="q9" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;" placeholder="Describe how a robot would detect and follow a colored line..."></textarea>
+            </div>
+
+            <!-- Question 10 - Short Answer -->
+            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <h3 style="color: #495057; margin-bottom: 1rem;">10. Give an example of how computer vision is used in everyday life and explain how it works. (Short Answer)</h3>
+                <textarea name="q10" rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;" placeholder="Describe a real-world computer vision application..."></textarea>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <button id="submitBtn" style="background: #667eea; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">
+                Submit Quiz
+            </button>
+        </div>
+
+        <!-- Results Section -->
+        <div id="resultsSection" class="hidden" style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; text-align: center;">Quiz Results</h2>
+            <div id="resultsContent"></div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week18" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Back to Lesson
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/lessons32/week19" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Next: Week 19 →
+            </a>
+        </div>
+    </div>
+
+    <script is:inline>
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const studentName = document.getElementById('quiz18StudentName').value.trim();
+            const studentEmail = document.getElementById('quiz18StudentEmail').value.trim();
+            
+            if (!studentName || !studentEmail) {
+                alert('Please enter both your name and email address.');
+                return;
+            }
+
+            // Collect answers
+            const answers = {};
+            
+            // Multiple choice questions
+            for (let i = 1; i <= 8; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                answers[`q${i}`] = selected ? selected.value : '';
+            }
+            
+            // Short answer questions
+            answers.q9 = document.querySelector('textarea[name="q9"]').value.trim();
+            answers.q10 = document.querySelector('textarea[name="q10"]').value.trim();
+
+            // Check if all questions are answered
+            let unanswered = [];
+            for (let i = 1; i <= 8; i++) {
+                if (!answers[`q${i}`]) unanswered.push(i);
+            }
+            if (!answers.q9) unanswered.push(9);
+            if (!answers.q10) unanswered.push(10);
+            
+            if (unanswered.length > 0) {
+                alert(`Please answer question(s): ${unanswered.join(', ')}`);
+                return;
+            }
+
+            // Correct answers
+            const correctAnswers = {
+                q1: 'B', // Red, Green, Blue
+                q2: 'B', // (255, 255, 255)
+                q3: 'C', // Average the red, green, and blue values
+                q4: 'A', // Adds the same amount to all pixel values
+                q5: 'C', // It accounts for lighting variations and camera differences
+                q6: 'B', // To find boundaries between different colored areas
+                q7: 'B', // Top-left corner
+                q8: 'C'  // Red (high red value, low green and blue)
+            };
+
+            // Calculate score
+            let score = 0;
+            const results = [];
+            
+            for (let i = 1; i <= 8; i++) {
+                const question = `q${i}`;
+                const isCorrect = answers[question] === correctAnswers[question];
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: i,
+                    selected: answers[question] || 'No answer',
+                    correct: correctAnswers[question],
+                    isCorrect: isCorrect
+                });
+            }
+
+            const percentage = Math.round((score / 8) * 100);
+            
+            // Display results
+            displayResults(score, 8, percentage, results, answers.q9, answers.q10);
+            
+            // Prepare email content
+            const message = `WEEK 18 QUIZ RESULTS - COMPUTER VISION & IMAGE PROCESSING
+
+Student: ${studentName}
+Email: ${studentEmail}
+Score: ${score}/8 (${percentage}%)
+
+MULTIPLE CHOICE ANSWERS:
+1. RGB color values: ${answers.q1} (Correct: ${correctAnswers.q1}) ${answers.q1 === correctAnswers.q1 ? '✓' : '✗'}
+2. Pure white RGB: ${answers.q2} (Correct: ${correctAnswers.q2}) ${answers.q2 === correctAnswers.q2 ? '✓' : '✗'}
+3. Grayscale conversion: ${answers.q3} (Correct: ${correctAnswers.q3}) ${answers.q3 === correctAnswers.q3 ? '✓' : '✗'}
+4. Brightness adjustment: ${answers.q4} (Correct: ${correctAnswers.q4}) ${answers.q4 === correctAnswers.q4 ? '✓' : '✗'}
+5. Color range detection: ${answers.q5} (Correct: ${correctAnswers.q5}) ${answers.q5 === correctAnswers.q5 ? '✓' : '✗'}
+6. Edge detection purpose: ${answers.q6} (Correct: ${correctAnswers.q6}) ${answers.q6 === correctAnswers.q6 ? '✓' : '✗'}
+7. Image coordinate origin: ${answers.q7} (Correct: ${correctAnswers.q7}) ${answers.q7 === correctAnswers.q7 ? '✓' : '✗'}
+8. RGB color identification: ${answers.q8} (Correct: ${correctAnswers.q8}) ${answers.q8 === correctAnswers.q8 ? '✓' : '✗'}
+
+SHORT ANSWER RESPONSES:
+9. Line Following with Vision: ${answers.q9}
+
+10. Real-World Computer Vision: ${answers.q10}
+
+Please review the short answer responses and provide feedback to the student.`;
+
+            // Send email using EmailJS
+            const submitBtn = this;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Initialize EmailJS
+            emailjs.init('ct_s19oZHppLy9BlW');
+
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: studentName,
+                from_email: studentEmail,
+                message: message,
+                subject: `Week 18 Quiz Results - ${studentName} (${percentage}%)`
+            }).then(function(response) {
+                console.log('Email sent successfully!', response.status, response.text);
+                
+                // Log to Google Sheets
+                const sheetsData = {
+                    studentName: studentName,
+                    studentEmail: studentEmail,
+                    week: 'Week 18',
+                    topic: 'Computer Vision & Image Processing',
+                    score: score,
+                    totalPoints: 8,
+                    percentage: percentage,
+                    grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                    timestamp: new Date().toISOString()
+                };
+
+                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                })
+                .then(() => {
+                    console.log('Quiz results logged to Google Sheets successfully!');
+                })
+                .catch(error => {
+                    console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error);
+                });
+
+                submitBtn.textContent = 'Submitted Successfully!';
+                submitBtn.style.background = '#28a745';
+                
+                alert('Quiz submitted successfully! Your results have been sent to your instructor.');
+                
+            }, function(error) {
+                console.log('Email failed...', error);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Quiz';
+                alert('There was an error submitting your quiz. Please try again.');
+            });
+        });
+
+        function displayResults(score, total, percentage, results, q9Answer, q10Answer) {
+            // Determine grade
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #667eea;">${score}/${total} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #667eea;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #667eea; font-weight: bold;">
+                        👁️ Week 18: Computer Vision & Image Processing
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((result, index) => {
+                        return `
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '✓' : '✗'}<br>
+                                <strong>Your answer:</strong> ${result.selected}<br>
+                                <strong>Correct answer:</strong> ${result.correct}
+                            </div>
+                        `;
+                    }).join('')}
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                        <strong>Question 9 - Line Following with Vision:</strong><br>
+                        <strong>Your answer:</strong> ${q9Answer || 'No answer provided'}
+                    </div>
+                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                        <strong>Question 10 - Real-World Computer Vision:</strong><br>
+                        <strong>Your answer:</strong> ${q10Answer || 'No answer provided'}
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('resultsSection').classList.remove('hidden');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+
+    <!-- EmailJS -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</Layout>

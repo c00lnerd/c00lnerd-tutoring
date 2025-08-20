@@ -1,0 +1,1188 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Module 3 Quiz - Atomic Structure and the Periodic Table">
+    <div class="container">
+        <h1>Module 3 Quiz - Physical Science</h1>
+
+        <div id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-container">
+                <div class="progress"></div>
+            </div>
+            
+            <div class="question-container">
+                <div id="question-number"></div>
+                <div id="question-text"></div>
+                
+                <div id="multiple-choice-container" style="display: none;"></div>
+                
+                <div id="atom-builder-container" style="display: none;">
+                    <div class="atom-inputs">
+                        <div class="input-group">
+                            <label for="protons">Protons:</label>
+                            <input type="number" id="protons" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="neutrons">Neutrons:</label>
+                            <input type="number" id="neutrons" min="0" value="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="electrons">Electrons:</label>
+                            <input type="number" id="electrons" min="0" value="0">
+                        </div>
+                    </div>
+                    <button id="check-atom" onclick="checkAtom()">Check Answer</button>
+                    <div id="atom-feedback" class="feedback" style="display: none;"></div>
+                </div>
+                
+                <div id="feedback" class="feedback" style="display: none;"></div>
+                
+                <div class="navigation">
+                    <button id="prevBtn" onclick="previousQuestion()" style="display: none;">Previous Question</button>
+                    <button id="nextBtn" onclick="nextQuestion()" style="display: none;">Next Question</button>
+                    <button id="submitBtn" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="incorrect-answers"></div>
+            <div id="email-status" style="display: none;"></div>
+            <div id="email-form">
+                <p>Results will be automatically sent to the email address you provided.</p>
+                <button onclick="startQuiz()">Start Over</button>
+            </div>
+        </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script type="text/javascript" is:inline>
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
+        } catch (error) {
+            console.error('Failed to initialize EmailJS:', error);
+        }
+    }
+</script>
+<script is:inline>
+    // Utility function to shuffle array and track original indices
+    function shuffleAnswers(question) {
+        // Only shuffle multiple-choice questions, not atom-builder
+        if (question.type !== "multiple-choice") {
+            return question;
+        }
+        
+        const originalOptions = [...question.options];
+        const correctAnswerText = question.correctAnswer;
+        
+        // Create array of indices
+        const indices = originalOptions.map((_, index) => index);
+        
+        // Fisher-Yates shuffle
+        for (let i = indices.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indices[i], indices[j]] = [indices[j], indices[i]];
+        }
+        
+        // Apply shuffle to options and update correct answer
+        const shuffledOptions = indices.map(i => originalOptions[i]);
+        
+        return {
+            ...question,
+            options: shuffledOptions,
+            correctAnswer: correctAnswerText, // Keep the same text-based correct answer
+            originalOrder: indices
+        };
+    }
+
+    // Enhanced questions with varied distractor lengths
+    const originalQuestions = [
+        {
+            question: "What is the atomic number of an element?",
+            type: "multiple-choice",
+            options: [
+                "The number of protons in the nucleus of an atom",
+                "The number of neutrons in the nucleus of an atom",
+                "The total number of protons and neutrons combined in the nucleus",
+                "The number of electron shells surrounding the nucleus"
+            ],
+            correctAnswer: "The number of protons in the nucleus of an atom",
+            reference: "The atomic number uniquely identifies an element and equals the number of protons in its nucleus."
+        },
+        {
+            question: "Which subatomic particle has a negative charge?",
+            type: "multiple-choice",
+            options: [
+                "Proton which carries a positive electrical charge",
+                "Neutron which has no electrical charge at all",
+                "Electron which carries a negative electrical charge",
+                "Nucleus which contains both protons and neutrons"
+            ],
+            correctAnswer: "Electron which carries a negative electrical charge",
+            reference: "Electrons are negatively charged particles that orbit the nucleus of an atom."
+        },
+        {
+            question: "What is the mass number of an atom?",
+            type: "multiple-choice",
+            options: [
+                "The number of protons only in the atomic nucleus",
+                "The number of neutrons only in the atomic nucleus",
+                "The sum of protons and neutrons in the atomic nucleus",
+                "The sum of protons and electrons in the entire atom"
+            ],
+            correctAnswer: "The sum of protons and neutrons in the atomic nucleus",
+            reference: "The mass number is the total number of protons and neutrons in an atom's nucleus."
+        },
+        {
+            question: "What is an isotope?",
+            type: "multiple-choice",
+            options: [
+                "Atoms with different numbers of protons and therefore different elements",
+                "Atoms with different numbers of neutrons but same number of protons",
+                "Atoms with different numbers of electrons but same nuclear composition",
+                "Atoms with no neutrons present in their atomic nucleus"
+            ],
+            correctAnswer: "Atoms with different numbers of neutrons but same number of protons",
+            reference: "Isotopes are atoms of the same element (same number of protons) but with different numbers of neutrons."
+        },
+        {
+            question: "Build a neutral carbon atom:",
+            type: "atom-builder",
+            correctValues: {
+                protons: 6,
+                neutrons: 6,
+                electrons: 6
+            },
+            reference: "A neutral carbon atom has 6 protons, 6 neutrons, and 6 electrons."
+        },
+        {
+            question: "What determines the chemical properties of an element?",
+            type: "multiple-choice",
+            options: [
+                "The number of neutrons",
+                "The number of protons",
+                "The total number of nucleons",
+                "The mass number"
+            ],
+            correctAnswer: "The number of protons",
+            reference: "The number of protons (atomic number) determines an element's chemical properties."
+        },
+        {
+            question: "Build a neutral sodium atom:",
+            type: "atom-builder",
+            correctValues: {
+                protons: 11,
+                neutrons: 12,
+                electrons: 11
+            },
+            reference: "A neutral sodium atom has 11 protons, typically 12 neutrons, and 11 electrons."
+        },
+        {
+            question: "What is the charge of a proton?",
+            type: "multiple-choice",
+            options: [
+                "+1",
+                "-1",
+                "0",
+                "+2"
+            ],
+            correctAnswer: "+1",
+            reference: "A proton carries a positive charge of +1."
+        },
+        {
+            question: "What is the charge of a neutron?",
+            type: "multiple-choice",
+            options: [
+                "+1",
+                "-1",
+                "0",
+                "+2"
+            ],
+            correctAnswer: "0",
+            reference: "A neutron has no electrical charge (neutral)."
+        },
+        {
+            question: "Build a neutral magnesium atom:",
+            type: "atom-builder",
+            correctValues: {
+                protons: 12,
+                neutrons: 12,
+                electrons: 12
+            },
+            reference: "A neutral magnesium atom has 12 protons, typically 12 neutrons, and 12 electrons."
+        },
+        {
+            question: "What happens to an atom when it gains electrons?",
+            type: "multiple-choice",
+            options: [
+                "It becomes a positive ion",
+                "It becomes a negative ion",
+                "It remains neutral",
+                "It becomes an isotope"
+            ],
+            correctAnswer: "It becomes a negative ion",
+            reference: "When an atom gains electrons, it becomes a negatively charged ion (anion)."
+        },
+        {
+            question: "What is the atomic mass unit (amu) approximately equal to?",
+            type: "multiple-choice",
+            options: [
+                "The mass of a proton",
+                "The mass of an electron",
+                "The mass of a neutron",
+                "The total mass of protons and neutrons"
+            ],
+            correctAnswer: "The total mass of protons and neutrons",
+            reference: "The atomic mass unit (amu) is based on the total mass of protons and neutrons in the nucleus."
+        },
+        {
+            question: "Build a neutral aluminum atom:",
+            type: "atom-builder",
+            correctValues: {
+                protons: 13,
+                neutrons: 14,
+                electrons: 13
+            },
+            reference: "A neutral aluminum atom has 13 protons, typically 14 neutrons, and 13 electrons."
+        },
+        {
+            question: "What is the main difference between atomic number and mass number?",
+            type: "multiple-choice",
+            options: [
+                "Atomic number counts only neutrons, mass number counts all particles",
+                "Atomic number counts only protons, mass number counts protons and neutrons",
+                "Atomic number counts protons and electrons, mass number counts only neutrons",
+                "Atomic number counts all particles, mass number counts only protons"
+            ],
+            correctAnswer: "Atomic number counts only protons, mass number counts protons and neutrons",
+            reference: "Atomic number is the number of protons, while mass number is the total number of protons and neutrons."
+        },
+        {
+            question: "What makes an atom electrically neutral?",
+            type: "multiple-choice",
+            options: [
+                "Having equal numbers of protons and neutrons",
+                "Having equal numbers of protons and electrons",
+                "Having more protons than electrons",
+                "Having more electrons than protons"
+            ],
+            correctAnswer: "Having equal numbers of protons and electrons",
+            reference: "An atom is neutral when it has equal numbers of protons (+) and electrons (-)."
+        },
+        {
+            question: "Build a neutral oxygen atom:",
+            type: "atom-builder",
+            correctValues: {
+                protons: 8,
+                neutrons: 8,
+                electrons: 8
+            },
+            reference: "A neutral oxygen atom has 8 protons, typically 8 neutrons, and 8 electrons."
+        },
+        {
+            question: "Where are electrons found in an atom?",
+            type: "multiple-choice",
+            options: [
+                "Only in the nucleus",
+                "In electron shells around the nucleus",
+                "Randomly distributed throughout the atom",
+                "Between the protons in the nucleus"
+            ],
+            correctAnswer: "In electron shells around the nucleus",
+            reference: "Electrons are found in shells (energy levels) orbiting around the nucleus."
+        }
+    ];
+
+    // Initialize randomized questions when quiz starts
+    function initializeQuiz() {
+        // Shuffle answers for each question (only multiple-choice)
+        window.questions = originalQuestions.map(question => shuffleAnswers(question));
+        
+        // Initialize quiz state after questions are randomized
+        currentQuestion = 0;
+        userAnswers = new Array(window.questions.length).fill(null);
+        questionAttempts = new Array(window.questions.length).fill(0);
+        
+        console.log('Module 3 quiz initialized with randomized answers');
+    }
+
+    // Initialize state
+    let currentQuestion = 0;
+    let userAnswers = new Array(originalQuestions.length).fill(null);
+    let questionAttempts = new Array(originalQuestions.length).fill(0);
+    let emailStatus = document.getElementById('email-status');
+    let score = 0;
+
+    // Initialize quiz functionality
+    function initQuiz() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
+        } catch (err) {
+            console.error('Error initializing EmailJS:', err);
+        }
+
+        // Set up quiz controls
+        const startButton = document.getElementById('start-quiz');
+        const downloadButton = document.getElementById('download-results');
+        const restartButton = document.getElementById('restart-quiz');
+        const prevButton = document.getElementById('prevBtn');
+        const nextButton = document.getElementById('nextBtn');
+        const submitButton = document.getElementById('submitBtn');
+
+        if (startButton) startButton.onclick = startQuiz;
+        if (downloadButton) downloadButton.onclick = downloadResults;
+        if (restartButton) restartButton.onclick = restartQuiz;
+        if (prevButton) prevButton.onclick = previousQuestion;
+        if (nextButton) nextButton.onclick = nextQuestion;
+        if (submitButton) submitButton.onclick = submitQuiz;
+    }
+
+    // Call init when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    } else {
+        initQuiz();
+    }
+
+    // Initialize quiz when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        // Hide quiz and results containers initially
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('email-section').style.display = 'block';
+        
+        // Add start button listener
+        document.getElementById('start-quiz').addEventListener('click', () => {
+            const email = document.getElementById('email').value;
+            const saveResults = document.getElementById('save-results').checked;
+            
+            // Store email preference
+            if (email && saveResults) {
+                localStorage.setItem('userEmail', email);
+            }
+            
+            // Initialize quiz with randomized answers
+            initializeQuiz();
+            
+            // Hide start screen, show quiz
+            document.getElementById('email-section').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            
+            // Initialize quiz state
+            currentQuestion = 0;
+            userAnswers = new Array(window.questions.length).fill(null);
+            questionAttempts = new Array(window.questions.length).fill(0);
+            score = 0;
+            
+            // Show first question
+            showQuestion();
+        });
+    });
+
+    function startQuiz() {
+        const emailInput = document.getElementById('email');
+        const saveResults = document.getElementById('save-results');
+        
+        if (saveResults.checked && (!emailInput.value || !emailInput.value.includes('@'))) {
+            alert('Please enter a valid email address or uncheck "Save results"');
+            return;
+        }
+
+        document.getElementById('email-section').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const question = window.questions[currentQuestion];
+        
+        // Debug logging
+        console.log('Current question:', currentQuestion + 1);
+        console.log('Question type:', question.type);
+        console.log('Question data:', question);
+        
+        // Update progress bar
+        const progress = ((currentQuestion + 1) / window.questions.length) * 100;
+        document.querySelector('.progress').style.width = `${progress}%`;
+        
+        // Update question number and text
+        document.getElementById('question-number').textContent = `Question ${currentQuestion + 1}/${window.questions.length}`;
+        document.getElementById('question-text').textContent = question.question;
+        
+        // Clear any previous feedback
+        document.getElementById('feedback').style.display = 'none';
+        document.getElementById('feedback').className = 'feedback';
+        document.getElementById('atom-feedback').style.display = 'none';
+        document.getElementById('atom-feedback').className = 'feedback';
+        
+        // Handle question type display
+        const multipleChoiceContainer = document.getElementById('multiple-choice-container');
+        const atomBuilderContainer = document.getElementById('atom-builder-container');
+        
+        console.log('multipleChoiceContainer:', multipleChoiceContainer);
+        console.log('atomBuilderContainer:', atomBuilderContainer);
+        console.log('About to check question type:', question.type);
+        
+        if (question.type === 'multiple-choice') {
+            console.log('Processing as multiple-choice');
+            multipleChoiceContainer.style.display = 'block';
+            atomBuilderContainer.style.display = 'none';
+            
+            // Clear and rebuild options
+            multipleChoiceContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                multipleChoiceContainer.appendChild(button);
+            });
+            
+            // If question was previously answered, restore state
+            if (userAnswers[currentQuestion] !== null) {
+                const options = document.querySelectorAll('.option-button');
+                options.forEach((option, index) => {
+                    if (userAnswers[currentQuestion] === true && index === question.correctAnswerIndex) {
+                        option.classList.add('correct');
+                    }
+                });
+                
+                // Show next/submit button if answered correctly
+                if (userAnswers[currentQuestion] === true) {
+                    if (currentQuestion < questions.length - 1) {
+                        document.getElementById('nextBtn').style.display = 'block';
+                    } else {
+                        document.getElementById('submitBtn').style.display = 'block';
+                    }
+                }
+            }
+        } else if (question.type === 'atom-builder') {
+            console.log('Processing as atom-builder');
+            console.log('Setting multipleChoiceContainer to none');
+            multipleChoiceContainer.style.display = 'none';
+            console.log('Setting atomBuilderContainer to block');
+            atomBuilderContainer.style.display = 'block';
+            console.log('Atom builder container display set to:', atomBuilderContainer.style.display);
+            
+            // Reset atom builder inputs
+            const protonsInput = document.getElementById('protons');
+            const neutronsInput = document.getElementById('neutrons');
+            const electronsInput = document.getElementById('electrons');
+            
+            console.log('Input fields found:', {
+                protons: protonsInput,
+                neutrons: neutronsInput,
+                electrons: electronsInput
+            });
+            
+            protonsInput.value = '0';
+            neutronsInput.value = '0';
+            electronsInput.value = '0';
+            
+            // Explicitly enable all input fields
+            protonsInput.disabled = false;
+            neutronsInput.disabled = false;
+            electronsInput.disabled = false;
+            protonsInput.removeAttribute('disabled');
+            neutronsInput.removeAttribute('disabled');
+            electronsInput.removeAttribute('disabled');
+            
+            // Explicitly enable the Check Answer button
+            const checkAtomButton = document.getElementById('check-atom');
+            if (checkAtomButton) {
+                checkAtomButton.disabled = false;
+                checkAtomButton.removeAttribute('disabled');
+                console.log('Check Answer button enabled:', !checkAtomButton.disabled);
+            }
+            
+            // Add event listeners to debug input interaction
+            protonsInput.oninput = function() { console.log('Protons input changed to:', this.value); };
+            neutronsInput.oninput = function() { console.log('Neutrons input changed to:', this.value); };
+            electronsInput.oninput = function() { console.log('Electrons input changed to:', this.value); };
+            
+            console.log('Input field values set to 0, disabled status:', {
+                protonsDisabled: protonsInput.disabled,
+                neutronsDisabled: neutronsInput.disabled,
+                electronsDisabled: electronsInput.disabled
+            });
+            
+            // If question was previously answered correctly, show next/submit
+            if (userAnswers[currentQuestion] === true) {
+                if (currentQuestion < questions.length - 1) {
+                    document.getElementById('nextBtn').style.display = 'block';
+                } else {
+                    document.getElementById('submitBtn').style.display = 'block';
+                }
+            }
+        }
+        
+        // Show previous button if not on first question
+        document.getElementById('prevBtn').style.display = currentQuestion > 0 ? 'block' : 'none';
+    }
+
+    function nextQuestion() {
+        if (currentQuestion < questions.length - 1) {
+            // Clear all feedback before moving to next question
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('atom-feedback').style.display = 'none';
+            document.getElementById('atom-feedback').className = 'feedback';
+            
+            // Remove correct/incorrect classes from all options
+            const options = document.querySelectorAll('.option-button');
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+                option.disabled = false;
+            });
+            
+            currentQuestion++;
+            showQuestion();
+        }
+    }
+
+    function previousQuestion() {
+        if (currentQuestion > 0) {
+            // Clear all feedback before moving to previous question
+            document.getElementById('feedback').style.display = 'none';
+            document.getElementById('feedback').className = 'feedback';
+            document.getElementById('atom-feedback').style.display = 'none';
+            document.getElementById('atom-feedback').className = 'feedback';
+            
+            // Remove correct/incorrect classes from all options
+            const options = document.querySelectorAll('.option-button');
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect');
+                option.disabled = false;
+            });
+            
+            currentQuestion--;
+            showQuestion();
+        }
+    }
+
+    function checkAtom() {
+        console.log('checkAtom() called - button clicked!');
+        console.log('Current question:', currentQuestion + 1);
+        
+        const protons = parseInt(document.getElementById('protons').value);
+        const neutrons = parseInt(document.getElementById('neutrons').value);
+        const electrons = parseInt(document.getElementById('electrons').value);
+        const question = questions[currentQuestion];
+        const atomFeedback = document.getElementById('atom-feedback');
+        
+        console.log('Input values:', { protons, neutrons, electrons });
+        console.log('Expected values:', question.correctValues);
+        console.log('Question data:', question);
+        
+        questionAttempts[currentQuestion]++;
+        
+        if (protons === question.correctValues.protons &&
+            neutrons === question.correctValues.neutrons &&
+            electrons === question.correctValues.electrons) {
+            
+            userAnswers[currentQuestion] = true;
+            score++;
+            
+            atomFeedback.className = 'feedback correct';
+            atomFeedback.innerHTML = `
+                <div>Correct!</div>
+                <div class="reference">${question.reference}</div>
+            `;
+            atomFeedback.style.display = 'block';
+            
+            // Show next/submit button
+            if (currentQuestion < questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'block';
+            }
+        } else {
+            if (questionAttempts[currentQuestion] >= 2) { // Last attempt used
+                atomFeedback.className = 'feedback incorrect';
+                atomFeedback.innerHTML = `
+                    <div>Incorrect. The correct configuration is:</div>
+                    <div>Protons: ${question.correctAnswer.protons}</div>
+                    <div>Neutrons: ${question.correctAnswer.neutrons}</div>
+                    <div>Electrons: ${question.correctAnswer.electrons}</div>
+                    <div class="reference">${question.reference}</div>
+                `;
+                atomFeedback.style.display = 'block';
+                
+                // Show navigation buttons
+                if (currentQuestion < questions.length - 1) {
+                    document.getElementById('nextBtn').style.display = 'block';
+                } else {
+                    document.getElementById('submitBtn').style.display = 'block';
+                }
+            } else {
+                // First attempt was wrong
+                atomFeedback.className = 'feedback incorrect';
+                atomFeedback.innerHTML = `
+                    <div>Incorrect. Try again.</div>
+                    <div class="reference">${question.reference}</div>
+                `;
+                atomFeedback.style.display = 'block';
+            }
+        }
+        
+        // Disable inputs after correct answer or max attempts
+        if (userAnswers[currentQuestion] === true || questionAttempts[currentQuestion] >= 2) {
+            document.getElementById('protons').disabled = true;
+            document.getElementById('neutrons').disabled = true;
+            document.getElementById('electrons').disabled = true;
+            document.getElementById('check-atom').disabled = true;
+        }
+    }
+
+    function selectAnswer(index) {
+        const question = questions[currentQuestion];
+        const selectedOption = question.options[index];
+        const isCorrect = selectedOption === question.correctAnswer;
+        const feedback = document.getElementById('feedback');
+        
+        // Clear any previous feedback state
+        const options = document.querySelectorAll('.option-button');
+        options.forEach(option => {
+            option.classList.remove('correct', 'incorrect');
+        });
+        
+        // Update the selected option's appearance
+        options[index].classList.add(isCorrect ? 'correct' : 'incorrect');
+        
+        // Show feedback
+        feedback.className = 'feedback ' + (isCorrect ? 'correct' : 'incorrect');
+        if (isCorrect) {
+            feedback.innerHTML = `
+                <div>Correct!</div>
+                <div class="reference">${question.reference || ''}</div>
+            `;
+            userAnswers[currentQuestion] = true;
+            
+            // Show next/submit button
+            if (currentQuestion < questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'block';
+            }
+        } else {
+            questionAttempts[currentQuestion]++;
+            if (questionAttempts[currentQuestion] >= 2) {
+                feedback.innerHTML = `
+                    <div>Incorrect. The correct answer is: ${question.correctAnswer}</div>
+                    <div class="reference">${question.reference || ''}</div>
+                `;
+                userAnswers[currentQuestion] = false;
+                
+                // Show next/submit button after max attempts
+                if (currentQuestion < questions.length - 1) {
+                    document.getElementById('nextBtn').style.display = 'block';
+                } else {
+                    document.getElementById('submitBtn').style.display = 'block';
+                }
+                
+                // Disable all options
+                options.forEach(option => option.disabled = true);
+            } else {
+                feedback.innerHTML = `
+                    <div>Incorrect. Try again.</div>
+                    <div class="reference">${question.reference || ''}</div>
+                `;
+            }
+        }
+        feedback.style.display = 'block';
+    }
+
+    async function submitQuiz() {
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+
+        // Calculate score correctly for mixed question types
+        let score = 0;
+        userAnswers.forEach((answer, index) => {
+            if (answer === true) {
+                score++;
+            }
+        });
+        
+        console.log('Final score calculation:', {
+            userAnswers: userAnswers,
+            score: score,
+            totalQuestions: questions.length
+        });
+
+        const percentage = ((score / questions.length) * 100).toFixed(1);
+        const emailInput = document.getElementById('email');
+        const saveResults = document.getElementById('save-results');
+
+        document.getElementById('score').innerHTML = `
+            <h3>Your Score: ${percentage}%</h3>
+            <p>You got ${score} out of ${questions.length} questions correct.</p>
+        `;
+
+        // Show incorrect answers if any
+        const incorrectAnswers = document.getElementById('incorrect-answers');
+        incorrectAnswers.innerHTML = '';
+
+        const hasIncorrectAnswers = userAnswers.some((answer, index) => answer !== true);
+
+        if (hasIncorrectAnswers) {
+            incorrectAnswers.innerHTML = '<h3>Review Incorrect Answers:</h3>';
+            
+            userAnswers.forEach((answer, index) => {
+                if (answer !== true) {
+                    const question = questions[index];
+                    let userAnswerText = 'Not answered';
+                    let correctAnswerText = '';
+                    
+                    if (question.type === 'multiple-choice') {
+                        if (answer !== null) {
+                            userAnswerText = question.options[answer];
+                        }
+                        correctAnswerText = question.correctAnswer;
+                    } else if (question.type === 'atom-builder') {
+                        userAnswerText = 'Incorrect atom configuration';
+                        correctAnswerText = `Protons: ${question.correctValues.protons}, Neutrons: ${question.correctValues.neutrons}, Electrons: ${question.correctValues.electrons}`;
+                    }
+                    
+                    incorrectAnswers.innerHTML += `
+                        <div class="question-result incorrect">
+                            <p><strong>Question:</strong> ${question.question}</p>
+                            <p><strong>Your Answer:</strong> ${userAnswerText}</p>
+                            <p><strong>Correct Answer:</strong> ${correctAnswerText}</p>
+                            <p><strong>Reference:</strong> ${question.reference}</p>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        // Send results if email was provided
+        if (saveResults.checked && emailInput.value) {
+            try {
+                emailStatus.style.display = 'block';
+                emailStatus.innerHTML = 'Sending results...';
+                
+                // Format email message like other working quizzes
+                let emailMessage = `Physical Science Module 3 Quiz Results\n\n`;
+                emailMessage += `Student: ${emailInput.value}\n`;
+                emailMessage += `Quiz: Atomic Structure and the Periodic Table\n`;
+                emailMessage += `Score: ${score}/${questions.length} (${percentage}%)\n`;
+                emailMessage += `Percentage: ${percentage}%\n`;
+                emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+                
+                // Add incorrect answers details for mixed question types
+                const incorrectAnswers = [];
+                questions.forEach((q, i) => {
+                    const isCorrect = userAnswers[i] === true;
+                    if (!isCorrect) {
+                        let userAnswerText = 'Not answered';
+                        let correctAnswerText = '';
+                        
+                        if (q.type === 'multiple-choice') {
+                            if (userAnswers[i] !== null) {
+                                userAnswerText = q.options[userAnswers[i]];
+                            }
+                            correctAnswerText = q.correctAnswer;
+                        } else if (q.type === 'atom-builder') {
+                            userAnswerText = 'Incorrect atom configuration';
+                            correctAnswerText = `Protons: ${q.correctValues.protons}, Neutrons: ${q.correctValues.neutrons}, Electrons: ${q.correctValues.electrons}`;
+                        }
+                        
+                        incorrectAnswers.push({
+                            question: q.question,
+                            userAnswer: userAnswerText,
+                            correctAnswer: correctAnswerText
+                        });
+                    }
+                });
+                
+                if (incorrectAnswers.length > 0) {
+                    emailMessage += "Incorrect Answers:\n\n";
+                    incorrectAnswers.forEach((item, index) => {
+                        emailMessage += `${index + 1}. ${item.question}\n`;
+                        emailMessage += `   Your answer: ${item.userAnswer}\n`;
+                        emailMessage += `   Correct answer: ${item.correctAnswer}\n\n`;
+                    });
+                } else {
+                    emailMessage += "Perfect score! All answers were correct.\n";
+                }
+                
+                // Post to Google Sheets
+                const sheetsData = {
+                    timestamp: new Date().toISOString(),
+                    studentEmail: emailInput.value,
+                    quizTitle: 'Physical Science Module 3 Quiz',
+                    score: score,
+                    totalQuestions: questions.length,
+                    percentage: percentage,
+                    incorrectCount: incorrectAnswers.length,
+                    timeCompleted: new Date().toLocaleString()
+                };
+
+                try {
+                    fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(sheetsData)
+                    }).then(() => {
+                        console.log('Google Sheets: Data logged successfully');
+                    }).catch(error => {
+                        console.error('Google Sheets: Error logging data:', error);
+                    });
+                } catch (error) {
+                    console.error('Google Sheets: Error logging data:', error);
+                }
+
+                // Update EmailJS template parameters for proper instructor notification
+                const updatedTemplateParams = {
+                    from_name: 'Physical Science Quiz System',
+                    student_email: emailInput.value,
+                    to_name: 'Instructor',
+                    subject: 'Physical Science Module 3 Quiz Results',
+                    submission_date: new Date().toLocaleString(),
+                    message: `Student Email: ${emailInput.value}\n\n${emailMessage}`,
+                    reply_to: emailInput.value
+                };
+
+                await emailjs.send("service_ot1jg6s", "template_0nxqbk8", updatedTemplateParams);
+
+                emailStatus.className = 'email-status success';
+                emailStatus.innerHTML = '✅ Results sent to instructor via email! ✅ Data logged to Google Sheets';
+            } catch (err) {
+                console.error('Error sending results:', err);
+                emailStatus.className = 'email-status error';
+                emailStatus.innerHTML = 'Failed to send results. Please try again.';
+            }
+        }
+    }
+
+    function downloadResults() {
+        const score = userAnswers.filter((answer, index) => 
+            answer !== null && questions[index].options[answer] === questions[index].correctAnswer
+        ).length;
+
+        const percentage = ((score / questions.length) * 100).toFixed(1);
+
+        let content = `Module 3: Atomic Structure and the Periodic Table - Quiz Results\n\n`;
+        content += `Score: ${percentage}%\n`;
+        content += `Correct Answers: ${score} out of ${questions.length}\n\n`;
+
+        if (userAnswers.some((answer, index) => 
+            answer === null || questions[index].options[answer] !== questions[index].correctAnswer
+        )) {
+            content += `Incorrect Answers Review:\n\n`;
+            userAnswers.forEach((answer, index) => {
+                if (answer === null || questions[index].options[answer] !== questions[index].correctAnswer) {
+                    content += `Question: ${questions[index].question}\n`;
+                    content += `Your Answer: ${answer !== null ? questions[index].options[answer] : 'Not answered'}\n`;
+                    content += `Correct Answer: ${questions[index].correctAnswer}\n`;
+                    content += `${questions[index].reference}\n\n`;
+                }
+            });
+        }
+
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'module3_quiz_results.txt';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    }
+
+    function restartQuiz() {
+        currentQuestion = 0;
+        userAnswers = new Array(questions.length).fill(null);
+        questionAttempts = new Array(questions.length).fill(0);
+        
+        // Reset UI elements
+        document.getElementById('email-section').style.display = 'block';
+        document.getElementById('quiz-container').style.display = 'none';
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('email').value = '';
+        document.getElementById('save-results').checked = true;
+        
+        // Clear email status
+        emailStatus.style.display = 'none';
+        emailStatus.className = 'email-status';
+        emailStatus.innerHTML = '';
+    }
+</script>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .quiz-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .progress-container {
+        width: 100%;
+        height: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .progress {
+        height: 100%;
+        background-color: #4CAF50;
+        border-radius: 5px;
+        transition: width 0.3s ease;
+    }
+
+    .question-container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #question-number {
+        font-size: 1.2em;
+        color: #666;
+        margin-bottom: 10px;
+    }
+
+    #question-text {
+        font-size: 1.4em;
+        margin-bottom: 20px;
+    }
+
+    #multiple-choice-container {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px;
+        margin: 20px 0;
+        width: 100%;
+    }
+
+    #multiple-choice-container[style*="none"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+
+    #atom-builder-container {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+
+    #atom-builder-container[style*="block"] {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    #atom-builder-container[style*="none"] {
+        display: none !important;
+    }
+
+    .option-button {
+        display: block !important;
+        width: 100% !important;
+        padding: 15px;
+        margin: 10px 0 !important;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        background-color: white;
+        font-size: 1.1em;
+        float: none !important;
+        clear: both !important;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .option-button:hover {
+        background-color: #f8f8f8;
+        border-color: #999;
+    }
+
+    .option-button.correct {
+        background-color: #dff0d8;
+        border-color: #4CAF50;
+        color: #3c763d;
+    }
+
+    .option-button.incorrect {
+        background-color: #f2dede;
+        border-color: #d9534f;
+        color: #a94442;
+    }
+
+    .option-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .atom-inputs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .input-group label {
+        margin-bottom: 5px;
+        color: #666;
+    }
+
+    .input-group input {
+        padding: 10px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+        font-size: 1.1em;
+    }
+
+    #check-atom {
+        padding: 12px 24px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1em;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    #check-atom:hover {
+        background-color: #45a049;
+    }
+
+    #check-atom:disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
+    .feedback {
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+        display: none;
+    }
+
+    .feedback.correct {
+        background-color: #dff0d8;
+        border: 1px solid #4CAF50;
+        color: #3c763d;
+    }
+
+    .feedback.incorrect {
+        background-color: #f2dede;
+        border: 1px solid #d9534f;
+        color: #a94442;
+    }
+
+    .reference {
+        margin-top: 10px;
+        font-style: italic;
+        color: #666;
+    }
+
+    .navigation {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+
+    .navigation button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 4px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    #prevBtn {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+
+    #nextBtn, #submitBtn {
+        background-color: #007bff;
+        color: white;
+    }
+
+    #prevBtn:hover {
+        background-color: #e2e6ea;
+    }
+
+    #nextBtn:hover, #submitBtn:hover {
+        background-color: #0056b3;
+    }
+
+    #results {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    #email-form {
+        margin-top: 20px;
+    }
+
+    #email-form label {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    #email-form input[type="email"] {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 2px solid #ddd;
+        border-radius: 4px;
+    }
+
+    #email-form button {
+        padding: 12px 24px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    #email-form button:hover {
+        background-color: #45a049;
+    }
+</style>
+
+</Layout>

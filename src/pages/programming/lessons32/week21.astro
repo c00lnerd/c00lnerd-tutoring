@@ -1,0 +1,362 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 21: GPS Navigation and Mapping">
+    <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0;">Week 21</h1>
+            <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; opacity: 0.9;">GPS Navigation and Mapping</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🎯</span> Learning Objectives
+            </h2>
+            <ul style="list-style-type: none; padding: 0;">
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Understand how GPS (Global Positioning System) works
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Learn about coordinates, latitude, and longitude
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Calculate distances between GPS coordinates using simple math
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Program your robot to navigate to specific locations
+                </li>
+                <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
+                    <span style="position: absolute; left: 0; color: #667eea;">•</span>
+                    Create simple maps and waypoint navigation systems
+                </li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Introduction to GPS -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🛰️</span> Introduction to GPS
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">What is GPS?</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    GPS stands for Global Positioning System. It's a network of satellites orbiting Earth that can tell you 
+                    exactly where you are anywhere on the planet! Your smartphone uses GPS to show your location on maps 
+                    and give you directions.
+                </p>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Think of GPS like a giant game of "Marco Polo" in space. The satellites are constantly saying "Marco!" 
+                    (sending signals), and your GPS receiver says "Polo!" (receives the signals). By measuring how long 
+                    it takes for the signals to travel, your device can figure out exactly where you are.
+                </p>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">How GPS Works (Simple Version)</h3>
+                <ol style="margin-bottom: 1rem; line-height: 1.8;">
+                    <li><strong>Satellites Send Signals:</strong> 24+ satellites orbit Earth, each sending time-stamped signals</li>
+                    <li><strong>Your Device Receives Signals:</strong> Your GPS receiver picks up signals from at least 4 satellites</li>
+                    <li><strong>Calculate Distance:</strong> By measuring signal travel time, it calculates distance to each satellite</li>
+                    <li><strong>Triangulation:</strong> Using distances to multiple satellites, it pinpoints your exact location</li>
+                </ol>
+                <p style="line-height: 1.6;">
+                    It's like being at the center of overlapping circles - where all the circles meet is exactly where you are!
+                </p>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">GPS Accuracy and Limitations</h3>
+                <ul style="margin-bottom: 1rem; line-height: 1.8;">
+                    <li><strong>Typical Accuracy:</strong> Within 3-5 meters (10-16 feet) in open areas</li>
+                    <li><strong>Indoor Problems:</strong> GPS doesn't work well inside buildings</li>
+                    <li><strong>Weather Effects:</strong> Heavy clouds or storms can reduce accuracy</li>
+                    <li><strong>Urban Canyons:</strong> Tall buildings can block or reflect signals</li>
+                    <li><strong>Battery Usage:</strong> GPS uses more power than other sensors</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: Understanding Coordinates -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🗺️</span> Understanding Coordinates
+            </h2>
+            
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Latitude and Longitude</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    GPS coordinates use two numbers to describe any location on Earth:
+                </p>
+                <ul style="margin-bottom: 1rem; line-height: 1.8;">
+                    <li><strong>Latitude:</strong> How far north or south you are (like horizontal lines on a globe)</li>
+                    <li><strong>Longitude:</strong> How far east or west you are (like vertical lines on a globe)</li>
+                </ul>
+                <p style="line-height: 1.6;">
+                    Example: The Statue of Liberty is at 40.6892° North, 74.0445° West
+                </p>
+            </div>
+
+            <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Reading GPS Coordinates</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    GPS coordinates can be written in different formats:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Different ways to write the same location:
+
+// Decimal Degrees (most common for programming)
+float latitude = 40.6892;
+float longitude = -74.0445;
+
+// Degrees, Minutes, Seconds (traditional)
+// 40° 41' 21.12" N, 74° 2' 40.2" W
+
+void setup() {
+  Serial.begin(9600);
+  Serial.print("Location: ");
+  Serial.print(latitude, 6);  // Print 6 decimal places
+  Serial.print(", ");
+  Serial.println(longitude, 6);
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fef7e0; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Understanding Coordinate Precision</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    The number of decimal places in coordinates affects accuracy:
+                </p>
+                <ul style="line-height: 1.8;">
+                    <li><strong>1 decimal place:</strong> ~11 km accuracy (city level)</li>
+                    <li><strong>2 decimal places:</strong> ~1.1 km accuracy (neighborhood level)</li>
+                    <li><strong>3 decimal places:</strong> ~110 m accuracy (large building level)</li>
+                    <li><strong>4 decimal places:</strong> ~11 m accuracy (house level)</li>
+                    <li><strong>5 decimal places:</strong> ~1.1 m accuracy (tree level)</li>
+                    <li><strong>6 decimal places:</strong> ~0.11 m accuracy (person level)</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 3: Distance Calculations -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📐</span> Distance Calculations
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Simple Distance Formula</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    To find the distance between two GPS points, we can use a simplified version of the 
+                    "straight line" distance formula. For short distances (like within a city), this works well:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Simple distance calculation between two GPS points
+float calculateDistance(float lat1, float lon1, float lat2, float lon2) {
+  // Convert degrees to approximate meters
+  float latDiff = (lat2 - lat1) * 111000;  // 1 degree ≈ 111km
+  float lonDiff = (lon2 - lon1) * 111000 * cos(lat1 * PI / 180);
+  
+  // Use Pythagorean theorem: distance = sqrt(a² + b²)
+  float distance = sqrt(latDiff * latDiff + lonDiff * lonDiff);
+  
+  return distance; // Returns distance in meters
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Direction Calculations</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    To navigate, your robot needs to know which direction to go. We can calculate the bearing 
+                    (compass direction) from one point to another:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Calculate direction (bearing) from point A to point B
+float calculateBearing(float lat1, float lon1, float lat2, float lon2) {
+  float latDiff = lat2 - lat1;
+  float lonDiff = lon2 - lon1;
+  
+  // Use atan2 to get angle in radians, then convert to degrees
+  float bearing = atan2(lonDiff, latDiff) * 180 / PI;
+  
+  // Make sure bearing is 0-360 degrees
+  if (bearing < 0) {
+    bearing += 360;
+  }
+  
+  return bearing;
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🔬</span> Hands-On Activity: GPS Treasure Hunt
+            </h2>
+            
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Materials Needed</h3>
+                <ul style="line-height: 1.8;">
+                    <li>miniAuto robot with Arduino</li>
+                    <li>GPS module (NEO-6M or NEO-8M)</li>
+                    <li>Compass/magnetometer module (for direction)</li>
+                    <li>Jumper wires and breadboard</li>
+                    <li>Smartphone with GPS coordinates app</li>
+                    <li>Large outdoor area (school yard, park, etc.)</li>
+                </ul>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Step-by-Step Hardware Setup</h3>
+                <ol style="line-height: 1.8;">
+                    <li><strong>Safety First:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Turn OFF the miniAuto robot before making any connections</li>
+                            <li>Remove the battery pack to prevent accidental power-on</li>
+                            <li>Handle the NEO-6M module carefully - it contains sensitive components</li>
+                        </ul>
+                    </li>
+                    <li><strong>Connect NEO-6M GPS Module to miniAuto:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li><strong>VCC (Power):</strong> Connect to <strong>3.3V</strong> on miniAuto expansion port (NOT 5V!)</li>
+                            <li><strong>GND (Ground):</strong> Connect to <strong>GND</strong> on miniAuto expansion port</li>
+                            <li><strong>TX (Transmit):</strong> Connect to <strong>Digital Pin 4</strong> on miniAuto (GPS sends data to Arduino)</li>
+                            <li><strong>RX (Receive):</strong> Connect to <strong>Digital Pin 3</strong> on miniAuto (GPS receives commands from Arduino)</li>
+                        </ul>
+                    </li>
+                    <li><strong>Secure the Module:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Use double-sided tape or small zip ties to mount GPS module on top of miniAuto</li>
+                            <li>Position the GPS antenna (ceramic square) facing upward for best signal reception</li>
+                            <li>Keep GPS module away from motors and other electronic components to reduce interference</li>
+                        </ul>
+                    </li>
+                    <li><strong>Upload GPS Code:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Connect miniAuto to computer via USB cable</li>
+                            <li>Upload the GPS navigation code from the lesson examples</li>
+                            <li>Open Serial Monitor to verify GPS data reception</li>
+                        </ul>
+                    </li>
+                    <li><strong>Initial Testing:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Reconnect battery pack and turn ON the miniAuto</li>
+                            <li>Take robot outside to an open area (GPS doesn't work indoors)</li>
+                            <li>Wait 2-5 minutes for GPS "fix" - you'll see coordinates appear in Serial Monitor</li>
+                            <li>Verify coordinates match your approximate location using smartphone GPS</li>
+                        </ul>
+                    </li>
+                    <li><strong>Create Treasure Hunt:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Use smartphone GPS app to record coordinates of 3-4 "treasure" locations</li>
+                            <li>Make sure locations are at least 20 meters apart for clear navigation</li>
+                            <li>Choose open areas without obstacles for initial testing</li>
+                        </ul>
+                    </li>
+                    <li><strong>Test Navigation:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Program target coordinates into your robot's code</li>
+                            <li>Start robot at a known location and activate navigation mode</li>
+                            <li>Observe how robot calculates direction and moves toward target</li>
+                            <li>Measure accuracy when robot reaches destination</li>
+                        </ul>
+                    </li>
+                    <li><strong>Improve and Iterate:</strong>
+                        <ul style="margin-top: 0.5rem;">
+                            <li>Adjust navigation parameters for better accuracy</li>
+                            <li>Add obstacle avoidance while maintaining GPS course</li>
+                            <li>Create multi-waypoint treasure hunt courses</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">⚠️ Important Safety Notes</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Voltage Warning:</strong> NEO-6M modules are 3.3V devices. Using 5V will damage the module!</li>
+                    <li><strong>Antenna Orientation:</strong> Keep the ceramic GPS antenna facing upward for best satellite reception</li>
+                    <li><strong>Outdoor Requirement:</strong> GPS requires clear sky view - it will NOT work indoors or under cover</li>
+                    <li><strong>Patience Required:</strong> First GPS fix can take 2-5 minutes; subsequent fixes are faster</li>
+                    <li><strong>Battery Life:</strong> GPS modules consume significant power; bring extra batteries for extended activities</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Troubleshooting Tips</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>No GPS Fix:</strong> Make sure you're outside with clear sky view</li>
+                    <li><strong>Inaccurate Position:</strong> Wait longer for GPS to stabilize</li>
+                    <li><strong>Robot Goes Wrong Direction:</strong> Check compass calibration</li>
+                    <li><strong>Battery Drain:</strong> GPS uses lots of power; bring extra batteries</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📋</span> Assessment & Homework
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Practice Exercises</h3>
+                <ol style="line-height: 1.8;">
+                    <li>Successfully get GPS coordinates from your robot and display them</li>
+                    <li>Calculate the distance between your school and your home using GPS coordinates</li>
+                    <li>Program your robot to navigate to a target location 50 meters away</li>
+                    <li>Create a simple waypoint navigation system with 3 stops</li>
+                    <li>Measure and record the accuracy of your GPS navigation system</li>
+                </ol>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Challenge Projects</h3>
+                <ul style="line-height: 1.8;">
+                    <li><strong>Delivery Robot:</strong> Program robot to deliver items between specific GPS locations</li>
+                    <li><strong>Boundary Patrol:</strong> Create a GPS fence and have robot patrol the perimeter</li>
+                    <li><strong>Return Home:</strong> Robot explores randomly but can always navigate back to start</li>
+                    <li><strong>GPS Logger:</strong> Record and map the path your robot takes during navigation</li>
+                </ul>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Reflection Questions</h3>
+                <ol style="line-height: 1.8;">
+                    <li>Why is GPS less accurate in cities with tall buildings compared to open areas?</li>
+                    <li>What are some advantages and disadvantages of GPS navigation for robots?</li>
+                    <li>How could you improve GPS navigation accuracy for your robot?</li>
+                    <li>What other applications use GPS navigation in the real world?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week20" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 20: Wireless Communication
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week21" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz →
+            </a>
+        </div>
+    </div>
+</Layout>

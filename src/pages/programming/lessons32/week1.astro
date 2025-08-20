@@ -1,0 +1,326 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 1: Introduction to Arduino & Programming">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 1: Introduction to Arduino & Programming</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Welcome to the world of robotics programming!</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center;">🎯 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">By the end of this lesson, students will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand what programming is and why it's useful for robotics
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Identify the main components of an Arduino microcontroller
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Install and navigate the Arduino IDE
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understand Arduino program structure and basic syntax
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Skills Developed:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Problem-solving mindset
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Basic programming concepts
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Hardware-software interaction
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Technical communication
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">Lesson Content</h2>
+                
+                <!-- Section 1: What is Programming? -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        What is Programming? (15 minutes)
+                    </h3>
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Programming is like giving instructions:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Everyday example:</strong> Following a recipe to bake cookies</li>
+                            <li>• <strong>Programming:</strong> Writing step-by-step instructions for a computer</li>
+                            <li>• <strong>Robotics:</strong> Telling a robot how to move, sense, and respond</li>
+                            <li>• <strong>Why it matters:</strong> Enables us to create smart, automated systems</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Real-World Programming Examples:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #4a5568;">
+                            <div>
+                                <p><strong>🏠 Smart Home:</strong> Automatic lights, thermostats</p>
+                                <p><strong>🚗 Cars:</strong> Anti-lock brakes, GPS navigation</p>
+                                <p><strong>📱 Phones:</strong> Apps, camera features, games</p>
+                            </div>
+                            <div>
+                                <p><strong>🤖 Robots:</strong> Vacuum cleaners, manufacturing arms</p>
+                                <p><strong>🎮 Games:</strong> Character movement, scoring systems</p>
+                                <p><strong>🌐 Internet:</strong> Websites, social media, search engines</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Programming Concepts -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Understanding Programming Concepts (20 minutes)
+                    </h3>
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">What is a Program?</h4>
+                        <p style="color: #4a5568; margin-bottom: 1rem;">A program is a set of instructions that tells a computer what to do:</p>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Input:</strong> Receive information (keyboard, mouse, sensors)</li>
+                            <li>• <strong>Process:</strong> Make decisions and calculations</li>
+                            <li>• <strong>Output:</strong> Display results or control devices</li>
+                            <li>• <strong>Storage:</strong> Remember information for later use</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Programming Languages:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #4a5568;">
+                            <div>
+                                <p><strong>🐍 Python:</strong> Easy to learn, great for beginners</p>
+                                <p><strong>☕ JavaScript:</strong> Powers websites and web apps</p>
+                                <p><strong>📊 C++:</strong> Fast and powerful for complex programs</p>
+                                <p><strong>🤖 Arduino C:</strong> Controls microcontrollers and robots</p>
+                            </div>
+                            <div>
+                                <p><strong>🎮 Scratch:</strong> Visual programming with blocks</p>
+                                <p><strong>📱 Swift:</strong> Creates iPhone and iPad apps</p>
+                                <p><strong>☕ Java:</strong> Runs on many different devices</p>
+                                <p><strong>🌐 HTML/CSS:</strong> Creates and styles web pages</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Online Programming Simulators -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Exploring Online Programming Simulators (25 minutes)
+                    </h3>
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">What is a Programming Simulator?</h4>
+                        <p style="color: #4a5568; margin-bottom: 1rem;">A simulator lets you write and test code without needing physical hardware. Perfect for learning!</p>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Code Editor:</strong> Where you write your programs</li>
+                            <li>• <strong>Virtual Hardware:</strong> Simulated components you can control</li>
+                            <li>• <strong>Real-time Testing:</strong> See your code work instantly</li>
+                            <li>• <strong>Safe Learning:</strong> No risk of damaging real components</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Recommended Online Simulators:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #4a5568;">
+                            <div>
+                                <p><strong>🌟 TinkerCAD Circuits:</strong> Free, beginner-friendly Arduino simulator</p>
+                                <p><strong>🚀 Wokwi:</strong> Advanced features with real-time simulation</p>
+                                <p><strong>🔧 SimulIDE:</strong> Comprehensive electronics simulator</p>
+                            </div>
+                            <div>
+                                <p><strong>🌐 Browser-based:</strong> No software installation needed</p>
+                                <p><strong>📱 Mobile-friendly:</strong> Works on tablets and phones</p>
+                                <p><strong>🎯 Perfect for learning:</strong> Safe environment to experiment</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Programming Structure & Hands-On Practice -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                        Programming Structure & Hands-On Practice (30 minutes)
+                    </h3>
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Understanding Program Structure:</h4>
+                        <p style="color: #4a5568; margin-bottom: 1rem;">Most programs follow a similar structure with key components:</p>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Initialization:</strong> Set up variables and starting conditions</li>
+                            <li>• <strong>Main Logic:</strong> The core functionality that repeats or responds to events</li>
+                            <li>• <strong>Functions:</strong> Reusable blocks of code that perform specific tasks</li>
+                            <li>• <strong>Comments:</strong> Human-readable notes that explain what the code does</li>
+                        </ul>
+                    </div>
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Online Arduino Simulators (No Hardware Needed!):</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #4a5568;">
+                            <div>
+                                <p><strong>🌟 TinkerCAD Circuits:</strong> Free, beginner-friendly</p>
+                                <p><strong>🚀 Wokwi:</strong> Advanced features, real-time simulation</p>
+                                <p><strong>🔧 EasyEDA:</strong> Professional circuit design</p>
+                            </div>
+                            <div>
+                                <p><strong>✅ Browser-based:</strong> No software installation</p>
+                                <p><strong>✅ Visual components:</strong> Drag-and-drop interface</p>
+                                <p><strong>✅ Code testing:</strong> See results instantly</p>
+                            </div>
+                        </div>
+                    </div>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>${`// My First Arduino Program - Hello World
+// This program demonstrates basic structure and serial communication
+
+void setup() {
+  // This runs once when Arduino starts
+  Serial.begin(9600);        // Start serial communication
+  Serial.println("Hello, Arduino World!");
+  Serial.println("Program started successfully!");
+}
+
+void loop() {
+  // This runs over and over again
+  Serial.print("Program running... Time: ");
+  Serial.print(millis() / 1000);  // Show seconds since start
+  Serial.println(" seconds");
+  delay(2000);               // Wait 2 seconds
+}`}</code>
+</pre>
+                    <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Code Explanation:</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>• <strong>//</strong> Creates comments (notes for humans, ignored by Arduino)</li>
+                            <li>• <strong>Serial.begin(9600):</strong> Starts communication with the computer</li>
+                            <li>• <strong>Serial.println():</strong> Sends messages to the Serial Monitor</li>
+                            <li>• <strong>millis():</strong> Returns milliseconds since the program started</li>
+                            <li>• <strong>delay(2000):</strong> Pauses the program for 2000 milliseconds (2 seconds)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Section 5: Hands-On Activity -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">5</span>
+                        Hands-On Activity: Arduino Simulator Exploration (20 minutes)
+                    </h3>
+                    <div style="background: #faf5ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Simulator Setup & Exploration:</h4>
+                        <p style="color: #4a5568; margin-bottom: 1rem;">Choose an online simulator and try these programming challenges:</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #4a5568;">
+                            <div>
+                                <p><strong>🌟 Step 1:</strong> Go to TinkerCAD.com and create a free account</p>
+                                <p><strong>🚀 Challenge 1:</strong> Create the "Hello World" program</p>
+                                <p><strong>🚀 Challenge 2:</strong> Modify the delay time (try 1000, 3000, 500)</p>
+                            </div>
+                            <div>
+                                <p><strong>🚀 Challenge 3:</strong> Add your name to the serial messages</p>
+                                <p><strong>🚀 Challenge 4:</strong> Create a countdown timer (10, 9, 8...)</p>
+                                <p><strong>🚀 Challenge 5:</strong> Add more comments explaining your code</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Bonus Challenges (If Time Permits):</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; color: #4a5568;">
+                            <div>
+                                <p><strong>🎆 Advanced 1:</strong> Create a simple math calculator in serial</p>
+                                <p><strong>🎆 Advanced 2:</strong> Make a program that counts to 100</p>
+                            </div>
+                            <div>
+                                <p><strong>🎆 Advanced 3:</strong> Display the current "uptime" in minutes</p>
+                                <p><strong>🎆 Advanced 4:</strong> Create a simple "robot status" reporter</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Troubleshooting Tips:</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>• <strong>Simulator not loading?</strong> Try refreshing the browser or switching browsers</li>
+                            <li>• <strong>Code not running?</strong> Check for missing semicolons (;) and brackets { }</li>
+                            <li>• <strong>Serial Monitor blank?</strong> Make sure you included Serial.begin(9600) in setup()</li>
+                            <li>• <strong>Need help?</strong> Ask a classmate or raise your hand!</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center;">📝 Assessment & Homework</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Quick Assessment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">• Successfully upload and run the Hello World program</li>
+                        <li style="margin-bottom: 0.5rem;">• Explain what setup() and loop() functions do</li>
+                        <li style="margin-bottom: 0.5rem;">• Identify Arduino IDE interface components</li>
+                        <li style="margin-bottom: 0.5rem;">• Add meaningful comments to code</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">• Practice: Create 3 different Serial Monitor programs</li>
+                        <li style="margin-bottom: 0.5rem;">• Research: Find one Arduino project that interests you</li>
+                        <li style="margin-bottom: 0.5rem;">• Reflection: Write about what programming means to you</li>
+                        <li style="margin-bottom: 0.5rem;">• Prepare questions about Arduino for next class</li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/" style="background-color: #6b7280; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Course Overview
+                    </a>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <a href="/programming/quizzes32/week1" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        📝 Take Quiz
+                    </a>
+                    <a href="/programming/lessons32/week2" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 2 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+

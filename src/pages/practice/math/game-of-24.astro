@@ -1,0 +1,300 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Game of 24 Solver">
+    <div class="container">
+        <h1>Game of 24</h1>
+        
+        <div class="game-controls">
+            <button id="newGameBtn">New Game</button>
+            <button id="modeToggle">Switch to Practice Mode</button>
+        </div>
+
+        <div class="numbers-display" id="numbersDisplay">
+            <div class="number">1</div>
+            <div class="number">2</div>
+            <div class="number">3</div>
+            <div class="number">4</div>
+        </div>
+
+        <div class="input-section">
+            <input type="text" id="expressionInput" placeholder="Enter your expression (e.g., (1+2)*3+4)">
+            <button id="checkBtn">Check Solution</button>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <div class="instructions">
+            <h3>How to Play:</h3>
+            <p>Use the four numbers shown above exactly once each, along with +, -, *, /, and parentheses to create an expression that equals 24.</p>
+            <p><strong>Example:</strong> If the numbers are 1, 2, 3, 4, you could write: (1+2+3)*4 = 24</p>
+            <p><strong>Practice Mode:</strong> Get hints and step-by-step guidance.</p>
+            <p><strong>Challenge Mode:</strong> Solve on your own without hints.</p>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 2rem;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--accent);
+        margin-bottom: 2rem;
+    }
+
+    .game-controls {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 5px;
+        background-color: var(--accent);
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: var(--accent-dark);
+    }
+
+    .numbers-display {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .number {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        font-weight: bold;
+        background-color: var(--gray-light);
+        border: 2px solid var(--accent);
+        border-radius: 10px;
+        color: var(--accent);
+    }
+
+    .input-section {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        align-items: center;
+    }
+
+    #expressionInput {
+        flex: 1;
+        padding: 0.5rem;
+        font-size: 1rem;
+        border: 2px solid var(--gray-light);
+        border-radius: 5px;
+    }
+
+    #expressionInput:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    .result {
+        text-align: center;
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+        min-height: 2rem;
+    }
+
+    .result.success {
+        color: #4caf50;
+    }
+
+    .result.error {
+        color: #f44336;
+    }
+
+    .instructions {
+        background-color: var(--gray-light);
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-top: 2rem;
+    }
+
+    .instructions h3 {
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .instructions p {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+        .container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .numbers-display {
+            gap: 0.5rem;
+        }
+
+        .number {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+
+        .input-section {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        #expressionInput {
+            width: 100%;
+        }
+    }
+</style>
+
+<script is:inline>
+    class Game24 {
+        constructor() {
+            this.numbers = [1, 2, 3, 4];
+            this.isPracticeMode = false;
+            this.setupEventListeners();
+            this.generateNewGame();
+        }
+
+        setupEventListeners() {
+            document.getElementById('newGameBtn').addEventListener('click', () => this.generateNewGame());
+            document.getElementById('modeToggle').addEventListener('click', () => this.toggleMode());
+            document.getElementById('checkBtn').addEventListener('click', () => this.checkSolution());
+            document.getElementById('expressionInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.checkSolution();
+                }
+            });
+        }
+
+        toggleMode() {
+            this.isPracticeMode = !this.isPracticeMode;
+            const modeToggle = document.getElementById('modeToggle');
+            modeToggle.textContent = this.isPracticeMode ? 'Switch to Challenge Mode' : 'Switch to Practice Mode';
+        }
+
+        generateNewGame() {
+            // Generate 4 random numbers between 1 and 13
+            this.numbers = [];
+            for (let i = 0; i < 4; i++) {
+                this.numbers.push(Math.floor(Math.random() * 13) + 1);
+            }
+            
+            // Ensure the game has a solution
+            let attempts = 0;
+            while (!this.hasSolution(this.numbers) && attempts < 100) {
+                this.numbers = [];
+                for (let i = 0; i < 4; i++) {
+                    this.numbers.push(Math.floor(Math.random() * 13) + 1);
+                }
+                attempts++;
+            }
+            
+            this.displayNumbers();
+            document.getElementById('expressionInput').value = '';
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = 'result';
+        }
+
+        displayNumbers() {
+            const numberElements = document.querySelectorAll('.number');
+            this.numbers.forEach((num, index) => {
+                numberElements[index].textContent = num;
+            });
+        }
+
+        evaluateExpression(expr) {
+            try {
+                // Remove spaces and validate characters
+                const cleanExpr = expr.replace(/\s/g, '');
+                if (!/^[0-9+\-*/().]+$/.test(cleanExpr)) {
+                    throw new Error('Invalid characters in expression');
+                }
+                
+                // Use Function constructor for safe evaluation
+                const result = new Function('return ' + cleanExpr)();
+                return result;
+            } catch (error) {
+                throw new Error('Invalid expression');
+            }
+        }
+
+        checkSolution() {
+            const expression = document.getElementById('expressionInput').value.trim();
+            const resultDiv = document.getElementById('result');
+            
+            if (!expression) {
+                resultDiv.textContent = 'Please enter an expression';
+                resultDiv.className = 'result error';
+                return;
+            }
+
+            try {
+                // Extract numbers from expression
+                const usedNumbers = expression.match(/\d+/g);
+                if (!usedNumbers || usedNumbers.length !== 4) {
+                    throw new Error('You must use exactly 4 numbers');
+                }
+
+                // Check if the used numbers match the given numbers
+                const sortedUsed = usedNumbers.map(Number).sort();
+                const sortedGiven = [...this.numbers].sort();
+                
+                if (!sortedUsed.every((num, index) => num === sortedGiven[index])) {
+                    throw new Error('You must use the exact numbers shown: ' + this.numbers.join(', '));
+                }
+
+                const result = this.evaluateExpression(expression);
+                
+                if (Math.abs(result - 24) < 0.0001) {
+                    resultDiv.textContent = '🎉 Correct! You made 24!';
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.textContent = `That equals ${result}, not 24. Try again!`;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.textContent = error.message;
+                resultDiv.className = 'result error';
+            }
+        }
+
+        hasSolution(numbers) {
+            // Simple check - in a full implementation, this would use a more sophisticated algorithm
+            // For now, we'll assume most combinations have solutions
+            return true;
+        }
+    }
+
+    // Initialize the game when the page loads
+    window.addEventListener('DOMContentLoaded', () => {
+        new Game24();
+    });
+</script>

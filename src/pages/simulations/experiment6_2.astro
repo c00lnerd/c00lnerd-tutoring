@@ -1,0 +1,719 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 6.2: Projectile Motion Simulation">
+    <main class="container mx-auto px-4 py-8">
+        <div class="experiment-header">
+            <h1 class="text-3xl font-bold text-center text-blue-700 mb-2">EXPERIMENT 6.2</h1>
+            <h2 class="text-2xl font-bold text-center text-blue-700 mb-8">PROJECTILE MOTION SIMULATION</h2>
+        </div>
+
+        <!-- Email Collection Section -->
+        <section class="mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                <h4 class="font-bold mb-2">Student Information:</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label for="studentName" class="block text-gray-700 font-bold mb-2">Name:</label>
+                        <input type="text" id="studentName" class="w-full px-3 py-2 border rounded-lg" placeholder="Your Name">
+                    </div>
+                    <div>
+                        <label for="studentEmail" class="block text-gray-700 font-bold mb-2">Email:</label>
+                        <input type="email" id="studentEmail" class="w-full px-3 py-2 border rounded-lg" placeholder="your.email@example.com">
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label for="teacherEmail" class="block text-gray-700 font-bold mb-2">Teacher's Email:</label>
+                    <input type="email" id="teacherEmail" class="w-full px-3 py-2 border rounded-lg" value="chuck@c00lnerd.com" placeholder="teacher.email@example.com">
+                </div>
+            </div>
+        </section>
+
+        <!-- Purpose Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">PURPOSE:</h3>
+            <p class="mb-4">To investigate how initial velocity and launch angle affect the trajectory of a projectile, and to understand the relationship between horizontal and vertical components of motion.</p>
+        </section>
+
+        <!-- Background Information Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">BACKGROUND:</h3>
+            <p class="mb-4">Projectile motion is a form of motion in which an object is thrown, kicked, or otherwise launched near the Earth's surface and moves along a curved path under the influence of gravity only. The path followed by a projectile is called its trajectory.</p>
+            <p class="mb-4">The key characteristics of projectile motion are:</p>
+            <ul class="list-disc pl-8 mb-4">
+                <li>The horizontal component of velocity remains constant (ignoring air resistance)</li>
+                <li>The vertical component of velocity changes due to gravity</li>
+                <li>The resulting path is a parabola</li>
+            </ul>
+            <p class="mb-4">The equations that govern projectile motion are:</p>
+            <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                <p class="font-mono">Horizontal position: x = (v₀ × cos θ) × t</p>
+                <p class="font-mono">Vertical position: y = (v₀ × sin θ) × t - (1/2) × g × t²</p>
+                <p class="font-mono">Time of flight: t_flight = (2 × v₀ × sin θ) / g</p>
+                <p class="font-mono">Maximum height: h_max = (v₀ × sin θ)² / (2 × g)</p>
+                <p class="font-mono">Range: R = (v₀² × sin(2θ)) / g</p>
+                <p class="mt-2">Where:</p>
+                <ul class="list-disc pl-8">
+                    <li>v₀ = initial velocity</li>
+                    <li>θ = launch angle</li>
+                    <li>g = acceleration due to gravity (9.8 m/s²)</li>
+                    <li>t = time</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Interactive Simulation Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">INTERACTIVE SIMULATION:</h3>
+            <p class="mb-4">Use the controls below to adjust the initial velocity and launch angle of the projectile. Click "Launch" to see the trajectory.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <label for="initialVelocity" class="block text-gray-700 font-bold mb-2">Initial Velocity (m/s):</label>
+                    <input type="range" id="initialVelocity" min="1" max="50" value="20" class="w-full">
+                    <div class="flex justify-between">
+                        <span>1</span>
+                        <span id="velocityValue">20</span>
+                        <span>50</span>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <label for="launchAngle" class="block text-gray-700 font-bold mb-2">Launch Angle (degrees):</label>
+                    <input type="range" id="launchAngle" min="0" max="90" value="45" class="w-full">
+                    <div class="flex justify-between">
+                        <span>0°</span>
+                        <span id="angleValue">45°</span>
+                        <span>90°</span>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg flex items-center justify-center">
+                    <button id="launchBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Launch Projectile
+                    </button>
+                </div>
+            </div>
+
+            <div class="relative bg-white border border-gray-300 rounded-lg" style="height: 400px; overflow: hidden;" id="simulationContainer">
+                <!-- Canvas for drawing the coordinate system and trajectory -->
+                <canvas id="simulationCanvas" class="absolute top-0 left-0 w-full h-full"></canvas>
+                <!-- Projectile element -->
+                <div id="projectile" class="absolute rounded-full bg-red-600" style="width: 20px; height: 20px; display: none;"></div>
+                <!-- Vector indicator at origin -->
+                <div id="velocityVector" class="absolute bg-blue-600" style="height: 4px; transform-origin: left center;"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="font-bold">Maximum Height:</p>
+                    <p id="maxHeight">0 m</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="font-bold">Range:</p>
+                    <p id="range">0 m</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="font-bold">Time of Flight:</p>
+                    <p id="timeOfFlight">0 s</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <p class="font-bold">Scale:</p>
+                    <p>1 pixel = 0.1 meters</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experiment Questions Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">EXPERIMENT QUESTIONS:</h3>
+            <p class="mb-4">Use the simulation to answer the following questions:</p>
+            
+            <div class="mb-4">
+                <p class="font-bold">1. What launch angle gives the maximum range for a projectile?</p>
+                <textarea id="question1" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+            </div>
+            
+            <div class="mb-4">
+                <p class="font-bold">2. How does doubling the initial velocity affect the maximum height and range?</p>
+                <textarea id="question2" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+            </div>
+            
+            <div class="mb-4">
+                <p class="font-bold">3. For a fixed initial velocity, what happens to the time of flight as you increase the launch angle from 0° to 90°?</p>
+                <textarea id="question3" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+            </div>
+            
+            <div class="mb-4">
+                <p class="font-bold">4. Why do two different launch angles sometimes give the same range?</p>
+                <textarea id="question4" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+            </div>
+            
+            <div class="mb-4">
+                <p class="font-bold">5. How would air resistance affect the trajectory of the projectile in a real-world scenario?</p>
+                <textarea id="question5" class="w-full p-2 border rounded-lg" rows="2" placeholder="Your answer..."></textarea>
+            </div>
+        </section>
+
+        <!-- Data Collection Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">DATA COLLECTION:</h3>
+            <p class="mb-4">Record your observations for different combinations of initial velocity and launch angle:</p>
+            
+            <div class="overflow-x-auto mb-4">
+                <table class="w-full border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-blue-100">
+                            <th class="border border-gray-300 p-2">Trial</th>
+                            <th class="border border-gray-300 p-2">Initial Velocity (m/s)</th>
+                            <th class="border border-gray-300 p-2">Launch Angle (degrees)</th>
+                            <th class="border border-gray-300 p-2">Maximum Height (m)</th>
+                            <th class="border border-gray-300 p-2">Range (m)</th>
+                            <th class="border border-gray-300 p-2">Time of Flight (s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-gray-300 p-2">1</td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial1_velocity" class="w-full p-2 border rounded-lg" placeholder="m/s">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial1_angle" class="w-full p-2 border rounded-lg" placeholder="degrees">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial1_height" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial1_range" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial1_time" class="w-full p-2 border rounded-lg" placeholder="s">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">2</td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial2_velocity" class="w-full p-2 border rounded-lg" placeholder="m/s">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial2_angle" class="w-full p-2 border rounded-lg" placeholder="degrees">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial2_height" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial2_range" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial2_time" class="w-full p-2 border rounded-lg" placeholder="s">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">3</td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial3_velocity" class="w-full p-2 border rounded-lg" placeholder="m/s">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial3_angle" class="w-full p-2 border rounded-lg" placeholder="degrees">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial3_height" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial3_range" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial3_time" class="w-full p-2 border rounded-lg" placeholder="s">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">4</td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial4_velocity" class="w-full p-2 border rounded-lg" placeholder="m/s">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial4_angle" class="w-full p-2 border rounded-lg" placeholder="degrees">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial4_height" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial4_range" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial4_time" class="w-full p-2 border rounded-lg" placeholder="s">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-gray-300 p-2">5</td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial5_velocity" class="w-full p-2 border rounded-lg" placeholder="m/s">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial5_angle" class="w-full p-2 border rounded-lg" placeholder="degrees">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial5_height" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial5_range" class="w-full p-2 border rounded-lg" placeholder="m">
+                            </td>
+                            <td class="border border-gray-300 p-2">
+                                <input type="number" id="trial5_time" class="w-full p-2 border rounded-lg" placeholder="s">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Conclusion Section -->
+        <section class="mb-8">
+            <h3 class="text-xl font-bold text-blue-700">CONCLUSION:</h3>
+            <p class="mb-4">Based on your observations and data collection, summarize what you've learned about projectile motion and how initial velocity and launch angle affect the trajectory.</p>
+            <div class="mb-4">
+                <textarea id="conclusion" class="w-full p-2 border rounded-lg" rows="6" placeholder="Write your conclusion here..."></textarea>
+            </div>
+        </section>
+
+        <!-- Submit Section -->
+        <section class="mb-8">
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h3 class="text-xl font-bold text-blue-700 mb-4">SUBMIT YOUR RESULTS:</h3>
+                <p class="mb-4">Click the button below to submit your experiment results to your teacher.</p>
+                <button id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Submit Results
+                </button>
+                <p id="submissionMessage" class="mt-2 hidden"></p>
+            </div>
+        </section>
+    </main>
+</Layout>
+
+<script is:inline>
+    // Load EmailJS
+    (function() {
+        emailjs.init("ct_s19oZHppLy9BlW");
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Store student information in local storage
+        const studentNameInput = document.getElementById('studentName');
+        const studentEmailInput = document.getElementById('studentEmail');
+        const teacherEmailInput = document.getElementById('teacherEmail');
+
+        // Load stored values if they exist
+        if (localStorage.getItem('studentName')) {
+            studentNameInput.value = localStorage.getItem('studentName');
+        }
+        if (localStorage.getItem('studentEmail')) {
+            studentEmailInput.value = localStorage.getItem('studentEmail');
+        }
+        if (localStorage.getItem('teacherEmail')) {
+            teacherEmailInput.value = localStorage.getItem('teacherEmail');
+        }
+
+        // Save values when they change
+        studentNameInput.addEventListener('change', function() {
+            localStorage.setItem('studentName', this.value);
+        });
+        studentEmailInput.addEventListener('change', function() {
+            localStorage.setItem('studentEmail', this.value);
+        });
+        teacherEmailInput.addEventListener('change', function() {
+            localStorage.setItem('teacherEmail', this.value);
+        });
+
+        // Simulation variables
+        const g = 9.8; // acceleration due to gravity in m/s²
+        const pixelsPerMeter = 10; // scale factor
+        const simulationContainer = document.getElementById('simulationContainer');
+        const projectile = document.getElementById('projectile');
+        const velocityVector = document.getElementById('velocityVector');
+        const canvas = document.getElementById('simulationCanvas');
+        const ctx = canvas.getContext('2d');
+        const initialVelocitySlider = document.getElementById('initialVelocity');
+        const launchAngleSlider = document.getElementById('launchAngle');
+        const velocityValue = document.getElementById('velocityValue');
+        const angleValue = document.getElementById('angleValue');
+        const launchBtn = document.getElementById('launchBtn');
+        const maxHeightDisplay = document.getElementById('maxHeight');
+        const rangeDisplay = document.getElementById('range');
+        const timeOfFlightDisplay = document.getElementById('timeOfFlight');
+        
+        let animationId = null;
+        let isAnimating = false;
+        let startTime = 0;
+        let initialVelocity = parseFloat(initialVelocitySlider.value);
+        let launchAngle = parseFloat(launchAngleSlider.value);
+        let maxHeight = 0;
+        let range = 0;
+        let timeOfFlight = 0;
+        
+        // Set up canvas dimensions
+        function setupCanvas() {
+            canvas.width = simulationContainer.clientWidth;
+            canvas.height = simulationContainer.clientHeight;
+            drawCoordinateSystem();
+            updateVelocityVector();
+        }
+        
+        // Draw coordinate system with axes and labels
+        function drawCoordinateSystem() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const originX = 50; // Origin X position (pixels from left)
+            const originY = height - 50; // Origin Y position (pixels from bottom)
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw ground
+            ctx.fillStyle = '#15803d'; // green-600
+            ctx.fillRect(0, originY, width, height - originY);
+            
+            // Draw X axis
+            ctx.beginPath();
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(width - 20, originY);
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw Y axis
+            ctx.beginPath();
+            ctx.moveTo(originX, originY);
+            ctx.lineTo(originX, 20);
+            ctx.stroke();
+            
+            // Draw X axis arrow
+            ctx.beginPath();
+            ctx.moveTo(width - 20, originY);
+            ctx.lineTo(width - 30, originY - 5);
+            ctx.lineTo(width - 30, originY + 5);
+            ctx.closePath();
+            ctx.fillStyle = '#000000';
+            ctx.fill();
+            
+            // Draw Y axis arrow
+            ctx.beginPath();
+            ctx.moveTo(originX, 20);
+            ctx.lineTo(originX - 5, 30);
+            ctx.lineTo(originX + 5, 30);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Label axes
+            ctx.font = '14px Arial';
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            ctx.fillText('Distance (m)', width / 2, originY + 30);
+            
+            ctx.save();
+            ctx.translate(originX - 30, height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center';
+            ctx.fillText('Height (m)', 0, 0);
+            ctx.restore();
+            
+            // Draw grid lines and labels
+            const gridSpacing = pixelsPerMeter * 5; // 5 meters per grid line
+            
+            // X grid lines and labels
+            for (let x = originX + gridSpacing; x < width - 20; x += gridSpacing) {
+                // Grid line
+                ctx.beginPath();
+                ctx.moveTo(x, originY - 5);
+                ctx.lineTo(x, originY + 5);
+                ctx.strokeStyle = '#888888';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                
+                // Label
+                const meters = Math.round((x - originX) / pixelsPerMeter);
+                ctx.fillText(meters.toString(), x, originY + 20);
+            }
+            
+            // Y grid lines and labels
+            for (let y = originY - gridSpacing; y > 20; y -= gridSpacing) {
+                // Grid line
+                ctx.beginPath();
+                ctx.moveTo(originX - 5, y);
+                ctx.lineTo(originX + 5, y);
+                ctx.stroke();
+                
+                // Label
+                const meters = Math.round((originY - y) / pixelsPerMeter);
+                ctx.fillText(meters.toString(), originX - 20, y);
+            }
+            
+            // Draw origin point
+            ctx.beginPath();
+            ctx.arc(originX, originY, 5, 0, Math.PI * 2);
+            ctx.fillStyle = '#ef4444'; // red-500
+            ctx.fill();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+        
+        // Update velocity vector based on current settings
+        function updateVelocityVector() {
+            const width = canvas.width;
+            const height = canvas.height;
+            const originX = 50;
+            const originY = height - 50;
+            
+            // Calculate vector length based on velocity
+            const vectorLength = Math.min(initialVelocity * 3, 100); // Scale for display
+            const angleRad = launchAngle * Math.PI / 180;
+            
+            // Position and size the vector
+            velocityVector.style.width = `${vectorLength}px`;
+            velocityVector.style.left = `${originX}px`;
+            velocityVector.style.top = `${originY - 2}px`; // Center on origin
+            velocityVector.style.transform = `rotate(${-launchAngle}deg)`;
+            
+            // Draw vector arrowhead on canvas
+            ctx.save();
+            ctx.translate(originX, originY);
+            ctx.rotate(-angleRad);
+            
+            // Draw arrowhead
+            ctx.beginPath();
+            ctx.moveTo(vectorLength, 0);
+            ctx.lineTo(vectorLength - 10, -5);
+            ctx.lineTo(vectorLength - 10, 5);
+            ctx.closePath();
+            ctx.fillStyle = '#2563eb'; // blue-600
+            ctx.fill();
+            
+            ctx.restore();
+        }
+        
+        // Update display values when sliders change
+        initialVelocitySlider.addEventListener('input', function() {
+            initialVelocity = parseFloat(this.value);
+            velocityValue.textContent = initialVelocity;
+            drawCoordinateSystem();
+            updateVelocityVector();
+        });
+        
+        launchAngleSlider.addEventListener('input', function() {
+            launchAngle = parseFloat(this.value);
+            angleValue.textContent = launchAngle + '°';
+            drawCoordinateSystem();
+            updateVelocityVector();
+        });
+        
+        // Launch button click handler
+        launchBtn.addEventListener('click', function() {
+            if (isAnimating) {
+                // Stop current animation
+                cancelAnimationFrame(animationId);
+                isAnimating = false;
+                this.textContent = 'Launch Projectile';
+                drawCoordinateSystem();
+                updateVelocityVector();
+            } else {
+                // Start new animation
+                startProjectileMotion();
+                this.textContent = 'Reset';
+            }
+        });
+        
+        // Start projectile motion animation
+        function startProjectileMotion() {
+            // Calculate trajectory parameters
+            const v0 = initialVelocity;
+            const angleRad = launchAngle * Math.PI / 180;
+            const v0x = v0 * Math.cos(angleRad);
+            const v0y = v0 * Math.sin(angleRad);
+            
+            // Calculate theoretical values
+            timeOfFlight = (2 * v0y) / g;
+            maxHeight = (v0y * v0y) / (2 * g);
+            range = v0x * timeOfFlight;
+            
+            // Update displays
+            maxHeightDisplay.textContent = maxHeight.toFixed(2) + ' m';
+            rangeDisplay.textContent = range.toFixed(2) + ' m';
+            timeOfFlightDisplay.textContent = timeOfFlight.toFixed(2) + ' s';
+            
+            // Start animation
+            startTime = performance.now();
+            isAnimating = true;
+            animateProjectile(v0x, v0y);
+        }
+        
+        // Animate projectile motion
+        function animateProjectile(v0x, v0y) {
+            const currentTime = performance.now();
+            const elapsedTimeMs = currentTime - startTime;
+            const t = elapsedTimeMs / 1000; // convert to seconds
+            
+            // Get canvas dimensions and origin position
+            const width = canvas.width;
+            const height = canvas.height;
+            const originX = 50;
+            const originY = height - 50;
+            
+            // Calculate position at time t
+            const x = v0x * t;
+            const y = v0y * t - 0.5 * g * t * t;
+            
+            // Convert to pixels
+            const xPixels = originX + x * pixelsPerMeter;
+            const yPixels = originY - y * pixelsPerMeter;
+            
+            // Check if projectile has hit the ground or gone out of bounds
+            if (y < 0 || xPixels > width || yPixels > height) {
+                isAnimating = false;
+                launchBtn.textContent = 'Launch Projectile';
+                return;
+            }
+            
+            // Redraw the scene
+            drawCoordinateSystem();
+            
+            // Draw the trajectory path
+            ctx.beginPath();
+            for (let time = 0; time <= t; time += 0.05) {
+                const pathX = v0x * time;
+                const pathY = v0y * time - 0.5 * g * time * time;
+                const pathXPixels = originX + pathX * pixelsPerMeter;
+                const pathYPixels = originY - pathY * pixelsPerMeter;
+                
+                if (time === 0) {
+                    ctx.moveTo(pathXPixels, pathYPixels);
+                } else {
+                    ctx.lineTo(pathXPixels, pathYPixels);
+                }
+            }
+            ctx.strokeStyle = '#3b82f6'; // blue-500
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Draw the projectile at current position
+            ctx.beginPath();
+            ctx.arc(xPixels, yPixels, 10, 0, Math.PI * 2);
+            ctx.fillStyle = '#ef4444'; // red-500
+            ctx.fill();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // Continue animation
+            if (isAnimating) {
+                animationId = requestAnimationFrame(() => animateProjectile(v0x, v0y));
+            }
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', setupCanvas);
+        
+        // Initialize the simulation
+        setupCanvas();
+        
+        // Handle form submission
+        const submitBtn = document.getElementById('submitBtn');
+        const submissionMessage = document.getElementById('submissionMessage');
+
+        submitBtn.addEventListener('click', function() {
+            // Validate required fields
+            const studentName = studentNameInput.value.trim();
+            const studentEmail = studentEmailInput.value.trim();
+            const teacherEmail = teacherEmailInput.value.trim();
+            const conclusion = document.getElementById('conclusion').value.trim();
+
+            if (!studentName || !studentEmail || !teacherEmail) {
+                showMessage('Please fill in all required student and teacher information.', 'error');
+                return;
+            }
+
+            if (!conclusion) {
+                showMessage('Please complete your conclusion before submitting.', 'error');
+                return;
+            }
+
+            // Collect trial data
+            const trialData = [];
+            for (let i = 1; i <= 5; i++) {
+                const velocity = document.getElementById(`trial${i}_velocity`).value;
+                const angle = document.getElementById(`trial${i}_angle`).value;
+                const height = document.getElementById(`trial${i}_height`).value;
+                const range = document.getElementById(`trial${i}_range`).value;
+                const time = document.getElementById(`trial${i}_time`).value;
+                
+                if (velocity || angle || height || range || time) {
+                    trialData.push({
+                        trial: i,
+                        velocity: velocity || 'Not recorded',
+                        angle: angle || 'Not recorded',
+                        height: height || 'Not recorded',
+                        range: range || 'Not recorded',
+                        time: time || 'Not recorded'
+                    });
+                }
+            }
+
+            // Prepare comprehensive experiment data (matching working experiment3_2 structure)
+            const questionsData = 
+                '1. What launch angle gives the maximum range for a projectile?\n' +
+                (document.getElementById('question1').value || 'Not answered') + '\n\n' +
+                '2. How does doubling the initial velocity affect the maximum height and range?\n' +
+                (document.getElementById('question2').value || 'Not answered') + '\n\n' +
+                '3. For a fixed initial velocity, what happens to the time of flight as you increase the launch angle from 0° to 90°?\n' +
+                (document.getElementById('question3').value || 'Not answered') + '\n\n' +
+                '4. Why do two different launch angles sometimes give the same range?\n' +
+                (document.getElementById('question4').value || 'Not answered') + '\n\n' +
+                '5. How would air resistance affect the trajectory of the projectile in a real-world scenario?\n' +
+                (document.getElementById('question5').value || 'Not answered');
+
+            const trialDataText = trialData.length > 0 ? 
+                trialData.map(trial => 
+                    `Trial ${trial.trial}: Velocity=${trial.velocity} m/s, Angle=${trial.angle}°, Height=${trial.height}m, Range=${trial.range}m, Time=${trial.time}s`
+                ).join('\n') : 'No trial data recorded';
+
+            const experimentData = 
+                'EXPERIMENT 6.2: PROJECTILE MOTION SIMULATION - DETAILED RESULTS\n\n' +
+                'Student: ' + studentName + '\n' +
+                'Email: ' + studentEmail + '\n\n' +
+                'TRIAL DATA:\n' + trialDataText + '\n\n' +
+                'ANALYSIS QUESTIONS:\n' + questionsData + '\n\n' +
+                'CONCLUSION:\n' + conclusion + '\n\n' +
+                'Experiment completed: ' + new Date().toLocaleString();
+
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            // Send email using EmailJS with exact parameter structure from working experiment3_2
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', {
+                student_name: studentName,
+                student_email: studentEmail,
+                experiment_title: 'Experiment 6.2: Projectile Motion Simulation',
+                hypothesis: 'See trial data and analysis questions below',
+                missing_elements: questionsData,
+                conclusion: experimentData,
+                subject: `Experiment 6.2 - ${studentName}`
+            })
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    showMessage('Your experiment results have been submitted successfully!', 'success');
+                    submitBtn.textContent = 'Submitted';
+                })
+                .catch(function(error) {
+                    console.log('FAILED...', error);
+                    showMessage('Failed to submit results. Please try again later.', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Results';
+                });
+        });
+
+        function showMessage(message, type) {
+            submissionMessage.textContent = message;
+            submissionMessage.classList.remove('hidden', 'text-green-600', 'text-red-600');
+            submissionMessage.classList.add(type === 'success' ? 'text-green-600' : 'text-red-600');
+        }
+    });
+</script>

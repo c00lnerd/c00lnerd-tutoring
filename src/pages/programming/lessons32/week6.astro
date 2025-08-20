@@ -1,0 +1,319 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 6: PWM & Analog Outputs - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 6: PWM & Analog Outputs</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Master Pulse Width Modulation and analog output control</p>
+                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                    <p class="text-purple-800 font-medium">🎛️ Learn to control brightness, speed, and analog devices</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Understand PWM (Pulse Width Modulation) principles
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Use analogWrite() for analog output control
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Control LED brightness and motor speed
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Create smooth fading and dimming effects
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                PWM frequency and duty cycle
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Arduino PWM pins and limitations
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                RGB LED color mixing
+                            </li>
+                            <li style="margin-bottom: 0.5rem;">
+                                <span class="text-purple-600 mr-2">•</span>
+                                Servo motor control basics
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Understanding PWM -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🌊 Section 1: Understanding PWM</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What is PWM?</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Pulse Width Modulation (PWM) is a technique used to simulate analog output using digital signals. 
+                        Instead of providing a continuous voltage like true analog output, PWM rapidly switches between 
+                        HIGH (5V) and LOW (0V) states.
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key PWM Concepts:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Duty Cycle:</strong> Percentage of time the signal is HIGH</li>
+                            <li><strong>Frequency:</strong> How fast the switching occurs (typically 490Hz or 980Hz)</li>
+                            <li><strong>Average Voltage:</strong> Effective voltage based on duty cycle</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">PWM on Arduino</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Arduino Uno has 6 PWM-capable pins: 3, 5, 6, 9, 10, and 11 (marked with ~ symbol). 
+                        These pins can output PWM signals with values from 0 (0% duty cycle) to 255 (100% duty cycle).
+                    </p>
+                    
+                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">PWM Value Examples:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>0:</strong> Always LOW (0V average)</li>
+                            <li><strong>64:</strong> 25% duty cycle (1.25V average)</li>
+                            <li><strong>128:</strong> 50% duty cycle (2.5V average)</li>
+                            <li><strong>192:</strong> 75% duty cycle (3.75V average)</li>
+                            <li><strong>255:</strong> Always HIGH (5V average)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: analogWrite() Function -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">⚡ Section 2: analogWrite() Function</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic analogWrite() Syntax</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The analogWrite() function generates PWM signals on compatible pins. It takes two parameters: 
+                        the pin number and the PWM value (0-255).
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic analogWrite() syntax
+analogWrite(pin, value);
+
+// Examples
+analogWrite(9, 0);     // LED off (0% brightness)
+analogWrite(9, 64);    // LED dim (25% brightness)
+analogWrite(9, 128);   // LED medium (50% brightness)
+analogWrite(9, 255);   // LED full brightness (100%)
+
+// Variable control
+int brightness = 100;
+analogWrite(ledPin, brightness);`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">LED Brightness Control</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        One of the most common uses of PWM is controlling LED brightness. Here's a complete example 
+                        that gradually fades an LED in and out:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// LED Fading Example
+const int ledPin = 9;  // PWM pin
+int brightness = 0;    // LED brightness
+int fadeAmount = 5;    // How much to change brightness
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Set LED brightness
+  analogWrite(ledPin, brightness);
+  
+  // Print current brightness
+  Serial.print("Brightness: ");
+  Serial.println(brightness);
+  
+  // Change brightness for next iteration
+  brightness = brightness + fadeAmount;
+  
+  // Reverse direction at the ends
+  if (brightness <= 0 || brightness >= 255) {
+    fadeAmount = -fadeAmount;
+  }
+  
+  delay(30);  // Smooth fading speed
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: RGB LED Control -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🌈 Section 3: RGB LED Control</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Color Mixing with PWM</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        RGB LEDs contain three separate LEDs (Red, Green, Blue) that can be controlled independently 
+                        using PWM. By mixing different intensities of these colors, you can create millions of colors.
+                    </p>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Common RGB Colors:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><strong>Red:</strong> (255, 0, 0)</li>
+                            <li><strong>Green:</strong> (0, 255, 0)</li>
+                            <li><strong>Blue:</strong> (0, 0, 255)</li>
+                            <li><strong>White:</strong> (255, 255, 255)</li>
+                            <li><strong>Purple:</strong> (255, 0, 255)</li>
+                            <li><strong>Yellow:</strong> (255, 255, 0)</li>
+                            <li><strong>Cyan:</strong> (0, 255, 255)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">RGB LED Control Code</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Here's an example that cycles through different colors on an RGB LED:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// RGB LED Color Cycling
+const int redPin = 9;    // Red LED pin
+const int greenPin = 10; // Green LED pin
+const int bluePin = 11;  // Blue LED pin
+
+void setup() {
+  Serial.begin(9600);
+  Serial.println("RGB LED Color Demo");
+}
+
+void loop() {
+  // Red
+  setColor(255, 0, 0);
+  Serial.println("Red");
+  delay(1000);
+  
+  // Green
+  setColor(0, 255, 0);
+  Serial.println("Green");
+  delay(1000);
+  
+  // Blue
+  setColor(0, 0, 255);
+  Serial.println("Blue");
+  delay(1000);
+  
+  // Purple
+  setColor(255, 0, 255);
+  Serial.println("Purple");
+  delay(1000);
+  
+  // Off
+  setColor(0, 0, 0);
+  Serial.println("Off");
+  delay(1000);
+}
+
+// Function to set RGB color
+void setColor(int red, int green, int blue) {
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: PWM Control Panel</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Interactive PWM Demonstration</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create a program that demonstrates PWM control using the Serial Monitor as a control interface. 
+                        This kit-independent activity will help you understand PWM principles through simulation and code.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Instructions</h3>
+                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
+                        <li>Create a PWM control program with Serial Monitor interface</li>
+                        <li>Include commands for LED brightness (L0-L255)</li>
+                        <li>Add motor speed control simulation (M0-M255)</li>
+                        <li>Implement RGB color control (R/G/B commands)</li>
+                        <li>Test different PWM values and observe the effects</li>
+                        <li>Create a demo mode that cycles through different settings</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
+                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
+                        <li>What PWM value would give you 75% brightness on an LED?</li>
+                        <li>Which Arduino pins support PWM output?</li>
+                        <li>What RGB values would create a yellow color?</li>
+                        <li>Why can't you connect a motor directly to an Arduino pin?</li>
+                        <li>What is the frequency range of Arduino PWM signals?</li>
+                    </ol>
+                </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week6" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 6 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week5" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 5
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week7" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Week 7 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+

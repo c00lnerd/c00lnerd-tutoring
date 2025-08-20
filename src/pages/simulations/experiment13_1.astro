@@ -1,0 +1,602 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Experiment 13.1: Radio Wave Propagation and the Ionosphere | C00lnerd">
+    <div class="experiment-container">
+        <h1>Experiment 13.1: Radio Wave Propagation and the Ionosphere</h1>
+        
+        <div class="student-info">
+            <h2>Student Information</h2>
+            <form id="studentInfoForm">
+                <div class="form-group">
+                    <label for="studentName">Student Name:</label>
+                    <input type="text" id="studentName" name="studentName" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentEmail">Student Email:</label>
+                    <input type="email" id="studentEmail" name="studentEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="instructorEmail">Instructor Email:</label>
+                    <input type="email" id="instructorEmail" name="instructorEmail" value="chuck@c00lnerd.com" readonly>
+                </div>
+            </form>
+        </div>
+
+        <div class="experiment-content">
+            <section class="purpose">
+                <h2>Purpose</h2>
+                <p>To understand how the ionosphere affects radio wave propagation and why different radio frequencies behave differently in Earth's atmosphere.</p>
+            </section>
+
+            <section class="materials">
+                <h2>Materials</h2>
+                <ul>
+                    <li>AM/FM radio</li>
+                    <li>Shortwave radio (optional, but helpful)</li>
+                    <li>Metal foil</li>
+                    <li>Cardboard box</li>
+                    <li>Internet access for radio signal tracking websites</li>
+                    <li>Notebook for recording observations</li>
+                </ul>
+            </section>
+
+            <section class="background">
+                <h2>Background Information</h2>
+                <p>The ionosphere is a region of Earth's upper atmosphere that extends from about 60 km to 1,000 km above Earth's surface. Within this region, solar radiation ionizes gas molecules, creating a layer of electrically charged particles (ions). This ionization is what gives the ionosphere its name.</p>
+                
+                <p>The ionosphere plays a crucial role in radio communications because it can reflect certain radio waves back to Earth. This reflection allows radio signals to travel beyond the horizon, enabling long-distance communication. However, not all radio frequencies interact with the ionosphere in the same way:</p>
+                
+                <ul>
+                    <li><strong>AM radio signals</strong> (535-1705 kHz) can bounce off the ionosphere, especially at night when ionization is more stable without solar radiation. This is why you can often pick up distant AM stations at night.</li>
+                    <li><strong>FM radio signals</strong> (88-108 MHz) generally pass through the ionosphere rather than bouncing off it. This is why FM reception is typically limited to line-of-sight distances.</li>
+                    <li><strong>Shortwave radio signals</strong> (3-30 MHz) are excellent at bouncing off the ionosphere and can travel around the world under the right conditions.</li>
+                </ul>
+                
+                <p>The ionosphere's properties change throughout the day and night, with seasons, and with solar activity, affecting radio wave propagation accordingly.</p>
+
+                <div class="image-container">
+                    <img src="/images/ionosphere-radio.jpg" alt="Diagram showing radio wave propagation through the ionosphere" onerror="this.onerror=null; this.src='/images/placeholder-image.png'; this.alt='Placeholder image - diagram of radio wave propagation'">
+                    <p class="caption">Figure 1: Radio wave propagation through the ionosphere</p>
+                </div>
+            </section>
+
+            <section class="hypothesis">
+                <h2>Hypothesis</h2>
+                <p>Based on the background information, form a hypothesis about how AM and FM radio reception will differ at different times of day and in different locations.</p>
+                <div class="form-group">
+                    <label for="hypothesis">Your Hypothesis:</label>
+                    <textarea id="hypothesis" name="hypothesis" rows="4" required></textarea>
+                </div>
+            </section>
+
+            <section class="procedure">
+                <h2>Procedure</h2>
+                <h3>Part 1: Comparing AM and FM Reception</h3>
+                <ol>
+                    <li>Find a location where you can receive both AM and FM radio signals.</li>
+                    <li>Turn on your radio and tune to a strong local FM station. Record the station's frequency and your observations about the signal quality.</li>
+                    <li>Now tune to a strong local AM station. Record the station's frequency and your observations about the signal quality.</li>
+                    <li>Wait until evening/night (after sunset) and repeat steps 2-3. Note any differences in reception quality between daytime and nighttime for both AM and FM.</li>
+                    <li>If possible, try to find distant AM stations that you couldn't receive during the day but can receive at night.</li>
+                </ol>
+
+                <h3>Part 2: Creating a Faraday Cage</h3>
+                <ol>
+                    <li>Line the inside of a cardboard box with metal foil, creating what's called a "Faraday cage." Leave the top open.</li>
+                    <li>With your radio tuned to a strong FM station, place it inside the foil-lined box. Record what happens to the signal.</li>
+                    <li>Repeat with an AM station and record your observations.</li>
+                    <li>Cover the top of the box with foil (completely enclosing the radio) and note any changes to both AM and FM reception.</li>
+                </ol>
+
+                <h3>Part 3: Online Radio Wave Tracking (Optional)</h3>
+                <ol>
+                    <li>Visit an online ionospheric propagation website (such as <a href="https://www.spaceweatherlive.com" target="_blank">SpaceWeatherLive</a>).</li>
+                    <li>Look up current ionospheric conditions and how they're affecting radio propagation.</li>
+                    <li>If you have access to a shortwave radio, try to receive international broadcasts and correlate your reception with the reported ionospheric conditions.</li>
+                </ol>
+            </section>
+
+            <section class="observations">
+                <h2>Observations</h2>
+                
+                <h3>Part 1: AM vs FM Reception</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Radio Band</th>
+                                <th>Station Frequency</th>
+                                <th>Daytime Reception Quality</th>
+                                <th>Nighttime Reception Quality</th>
+                                <th>Distance from Transmitter (if known)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FM</td>
+                                <td><input type="text" id="fmFrequency" name="fmFrequency"></td>
+                                <td><input type="text" id="fmDaytime" name="fmDaytime"></td>
+                                <td><input type="text" id="fmNighttime" name="fmNighttime"></td>
+                                <td><input type="text" id="fmDistance" name="fmDistance"></td>
+                            </tr>
+                            <tr>
+                                <td>AM</td>
+                                <td><input type="text" id="amFrequency" name="amFrequency"></td>
+                                <td><input type="text" id="amDaytime" name="amDaytime"></td>
+                                <td><input type="text" id="amNighttime" name="amNighttime"></td>
+                                <td><input type="text" id="amDistance" name="amDistance"></td>
+                            </tr>
+                            <tr>
+                                <td>Distant AM</td>
+                                <td><input type="text" id="distantFrequency" name="distantFrequency"></td>
+                                <td><input type="text" id="distantDaytime" name="distantDaytime"></td>
+                                <td><input type="text" id="distantNighttime" name="distantNighttime"></td>
+                                <td><input type="text" id="distantDistance" name="distantDistance"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Part 2: Faraday Cage Experiment</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Radio Band</th>
+                                <th>Reception Outside Box</th>
+                                <th>Reception in Open-Top Box</th>
+                                <th>Reception in Closed Box</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>FM</td>
+                                <td><input type="text" id="fmOutside" name="fmOutside"></td>
+                                <td><input type="text" id="fmOpenBox" name="fmOpenBox"></td>
+                                <td><input type="text" id="fmClosedBox" name="fmClosedBox"></td>
+                            </tr>
+                            <tr>
+                                <td>AM</td>
+                                <td><input type="text" id="amOutside" name="amOutside"></td>
+                                <td><input type="text" id="amOpenBox" name="amOpenBox"></td>
+                                <td><input type="text" id="amClosedBox" name="amClosedBox"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Part 3: Online Ionospheric Conditions (Optional)</h3>
+                <div class="form-group">
+                    <label for="ionosphericConditions">Current Ionospheric Conditions:</label>
+                    <textarea id="ionosphericConditions" name="ionosphericConditions" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="shortwaveObservations">Shortwave Reception Observations (if applicable):</label>
+                    <textarea id="shortwaveObservations" name="shortwaveObservations" rows="3"></textarea>
+                </div>
+            </section>
+
+            <section class="analysis">
+                <h2>Analysis Questions</h2>
+                <ol>
+                    <li>
+                        <p>How did AM reception differ between day and night? Explain why this occurs in terms of the ionosphere.</p>
+                        <div class="form-group">
+                            <textarea id="analysis1" name="analysis1" rows="3" required></textarea>
+                        </div>
+                    </li>
+                    <li>
+                        <p>Why did FM and AM signals behave differently in the Faraday cage experiment?</p>
+                        <div class="form-group">
+                            <textarea id="analysis2" name="analysis2" rows="3" required></textarea>
+                        </div>
+                    </li>
+                    <li>
+                        <p>If you were designing a communication system that needed to work reliably at all times of day and in all weather conditions, would you use frequencies more like AM or FM? Explain your reasoning.</p>
+                        <div class="form-group">
+                            <textarea id="analysis3" name="analysis3" rows="3" required></textarea>
+                        </div>
+                    </li>
+                    <li>
+                        <p>The ionosphere is divided into several layers (D, E, F1, and F2). Research and explain how these different layers affect radio wave propagation differently.</p>
+                        <div class="form-group">
+                            <textarea id="analysis4" name="analysis4" rows="3" required></textarea>
+                        </div>
+                    </li>
+                    <li>
+                        <p>How might solar activity (such as solar flares) affect radio communications on Earth? Explain the connection between the Sun and the ionosphere.</p>
+                        <div class="form-group">
+                            <textarea id="analysis5" name="analysis5" rows="3" required></textarea>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+
+            <section class="conclusion">
+                <h2>Conclusion</h2>
+                <p>In a complete paragraph, explain how the ionosphere affects radio wave propagation and why this is important for global communications.</p>
+                <div class="form-group">
+                    <label for="conclusion">Your Conclusion:</label>
+                    <textarea id="conclusion" name="conclusion" rows="5" required></textarea>
+                </div>
+            </section>
+
+            <section class="explanation">
+                <h2>Scientific Explanation</h2>
+                <div class="explanation-content">
+                    <p>The ionosphere is a region in Earth's upper atmosphere where solar radiation ionizes gas molecules, creating a layer of electrically charged particles (ions). This region extends roughly from 60 km to 1,000 km above Earth's surface and plays a crucial role in radio communications.</p>
+                    
+                    <p>Radio waves interact with the ionosphere differently depending on their frequency:</p>
+                    
+                    <ul>
+                        <li><strong>Low and Medium Frequencies (AM radio, 535-1705 kHz):</strong> These waves can be reflected by the ionosphere, especially at night when the D layer (which absorbs some radio waves during the day) weakens without solar radiation. This is why you can often receive distant AM stations at night that you can't hear during the day.</li>
+                        
+                        <li><strong>Very High Frequencies (FM radio, 88-108 MHz):</strong> These higher frequency waves typically pass through the ionosphere rather than being reflected. This is why FM reception is generally limited to line-of-sight distances and doesn't improve at night.</li>
+                        
+                        <li><strong>High Frequencies (Shortwave radio, 3-30 MHz):</strong> These frequencies are excellent for long-distance communication because they can bounce between the Earth and the ionosphere multiple times, allowing them to follow the curvature of the Earth for thousands of miles.</li>
+                    </ul>
+                    
+                    <p>The Faraday cage experiment demonstrates another important principle of electromagnetic waves. A Faraday cage blocks electromagnetic fields by creating a conductive shell that distributes electrical charges in such a way that they cancel the field's effect inside the cage. AM radio waves, which have longer wavelengths, can sometimes penetrate a Faraday cage more effectively than the shorter wavelength FM signals.</p>
+                    
+                    <p>The ionosphere's properties change throughout the day and night, with seasons, and with solar activity. During solar flares or other solar events, the ionosphere can become more heavily ionized, which can enhance some radio signals while disrupting others. This is why space weather monitoring is important for radio communications, aviation, and satellite operations.</p>
+                    
+                    <p>The auroras (aurora borealis in the Northern Hemisphere and aurora australis in the Southern Hemisphere) are visible manifestations of the interaction between the ionosphere and solar particles. When charged particles from the Sun collide with atoms in the ionosphere, they release energy in the form of light, creating the spectacular displays we know as the Northern and Southern Lights.</p>
+                    
+                    <p>Understanding the ionosphere and its effects on radio wave propagation has been crucial for developing global communication systems. Before satellites, shortwave radio bouncing off the ionosphere was the primary method of intercontinental communication. Even today, many systems still rely on ionospheric propagation, including some emergency communication systems, amateur radio, and international broadcasting.</p>
+                </div>
+            </section>
+
+            <section class="submit-section">
+                <h2>Submit Your Results</h2>
+                <p>Click the button below to submit your experiment results to your instructor.</p>
+                <button type="button" id="submitBtn" class="submit-btn">Submit Results</button>
+                <div id="submissionStatus" class="submission-status"></div>
+            </section>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .experiment-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    h1 {
+        color: #2c3e50;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    
+    h2 {
+        color: #3498db;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #ecf0f1;
+        padding-bottom: 0.5rem;
+    }
+    
+    h3 {
+        color: #2c3e50;
+        margin-top: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .student-info {
+        background-color: #ecf0f1;
+        padding: 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: bold;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    textarea {
+        width: 100%;
+        padding: 0.5rem;
+        border: 1px solid #bdc3c7;
+        border-radius: 4px;
+        font-family: inherit;
+        font-size: 1rem;
+    }
+    
+    textarea {
+        resize: vertical;
+    }
+    
+    .table-container {
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+    }
+    
+    th, td {
+        border: 1px solid #bdc3c7;
+        padding: 0.5rem;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #ecf0f1;
+        font-weight: bold;
+    }
+    
+    td input {
+        width: 100%;
+        padding: 0.25rem;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+    }
+    
+    .submit-btn {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.3s;
+    }
+    
+    .submit-btn:hover {
+        background-color: #2980b9;
+    }
+    
+    .submission-status {
+        margin-top: 1rem;
+        padding: 0.5rem;
+        border-radius: 4px;
+    }
+    
+    .success {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    
+    .error {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    
+    .image-container {
+        text-align: center;
+        margin: 1.5rem 0;
+    }
+    
+    .image-container img {
+        max-width: 100%;
+        border-radius: 4px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    
+    .caption {
+        font-style: italic;
+        margin-top: 0.5rem;
+        color: #7f8c8d;
+    }
+    
+    .explanation-content {
+        background-color: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+    }
+    
+    @media (max-width: 600px) {
+        .experiment-container {
+            padding: 1rem;
+        }
+        
+        table {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+
+<script is:inline>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load saved email if available
+        const savedEmail = localStorage.getItem('studentEmail');
+        if (savedEmail) {
+            document.getElementById('studentEmail').value = savedEmail;
+        }
+        
+        // Handle form submission
+        document.getElementById('submitBtn').addEventListener('click', function() {
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            const instructorEmail = document.getElementById('instructorEmail').value;
+            
+            if (!studentName || !studentEmail) {
+                alert('Please fill in your name and email before submitting.');
+                return;
+            }
+            
+            // Save email for future use
+            localStorage.setItem('studentEmail', studentEmail);
+            
+            // Collect form data
+            const formData = {
+                studentName,
+                studentEmail,
+                instructorEmail,
+                experimentTitle: 'Experiment 13.1: Radio Wave Propagation and the Ionosphere',
+                hypothesis: document.getElementById('hypothesis').value,
+                
+                // AM/FM Reception data
+                fmFrequency: document.getElementById('fmFrequency').value,
+                fmDaytime: document.getElementById('fmDaytime').value,
+                fmNighttime: document.getElementById('fmNighttime').value,
+                fmDistance: document.getElementById('fmDistance').value,
+                
+                amFrequency: document.getElementById('amFrequency').value,
+                amDaytime: document.getElementById('amDaytime').value,
+                amNighttime: document.getElementById('amNighttime').value,
+                amDistance: document.getElementById('amDistance').value,
+                
+                distantFrequency: document.getElementById('distantFrequency').value,
+                distantDaytime: document.getElementById('distantDaytime').value,
+                distantNighttime: document.getElementById('distantNighttime').value,
+                distantDistance: document.getElementById('distantDistance').value,
+                
+                // Faraday cage data
+                fmOutside: document.getElementById('fmOutside').value,
+                fmOpenBox: document.getElementById('fmOpenBox').value,
+                fmClosedBox: document.getElementById('fmClosedBox').value,
+                
+                amOutside: document.getElementById('amOutside').value,
+                amOpenBox: document.getElementById('amOpenBox').value,
+                amClosedBox: document.getElementById('amClosedBox').value,
+                
+                // Optional data
+                ionosphericConditions: document.getElementById('ionosphericConditions').value,
+                shortwaveObservations: document.getElementById('shortwaveObservations').value,
+                
+                // Analysis answers
+                analysis1: document.getElementById('analysis1').value,
+                analysis2: document.getElementById('analysis2').value,
+                analysis3: document.getElementById('analysis3').value,
+                analysis4: document.getElementById('analysis4').value,
+                analysis5: document.getElementById('analysis5').value,
+                
+                conclusion: document.getElementById('conclusion').value
+            };
+            
+            // Extract student name from email if not provided
+            const extractedName = formData.studentName || (formData.studentEmail ? formData.studentEmail.split('@')[0] : 'Student');
+            
+            // Check for missing elements
+            const missingElements = [];
+            if (!formData.hypothesis) missingElements.push('Hypothesis');
+            if (!formData.fmFrequency) missingElements.push('FM Frequency');
+            if (!formData.amFrequency) missingElements.push('AM Frequency');
+            if (!formData.analysis1) missingElements.push('Analysis Question 1');
+            if (!formData.analysis2) missingElements.push('Analysis Question 2');
+            if (!formData.analysis3) missingElements.push('Analysis Question 3');
+            if (!formData.analysis4) missingElements.push('Analysis Question 4');
+            if (!formData.analysis5) missingElements.push('Analysis Question 5');
+            if (!formData.conclusion) missingElements.push('Conclusion');
+            
+            const missingElementsText = missingElements.length > 0 ? 
+                `❌ Missing: ${missingElements.join(', ')}` : 
+                '✅ All sections completed';
+
+            // Format comprehensive experiment data
+            const conclusionText = `
+EXPERIMENT 13.1: RADIO WAVE PROPAGATION AND THE IONOSPHERE RESULTS
+================================================================
+
+Student: ${extractedName}
+Email: ${formData.studentEmail}
+Instructor Email: ${formData.instructorEmail || 'Not provided'}
+
+HYPOTHESIS:
+${formData.hypothesis || 'Not provided'}
+
+AM/FM RECEPTION COMPARISON:
+---------------------------
+FM Station (${formData.fmFrequency || 'N/A'} MHz):
+- Daytime Reception: ${formData.fmDaytime || 'Not recorded'}
+- Nighttime Reception: ${formData.fmNighttime || 'Not recorded'}
+- Distance from Station: ${formData.fmDistance || 'Not recorded'}
+
+AM Station (${formData.amFrequency || 'N/A'} kHz):
+- Daytime Reception: ${formData.amDaytime || 'Not recorded'}
+- Nighttime Reception: ${formData.amNighttime || 'Not recorded'}
+- Distance from Station: ${formData.amDistance || 'Not recorded'}
+
+Distant Station (${formData.distantFrequency || 'N/A'}):
+- Daytime Reception: ${formData.distantDaytime || 'Not recorded'}
+- Nighttime Reception: ${formData.distantNighttime || 'Not recorded'}
+- Distance from Station: ${formData.distantDistance || 'Not recorded'}
+
+FARADAY CAGE EXPERIMENT:
+------------------------
+FM Reception:
+- Outside Box: ${formData.fmOutside || 'Not recorded'}
+- Open Box: ${formData.fmOpenBox || 'Not recorded'}
+- Closed Box: ${formData.fmClosedBox || 'Not recorded'}
+
+AM Reception:
+- Outside Box: ${formData.amOutside || 'Not recorded'}
+- Open Box: ${formData.amOpenBox || 'Not recorded'}
+- Closed Box: ${formData.amClosedBox || 'Not recorded'}
+
+OPTIONAL OBSERVATIONS:
+---------------------
+Ionospheric Conditions: ${formData.ionosphericConditions || 'Not provided'}
+Shortwave Observations: ${formData.shortwaveObservations || 'Not provided'}
+
+ANALYSIS QUESTIONS:
+------------------
+1. How did AM reception differ between day and night?
+${formData.analysis1 || 'Not answered'}
+
+2. How did FM reception differ between day and night?
+${formData.analysis2 || 'Not answered'}
+
+3. What happened to radio reception inside the Faraday cage?
+${formData.analysis3 || 'Not answered'}
+
+4. Why do AM radio waves travel farther at night?
+${formData.analysis4 || 'Not answered'}
+
+5. How does the ionosphere affect different radio frequencies?
+${formData.analysis5 || 'Not answered'}
+
+CONCLUSIONS:
+${formData.conclusion || 'Not provided'}
+
+DATA COMPLETENESS: ${missingElementsText}
+            `.trim();
+
+            const statusDiv = document.getElementById('submissionStatus');
+            statusDiv.className = 'submission-status';
+            statusDiv.textContent = 'Sending your results...';
+            
+            // Send email using proven parameter mapping
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', {
+                student_name: extractedName,
+                student_email: formData.studentEmail,
+                experiment_title: 'Experiment 13.1: Radio Wave Propagation and the Ionosphere',
+                hypothesis: formData.hypothesis || 'Not provided',
+                missing_elements: missingElementsText,
+                conclusion: conclusionText,
+                subject: `Experiment 13.1: Radio Wave Propagation - ${extractedName}`
+            })
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    statusDiv.className = 'submission-status success';
+                    statusDiv.textContent = 'Your results have been submitted successfully!';
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    statusDiv.className = 'submission-status error';
+                    statusDiv.textContent = 'Failed to submit results. Please try again or contact support.';
+                });
+        });
+        
+        // Initialize EmailJS
+        (function() {
+            emailjs.init('ct_s19oZHppLy9BlW');
+        })();
+    });
+</script>

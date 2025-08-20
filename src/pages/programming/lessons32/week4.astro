@@ -1,0 +1,511 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 4: Digital I/O Basics - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 4: Digital I/O Basics</h1>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Understanding Digital Inputs and Outputs with Arduino</p>
+                <div class="mt-4 p-4 bg-blue-100 rounded-lg">
+                    <p class="text-blue-800 font-medium">🎯 Learning Focus: Digital pins, LEDs, buttons, and basic control</p>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this week, you will:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Understand digital HIGH and LOW states
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Control LEDs with digitalWrite()
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Read button inputs with digitalRead()
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-green-500 mr-2">✓</span>
+                                Implement pull-up and pull-down resistors
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Digital pin modes (INPUT/OUTPUT)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Voltage levels (0V/5V)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Current limiting with resistors
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-blue-500 mr-2">•</span>
+                                Debouncing techniques
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Arduino IDE Setup & Hardware Connection -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔧 Section 1: Arduino IDE Setup & Hardware Connection</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Installing the Arduino IDE</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Now that you have your Arduino hardware, it's time to install the Arduino IDE (Integrated Development Environment) - the software we'll use to write and upload programs to your Arduino board.
+                    </p>
+                    
+                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">What is the Arduino IDE?</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Text Editor:</strong> Where you write your Arduino code (called "sketches")</li>
+                            <li>• <strong>Compiler:</strong> Translates your code into machine language</li>
+                            <li>• <strong>Uploader:</strong> Sends your compiled program to the Arduino board</li>
+                            <li>• <strong>Serial Monitor:</strong> View messages and data from your Arduino</li>
+                            <li>• <strong>Library Manager:</strong> Install additional code libraries for sensors and components</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Installation Steps:</h4>
+                        <ol style="list-style: decimal; padding-left: 1.5rem; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem;"><strong>Download:</strong> Go to <code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">arduino.cc/software</code> and download the Arduino IDE</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Install:</strong> Run the installer and follow the setup wizard</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Connect:</strong> Plug your Arduino into your computer using the USB cable</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Select Board:</strong> Go to Tools → Board → Arduino Uno (or your specific board)</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Select Port:</strong> Go to Tools → Port → Select the COM port (Windows) or /dev/cu.usbmodem (Mac)</li>
+                            <li style="margin-bottom: 0.5rem;"><strong>Test:</strong> Upload the built-in "Blink" example to verify everything works</li>
+                        </ol>
+                    </div>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔍 Troubleshooting Common Issues:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <strong>Port not found:</strong> Try different USB ports, restart the IDE, or install Arduino drivers</li>
+                            <li>• <strong>Upload failed:</strong> Check that the correct board and port are selected</li>
+                            <li>• <strong>Permission denied:</strong> Run Arduino IDE as administrator (Windows) or check permissions (Mac/Linux)</li>
+                            <li>• <strong>Board not recognized:</strong> Install CH340 drivers for clone Arduino boards</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section 2: Digital Output Basics -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">💡 Section 2: Digital Output Basics</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Digital Signals</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Digital signals have only two states: HIGH (5V) and LOW (0V). This binary nature makes them perfect for controlling devices like LEDs, motors, and relays.
+                    </p>
+                    
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Functions:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><code style="background: #bee3f8; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">pinMode(pin, OUTPUT)</code> - Configure pin as output</li>
+                            <li><code style="background: #bee3f8; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">digitalWrite(pin, HIGH)</code> - Set pin to 5V</li>
+                            <li><code style="background: #bee3f8; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">digitalWrite(pin, LOW)</code> - Set pin to 0V</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic LED Control</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Let's start with the classic "Hello World" of electronics - blinking an LED.
+                    </p>
+                    
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Circuit Setup:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• LED connected to digital pin 13</li>
+                            <li>• 220Ω resistor in series with LED</li>
+                            <li>• Ground connection to complete circuit</li>
+                        </ul>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic LED Blink Program
+const int ledPin = 13;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("LED Blink Program Started");
+}
+
+void loop() {
+  digitalWrite(ledPin, HIGH);   // Turn LED on
+  Serial.println("LED ON");
+  delay(1000);                  // Wait 1 second
+  
+  digitalWrite(ledPin, LOW);    // Turn LED off
+  Serial.println("LED OFF");
+  delay(1000);                  // Wait 1 second
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 2: Digital Input Basics -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔘 Section 2: Digital Input Basics</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Reading Button States</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Digital inputs allow us to read the state of switches, buttons, and sensors. The Arduino can detect whether a pin is HIGH or LOW.
+                    </p>
+                    
+                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Input Functions:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li><code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">pinMode(pin, INPUT)</code> - Configure pin as input</li>
+                            <li><code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">pinMode(pin, INPUT_PULLUP)</code> - Input with internal pull-up</li>
+                            <li><code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">digitalRead(pin)</code> - Read pin state (HIGH/LOW)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Pull-up Resistors</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Pull-up resistors ensure that input pins have a defined state when not connected to anything. Arduino has built-in pull-up resistors we can enable.
+                    </p>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Button Input with Pull-up Resistor
+const int buttonPin = 2;
+const int ledPin = 13;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);  // Enable internal pull-up
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("Button Input Program Started");
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);
+  
+  if (buttonState == LOW) {  // Button pressed (pull-up inverts logic)
+    digitalWrite(ledPin, HIGH);
+    Serial.println("Button Pressed - LED ON");
+  } else {
+    digitalWrite(ledPin, LOW);
+    Serial.println("Button Released - LED OFF");
+  }
+  
+  delay(50);  // Small delay for stability
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Section 3: Combining Input and Output -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔄 Section 3: Combining Input and Output</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Interactive LED Control</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Now let's create more interactive programs that respond to user input and control multiple outputs.
+                    </p>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Toggle LED with Button Press
+const int buttonPin = 2;
+const int ledPin = 13;
+
+bool ledState = false;
+bool lastButtonState = HIGH;
+bool currentButtonState = HIGH;
+
+void setup() {
+  pinMode(buttonPin, INPUT_PULLUP);
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("LED Toggle Program Started");
+}
+
+void loop() {
+  currentButtonState = digitalRead(buttonPin);
+  
+  // Check for button press (HIGH to LOW transition)
+  if (lastButtonState == HIGH && currentButtonState == LOW) {
+    ledState = !ledState;  // Toggle LED state
+    digitalWrite(ledPin, ledState);
+    
+    if (ledState) {
+      Serial.println("LED Toggled ON");
+    } else {
+      Serial.println("LED Toggled OFF");
+    }
+    
+    delay(50);  // Simple debounce
+  }
+  
+  lastButtonState = currentButtonState;
+}`}</code></pre>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Multiple LEDs and Patterns</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Let's create more complex patterns using multiple LEDs and timing.
+                    </p>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Traffic Light Simulator
+const int redPin = 11;
+const int yellowPin = 12;
+const int greenPin = 13;
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(yellowPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  Serial.begin(9600);
+  Serial.println("Traffic Light Simulator Started");
+}
+
+void loop() {
+  // Green light
+  digitalWrite(greenPin, HIGH);
+  digitalWrite(yellowPin, LOW);
+  digitalWrite(redPin, LOW);
+  Serial.println("GREEN - Go!");
+  delay(3000);
+  
+  // Yellow light
+  digitalWrite(greenPin, LOW);
+  digitalWrite(yellowPin, HIGH);
+  digitalWrite(redPin, LOW);
+  Serial.println("YELLOW - Caution!");
+  delay(1000);
+  
+  // Red light
+  digitalWrite(greenPin, LOW);
+  digitalWrite(yellowPin, LOW);
+  digitalWrite(redPin, HIGH);
+  Serial.println("RED - Stop!");
+  delay(3000);
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: Interactive Control Panel</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Build a Simple Control Panel</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create an interactive control panel with multiple buttons and LEDs that demonstrates digital I/O concepts.
+                    </p>
+                    
+                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Required Components:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Arduino Uno</li>
+                            <li>• 3 LEDs (Red, Yellow, Green)</li>
+                            <li>• 2 Push buttons</li>
+                            <li>• 3 × 220Ω resistors (for LEDs)</li>
+                            <li>• Breadboard and jumper wires</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge Tasks:</h4>
+                        <ol class="text-blue-700 space-y-1 list-decimal list-inside">
+                            <li>Wire the circuit according to the schematic</li>
+                            <li>Program button 1 to cycle through LED colors</li>
+                            <li>Program button 2 to create a blinking pattern</li>
+                            <li>Add Serial Monitor feedback for all actions</li>
+                            <li>Implement proper button debouncing</li>
+                        </ol>
+                    </div>
+
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Control Panel Challenge Solution
+const int redPin = 11;
+const int yellowPin = 12;
+const int greenPin = 13;
+const int button1Pin = 2;
+const int button2Pin = 3;
+
+int currentLED = 0;  // 0=red, 1=yellow, 2=green
+bool blinkMode = false;
+bool lastButton1State = HIGH;
+bool lastButton2State = HIGH;
+
+void setup() {
+  pinMode(redPin, OUTPUT);
+  pinMode(yellowPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(button1Pin, INPUT_PULLUP);
+  pinMode(button2Pin, INPUT_PULLUP);
+  Serial.begin(9600);
+  Serial.println("Control Panel Ready!");
+}
+
+void loop() {
+  // Check button 1 for LED cycling
+  bool button1State = digitalRead(button1Pin);
+  if (lastButton1State == HIGH && button1State == LOW) {
+    currentLED = (currentLED + 1) % 3;
+    Serial.print("Switched to LED: ");
+    Serial.println(currentLED);
+    delay(50);  // Debounce
+  }
+  lastButton1State = button1State;
+  
+  // Check button 2 for blink mode
+  bool button2State = digitalRead(button2Pin);
+  if (lastButton2State == HIGH && button2State == LOW) {
+    blinkMode = !blinkMode;
+    Serial.print("Blink mode: ");
+    Serial.println(blinkMode ? "ON" : "OFF");
+    delay(50);  // Debounce
+  }
+  lastButton2State = button2State;
+  
+  // Control LEDs
+  updateLEDs();
+}
+
+void updateLEDs() {
+  // Turn off all LEDs first
+  digitalWrite(redPin, LOW);
+  digitalWrite(yellowPin, LOW);
+  digitalWrite(greenPin, LOW);
+  
+  // Turn on current LED
+  if (blinkMode && (millis() % 500 < 250)) {
+    // Blink current LED
+    switch(currentLED) {
+      case 0: digitalWrite(redPin, HIGH); break;
+      case 1: digitalWrite(yellowPin, HIGH); break;
+      case 2: digitalWrite(greenPin, HIGH); break;
+    }
+  } else if (!blinkMode) {
+    // Solid current LED
+    switch(currentLED) {
+      case 0: digitalWrite(redPin, HIGH); break;
+      case 1: digitalWrite(yellowPin, HIGH); break;
+      case 2: digitalWrite(greenPin, HIGH); break;
+    }
+  }
+}`}</code></pre>
+                </div>
+            </div>
+
+            <!-- Assessment and Homework -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Week 4 Quiz Topics:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                Digital HIGH and LOW states
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                pinMode() configurations
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                digitalWrite() and digitalRead()
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                Pull-up resistor concepts
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-purple-500 mr-2">•</span>
+                                Button debouncing techniques
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignments:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">1.</span>
+                                Complete the control panel project
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">2.</span>
+                                Create a binary counter with 4 LEDs
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">3.</span>
+                                Design a simple alarm system
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">4.</span>
+                                Research different types of switches
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span class="text-orange-500 mr-2">5.</span>
+                                Practice circuit diagrams and schematics
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6 p-4 bg-green-50 rounded-lg">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">💡 Pro Tips for Success:</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Always check your wiring before powering on</li>
+                        <li>• Use the Serial Monitor to debug your programs</li>
+                        <li>• Start with simple circuits and add complexity gradually</li>
+                        <li>• Keep a notebook of working circuit configurations</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week3" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Week 3: Variables & Data Types
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week4" style="background-color: #7c3aed; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Quiz 📝
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week5" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Week 5: Analog Inputs & Sensors →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+
+
+
+
+

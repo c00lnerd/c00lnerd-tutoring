@@ -1,0 +1,785 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physical Science Module 12 Quiz">
+    <div class="container">
+        <h1>Physical Science Module 12 Quiz: Plate Tectonics</h1>
+        
+        <div class="email-input" id="email-section">
+            <label for="email">Enter your email (optional):</label>
+            <input type="email" id="email" placeholder="your.email@example.com">
+            <div>
+                <input type="checkbox" id="save-results" checked>
+                <label for="save-results">Save results and send to instructor</label>
+            </div>
+            <button class="control-button" id="start-quiz">Start Quiz</button>
+        </div>
+
+        <div id="quiz-container" style="display: none;">
+            <div class="progress-bar">
+                <div class="fill" id="progress"></div>
+            </div>
+            <div id="question-number"></div>
+            <div id="question-text"></div>
+            <div class="options" id="options"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="controls">
+                <button id="prevBtn" class="control-button" onclick="previousQuestion()">Previous Question</button>
+                <button id="nextBtn" class="control-button" onclick="nextQuestion()">Next Question</button>
+                <button id="submitBtn" class="control-button" onclick="submitQuiz()" style="display: none;">Submit Quiz</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Quiz Results</h2>
+            <div id="score"></div>
+            <div id="email-status" class="email-status"></div>
+            <div id="incorrect-answers"></div>
+            <div class="result-buttons">
+                <button id="download-results" class="control-button">Download Results</button>
+                <button id="restart-quiz" class="control-button" onclick="window.location.reload()">Restart Quiz</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load EmailJS before initializing -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+    <script type="text/javascript" is:inline>
+        // Wait for EmailJS to load before initializing
+        window.onload = function() {
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init("ct_s19oZHppLy9BlW");
+                console.log("EmailJS initialized successfully");
+            } else {
+                console.error("EmailJS failed to load");
+            }
+        };
+    </script>
+
+    <script is:inline>
+        // Utility function to shuffle array and track original indices
+        function shuffleAnswers(question) {
+            const originalOptions = [...question.options];
+            const correctAnswerIndex = question.correctAnswer;
+            
+            // Create array of indices
+            const indices = originalOptions.map((_, index) => index);
+            
+            // Fisher-Yates shuffle
+            for (let i = indices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [indices[i], indices[j]] = [indices[j], indices[i]];
+            }
+            
+            // Apply shuffle to options and find new correct answer index
+            const shuffledOptions = indices.map(i => originalOptions[i]);
+            const newCorrectAnswerIndex = indices.indexOf(correctAnswerIndex);
+            
+            return {
+                ...question,
+                options: shuffledOptions,
+                correctAnswer: newCorrectAnswerIndex,
+                originalOrder: indices
+            };
+        }
+
+        // Initialize randomized questions when quiz starts
+        function initializeQuiz() {
+            // Shuffle answers for each question
+            window.questions = originalQuestions.map(question => shuffleAnswers(question));
+            
+            // Initialize quiz state after questions are randomized
+            window.currentQuestion = 0;
+            window.userAnswers = new Array(window.questions.length).fill(null);
+            window.questionAttempts = new Array(window.questions.length).fill(0);
+            
+            console.log('Module 12 quiz initialized with randomized answers');
+        }
+
+        // Define questions first
+        const originalQuestions = [
+            {
+                question: "What is the theory that explains how Earth's continents move over time?",
+                options: ["Continental drift theory proposed by Alfred Wegener", "Plate tectonics theory explaining lithospheric movement", "Seafloor spreading at mid-ocean ridges", "Subduction zones where plates converge"],
+                correctAnswer: 1,
+                explanation: "Plate tectonics is the comprehensive theory that explains how Earth's lithosphere is divided into plates that move over the asthenosphere."
+            },
+            {
+                question: "What causes plastic rock in Earth's mantle to flow?",
+                options: ["Electrical currents", "Magnetic fields", "Heat from radioactive decay", "Gravitational pull from the Moon"],
+                correctAnswer: 2,
+                explanation: "Heat from radioactive decay within Earth causes convection currents in the mantle, making the plastic rock flow."
+            },
+            {
+                question: "Which scientist proposed the theory of continental drift in 1912?",
+                options: ["Alfred Wegener", "Charles Darwin", "Isaac Newton", "Marie Curie"],
+                correctAnswer: 0,
+                explanation: "Alfred Wegener proposed the theory of continental drift in 1912, though it wasn't widely accepted until the 1960s."
+            },
+            {
+                question: "What is the boundary called where two tectonic plates move away from each other?",
+                options: ["Convergent boundary", "Divergent boundary", "Transform boundary", "Subduction zone"],
+                correctAnswer: 1,
+                explanation: "A divergent boundary is where two tectonic plates move away from each other, often creating new crust."
+            },
+            {
+                question: "Which of the following is evidence for plate tectonics?",
+                options: ["The shape of continents", "Matching fossils on different continents", "Similar rock formations on different continents", "All of the above"],
+                correctAnswer: 3,
+                explanation: "All of these are evidence for plate tectonics: continental shapes fit together, fossils match across oceans, and rock formations are similar on different continents."
+            },
+            {
+                question: "What happens at a convergent plate boundary?",
+                options: ["Plates move away from each other", "Plates slide past each other", "Plates move toward each other", "Plates remain stationary"],
+                correctAnswer: 2,
+                explanation: "At convergent boundaries, tectonic plates move toward each other, often resulting in mountain formation or subduction."
+            },
+            {
+                question: "What is seafloor spreading?",
+                options: ["The process of ocean floors getting wider", "The process of continents drifting apart", "The formation of underwater mountains", "The creation of ocean trenches"],
+                correctAnswer: 0,
+                explanation: "Seafloor spreading is the process where new oceanic crust is formed at mid-ocean ridges, causing ocean floors to get wider."
+            },
+            {
+                question: "What type of rock is formed when existing rock is changed by heat and pressure?",
+                options: ["Igneous rock", "Sedimentary rock", "Metamorphic rock", "Plastic rock"],
+                correctAnswer: 2,
+                explanation: "Metamorphic rock is formed when existing rock is changed by heat and pressure without melting."
+            },
+            {
+                question: "What is the Ring of Fire?",
+                options: ["A volcanic region around the Pacific Ocean", "A type of igneous rock", "A geological formation in Africa", "A method of dating rocks"],
+                correctAnswer: 0,
+                explanation: "The Ring of Fire is a region around the Pacific Ocean where many volcanoes and earthquakes occur due to tectonic plate activity."
+            },
+            {
+                question: "What drives the movement of tectonic plates?",
+                options: ["Ocean currents", "Wind patterns", "Convection currents in the mantle", "Gravitational pull from the Moon"],
+                correctAnswer: 2,
+                explanation: "Convection currents in Earth's mantle, driven by heat from radioactive decay, are the primary force that moves tectonic plates."
+            },
+            {
+                question: "What is subduction?",
+                options: ["The process of plates moving apart", "The process of one plate sliding under another", "The formation of new crust", "The breaking apart of continents"],
+                correctAnswer: 1,
+                explanation: "Subduction is the process where one tectonic plate slides beneath another, typically at convergent boundaries."
+            },
+            {
+                question: "What evidence did Wegener use to support continental drift?",
+                options: ["Matching fossils across oceans", "Similar rock formations on different continents", "The fit of continental coastlines", "All of the above"],
+                correctAnswer: 3,
+                explanation: "Wegener used all of these as evidence: matching fossils, similar rock formations, and the puzzle-like fit of continental coastlines."
+            },
+            {
+                question: "What is the asthenosphere?",
+                options: ["The solid outer layer of Earth", "The liquid outer core", "The plastic layer of the mantle", "The Earth's magnetic field"],
+                correctAnswer: 2,
+                explanation: "The asthenosphere is the plastic, partially molten layer of the mantle on which tectonic plates move."
+            },
+            {
+                question: "What type of boundary is the San Andreas Fault?",
+                options: ["Convergent boundary", "Divergent boundary", "Transform boundary", "Subduction zone"],
+                correctAnswer: 2,
+                explanation: "The San Andreas Fault is a transform boundary where two plates slide past each other horizontally."
+            },
+            {
+                question: "What happens when an oceanic plate meets a continental plate?",
+                options: ["They bounce off each other", "The oceanic plate subducts under the continental plate", "They form a transform boundary", "Nothing happens"],
+                correctAnswer: 1,
+                explanation: "When an oceanic plate meets a continental plate, the denser oceanic plate typically subducts (slides under) the continental plate."
+            }
+        ];
+
+        // Quiz state
+        window.currentQuestion = 0;
+        window.userAnswers = new Array(originalQuestions.length).fill(null);
+        window.userEmail = '';
+        window.saveResults = false;
+
+        // Load saved email when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedEmail = localStorage.getItem('studentEmail');
+            if (savedEmail) {
+                document.getElementById('email').value = savedEmail;
+            }
+        });
+
+        // Start quiz function
+        document.getElementById('start-quiz').addEventListener('click', function() {
+            const email = document.getElementById('email').value;
+            const saveResults = document.getElementById('save-results').checked;
+            
+            // Store email preference
+            window.userEmail = email;
+            window.saveResults = saveResults;
+            
+            // Initialize quiz with randomized answers
+            initializeQuiz();
+            
+            // Hide email section and show quiz
+            document.getElementById('email-section').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            
+            window.quizStarted = true;
+            showQuestion();
+        });
+
+        function showQuestion() {
+            const question = window.questions[window.currentQuestion];
+            document.getElementById('question-number').textContent = `Question ${window.currentQuestion + 1} of ${window.questions.length}`;
+            document.getElementById('question-text').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            // Update progress bar
+            const progress = ((window.currentQuestion + 1) / window.questions.length) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+            
+            // Show/hide navigation buttons
+            document.getElementById('prevBtn').style.display = window.currentQuestion > 0 ? 'inline-block' : 'none';
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('submitBtn').style.display = 'none';
+            
+            // Hide feedback
+            document.getElementById('feedback').style.display = 'none';
+            
+            // Restore previous answer if exists
+            if (window.userAnswers[window.currentQuestion] !== null) {
+                const buttons = document.querySelectorAll('.option-button');
+                buttons[window.userAnswers[window.currentQuestion]].classList.add('selected');
+                showFeedback();
+            }
+        }
+
+        function selectAnswer(selectedIndex) {
+            const options = document.querySelectorAll('.option-button');
+            const feedback = document.getElementById('feedback');
+            const currentQuestion = window.questions[window.currentQuestion];
+            
+            // Clear previous selections
+            options.forEach(btn => btn.classList.remove('selected', 'correct', 'incorrect'));
+            
+            // Mark selected answer
+            options[selectedIndex].classList.add('selected');
+            window.userAnswers[window.currentQuestion] = selectedIndex;
+            
+            // Show feedback
+            const isCorrect = selectedIndex === currentQuestion.correctAnswer;
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.innerHTML = isCorrect ? 
+                `<p>Correct! ${currentQuestion.explanation}</p>` : 
+                `<p>Incorrect. The correct answer is: ${currentQuestion.options[currentQuestion.correctAnswer]}. ${currentQuestion.explanation}</p>`;
+            feedback.style.display = 'block';
+            
+            // Mark correct and incorrect answers
+            options[currentQuestion.correctAnswer].classList.add('correct');
+            if (!isCorrect) {
+                options[selectedIndex].classList.add('incorrect');
+            }
+            
+            // Show navigation buttons
+            if (window.currentQuestion < window.questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function showFeedback() {
+            const feedback = document.getElementById('feedback');
+            const currentQuestion = window.questions[window.currentQuestion];
+            const selectedIndex = window.userAnswers[window.currentQuestion];
+            
+            if (selectedIndex === null) return;
+            
+            const isCorrect = selectedIndex === currentQuestion.correctAnswer;
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'incorrect'}`;
+            feedback.innerHTML = isCorrect ? 
+                `<p>Correct! ${currentQuestion.explanation}</p>` : 
+                `<p>Incorrect. The correct answer is: ${currentQuestion.options[currentQuestion.correctAnswer]}. ${currentQuestion.explanation}</p>`;
+            feedback.style.display = 'block';
+            
+            // Show navigation buttons
+            if (window.currentQuestion < window.questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('submitBtn').style.display = 'inline-block';
+            }
+        }
+
+        function nextQuestion() {
+            if (window.currentQuestion < window.questions.length - 1) {
+                window.currentQuestion++;
+                showQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (window.currentQuestion > 0) {
+                window.currentQuestion--;
+                showQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            // Defensive initialization of userAnswers to prevent undefined errors
+            if (!window.userAnswers) {
+                window.userAnswers = new Array(window.questions.length).fill(null);
+            }
+            
+            let score = 0;
+            for (let i = 0; i < window.questions.length; i++) {
+                if (window.userAnswers[i] === window.questions[i].correctAnswer) {
+                    score++;
+                }
+            }
+            
+            const percentage = Math.round((score / window.questions.length) * 100);
+            
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            
+            document.getElementById('score').innerHTML = `<h3>Your Score: ${score} out of ${window.questions.length} (${percentage}%)</h3>`;
+            
+            showFinalResults();
+            
+            if (window.saveResults && window.userEmail) {
+                sendResultsToInstructor(score, percentage);
+            }
+        }
+
+        function showFinalResults() {
+            const detailedResults = document.getElementById('incorrect-answers');
+            let resultsHTML = '<h3>Detailed Results:</h3>';
+
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                
+                // Defensive programming to prevent array access errors
+                const userAnswerText = (userAnswer !== null && userAnswer !== undefined && question.options && question.options[userAnswer]) 
+                    ? question.options[userAnswer] 
+                    : 'Not answered';
+                
+                const correctAnswerText = (question.options && question.options[question.correctAnswer]) 
+                    ? question.options[question.correctAnswer] 
+                    : 'Unknown';
+                
+                resultsHTML += `
+                    <div class="result-item ${isCorrect ? 'correct' : 'incorrect'}">
+                        <p><strong>Question ${index + 1}:</strong> ${question.question}</p>
+                        <p><strong>Your answer:</strong> ${userAnswerText}</p>
+                        <p><strong>Correct answer:</strong> ${correctAnswerText}</p>
+                        <p><strong>Explanation:</strong> ${question.explanation || 'No explanation available'}</p>
+                    </div>
+                `;
+            });
+
+            detailedResults.innerHTML = resultsHTML;
+        }
+
+        function sendResultsToInstructor(score, percentage) {
+            localStorage.setItem('studentEmail', window.userEmail);
+            
+            // Ensure userAnswers is properly initialized
+            if (!window.userAnswers || !Array.isArray(window.userAnswers)) {
+                window.userAnswers = new Array(window.questions.length).fill(null);
+            }
+            
+            // Format email message like other working quizzes
+            let emailMessage = `Physical Science Module 12 Quiz Results\n\n`;
+            emailMessage += `Student: ${window.userEmail}\n`;
+            emailMessage += `Quiz: Plate Tectonics\n`;
+            emailMessage += `Score: ${score}/${window.questions.length} (${percentage}%)\n`;
+            emailMessage += `Percentage: ${percentage}%\n`;
+            emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
+            
+            // Build incorrect answers with bulletproof defensive programming
+            const incorrectAnswers = [];
+            
+            // Safely iterate through questions
+            if (window.questions && Array.isArray(window.questions)) {
+                for (let index = 0; index < window.questions.length; index++) {
+                    const question = window.questions[index];
+                    const userAnswer = window.userAnswers[index];
+                    
+                    // Skip if question or options don't exist
+                    if (!question || !question.options || !Array.isArray(question.options)) {
+                        continue;
+                    }
+                    
+                    // Check if answer is incorrect
+                    if (userAnswer !== question.correctAnswer) {
+                        const userAnswerText = (userAnswer !== null && userAnswer !== undefined && 
+                                              typeof userAnswer === 'number' && 
+                                              userAnswer >= 0 && userAnswer < question.options.length && 
+                                              question.options[userAnswer]) 
+                            ? question.options[userAnswer] 
+                            : 'Not answered';
+                        
+                        const correctAnswerText = (typeof question.correctAnswer === 'number' && 
+                                                  question.correctAnswer >= 0 && 
+                                                  question.correctAnswer < question.options.length && 
+                                                  question.options[question.correctAnswer]) 
+                            ? question.options[question.correctAnswer] 
+                            : 'Unknown';
+                        
+                        incorrectAnswers.push({
+                            question: question.question || 'Unknown question',
+                            userAnswer: userAnswerText,
+                            correctAnswer: correctAnswerText,
+                            attempts: (window.questionAttempts && window.questionAttempts[index]) || 0
+                        });
+                    }
+                }
+            }
+            
+            if (incorrectAnswers.length > 0) {
+                emailMessage += "Incorrect Answers:\n\n";
+                incorrectAnswers.forEach((item, index) => {
+                    // Additional defensive checks for item properties
+                    if (item && typeof item === 'object') {
+                        emailMessage += `${index + 1}. ${item.question || 'Unknown question'}\n`;
+                        emailMessage += `   Your answer: ${item.userAnswer || 'Not answered'}\n`;
+                        emailMessage += `   Correct answer: ${item.correctAnswer || 'Unknown'}\n`;
+                        emailMessage += `   Attempts: ${item.attempts || 0}\n\n`;
+                    }
+                });
+            } else {
+                emailMessage += "Perfect score! All answers were correct.\n";
+            }
+            
+            const templateParams = {
+                to_email: window.userEmail,
+                message: emailMessage,
+                score: score,
+                total: window.questions.length,
+                percentage: percentage
+            };
+            
+            if (typeof emailjs !== 'undefined') {
+                // Post to Google Sheets first
+                const sheetsData = {
+                    timestamp: new Date().toISOString(),
+                    studentEmail: window.userEmail,
+                    quizTitle: 'Physical Science Module 12 Quiz',
+                    score: score,
+                    totalQuestions: window.questions.length,
+                    percentage: percentage.toString(),
+                    incorrectCount: window.questions.length - score,
+                    timeCompleted: new Date().toLocaleString()
+                };
+
+                try {
+                    fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(sheetsData)
+                    }).then(() => {
+                        console.log('Google Sheets: Data logged successfully');
+                    }).catch(error => {
+                        console.error('Google Sheets: Error logging data:', error);
+                    });
+                } catch (error) {
+                    console.error('Google Sheets: Error logging data:', error);
+                }
+
+                // Send EmailJS notification to instructor with standardized format
+                const updatedTemplateParams = {
+                    from_name: 'Physical Science Quiz System',
+                    student_email: window.userEmail,
+                    to_name: 'Instructor',
+                    subject: 'Physical Science Module 12 Quiz Results',
+                    submission_date: new Date().toLocaleString(),
+                    message: emailMessage,
+                    reply_to: window.userEmail
+                };
+
+                emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS!', response.status, response.text);
+                        document.getElementById('email-status').innerHTML = '<p class="success">✅ Results sent to instructor via email! ✅ Data logged to Google Sheets</p>';
+                    }, function(error) {
+                        console.log('FAILED...', error);
+                        document.getElementById('email-status').innerHTML = '<p class="error">Failed to send results. Please try again.</p>';
+                    });
+            }
+        }
+
+        function generateEmailDetails() {
+            let details = '';
+            window.questions.forEach((question, index) => {
+                const userAnswer = window.userAnswers[index];
+                const isCorrect = userAnswer === question.correctAnswer;
+                details += `Question ${index + 1}: ${isCorrect ? 'Correct' : 'Incorrect'}\n`;
+                details += `Your answer: ${userAnswer !== null ? question.options[userAnswer] : 'Not answered'}\n`;
+                details += `Correct answer: ${question.options[question.correctAnswer]}\n\n`;
+            });
+            return details;
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .email-input {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .email-input label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .email-input input[type="email"] {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .email-input div {
+            margin-bottom: 15px;
+        }
+
+        .email-input input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        .control-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            margin: 5px;
+        }
+
+        .control-button:hover {
+            background-color: #2980b9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background-color: #27ae60;
+            transition: width 0.3s ease;
+            border-radius: 10px;
+        }
+
+        #question-number {
+            font-size: 18px;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+
+        #question-text {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: left;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+
+        .option-button:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+        }
+
+        .option-button.selected {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-button.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option-button.incorrect {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .feedback {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .feedback.correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        #results {
+            text-align: center;
+        }
+
+        #score {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #2c3e50;
+        }
+
+        .result-buttons {
+            margin: 20px 0;
+        }
+
+        .result-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .result-item.correct {
+            border-left: 4px solid #27ae60;
+        }
+
+        .result-item.incorrect {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .email-status .success {
+            color: #27ae60;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .email-status .error {
+            color: #e74c3c;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            #question-text {
+                font-size: 18px;
+            }
+            
+            .option-button {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            .control-button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</Layout>

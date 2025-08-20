@@ -1,0 +1,467 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 25: Autonomous Navigation and Path Planning">
+    <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 25: Autonomous Navigation and Path Planning</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Teaching Robots to Navigate Complex Environments</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🎯</span> Learning Objectives
+            </h2>
+            <ul style="line-height: 1.8; color: #4a5568;">
+                <li><strong>Understand autonomous navigation:</strong> Learn how robots can move independently through environments</li>
+                <li><strong>Explore path planning algorithms:</strong> Discover different strategies for finding optimal routes</li>
+                <li><strong>Program obstacle avoidance:</strong> Create systems that navigate around barriers</li>
+                <li><strong>Build mapping systems:</strong> Teach robots to remember and use environmental information</li>
+                <li><strong>Apply real-world navigation:</strong> Connect concepts to GPS, autonomous vehicles, and robotics</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Introduction to Autonomous Navigation -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🗺️</span> Introduction to Autonomous Navigation
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">What is Autonomous Navigation?</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Autonomous navigation is the ability of a robot to move from one location to another without human control. The robot must understand its environment, plan a safe route, and execute the movement while avoiding obstacles and adapting to changes.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Key Components of Navigation:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Localization:</strong> Knowing where the robot is in the environment</li>
+                    <li><strong>Mapping:</strong> Understanding the layout of the environment</li>
+                    <li><strong>Path Planning:</strong> Finding the best route to the destination</li>
+                    <li><strong>Obstacle Avoidance:</strong> Detecting and avoiding barriers</li>
+                    <li><strong>Motion Control:</strong> Executing the planned movements accurately</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Real-World Examples</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Autonomous navigation is used in many applications:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Self-driving cars:</strong> Navigate roads while avoiding other vehicles and pedestrians</li>
+                    <li><strong>Delivery drones:</strong> Fly to specific addresses while avoiding obstacles</li>
+                    <li><strong>Warehouse robots:</strong> Move products efficiently through storage facilities</li>
+                    <li><strong>Vacuum robots:</strong> Clean rooms systematically without getting stuck</li>
+                    <li><strong>Mars rovers:</strong> Explore planetary surfaces autonomously</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Section 2: Path Planning Algorithms -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🧭</span> Path Planning Algorithms
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Simple Navigation Strategies</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Different algorithms help robots find paths through environments:
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">1. Wall Following (Bug Algorithm):</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li>Move toward goal until obstacle is encountered</li>
+                    <li>Follow the obstacle boundary until goal direction is clear</li>
+                    <li>Resume moving toward goal</li>
+                    <li>Simple but effective for many environments</li>
+                </ul>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">2. Grid-Based Planning:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li>Divide environment into a grid of cells</li>
+                    <li>Mark cells as free or blocked</li>
+                    <li>Find path through free cells to destination</li>
+                    <li>Good for known environments</li>
+                </ul>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">3. Potential Field Method:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Goal attracts robot like a magnet</li>
+                    <li>Obstacles repel robot like same-pole magnets</li>
+                    <li>Robot follows the combined force field</li>
+                    <li>Works well for dynamic environments</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">A* (A-Star) Algorithm</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    A* is one of the most popular path planning algorithms because it finds the shortest path efficiently:
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">How A* Works:</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Start at current position, add to "open list"</li>
+                    <li>For each position, calculate cost to reach goal</li>
+                    <li>Choose position with lowest total cost</li>
+                    <li>Add neighboring positions to open list</li>
+                    <li>Repeat until goal is reached</li>
+                    <li>Trace back to find optimal path</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Section 3: Programming Navigation Systems -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">💻</span> Programming Navigation Systems
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Basic Obstacle Avoidance</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Let's start with simple obstacle avoidance using ultrasonic sensors:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Simple obstacle avoidance navigation
+void autonomousNavigation() {
+  float frontDistance = getUltrasonicDistance();
+  float leftDistance = getLeftSensorDistance();
+  float rightDistance = getRightSensorDistance();
+  
+  const float SAFE_DISTANCE = 30; // cm
+  const int MOVE_SPEED = 100;
+  const int TURN_SPEED = 80;
+  
+  if (frontDistance > SAFE_DISTANCE) {
+    // Path is clear - move forward
+    moveForward(MOVE_SPEED);
+    Serial.println("Moving forward");
+  } else {
+    // Obstacle detected - choose best direction
+    stopMoving();
+    delay(100);
+    
+    if (leftDistance > rightDistance && leftDistance > SAFE_DISTANCE) {
+      // Turn left
+      turnLeft(90);
+      Serial.println("Turning left to avoid obstacle");
+    } else if (rightDistance > SAFE_DISTANCE) {
+      // Turn right
+      turnRight(90);
+      Serial.println("Turning right to avoid obstacle");
+    } else {
+      // Both sides blocked - turn around
+      turnRight(180);
+      Serial.println("Turning around - path blocked");
+    }
+    
+    delay(500); // Allow turn to complete
+  }
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Wall Following Algorithm</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    This algorithm helps robots navigate by following walls or obstacles:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Wall following navigation
+enum WallFollowState {
+  SEEKING_WALL,
+  FOLLOWING_WALL,
+  TURNING_CORNER
+};
+
+WallFollowState currentState = SEEKING_WALL;
+const float WALL_DISTANCE = 20; // Desired distance from wall (cm)
+const float WALL_TOLERANCE = 5;  // Acceptable distance variation
+
+void wallFollowingNavigation() {
+  float frontDistance = getUltrasonicDistance();
+  float rightDistance = getRightSensorDistance();
+  
+  switch (currentState) {
+    case SEEKING_WALL:
+      if (frontDistance < 30) {
+        // Found obstacle - start following
+        currentState = FOLLOWING_WALL;
+        turnRight(90); // Orient to follow wall
+      } else {
+        moveForward(100);
+      }
+      break;
+      
+    case FOLLOWING_WALL:
+      if (frontDistance < 25) {
+        // Corner or obstacle ahead
+        currentState = TURNING_CORNER;
+        stopMoving();
+      } else if (rightDistance < WALL_DISTANCE - WALL_TOLERANCE) {
+        // Too close to wall - turn left slightly
+        turnLeft(15);
+        moveForward(80);
+      } else if (rightDistance > WALL_DISTANCE + WALL_TOLERANCE) {
+        // Too far from wall - turn right slightly
+        turnRight(15);
+        moveForward(80);
+      } else {
+        // Good distance - move forward
+        moveForward(100);
+      }
+      break;
+      
+    case TURNING_CORNER:
+      turnLeft(90); // Turn around corner
+      delay(1000);
+      currentState = FOLLOWING_WALL;
+      break;
+  }
+}`}</pre>
+                </div>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Simple Grid-Based Path Planning</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    For known environments, we can use a simple grid to plan paths:
+                </p>
+                
+                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
+                    <pre style="margin: 0; white-space: pre-wrap;">${`// Simple grid-based navigation
+const int GRID_SIZE = 10;
+int environmentGrid[GRID_SIZE][GRID_SIZE];
+int robotX = 0, robotY = 0; // Current position
+int goalX = 8, goalY = 8;   // Destination
+
+void initializeGrid() {
+  // 0 = free space, 1 = obstacle
+  for (int x = 0; x < GRID_SIZE; x++) {
+    for (int y = 0; y < GRID_SIZE; y++) {
+      environmentGrid[x][y] = 0; // Start with empty grid
+    }
+  }
+  
+  // Add some obstacles
+  environmentGrid[3][3] = 1;
+  environmentGrid[3][4] = 1;
+  environmentGrid[4][3] = 1;
+  environmentGrid[6][7] = 1;
+}
+
+void moveToGoal() {
+  // Simple greedy approach - move toward goal if possible
+  int deltaX = goalX - robotX;
+  int deltaY = goalY - robotY;
+  
+  if (abs(deltaX) > abs(deltaY)) {
+    // Move in X direction
+    if (deltaX > 0 && canMoveTo(robotX + 1, robotY)) {
+      moveEast();
+      robotX++;
+    } else if (deltaX < 0 && canMoveTo(robotX - 1, robotY)) {
+      moveWest();
+      robotX--;
+    } else {
+      // X blocked, try Y
+      if (deltaY > 0 && canMoveTo(robotX, robotY + 1)) {
+        moveNorth();
+        robotY++;
+      } else if (deltaY < 0 && canMoveTo(robotX, robotY - 1)) {
+        moveSouth();
+        robotY--;
+      }
+    }
+  } else {
+    // Move in Y direction
+    if (deltaY > 0 && canMoveTo(robotX, robotY + 1)) {
+      moveNorth();
+      robotY++;
+    } else if (deltaY < 0 && canMoveTo(robotX, robotY - 1)) {
+      moveSouth();
+      robotY--;
+    } else {
+      // Y blocked, try X
+      if (deltaX > 0 && canMoveTo(robotX + 1, robotY)) {
+        moveEast();
+        robotX++;
+      } else if (deltaX < 0 && canMoveTo(robotX - 1, robotY)) {
+        moveWest();
+        robotX--;
+      }
+    }
+  }
+  
+  // Check if goal reached
+  if (robotX == goalX && robotY == goalY) {
+    Serial.println("Goal reached!");
+    celebrateGoal();
+  }
+}
+
+bool canMoveTo(int x, int y) {
+  // Check if position is valid and not blocked
+  if (x < 0 || x >= GRID_SIZE || y < 0 || y >= GRID_SIZE) {
+    return false; // Out of bounds
+  }
+  return environmentGrid[x][y] == 0; // Not blocked
+}
+
+void moveEast() {
+  turnToDirection(0);   // Face east
+  moveForward(50);      // Move one grid cell
+  delay(1000);
+}
+
+void moveNorth() {
+  turnToDirection(90);  // Face north
+  moveForward(50);
+  delay(1000);
+}
+
+void moveWest() {
+  turnToDirection(180); // Face west
+  moveForward(50);
+  delay(1000);
+}
+
+void moveSouth() {
+  turnToDirection(270); // Face south
+  moveForward(50);
+  delay(1000);
+}`}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">🛠️</span> Hands-On Activity: Autonomous Maze Navigator
+            </h2>
+            
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Project Overview</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Create an autonomous navigation system that can navigate through a simple maze or obstacle course to reach a target destination.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Materials Needed:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6; margin-bottom: 1rem;">
+                    <li>miniAuto robot with ultrasonic sensors</li>
+                    <li>Cardboard boxes or books to create maze walls</li>
+                    <li>Tape to mark start and goal positions</li>
+                    <li>Open floor space (classroom or hallway)</li>
+                </ul>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Implementation Steps:</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Design maze:</strong> Create a simple maze with walls and clear paths</li>
+                    <li><strong>Program navigation:</strong> Implement wall-following or obstacle avoidance</li>
+                    <li><strong>Test basic movement:</strong> Verify robot can detect and avoid walls</li>
+                    <li><strong>Add goal detection:</strong> Use color sensor or marker to detect destination</li>
+                    <li><strong>Optimize path:</strong> Improve algorithm for faster navigation</li>
+                    <li><strong>Challenge mode:</strong> Try more complex mazes or moving obstacles</li>
+                </ol>
+            </div>
+
+            <div style="background: #ffeaa7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">⚠️ Safety and Setup Notes</h3>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li><strong>Clear boundaries:</strong> Ensure robot cannot fall off tables or hit people</li>
+                    <li><strong>Emergency stop:</strong> Always have a way to quickly stop the robot</li>
+                    <li><strong>Sensor calibration:</strong> Test sensors in the actual environment</li>
+                    <li><strong>Speed limits:</strong> Use moderate speeds for safety and accuracy</li>
+                    <li><strong>Backup plan:</strong> Have manual control ready if autonomous mode fails</li>
+                </ul>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Observation and Testing</h3>
+                <ol style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>How well does the robot avoid obstacles?</li>
+                    <li>Does it get stuck in corners or dead ends?</li>
+                    <li>How does it handle narrow passages?</li>
+                    <li>What happens when the environment changes?</li>
+                    <li>How could the navigation algorithm be improved?</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Section 5: Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
+                <span style="margin-right: 0.5rem;">📝</span> Assessment & Homework
+            </h2>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Reflection Questions</h3>
+                <ol style="margin-left: 1.5rem; line-height: 1.8;">
+                    <li>What are the five key components of autonomous navigation?</li>
+                    <li>Explain how the wall-following algorithm works and when it's useful.</li>
+                    <li>What are the advantages and disadvantages of grid-based path planning?</li>
+                    <li>How do self-driving cars use autonomous navigation principles?</li>
+                    <li>What challenges might a robot face when navigating in a dynamic environment?</li>
+                </ol>
+            </div>
+
+            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Programming Challenge</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    <strong>Smart Delivery Robot:</strong> Create a navigation system for a robot that can deliver items between multiple locations in a building.
+                </p>
+                
+                <h4 style="color: #495057; margin: 1rem 0 0.5rem 0;">Requirements:</h4>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>Navigate between at least 3 different "rooms" (marked areas)</li>
+                    <li>Avoid obstacles and navigate around furniture</li>
+                    <li>Return to a "home base" when delivery is complete</li>
+                    <li>Handle situations where paths are blocked</li>
+                    <li>Provide status updates during navigation</li>
+                </ul>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #495057; margin-bottom: 1rem;">Research Project</h3>
+                <p style="margin-bottom: 1rem; line-height: 1.6;">
+                    Research one real-world application of autonomous navigation and write a one-page report covering:
+                </p>
+                <ul style="margin-left: 1.5rem; line-height: 1.6;">
+                    <li>What type of environment the system navigates</li>
+                    <li>What sensors and algorithms are used</li>
+                    <li>What challenges the system faces</li>
+                    <li>How the system handles unexpected situations</li>
+                    <li>Future improvements or developments planned</li>
+                </ul>
+                
+                <p style="margin-top: 1rem; line-height: 1.6; font-style: italic;">
+                    <strong>Suggested topics:</strong> Autonomous vehicles, delivery drones, warehouse robots, Mars rovers, or underwater exploration vehicles.
+                </p>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week24" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 24: Face Recognition
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/week25" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Take Quiz 📝
+            </a>
+        </div>
+    </div>
+</Layout>

@@ -1,0 +1,237 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 10: Analog Sensors and Data Collection">
+    <main class="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-green-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">10</div>
+                    <div>
+                        <h1 class="text-4xl font-bold text-gray-800">Week 10: Analog Sensors and Data Collection</h1>
+                        <p class="text-gray-600 mt-2">Learn to read analog sensors for robot environmental awareness</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-green-700 mb-3">Knowledge Goals:</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Understanding analogRead() function
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Converting sensor values to voltage
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Sensor calibration techniques
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-700 mb-3">Skill Goals:</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Reading multiple analog sensors
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Data processing and filtering
+                            </li>
+                            <li class="flex items-start">
+                                <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                Robot environmental sensing
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lesson Content -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Lesson Content</h2>
+                
+                <!-- Section 1: Analog Sensors -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                        Analog Sensors and analogRead() (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Analog Sensor Basics:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• analogRead() returns values from 0-1023 (10-bit ADC)</li>
+                            <li>• Represents voltage from 0V to 5V</li>
+                            <li>• Perfect for reading light, distance, and temperature</li>
+                            <li>• Essential for robot environmental awareness</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Basic analog sensor reading
+int sensorPin = A0;
+int sensorValue;
+float voltage;
+
+void setup() {
+    Serial.begin(9600);
+    Serial.println("🤖 Analog Sensor Reader Ready!");
+}
+
+void loop() {
+    sensorValue = analogRead(sensorPin);
+    // Convert to voltage (0-5V)
+    voltage = (sensorValue / 1023.0) * 5.0;
+    Serial.print("Raw: ");
+    Serial.print(sensorValue);
+    Serial.print("  Voltage: ");
+    Serial.println(voltage);
+    delay(500);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 2: Sensor Types -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                        Common Robot Sensors (20 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Sensor Types for miniAuto:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Light sensors (photoresistors) for line following</li>
+                            <li>• Distance sensors for obstacle avoidance</li>
+                            <li>• Temperature sensors for environmental monitoring</li>
+                            <li>• Potentiometers for user input and calibration</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Multi-sensor robot system
+int lightSensor = A0;
+int distanceSensor = A1;
+int tempSensor = A2;
+
+void setup() {
+    Serial.begin(9600);
+    Serial.println("🤖 Multi-Sensor Robot Online!");
+}
+
+void loop() {
+    int lightLevel = analogRead(lightSensor);
+    int distance = analogRead(distanceSensor);
+    int temperature = analogRead(tempSensor);
+    
+    Serial.print("Light: ");
+    Serial.print(lightLevel);
+    Serial.print("  Distance: ");
+    Serial.print(distance);
+    Serial.print("  Temp: ");
+    Serial.println(temperature);
+    
+    delay(1000);
+}`}</pre>
+                    </div>
+                </div>
+
+                <!-- Section 3: Data Processing -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                        <span class="bg-green-100 text-green-800 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                        Data Processing and Calibration (15 minutes)
+                    </h3>
+                    <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Why Process Sensor Data:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Raw sensor values need conversion to meaningful units</li>
+                            <li>• Calibration improves accuracy and reliability</li>
+                            <li>• Filtering reduces noise for stable readings</li>
+                            <li>• Essential for consistent robot behavior</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
+                        <pre class="text-green-400 whitespace-pre-wrap">{`// Sensor calibration and filtering
+int lightMin = 1023;  // Start with max
+int lightMax = 0;     // Start with min
+
+void calibrateSensor() {
+    Serial.println("🔧 Calibrating light sensor...");
+    Serial.println("Cover and uncover sensor for 5 seconds");
+    
+    unsigned long startTime = millis();
+    while (millis() - startTime < 5000) {
+        int reading = analogRead(A0);
+        if (reading < lightMin) lightMin = reading;
+        if (reading > lightMax) lightMax = reading;
+        delay(10);
+    }
+    
+    Serial.print("✅ Calibrated! Min: ");
+    Serial.print(lightMin);
+    Serial.print("  Max: ");
+    Serial.println(lightMax);
+}
+
+int getCalibratedLight() {
+    int raw = analogRead(A0);
+    // Map to 0-100 percentage
+    return map(raw, lightMin, lightMax, 0, 100);
+}`}</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Assessment & Homework</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick Check (In Class):</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Can student read analog sensors correctly?</li>
+                            <li>• Do they understand voltage conversion?</li>
+                            <li>• Can they implement basic sensor calibration?</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3">Homework Assignment:</h3>
+                        <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <p class="text-blue-800 font-medium mb-2">Environmental Monitor</p>
+                            <p class="text-blue-700 text-sm">Create a sensor system that monitors light and temperature, calibrates the sensors, and provides meaningful readings for robot decision making.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="background-color: #f9fafb; padding: 24px; border-radius: 12px; border: 2px solid #e5e7eb; margin-top: 32px;">
+                <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; gap: 16px;">
+                    <a href="/programming/lessons/week9" style="background-color: #4b5563; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #374151; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#374151'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 9
+                    </a>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <a href="/programming/quizzes/week10" style="background-color: #059669; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            📝 Take Week 10 Quiz
+                        </a>
+                        <a href="/programming/lessons/week11" style="background-color: #2563eb; color: white; padding: 16px 32px; border-radius: 12px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                            Next: Week 11 →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>

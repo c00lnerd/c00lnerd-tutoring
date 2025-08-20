@@ -1,0 +1,466 @@
+---
+title: "Week 28: Gripper/Manipulator Integration"
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Week 28: Gripper/Manipulator Integration</title>
+        <style>
+            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; max-width: 1000px; margin: 0 auto; padding: 20px; background-color: #f5f7fa; }
+            .container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center; }
+            .section { background: #f8fafc; padding: 2rem; margin: 1.5rem 0; border-radius: 12px; border-left: 5px solid #3b82f6; }
+            .objectives { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 2rem; border-radius: 12px; margin: 2rem 0; }
+            .code-block { background: #1a1a1a; color: #f8f8f2; padding: 1.5rem; border-radius: 8px; margin: 1rem 0; font-family: 'Courier New', monospace; overflow-x: auto; border: 1px solid #333; }
+            .highlight { background: #fef3c7; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: bold; }
+            .warning { background: #fef2f2; border-left: 4px solid #ef4444; padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+            .activity { background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: white; padding: 2rem; border-radius: 12px; margin: 2rem 0; }
+            .nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; }
+            .nav-button { padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.2s; }
+            h1, h2, h3 { color: #1f2937; }
+            h2 { border-bottom: 3px solid #3b82f6; padding-bottom: 0.5rem; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>Week 28: Gripper/Manipulator Integration</h1>
+                <p>Adding Robotic Arms and Grippers to Your miniAuto</p>
+            </div>
+
+            <div class="objectives">
+                <h2 style="color: white; margin-top: 0;">Learning Objectives</h2>
+                <ul style="font-size: 1.1rem; line-height: 1.8;">
+                    <li>Understand servo motor control and positioning</li>
+                    <li>Learn gripper mechanics and design principles</li>
+                    <li>Implement precise object manipulation algorithms</li>
+                    <li>Integrate grippers with vision systems for autonomous picking</li>
+                    <li>Develop coordinated arm and base movement strategies</li>
+                    <li>Apply inverse kinematics for robotic arm control</li>
+                    <li>Create practical applications for manipulation tasks</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>1. Introduction to Robotic Manipulation</h2>
+                <p>Robotic manipulation is the ability of a robot to interact with and modify its environment through physical contact. This involves:</p>
+                
+                <h3>Key Components:</h3>
+                <ul>
+                    <li><strong>End Effector:</strong> The gripper or tool at the end of the robotic arm</li>
+                    <li><strong>Actuators:</strong> Servo motors that control joint movement</li>
+                    <li><strong>Sensors:</strong> Force, position, and vision sensors for feedback</li>
+                    <li><strong>Control System:</strong> Algorithms that coordinate movement and force</li>
+                </ul>
+
+                <h3>Types of Grippers:</h3>
+                <ul>
+                    <li><strong>Parallel Jaw:</strong> Two fingers that move parallel to grasp objects</li>
+                    <li><strong>Angular:</strong> Fingers that rotate around a pivot point</li>
+                    <li><strong>Suction:</strong> Uses vacuum to pick up smooth, flat objects</li>
+                    <li><strong>Magnetic:</strong> Uses electromagnets for ferrous materials</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>2. Servo Motor Control Fundamentals</h2>
+                <p>Servo motors provide precise position control essential for robotic manipulation:</p>
+
+                <h3>Servo Control Basics:</h3>
+                <pre class="code-block">${`
+// Basic servo control setup
+#include <Servo.h>
+
+Servo gripperServo;
+Servo armServo;
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Attach servos to pins
+  gripperServo.attach(9);   // Gripper servo on pin 9
+  armServo.attach(10);      // Arm servo on pin 10
+  
+  // Initialize to neutral positions
+  gripperServo.write(90);   // Open position
+  armServo.write(90);       // Neutral arm position
+  
+  delay(1000);
+}
+
+void loop() {
+  // Demonstrate basic movements
+  pickAndPlace();
+  delay(2000);
+}
+                `}</pre>
+
+                <h3>Precise Position Control:</h3>
+                <pre class="code-block">${`
+// Smooth servo movement function
+void moveServoSmoothly(Servo &servo, int startPos, int endPos, int stepDelay) {
+  int currentPos = startPos;
+  int step = (endPos > startPos) ? 1 : -1;
+  
+  while (currentPos != endPos) {
+    servo.write(currentPos);
+    delay(stepDelay);
+    currentPos += step;
+  }
+}
+
+// Gripper control functions
+void openGripper() {
+  moveServoSmoothly(gripperServo, gripperServo.read(), 180, 15);
+  Serial.println("Gripper opened");
+}
+
+void closeGripper() {
+  moveServoSmoothly(gripperServo, gripperServo.read(), 0, 15);
+  Serial.println("Gripper closed");
+}
+                `}</pre>
+            </div>
+
+            <div class="section">
+                <h2>3. Gripper Mechanics and Force Control</h2>
+                <p>Understanding the mechanical principles behind effective gripping:</p>
+
+                <h3>Force and Torque Considerations:</h3>
+                <ul>
+                    <li><strong>Grip Force:</strong> Sufficient force to hold objects without crushing</li>
+                    <li><strong>Contact Points:</strong> Multiple contact points for stable grasping</li>
+                    <li><strong>Friction:</strong> Surface texture affects grip reliability</li>
+                    <li><strong>Object Geometry:</strong> Shape determines optimal grip strategy</li>
+                </ul>
+
+                <h3>Adaptive Gripping Algorithm:</h3>
+                <pre class="code-block">${`
+// Adaptive gripper with force feedback
+int gripperCurrentPin = A0;  // Current sensor for force feedback
+int maxGripCurrent = 500;    // Maximum safe current reading
+
+bool adaptiveGrip(int targetObject) {
+  Serial.println("Starting adaptive grip sequence...");
+  
+  // Open gripper fully
+  openGripper();
+  delay(500);
+  
+  // Slowly close until contact detected
+  for (int pos = 180; pos >= 0; pos -= 2) {
+    gripperServo.write(pos);
+    delay(50);
+    
+    // Check current draw (force feedback)
+    int current = analogRead(gripperCurrentPin);
+    
+    if (current > maxGripCurrent) {
+      Serial.println("Object detected - grip achieved");
+      return true;
+    }
+  }
+  
+  Serial.println("No object detected");
+  return false;
+}
+                `}</pre>
+            </div>
+
+            <div class="section">
+                <h2>4. Vision-Guided Object Manipulation</h2>
+                <p>Integrating computer vision with manipulation for autonomous object handling:</p>
+
+                <h3>Object Detection and Positioning:</h3>
+                <pre class="code-block">${`
+// Vision-guided picking system
+struct ObjectPosition {
+  int x, y;
+  int size;
+  bool detected;
+};
+
+ObjectPosition detectObject() {
+  ObjectPosition obj = {0, 0, 0, false};
+  
+  // Capture image from ESP32-S3 camera
+  camera_fb_t *fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    return obj;
+  }
+  
+  // Simple color-based object detection
+  // (In practice, use more sophisticated algorithms)
+  int targetPixels = 0;
+  int centerX = 0, centerY = 0;
+  
+  for (int y = 0; y < fb->height; y += 4) {
+    for (int x = 0; x < fb->width; x += 4) {
+      // Check if pixel matches target color
+      if (isTargetColor(fb->buf, x, y, fb->width)) {
+        centerX += x;
+        centerY += y;
+        targetPixels++;
+      }
+    }
+  }
+  
+  if (targetPixels > 50) {  // Minimum object size
+    obj.x = centerX / targetPixels;
+    obj.y = centerY / targetPixels;
+    obj.size = targetPixels;
+    obj.detected = true;
+    
+    Serial.printf("Object detected at (%d, %d), size: %d\n", 
+                  obj.x, obj.y, obj.size);
+  }
+  
+  esp_camera_fb_return(fb);
+  return obj;
+}
+                `}</pre>
+
+                <h3>Coordinate Transformation:</h3>
+                <pre class="code-block">${`
+// Convert camera coordinates to robot coordinates
+void moveToObject(ObjectPosition obj) {
+  if (!obj.detected) return;
+  
+  // Camera-to-robot coordinate transformation
+  // These values need calibration for your specific setup
+  float pixelToMM = 0.5;  // mm per pixel
+  float cameraOffsetX = 50;  // Camera offset from gripper center
+  float cameraOffsetY = 30;
+  
+  // Calculate real-world coordinates
+  float objectX = (obj.x - 160) * pixelToMM + cameraOffsetX;  // 160 = camera center
+  float objectY = (obj.y - 120) * pixelToMM + cameraOffsetY;  // 120 = camera center
+  
+  Serial.printf("Moving to object at (%.1f, %.1f) mm\n", objectX, objectY);
+  
+  // Move robot base to position gripper over object
+  positionRobotBase(objectX, objectY);
+  
+  // Lower arm and attempt grip
+  lowerArm();
+  if (adaptiveGrip(1)) {
+    Serial.println("Object successfully grasped");
+    raiseArm();
+  }
+}
+                `}</pre>
+            </div>
+
+            <div class="section">
+                <h2>5. Coordinated Movement Strategies</h2>
+                <p>Coordinating base movement with arm manipulation for complex tasks:</p>
+
+                <h3>Multi-DOF Control:</h3>
+                <pre class="code-block">${`
+// Coordinated pick and place operation
+void pickAndPlace() {
+  Serial.println("Starting pick and place sequence");
+  
+  // Phase 1: Search for object
+  ObjectPosition target = scanForObject();
+  if (!target.detected) {
+    Serial.println("No object found");
+    return;
+  }
+  
+  // Phase 2: Approach object
+  approachObject(target);
+  
+  // Phase 3: Pick up object
+  if (pickUpObject()) {
+    Serial.println("Object picked up successfully");
+    
+    // Phase 4: Move to drop location
+    moveToDropZone();
+    
+    // Phase 5: Release object
+    releaseObject();
+    
+    // Phase 6: Return to home position
+    returnHome();
+  }
+}
+
+ObjectPosition scanForObject() {
+  Serial.println("Scanning for objects...");
+  
+  // Rotate base while scanning with camera
+  for (int angle = -90; angle <= 90; angle += 30) {
+    rotateBase(angle);
+    delay(500);  // Allow movement to settle
+    
+    ObjectPosition obj = detectObject();
+    if (obj.detected) {
+      Serial.printf("Object found at base angle %d degrees\n", angle);
+      return obj;
+    }
+  }
+  
+  // Return to center if no object found
+  rotateBase(0);
+  return {0, 0, 0, false};
+}
+                `}</pre>
+            </div>
+
+            <div class="section">
+                <h2>6. Inverse Kinematics Basics</h2>
+                <p>Mathematical approach to determining joint angles for desired end-effector positions:</p>
+
+                <h3>2-DOF Arm Kinematics:</h3>
+                <pre class="code-block">${`
+// Simple 2-DOF arm inverse kinematics
+struct ArmConfiguration {
+  float shoulderAngle;
+  float elbowAngle;
+  bool reachable;
+};
+
+ArmConfiguration calculateIK(float targetX, float targetY) {
+  ArmConfiguration config = {0, 0, false};
+  
+  // Arm segment lengths (in mm)
+  float L1 = 100;  // Upper arm length
+  float L2 = 80;   // Forearm length
+  
+  // Calculate distance to target
+  float distance = sqrt(targetX * targetX + targetY * targetY);
+  
+  // Check if target is reachable
+  if (distance > (L1 + L2) || distance < abs(L1 - L2)) {
+    Serial.println("Target position not reachable");
+    return config;
+  }
+  
+  // Calculate elbow angle using law of cosines
+  float cosElbow = (L1*L1 + L2*L2 - distance*distance) / (2*L1*L2);
+  config.elbowAngle = acos(cosElbow) * 180.0 / PI;
+  
+  // Calculate shoulder angle
+  float alpha = atan2(targetY, targetX) * 180.0 / PI;
+  float beta = acos((L1*L1 + distance*distance - L2*L2) / (2*L1*distance)) * 180.0 / PI;
+  config.shoulderAngle = alpha + beta;
+  
+  config.reachable = true;
+  
+  Serial.printf("IK Solution: Shoulder=%.1f°, Elbow=%.1f°\n", 
+                config.shoulderAngle, config.elbowAngle);
+  
+  return config;
+}
+                `}</pre>
+            </div>
+
+            <div class="activity">
+                <h2 style="color: white; margin-top: 0;">🛠️ Hands-On Project: Autonomous Sorting System</h2>
+                <p style="font-size: 1.1rem;">Build a complete autonomous sorting system that uses vision to identify colored objects and sorts them into different containers.</p>
+                
+                <h3 style="color: white;">Project Requirements:</h3>
+                <ul style="font-size: 1.1rem; line-height: 1.8;">
+                    <li>Detect objects of different colors using the ESP32-S3 camera</li>
+                    <li>Calculate optimal approach paths to avoid collisions</li>
+                    <li>Implement adaptive gripping for different object sizes</li>
+                    <li>Sort objects into designated containers based on color</li>
+                    <li>Provide real-time feedback on sorting progress</li>
+                </ul>
+
+                <h3 style="color: white;">Implementation Steps:</h3>
+                <ol style="font-size: 1.1rem; line-height: 1.8;">
+                    <li>Set up gripper and arm servos with proper calibration</li>
+                    <li>Implement color detection algorithm for multiple colors</li>
+                    <li>Create coordinate transformation from camera to robot space</li>
+                    <li>Develop path planning to avoid obstacles and containers</li>
+                    <li>Test and refine gripping force for various objects</li>
+                    <li>Integrate all systems for autonomous operation</li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>7. Advanced Applications</h2>
+                <p>Real-world applications of robotic manipulation:</p>
+
+                <h3>Industrial Applications:</h3>
+                <ul>
+                    <li><strong>Assembly Lines:</strong> Automated part insertion and assembly</li>
+                    <li><strong>Quality Control:</strong> Automated inspection and sorting</li>
+                    <li><strong>Packaging:</strong> Pick and place operations for packaging</li>
+                    <li><strong>Material Handling:</strong> Warehouse automation and logistics</li>
+                </ul>
+
+                <h3>Service Robotics:</h3>
+                <ul>
+                    <li><strong>Healthcare:</strong> Surgical assistance and patient care</li>
+                    <li><strong>Domestic:</strong> Household cleaning and organization</li>
+                    <li><strong>Agriculture:</strong> Automated harvesting and planting</li>
+                    <li><strong>Food Service:</strong> Automated cooking and serving</li>
+                </ul>
+
+                <div class="warning">
+                    <strong>Safety Considerations:</strong>
+                    <ul>
+                        <li>Always implement emergency stops for robotic arms</li>
+                        <li>Use appropriate force limits to prevent damage</li>
+                        <li>Ensure proper workspace boundaries and collision detection</li>
+                        <li>Test all movements at slow speeds before full operation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>8. Assessment & Homework</h2>
+                
+                <h3>Quick Check Questions:</h3>
+                <ol>
+                    <li>What are the main components of a robotic manipulation system?</li>
+                    <li>How does force feedback improve gripping performance?</li>
+                    <li>What is inverse kinematics and why is it important?</li>
+                    <li>How do you coordinate base movement with arm manipulation?</li>
+                    <li>What safety considerations are important for robotic arms?</li>
+                </ol>
+
+                <h3>Programming Assignment:</h3>
+                <p><strong>Design Challenge:</strong> Create a "Smart Warehouse" system where your miniAuto robot can:</p>
+                <ul>
+                    <li>Identify different colored blocks representing inventory items</li>
+                    <li>Pick up items and sort them into designated storage areas</li>
+                    <li>Keep track of inventory levels and report when areas are full</li>
+                    <li>Handle objects of different sizes with adaptive gripping</li>
+                    <li>Optimize movement paths to minimize sorting time</li>
+                </ul>
+
+                <p><strong>Bonus Challenge:</strong> Implement a "restocking" mode where the robot can retrieve specific items on command and deliver them to a pickup location.</p>
+            </div>
+
+            <!-- Quiz Button Section -->
+            <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 2rem; border-radius: 12px; margin: 2rem 0; text-align: center;">
+                <h3 style="color: white; margin-top: 0;">Ready to Test Your Knowledge?</h3>
+                <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Take the Week 28 quiz to assess your understanding of gripper and manipulator integration concepts!</p>
+                <a href="/programming/quizzes32/week28" style="background-color: #ffffff; color: #d97706; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 1.1rem; display: inline-block; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 12px rgba(0,0,0,0.15)'" onmouseout="this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px rgba(0,0,0,0.1)'">
+                    Take Week 28 Quiz →
+                </a>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-buttons">
+                <a href="/programming/lessons32/week27" class="nav-button" style="background-color: #6b7280; color: white; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous Lesson
+                </a>
+                <a href="/programming/" class="nav-button" style="background-color: #059669; color: white; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Semester Overview
+                </a>
+                <a href="/programming/lessons32/week29" class="nav-button" style="background-color: #2563eb; color: white; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next Lesson →
+                </a>
+            </div>
+        </div>
+    </body>
+</html>

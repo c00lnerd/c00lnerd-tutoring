@@ -1,0 +1,356 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 3 Quiz: Conditionals and Decision Making">
+    <main style="min-height: 100vh; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 3rem 0;">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+            <!-- Header -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <div style="background: #f59e0b; color: white; border-radius: 50%; width: 4rem; height: 4rem; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.5rem; margin-right: 1rem;">Q3</div>
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 2rem; font-weight: bold; color: var(--black); margin: 0;">Week 3 Quiz</h1>
+                        <p style="color: var(--gray); margin: 0;">Conditionals and Decision Making</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Form -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); padding: 2rem;">
+                <form id="week3Quiz" style="display: flex; flex-direction: column; gap: 2rem;">
+                    <!-- Student Info -->
+                    <div style="background: var(--gray-light); padding: 1.5rem; border-radius: 8px;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 1rem;">Student Information</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Name:</label>
+                                <input type="text" id="studentName" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                            <div>
+                                <label style="display: block; font-weight: 500; color: var(--black); margin-bottom: 0.5rem;">Email:</label>
+                                <input type="email" id="studentEmail" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem;" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question 1 -->
+                    <div style="border-left: 4px solid #f59e0b; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 1: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which operator is used to check if two values are equal in Python?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="a" style="margin-right: 0.75rem;">
+                                <span>A) =</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="b" style="margin-right: 0.75rem;">
+                                <span>B) ==</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="c" style="margin-right: 0.75rem;">
+                                <span>C) !=</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q1" value="d" style="margin-right: 0.75rem;">
+                                <span>D) >=</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div style="border-left: 4px solid #f59e0b; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 2: Short Answer (3 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Write an if statement that checks if a variable called 'age' is 18 or older, and prints "You can vote!" if true:</p>
+                        <textarea id="q2" name="q2" rows="4" style="width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 6px; font-family: monospace; font-size: 0.9rem;" placeholder="Type your Python code here..."></textarea>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div style="border-left: 4px solid #f59e0b; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 3: Multiple Choice (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">What will this code print?<br><code style="background: #f3f4f6; padding: 0.25rem;">x = 10<br>if x > 5:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Big")<br>else:<br>&nbsp;&nbsp;&nbsp;&nbsp;print("Small")</code></p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="a" style="margin-right: 0.75rem;">
+                                <span>A) Big</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="b" style="margin-right: 0.75rem;">
+                                <span>B) Small</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="c" style="margin-right: 0.75rem;">
+                                <span>C) Nothing</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q3" value="d" style="margin-right: 0.75rem;">
+                                <span>D) Error</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div style="border-left: 4px solid #f59e0b; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 4: True/False (2 points)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">In Python, you can have multiple elif statements in a single if-elif-else structure.</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="true" style="margin-right: 0.75rem;">
+                                <span>True</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q4" value="false" style="margin-right: 0.75rem;">
+                                <span>False</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 5 -->
+                    <div style="border-left: 4px solid #f59e0b; padding-left: 1.5rem;">
+                        <h3 style="font-size: 1.25rem; font-weight: 600; color: var(--black); margin-bottom: 0.75rem;">Question 5: Multiple Choice (1 point)</h3>
+                        <p style="color: var(--gray); margin-bottom: 1rem;">Which logical operator represents "AND" in Python?</p>
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="a" style="margin-right: 0.75rem;">
+                                <span>A) &&</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="b" style="margin-right: 0.75rem;">
+                                <span>B) and</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="c" style="margin-right: 0.75rem;">
+                                <span>C) &</span>
+                            </label>
+                            <label style="display: flex; align-items: center;">
+                                <input type="radio" name="q5" value="d" style="margin-right: 0.75rem;">
+                                <span>D) AND</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <button type="submit" style="background: #f59e0b; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+                            Submit Quiz
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Results Display -->
+                <div id="quizResults" style="display: none; margin-top: 2rem; padding: 1.5rem; background: #eff6ff; border-radius: 8px;">
+                    <h3 style="font-size: 1.25rem; font-weight: bold; color: #1e40af; margin-bottom: 1rem;">Quiz Results</h3>
+                    <div id="scoreDisplay" style="font-size: 1.1rem; margin-bottom: 1rem;"></div>
+                    <div id="feedback" style="color: var(--gray);"></div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div style="display: flex; flex-direction: column; gap: 1rem; align-items: center; margin-top: 2rem;">
+                <a href="/programming/lessons/week3" 
+                   style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
+                          color: white; 
+                          padding: 12px 24px; 
+                          border-radius: 8px; 
+                          text-decoration: none; 
+                          font-weight: 600; 
+                          transition: all 0.3s ease; 
+                          box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3); 
+                          min-width: 200px; 
+                          text-align: center;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
+                    ← Back to Week 3 Lesson
+                </a>
+                
+                <a href="/programming/semester1" 
+                   style="background: linear-gradient(135deg, #6b7280 0%, #374151 100%); 
+                          color: white; 
+                          padding: 12px 24px; 
+                          border-radius: 8px; 
+                          text-decoration: none; 
+                          font-weight: 600; 
+                          transition: all 0.3s ease; 
+                          box-shadow: 0 2px 4px rgba(107, 114, 128, 0.3); 
+                          min-width: 200px; 
+                          text-align: center;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(107, 114, 128, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(107, 114, 128, 0.3)'">
+                    📚 Semester Overview
+                </a>
+                
+                <a href="/programming/lessons/week4" 
+                   style="background: linear-gradient(135deg, #10b981 0%, #047857 100%); 
+                          color: white; 
+                          padding: 12px 24px; 
+                          border-radius: 8px; 
+                          text-decoration: none; 
+                          font-weight: 600; 
+                          transition: all 0.3s ease; 
+                          box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3); 
+                          min-width: 200px; 
+                          text-align: center;"
+                   onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
+                    Next: Week 4 Lesson →
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Quiz answers and scoring
+        const correctAnswers = {
+            q1: 'b',  // ==
+            q3: 'a',  // Big
+            q4: 'true',  // multiple elif allowed
+            q5: 'b'   // and
+        };
+
+        // Define point values for each question
+        const questionPoints = {
+            q1: 2,  // Multiple choice
+            q2: 3,  // Short answer (more complex)
+            q3: 2,  // Multiple choice
+            q4: 2,  // True/False
+            q5: 1   // Multiple choice
+        };
+        const totalPoints = 10;
+
+        document.getElementById('week3Quiz').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const studentName = document.getElementById('studentName').value.trim();
+            const studentEmail = document.getElementById('studentEmail').value.trim();
+            
+            // Validate student information with specific messages
+            if (!studentName && !studentEmail) {
+                alert('⚠️ Please enter both your name and email address before submitting the quiz.');
+                document.getElementById('studentName').focus();
+                return;
+            } else if (!studentName) {
+                alert('⚠️ Please enter your name before submitting the quiz.');
+                document.getElementById('studentName').focus();
+                return;
+            } else if (!studentEmail) {
+                alert('⚠️ Please enter your email address before submitting the quiz.');
+                document.getElementById('studentEmail').focus();
+                return;
+            }
+            
+            // Basic email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(studentEmail)) {
+                alert('⚠️ Please enter a valid email address (e.g., student@example.com).');
+                document.getElementById('studentEmail').focus();
+                return;
+            }
+
+            let score = 0;
+            let feedback = [];
+
+            // Check multiple choice answers
+            Object.keys(correctAnswers).forEach(questionId => {
+                const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
+                if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
+                    score += questionPoints[questionId];
+                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct (${questionPoints[questionId]} points)`);
+                } else {
+                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect (0 points)`);
+                }
+            });
+
+            // Check short answer (Q2) - improved validation
+            const q2Answer = document.getElementById('q2').value.toLowerCase().trim();
+            const hasIf = q2Answer.includes('if');
+            const hasAge = q2Answer.includes('age');
+            const hasComparison = q2Answer.includes('>=') || q2Answer.includes('>');
+            const hasEighteen = q2Answer.includes('18');
+            
+            if (hasIf && hasAge && hasComparison && hasEighteen) {
+                score += questionPoints.q2;
+                feedback.push(`✓ Question 2: Correct - Good conditional structure (${questionPoints.q2} points)`);
+            } else {
+                let missing = [];
+                if (!hasIf) missing.push('if statement');
+                if (!hasAge) missing.push('age variable');
+                if (!hasComparison) missing.push('comparison operator (>= or >)');
+                if (!hasEighteen) missing.push('value 18');
+                feedback.push(`✗ Question 2: Missing key elements: ${missing.join(', ')} (0 points)`);
+            }
+
+            const percentage = Math.round((score / totalPoints) * 100);
+            
+            // Display results
+            document.getElementById('scoreDisplay').innerHTML = `
+                <strong>Score: ${score}/${totalPoints} (${percentage}%)</strong>
+            `;
+            
+            document.getElementById('feedback').innerHTML = feedback.join('<br>');
+            document.getElementById('quizResults').style.display = 'block';
+
+            // Prepare quiz data for submission
+            const quizData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 3,
+                topic: 'Conditionals and Decision Making',
+                score: score,
+                totalPoints: totalPoints,
+                percentage: percentage,
+                answers: {
+                    q1: document.querySelector('input[name="q1"]:checked')?.value || 'No answer',
+                    q2: document.getElementById('q2').value || 'No answer',
+                    q3: document.querySelector('input[name="q3"]:checked')?.value || 'No answer',
+                    q4: document.querySelector('input[name="q4"]:checked')?.value || 'No answer',
+                    q5: document.querySelector('input[name="q5"]:checked')?.value || 'No answer'
+                },
+                submittedAt: new Date().toISOString()
+            };
+
+            // Submit to teacher via EmailJS
+            submitQuizResults(quizData);
+        });
+
+        function submitQuizResults(quizData) {
+            const formattedMessage = `WEEK 3 QUIZ RESULTS - CONDITIONALS AND DECISION MAKING
+
+Student Information:
+• Name: ${quizData.studentName}
+• Email: ${quizData.studentEmail}
+
+Quiz Performance:
+• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+• Topic: ${quizData.topic}
+• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+
+Student Responses:
+• Q1 (Equality Operator): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
+• Q2 (If Statement): ${quizData.answers.q2}
+• Q3 (Code Output): ${quizData.answers.q3} ${quizData.answers.q3 === 'a' ? '✓' : '✗'}
+• Q4 (Multiple elif): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
+• Q5 (Logical AND): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+
+Performance Analysis:
+${quizData.percentage >= 80 ? '🎉 Excellent! Student shows strong understanding of conditionals and decision-making logic.' : 
+  quizData.percentage >= 70 ? '👍 Good work! Student grasps conditional concepts but may need practice with syntax.' :
+  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with if-elif-else structures.' :
+  '📚 Needs improvement. Recommend additional review of conditional statements and logical operators.'}`;
+
+            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: quizData.studentName,
+                from_email: quizData.studentEmail,
+                message: formattedMessage,
+                subject: `Week 3 Programming Quiz - ${quizData.studentName}`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+            });
+        }
+
+        // Initialize EmailJS
+        emailjs.init("ct_s19oZHppLy9BlW");
+    </script>
+</Layout>

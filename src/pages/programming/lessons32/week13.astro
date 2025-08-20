@@ -1,0 +1,453 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 13: Communication Protocols and Sensor Integration">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Week 13: Communication Protocols and Sensor Integration</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Master I2C, SPI, and advanced sensor communication</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center;">🎯 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 1rem;">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Knowledge Goals:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Understand I2C and SPI communication protocols
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Connect and control multiple sensors simultaneously
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Implement sensor fusion for improved accuracy
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Build complex multi-sensor robotics systems
+                        </li>
+                    </ul>
+                    </div>
+                    <div>
+                        <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Key Concepts:</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                                I2C protocol (SDA, SCL, addressing)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                                SPI communication (MOSI, MISO, SCK, CS)
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                                Sensor libraries and device management
+                            </li>
+                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                                <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                                Data fusion and filtering techniques
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: I2C Communication Protocol -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">🔗 Section 1: I2C Communication Protocol</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What is I2C?</h3>
+                    <p class="text-gray-700 mb-4">
+                        I2C (Inter-Integrated Circuit) is a serial communication protocol that allows multiple 
+                        devices to communicate using only two wires. It's perfect for connecting sensors, 
+                        displays, and other components to your Arduino.
+                    </p>
+                    
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">I2C Key Features:</h4>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div>
+                                <h5 class="font-medium text-blue-700 mb-1">Hardware:</h5>
+                                <ul class="text-blue-600 text-sm space-y-1">
+                                    <li>• SDA (Serial Data) - data transfer</li>
+                                    <li>• SCL (Serial Clock) - timing signal</li>
+                                    <li>• Pull-up resistors required</li>
+                                    <li>• Multiple devices on same bus</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 class="font-medium text-blue-700 mb-1">Communication:</h5>
+                                <ul class="text-blue-600 text-sm space-y-1">
+                                    <li>• Master-slave architecture</li>
+                                    <li>• 7-bit or 10-bit device addresses</li>
+                                    <li>• Speeds: 100kHz, 400kHz, 1MHz</li>
+                                    <li>• Bidirectional data transfer</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic I2C Communication</h3>
+                    <p class="text-gray-700 mb-4">
+                        Arduino provides the Wire library for I2C communication. Here's how to scan for 
+                        connected I2C devices:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>${`// I2C Device Scanner
+#include <Wire.h>
+
+void setup() {
+  Wire.begin();        // Initialize I2C as master
+  Serial.begin(9600);
+  Serial.println("I2C Scanner");
+  Serial.println("Scanning for devices...");
+}
+
+void loop() {
+  byte error, address;
+  int deviceCount = 0;
+  
+  Serial.println("Scanning...");
+  
+  for (address = 1; address < 127; address++) {
+    Wire.beginTransmission(address);
+    error = Wire.endTransmission();
+    
+    if (error == 0) {
+      Serial.print("I2C device found at address 0x");
+      if (address < 16) Serial.print("0");
+      Serial.print(address, HEX);
+      Serial.println(" !");
+      deviceCount++;
+    }
+  }
+  
+  if (deviceCount == 0) {
+    Serial.println("No I2C devices found");
+  } else {
+    Serial.print("Found ");
+    Serial.print(deviceCount);
+    Serial.println(" devices");
+  }
+  
+  delay(5000);  // Wait 5 seconds before next scan
+}`}</code>
+</pre>
+                </div>
+            </div>
+
+            <!-- Section 2: SPI Communication Protocol -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">⚡ Section 2: SPI Communication Protocol</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding SPI</h3>
+                    <p class="text-gray-700 mb-4">
+                        SPI (Serial Peripheral Interface) is a high-speed synchronous communication protocol 
+                        that uses four wires and supports full-duplex communication between master and slave devices.
+                    </p>
+                    
+                    <div class="bg-green-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-green-800 mb-2">SPI Signal Lines:</h4>
+                        <ul class="text-green-700 space-y-1">
+                            <li><strong>MOSI (Master Out Slave In):</strong> Data from master to slave</li>
+                            <li><strong>MISO (Master In Slave Out):</strong> Data from slave to master</li>
+                            <li><strong>SCK (Serial Clock):</strong> Clock signal from master</li>
+                            <li><strong>CS/SS (Chip Select/Slave Select):</strong> Selects which slave to communicate with</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-800 mb-2">SPI vs I2C Comparison:</h4>
+                        <div class="grid md:grid-cols-2 gap-4 text-yellow-700 text-sm">
+                            <div>
+                                <strong>SPI Advantages:</strong><br>
+                                • Faster data transfer<br>
+                                • Full-duplex communication<br>
+                                • Simple protocol<br>
+                                • No addressing needed
+                            </div>
+                            <div>
+                                <strong>I2C Advantages:</strong><br>
+                                • Only 2 wires needed<br>
+                                • Multiple devices on same bus<br>
+                                • Built-in addressing<br>
+                                • Less pin usage
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Multi-Sensor Integration -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">🌐 Section 3: Multi-Sensor Integration</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Combining Multiple Sensors</h3>
+                    <p class="text-gray-700 mb-4">
+                        Real robotics applications often require multiple sensors working together. Let's create 
+                        a comprehensive sensor system combining ultrasonic, temperature, and accelerometer sensors:
+                    </p>
+                    
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>${`// Multi-Sensor Integration System
+#include <Wire.h>
+
+// Ultrasonic sensor pins
+const int trigPin = 9;
+const int echoPin = 10;
+
+// Temperature sensor (analog)
+const int tempPin = A0;
+
+// I2C accelerometer (example addresses)
+const int ACCEL_ADDRESS = 0x53;
+
+// Sensor data structure
+struct SensorData {
+  float distance;      // cm
+  float temperature;   // Celsius
+  int accelX, accelY, accelZ;  // acceleration values
+  unsigned long timestamp;
+};
+
+void setup() {
+  // Initialize serial communication
+  Serial.begin(9600);
+  
+  // Initialize ultrasonic sensor
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  
+  // Initialize I2C for accelerometer
+  Wire.begin();
+  
+  // Initialize accelerometer (device-specific)
+  initAccelerometer();
+  
+  Serial.println("Multi-Sensor System Initialized");
+  Serial.println("Distance(cm), Temp(C), AccelX, AccelY, AccelZ");
+}
+
+void loop() {
+  SensorData data;
+  
+  // Read all sensors
+  data.distance = readUltrasonic();
+  data.temperature = readTemperature();
+  readAccelerometer(&data.accelX, &data.accelY, &data.accelZ);
+  data.timestamp = millis();
+  
+  // Display sensor data
+  displaySensorData(data);
+  
+  // Analyze sensor fusion
+  analyzeSensorFusion(data);
+  
+  delay(500);  // Update every 500ms
+}
+
+float readUltrasonic() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  long duration = pulseIn(echoPin, HIGH);
+  float distance = duration * 0.0343 / 2;
+  
+  // Validate reading
+  if (distance < 2 || distance > 400) {
+    return -1;  // Invalid reading
+  }
+  return distance;
+}
+
+float readTemperature() {
+  int sensorValue = analogRead(tempPin);
+  // Convert to temperature (example for TMP36)
+  float voltage = sensorValue * (5.0 / 1023.0);
+  float temperature = (voltage - 0.5) * 100;
+  return temperature;
+}
+
+void initAccelerometer() {
+  // Example initialization for ADXL345
+  Wire.beginTransmission(ACCEL_ADDRESS);
+  Wire.write(0x2D);  // Power control register
+  Wire.write(0x08);  // Enable measurement mode
+  Wire.endTransmission();
+}
+
+void readAccelerometer(int* x, int* y, int* z) {
+  Wire.beginTransmission(ACCEL_ADDRESS);
+  Wire.write(0x32);  // Start reading from X-axis data register
+  Wire.endTransmission();
+  
+  Wire.requestFrom(ACCEL_ADDRESS, 6);  // Request 6 bytes
+  
+  if (Wire.available() >= 6) {
+    *x = Wire.read() | (Wire.read() << 8);
+    *y = Wire.read() | (Wire.read() << 8);
+    *z = Wire.read() | (Wire.read() << 8);
+  }
+}
+
+void displaySensorData(SensorData data) {
+  Serial.print(data.distance);
+  Serial.print(", ");
+  Serial.print(data.temperature);
+  Serial.print(", ");
+  Serial.print(data.accelX);
+  Serial.print(", ");
+  Serial.print(data.accelY);
+  Serial.print(", ");
+  Serial.println(data.accelZ);
+}
+
+void analyzeSensorFusion(SensorData data) {
+  // Example sensor fusion logic
+  
+  // Detect motion using accelerometer
+  int totalAccel = abs(data.accelX) + abs(data.accelY) + abs(data.accelZ);
+  bool isMoving = totalAccel > 1000;  // Threshold for movement
+  
+  // Combine with distance for obstacle detection
+  if (data.distance > 0 && data.distance < 20 && isMoving) {
+    Serial.println("WARNING: Moving toward obstacle!");
+  }
+  
+  // Temperature-based alerts
+  if (data.temperature > 30) {
+    Serial.println("ALERT: High temperature detected");
+  }
+  
+  // Multi-sensor status
+  if (data.distance > 0 && !isMoving && data.temperature < 25) {
+    Serial.println("STATUS: All systems normal");
+  }
+}`}</code>
+</pre>
+                </div>
+            </div>
+
+            <!-- Hands-On Activity -->
+            <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔧️ Hands-On Activity: Smart Environmental Monitor</h2>
+                
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <h3 style="color: #234e52; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Multi-Protocol Sensor Network</h3>
+                    <p style="color: #234e52; line-height: 1.6; margin-bottom: 1rem;">
+                        Create an advanced environmental monitoring system that uses both I2C and SPI protocols 
+                        to collect data from multiple sensors and implement intelligent decision-making based 
+                        on sensor fusion.
+                    </p>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">System Requirements</h3>
+                    <ol style="color: #4a5568; line-height: 1.8; margin-left: 1.5rem;">
+                        <li>Implement I2C communication with at least 2 different sensor types</li>
+                        <li>Add SPI communication for high-speed data logging</li>
+                        <li>Create a sensor data fusion algorithm</li>
+                        <li>Implement automatic alerts based on combined sensor readings</li>
+                        <li>Add data logging with timestamps</li>
+                        <li>Create a status display showing all sensor states</li>
+                        <li>Implement error handling for communication failures</li>
+                    </ol>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Advanced Features</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: #edf2f7; padding: 1rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 0.5rem;">Communication Features</h4>
+                            <ul style="color: #4a5568; font-size: 0.9rem; line-height: 1.6;">
+                                <li>• I2C device auto-discovery</li>
+                                <li>• SPI high-speed data transfer</li>
+                                <li>• Communication error detection</li>
+                                <li>• Protocol switching based on data type</li>
+                            </ul>
+                        </div>
+                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px;">
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 0.5rem;">Intelligence Features</h4>
+                            <ul style="color: #4a5568; font-size: 0.9rem; line-height: 1.6;">
+                                <li>• Sensor data correlation analysis</li>
+                                <li>• Predictive alert system</li>
+                                <li>• Adaptive sampling rates</li>
+                                <li>• Multi-parameter decision making</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assessment & Homework -->
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem; display: flex; align-items: center;">📝 Assessment & Homework</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Quick Assessment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">• Demonstrate I2C and SPI communication setup</li>
+                        <li style="margin-bottom: 0.5rem;">• Explain protocol selection criteria</li>
+                        <li style="margin-bottom: 0.5rem;">• Show multi-sensor integration program</li>
+                        <li style="margin-bottom: 0.5rem;">• Analyze sensor fusion algorithms</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignment</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li style="margin-bottom: 0.5rem;">• Research advanced communication protocols</li>
+                        <li style="margin-bottom: 0.5rem;">• Design multi-protocol sensor network</li>
+                        <li style="margin-bottom: 0.5rem;">• Plan a sensor fusion project</li>
+                        <li style="margin-bottom: 0.5rem;">• Study real-world robotics communication systems</li>
+                    </ul>
+                </div>
+            </div>
+
+                <div class="text-center">
+                    <a href="/programming/quizzes32/week13" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Week 13 Quiz →
+                    </a>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/week12" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Week 12
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Course Overview
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/week13-5" style="background-color: #dc2626; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #b91c1c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Assembly Time! →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+

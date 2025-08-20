@@ -1,0 +1,488 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Week 17: Advanced Sensor Integration & Data Processing">
+    <style>
+        .code-block {
+            background: #1a1a1a;
+            color: #e6e6e6;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 1rem 0;
+            overflow-x: auto;
+            border: 1px solid #333;
+        }
+        .highlight { background: #2d3748; padding: 0.2rem 0.4rem; border-radius: 4px; }
+        .section-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .objective-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        .concept-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .activity-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        .assessment-card {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+    </style>
+
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0;">Week 17</h1>
+            <p style="font-size: 1.3rem; margin: 1rem 0 0 0; opacity: 0.9;">Advanced Sensor Integration & Data Processing</p>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.8;">🤖 Second Semester Begins - Advanced Robotics Concepts</p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🎯 Learning Objectives</h2>
+            <ul style="margin-left: 1.5rem; line-height: 1.8;">
+                <li>Learn how to combine data from multiple sensors for better accuracy</li>
+                <li>Understand simple techniques to clean up noisy sensor readings</li>
+                <li>Create systems that can detect and handle sensor errors automatically</li>
+                <li>Build programs that can adjust to changing sensor conditions</li>
+                <li>Design data logging systems to track sensor performance over time</li>
+                <li>Apply these concepts to improve miniAuto robot reliability</li>
+            </ul>
+        </div>
+
+        <!-- Section 1: Combining Multiple Sensors -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🔬 Section 1: Combining Multiple Sensors</h2>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Weighted Averages</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Sometimes one sensor is more reliable than another. Instead of a simple average, we can give more "weight" to the better sensor. For example, if sensor A is very accurate, we might use 80% of its reading and only 20% from sensor B.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Smart Decision Making</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">We can program our robot to make smart decisions about which sensors to trust. If one sensor gives a reading that seems way off compared to the others, the robot can ignore it or give it less importance.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Combining Techniques:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Simple Average:</strong> Add all sensor readings and divide by the number of sensors</li>
+                <li><strong>Weighted Average:</strong> Give more importance to reliable sensors</li>
+                <li><strong>Best Reading:</strong> Choose the sensor that seems most accurate for the situation</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Sensor Combining Example:</h4>
+            <div class="code-block">
+<pre>{`// Combining multiple distance sensors
+class SimpleSensorFusion {
+private:
+    float lastGoodReading = 0;
+    
+public:
+    // Simple average of two sensors
+    float averageTwoSensors(float sensor1, float sensor2) {
+        return (sensor1 + sensor2) / 2.0;
+    }
+    
+    // Weighted average - give sensor1 more importance
+    float weightedAverage(float sensor1, float sensor2) {
+        return (sensor1 * 0.8) + (sensor2 * 0.2);
+    }
+    
+    // Choose the best reading (closest to previous good reading)
+    float chooseBestReading(float sensor1, float sensor2) {
+        float diff1 = abs(sensor1 - lastGoodReading);
+        float diff2 = abs(sensor2 - lastGoodReading);
+        
+        if (diff1 < diff2) {
+            lastGoodReading = sensor1;
+            return sensor1;
+        } else {
+            lastGoodReading = sensor2;
+            return sensor2;
+        }
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 2: Cleaning Up Sensor Data -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">⚡ Section 2: Cleaning Up Sensor Data</h2>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Removing Bad Readings</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Sometimes a sensor gives a really bad reading (like measuring 1000cm when everything else is around 20cm). We can detect these "outliers" and ignore them, using the previous good reading instead.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Gradual Updates</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Instead of sudden jumps in readings, we can make changes gradually. If a sensor reading changes from 20 to 30, we might update slowly: 21, 22, 23... until we reach 30. This prevents jerky robot movements.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Cleaning Techniques:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Average Filter:</strong> Average the last few readings to smooth out noise</li>
+                <li><strong>Range Check:</strong> Ignore readings that are way outside the expected range</li>
+                <li><strong>Gradual Change:</strong> Don't allow sudden big jumps in readings</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Simple Data Cleaning System:</h4>
+            <div class="code-block">
+<pre>{`// Simple data cleaning for sensor readings
+class DataCleaner {
+private:
+    static const int BUFFER_SIZE = 5;
+    float readings[BUFFER_SIZE];
+    int currentIndex = 0;
+    float lastGoodReading = 0;
+    
+public:
+    float cleanReading(float newReading) {
+        // Step 1: Check if reading seems reasonable
+        if (isBadReading(newReading)) {
+            Serial.println("Bad reading detected, using last good value");
+            return lastGoodReading;
+        }
+        
+        // Step 2: Add to our buffer of recent readings
+        readings[currentIndex] = newReading;
+        currentIndex = (currentIndex + 1) % BUFFER_SIZE;
+        
+        // Step 3: Calculate average of recent readings
+        float average = calculateAverage();
+        
+        // Step 4: Make gradual changes to prevent jumps
+        float smoothReading = makeGradualChange(average);
+        
+        lastGoodReading = smoothReading;
+        return smoothReading;
+    }
+    
+private:
+    bool isBadReading(float reading) {
+        // Check if reading is way different from last good reading
+        float difference = abs(reading - lastGoodReading);
+        return difference > 50; // Adjust this threshold as needed
+    }
+    
+    float calculateAverage() {
+        float sum = 0;
+        for (int i = 0; i < BUFFER_SIZE; i++) {
+            sum += readings[i];
+        }
+        return sum / BUFFER_SIZE;
+    }
+    
+    float makeGradualChange(float targetReading) {
+        // Don't change too quickly - move 20% toward target
+        float change = (targetReading - lastGoodReading) * 0.2;
+        return lastGoodReading + change;
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 3: Smart Error Detection and Fixing -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🎯 Section 3: Smart Error Detection and Fixing</h2>
+            
+            <h3 style="color: #495057; margin-bottom: 1rem;">Teaching Robots to Fix Themselves</h3>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Just like you might adjust your approach when something isn't working right, we can program robots to detect problems and fix them automatically. This makes them more reliable and easier to use.</p>
+            
+            <h4 style="color: #6c757d; margin-bottom: 0.5rem;">Automatic Adjustments</h4>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">Sensors can drift over time or be affected by temperature changes. We can program the robot to notice these changes and adjust automatically, like how your eyes adjust to different lighting conditions.</p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Calibration Strategies:</h4>
+            <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Dynamic Calibration:</strong> Continuous adjustment during operation</li>
+                <li><strong>Environmental Adaptation:</strong> Adjusting for temperature, humidity, lighting</li>
+                <li><strong>Cross-Sensor Validation:</strong> Using multiple sensors to verify accuracy</li>
+            </ul>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Smart Calibration System:</h4>
+            <div class="code-block">
+<pre>{`// Simple sensor calibration and error handling
+class SmartSensorManager {
+private:
+    struct SensorCalibration {
+        float offset = 0;
+        float scale = 1.0;
+        float confidence = 1.0;
+        unsigned long lastCalibration = 0;
+        int errorCount = 0;
+    };
+    
+    SensorCalibration ultrasonicCal;
+    SensorCalibration imuCal;
+    SensorCalibration compassCal;
+    
+    static const int CALIBRATION_INTERVAL = 300000; // 5 minutes
+    
+public:
+    void performSystemCalibration() {
+        Serial.println("Starting intelligent calibration...");
+        
+        // Ultrasonic calibration using known reference
+        calibrateUltrasonic();
+        
+        // IMU calibration using gravity reference
+        calibrateIMU();
+        
+        // Compass calibration using magnetic declination
+        calibrateCompass();
+        
+        Serial.println("Calibration complete!");
+    }
+    
+    float getCalibratedReading(int sensorType, float rawValue) {
+        SensorCalibration* cal = getSensorCalibration(sensorType);
+        
+        // Apply calibration
+        float calibratedValue = (rawValue + cal->offset) * cal->scale;
+        
+        // Validate reading
+        if (validateReading(sensorType, calibratedValue)) {
+            cal->confidence = min(cal->confidence + 0.01, 1.0);
+            cal->errorCount = 0;
+            return calibratedValue;
+        } else {
+            cal->confidence = max(cal->confidence - 0.05, 0.1);
+            cal->errorCount++;
+            
+            // Trigger recalibration if too many errors
+            if (cal->errorCount > 10) {
+                triggerRecalibration(sensorType);
+            }
+            
+            return -1; // Error value
+        }
+    }
+    
+private:
+    void calibrateUltrasonic() {
+        // Multi-point calibration using known distances
+        float knownDistances[] = {10, 20, 50, 100}; // cm
+        float measurements[4];
+        
+        for (int i = 0; i < 4; i++) {
+            Serial.print("Place object at ");
+            Serial.print(knownDistances[i]);
+            Serial.println("cm and press button...");
+            
+            waitForButtonPress();
+            measurements[i] = getUltrasonicReading();
+            delay(1000);
+        }
+        
+        // Calculate linear calibration coefficients
+        calculateLinearCalibration(knownDistances, measurements, 4, &ultrasonicCal);
+    }
+    
+    bool validateReading(int sensorType, float value) {
+        // Implement sensor-specific validation logic
+        switch (sensorType) {
+            case ULTRASONIC:
+                return (value > 2 && value < 400); // Valid range for HC-SR04
+            case IMU_ACCEL:
+                return (abs(value) <= 16); // ±16g range
+            case COMPASS:
+                return (value >= 0 && value <= 360); // Degree range
+            default:
+                return true;
+        }
+    }
+};`}</pre>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div class="section-card">
+            <div class="activity-card">
+                <h2 style="margin-top: 0;">🛠️ Hands-On Activity: Multi-Sensor Data Logger</h2>
+            </div>
+            
+            <h3 style="color: #667eea; margin-bottom: 1rem;">Build an Advanced Sensor Monitoring System</h3>
+            <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                Create a comprehensive sensor data logging and analysis system that demonstrates advanced integration techniques.
+            </p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Activity Steps:</h4>
+            <ol style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li>Set up multiple sensors (ultrasonic, IMU, compass, temperature)</li>
+                <li>Implement the sensor fusion algorithms from Section 1</li>
+                <li>Add the data processing pipeline from Section 2</li>
+                <li>Create a calibration routine using Section 3 concepts</li>
+                <li>Build a real-time data visualization system</li>
+                <li>Test system performance under different conditions</li>
+            </ol>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Complete Implementation:</h4>
+            <div class="code-block">
+<pre>{`// Complete multi-sensor data logging system
+#include <Wire.h>
+#include <MPU6050.h>
+#include <HMC5883L.h>
+
+class AdvancedSensorSystem {
+private:
+    MPU6050 mpu;
+    HMC5883L compass;
+    
+    SensorFusion fusion;
+    DataProcessor processor;
+    SmartSensorManager calibration;
+    
+    // Data logging
+    struct SensorReading {
+        unsigned long timestamp;
+        float ultrasonic;
+        float accelX, accelY, accelZ;
+        float gyroX, gyroY, gyroZ;
+        float compass;
+        float temperature;
+        float fusedHeading;
+    };
+    
+    SensorReading readings[100]; // Circular buffer
+    int readingIndex = 0;
+    
+public:
+    void initialize() {
+        Serial.begin(115200);
+        Wire.begin();
+        
+        // Initialize sensors
+        mpu.initialize();
+        compass.initialize();
+        
+        // Perform initial calibration
+        calibration.performSystemCalibration();
+        
+        Serial.println("Advanced Sensor System Ready!");
+    }
+    
+    void loop() {
+        // Collect raw sensor data
+        SensorReading current;
+        current.timestamp = millis();
+        
+        // Ultrasonic reading with processing
+        float rawUltrasonic = getUltrasonicDistance();
+        current.ultrasonic = processor.processReading(rawUltrasonic);
+        
+        // IMU readings with calibration
+        int16_t ax, ay, az, gx, gy, gz;
+        mpu.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+        
+        current.accelX = calibration.getCalibratedReading(IMU_ACCEL, ax / 16384.0);
+        current.accelY = calibration.getCalibratedReading(IMU_ACCEL, ay / 16384.0);
+        current.accelZ = calibration.getCalibratedReading(IMU_ACCEL, az / 16384.0);
+        
+        // Compass reading
+        Vector mag = compass.readNormalize();
+        current.compass = atan2(mag.YAxis, mag.XAxis) * 180 / PI;
+        if (current.compass < 0) current.compass += 360;
+        
+        // Sensor fusion
+        float accelAngle = atan2(current.accelY, current.accelZ) * 180 / PI;
+        float gyroRate = gx / 131.0; // Convert to degrees/second
+        current.fusedHeading = fusion.fuseIMUData(gyroRate, accelAngle, current.compass);
+        
+        // Store reading
+        readings[readingIndex] = current;
+        readingIndex = (readingIndex + 1) % 100;
+        
+        // Output data for visualization
+        outputTelemetry(current);
+        
+        delay(50); // 20Hz update rate
+    }
+    
+private:
+    void outputTelemetry(const SensorReading& reading) {
+        Serial.print("TIME:");
+        Serial.print(reading.timestamp);
+        Serial.print(",ULTRA:");
+        Serial.print(reading.ultrasonic);
+        Serial.print(",ACCEL:");
+        Serial.print(reading.accelX); Serial.print(",");
+        Serial.print(reading.accelY); Serial.print(",");
+        Serial.print(reading.accelZ);
+        Serial.print(",COMPASS:");
+        Serial.print(reading.compass);
+        Serial.print(",FUSED:");
+        Serial.println(reading.fusedHeading);
+    }
+};
+
+AdvancedSensorSystem sensorSystem;
+
+void setup() {
+    sensorSystem.initialize();
+}
+
+void loop() {
+    sensorSystem.loop();
+}`}</pre>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div class="section-card">
+            <div class="assessment-card">
+                <h2 style="margin-top: 0;">📝 Assessment & Homework</h2>
+            </div>
+            
+            <h3 style="color: #667eea; margin-bottom: 1rem;">Week 17 Assignments</h3>
+            
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Programming Challenges:</h4>
+            <ol style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li><strong>Sensor Fusion Challenge:</strong> Implement a Kalman filter for position estimation using accelerometer and gyroscope data</li>
+                <li><strong>Data Processing Project:</strong> Create an adaptive filtering system that automatically adjusts filter parameters based on noise levels</li>
+                <li><strong>Calibration System:</strong> Design a self-calibrating sensor system that can detect and correct for sensor drift</li>
+                <li><strong>Performance Analysis:</strong> Compare the accuracy of different fusion algorithms using controlled test scenarios</li>
+            </ol>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Research Assignment:</h4>
+            <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                Research and write a 2-page report on "Advanced Sensor Technologies in Modern Robotics." Include examples of LIDAR, computer vision, and AI-enhanced sensor systems. Due next class.
+            </p>
+
+            <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Lab Report:</h4>
+            <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                Document your multi-sensor data logger implementation, including calibration procedures, performance metrics, and analysis of sensor fusion accuracy under different conditions.
+            </p>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/week16" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                ← Week 16: Advanced Projects
+            </a>
+            
+            <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                📚 Second Semester Overview
+            </a>
+            
+            <a href="/programming/lessons32/week18" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Next: Week 18 →
+            </a>
+        </div>
+    </div>
+</Layout>
