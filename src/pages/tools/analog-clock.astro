@@ -82,8 +82,13 @@
         .degree {
             position: absolute;
             font-size: 14px;
-            color: #666;
+            color: #333 !important;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2px 4px;
+            border-radius: 3px;
             transform: translate(-50%, -50%);
+            z-index: 5;
         }
 
         .tick {
@@ -277,8 +282,8 @@
                 const numberX = centerX + numberRadius * Math.cos(radian);
                 const numberY = centerY + numberRadius * Math.sin(radian);
                 
-                // Position for degrees (further from center) - scale with clock size
-                const degreeRadius = clockSize * 0.31;
+                // Position for degrees (between numbers and edge) - scale with clock size
+                const degreeRadius = clockSize * 0.35;
                 const degreeX = centerX + degreeRadius * Math.cos(radian);
                 const degreeY = centerY + degreeRadius * Math.sin(radian);
                 
