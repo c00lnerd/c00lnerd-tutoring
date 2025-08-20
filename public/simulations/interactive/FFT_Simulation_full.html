@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FFT Visualizer with Max Hold and Waterfall</title>
+  <style>
+    body {
+      background-color: #222;
+      color: #eee;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      display: block;
+      margin: 20px auto;
+      background-color: #000;
+      border: 1px solid #444;
+    }
+    #controls {
+      margin-top: 10px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    /* Waterfall canvas is a bit shorter */
+    #waterfallCanvas {
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <h1>FFT Visualizer with Max Hold and Waterfall</h1>
+  <!-- Start Audio Button -->
+  <button id="startAudio">Start Audio</button>
+  <!-- Main FFT Canvas -->
+  <canvas id="fftCanvas" width="800" height="400"></canvas>
+  <!-- Waterfall Canvas Beneath the Main Graph -->
+  <canvas id="waterfallCanvas" width="800" height="200"></canvas>
+  <div id="controls" style="display:none;">
+    <button id="toggleAmp">Linear Amp Scale</button>
+    <button id="toggleFreq">Linear Freq Scale</button>
+    <button id="toggleFreeze">Freeze</button>
+    <button id="toggleMax">Toggle Max (Current Frame)</button>
+    <button id="toggleMaxHold">Toggle Max Hold</button>
+  </div>
+
+  <script>
+    // ============== DOM and Canvas Setup ==============
+    const fftCanvas = document.getElementById("fftCanvas");
+    const ctx = fftCanvas.getContext("2d");
+    const waterfallCanvas = document.getElementById("waterfallCanvas");
+    const waterfallCtx = waterfallCanvas.getContext("2d");
+
+    // Margins for axes on the main FFT canvas.
+    const marginLeft = 40;
+    const marginBottom = 30;
+
+    // ============== Control Flags ==============
+    let ampLog     = false;  // false = linear amp, true = logarithmic amp
+    let freqLog    = false;  // false = linear freq, true = logarithmic freq
+    let freeze     = false;  // Freeze the live update
+    let showMax    = false;  // Show marker for max bin in current frame
+    let showMaxHold = false; // Show maximum values (max hold) for each bin
+
+    // Array to store max hold values per group.
+    let maxHold = [];
+
+    // ============== Audio Setup ==============
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    // ============== Utility: Frequency to Note Name ==============
+    function frequencyToNoteName(frequency) {
+      const noteNumber = 12 * Math.log2(frequency / 440) + 69;
+      const rounded = Math.round(noteNumber);
+      const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      const noteIndex = ((rounded % 12) + 12) % 12;
+      const octave = Math.floor(rounded / 12) - 1;
+      return noteNames[noteIndex] + octave;
+    }
+
+    // ============== Start Button Handler ==============
+    document.getElementById("startAudio").addEventListener("click", () => {
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then(stream => {
+          const source = audioCtx.createMediaStreamSource(stream);
+          source.connect(analyser);
+          document.getElementById("startAudio").style.display = "none";
+          document.getElementById("controls").style.display = "block";
+          draw(); // Start the visualization loop.
+        })
+        .catch(err => {
+          console.error("Error accessing microphone:", err);
+        });
+    });
+
+    // ============== Button Event Listeners ==============
+    document.getElementById("toggleAmp").addEventListener("click", (e) => {
+      ampLog = !ampLog;
+      e.target.textContent = ampLog ? "Log Amp Scale" : "Linear Amp Scale";
+      console.log("Amplitude scale:", ampLog ? "Log" : "Linear");
+    });
+
+    document.getElementById("toggleFreq").addEventListener("click", (e) => {
+      freqLog = !freqLog;
+      e.target.textContent = freqLog ? "Log Freq Scale" : "Linear Freq Scale";
+      console.log("Frequency scale:", freqLog ? "Log" : "Linear");
+    });
+
+    document.getElementById("toggleFreeze").addEventListener("click", (e) => {
+      freeze = !freeze;
+      e.target.textContent = freeze ? "Unfreeze" : "Freeze";
+      console.log("Freeze:", freeze);
+    });
+
+    document.getElementById("toggleMax").addEventListener("click", (e) => {
+      showMax = !showMax;
+      e.target.textContent = showMax ? "Hide Max (Current Frame)" : "Toggle Max (Current Frame)";
+      console.log("Show max (current frame):", showMax);
+    });
+
+    document.getElementById("toggleMaxHold").addEventListener("click", (e) => {
+      showMaxHold = !showMaxHold;
+      e.target.textContent = showMaxHold ? "Hide Max Hold" : "Toggle Max Hold";
+      console.log("Show max hold:", showMaxHold);
+      // Optionally, reset the maxHold array when toggling off.
+      if (!showMaxHold) {
+        maxHold = [];
+      }
+    });
+
+    // ============== Drawing / Visualization ==============
+    function draw() {
+      requestAnimationFrame(draw);
+      if (freeze) return;  // Do not update if frozen
+
+      // Define drawing area dimensions for the main FFT canvas.
+      const drawAreaWidth = fftCanvas.width - marginLeft;
+      const drawAreaHeight = fftCanvas.height - marginBottom;
+
+      // Get FFT data.
+      analyser.getByteFrequencyData(dataArray);
+
+      // Clear the main FFT canvas.
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, fftCanvas.width, fftCanvas.height);
+
+      // Group bins for display.
+      const groupSize = 4;
+      const numGroups = Math.floor(bufferLength / groupSize);
+      const barWidth = drawAreaWidth / numGroups;
+
+      // Initialize maxHold array if needed.
+      if (maxHold.length !== numGroups) {
+        maxHold = new Array(numGroups).fill(0);
+      }
+
+      // Variables for tracking current frame max (if showMax enabled).
+      let currentFrameMaxValue = 0;
+      let currentFrameMaxIndex = 0;
+
+      // Draw FFT bars and update maxHold.
+      for (let i = 0; i < numGroups; i++) {
+        let sum = 0;
+        for (let j = 0; j < groupSize; j++) {
+          sum += dataArray[i * groupSize + j];
+        }
+        let avg = sum / groupSize;
+        let barHeight = ampLog ? Math.log(avg + 1) * 20 : avg;
+
+        // Update max hold: if current avg is greater than stored max, update.
+        if (avg > maxHold[i]) {
+          maxHold[i] = avg;
+        }
+
+        // Track maximum of the current frame if needed.
+        if (showMax && avg > currentFrameMaxValue) {
+          currentFrameMaxValue = avg;
+          currentFrameMaxIndex = i;
+        }
+
+        // Compute x coordinate.
+        let x;
+        if (freqLog) {
+          const logIndex = Math.log10(i + 1) / Math.log10(numGroups);
+          x = marginLeft + logIndex * drawAreaWidth;
+        } else {
+          x = marginLeft + i * barWidth;
+        }
+
+        // Draw FFT bar.
+        ctx.fillStyle = "lime";
+        ctx.fillRect(x, fftCanvas.height - marginBottom - barHeight, barWidth, barHeight);
+
+        // If max hold is enabled, overlay the max hold value in red.
+        if (showMaxHold) {
+          let holdHeight = ampLog ? Math.log(maxHold[i] + 1) * 20 : maxHold[i];
+          ctx.fillStyle = "red";
+          // Draw a thin rectangle (or line) at the max hold level.
+          ctx.fillRect(x, fftCanvas.height - marginBottom - holdHeight, barWidth, 2);
+        }
+      }
+
+      // Draw the current frame max marker if enabled.
+      if (showMax && currentFrameMaxValue > 0) {
+        let barHeight = ampLog ? Math.log(currentFrameMaxValue + 1) * 20 : currentFrameMaxValue;
+        let x;
+        if (freqLog) {
+          const logIndex = Math.log10(currentFrameMaxIndex + 1) / Math.log10(numGroups);
+          x = marginLeft + logIndex * drawAreaWidth;
+        } else {
+          x = marginLeft + currentFrameMaxIndex * barWidth;
+        }
+        ctx.fillStyle = "red";
+        ctx.fillRect(x, fftCanvas.height - marginBottom - barHeight - 5, barWidth, 5);
+
+        // Estimate frequency for current max marker.
+        const freqResolution = audioCtx.sampleRate / analyser.fftSize;
+        const centerBin = currentFrameMaxIndex * groupSize + groupSize / 2;
+        const frequency = centerBin * freqResolution;
+        const noteName = frequencyToNoteName(frequency);
+
+        ctx.fillStyle = "white";
+        ctx.font = "14px sans-serif";
+        const infoText = `Max: ${Math.round(currentFrameMaxValue)} @ bin ${currentFrameMaxIndex} (${frequency.toFixed(1)} Hz, ${noteName})`;
+        ctx.fillText(infoText, x + 2, fftCanvas.height - marginBottom - barHeight - 10);
+      }
+
+      // Draw axes with tick marks on the main FFT canvas.
+      drawAxes(numGroups, barWidth);
+
+      // Update the waterfall graph.
+      updateWaterfall(numGroups, barWidth, groupSize);
+
+    } // end draw()
+
+    // ============== Function to Draw Axes with Tick Marks ==============
+    function drawAxes(numGroups, barWidth) {
+      ctx.strokeStyle = "#555";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#eee";
+      ctx.font = "10px sans-serif";
+
+      const drawAreaWidth = fftCanvas.width - marginLeft;
+      const drawAreaHeight = fftCanvas.height - marginBottom;
+      const fMax = audioCtx.sampleRate / 2;
+
+      // Draw x-axis line.
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, fftCanvas.height - marginBottom);
+      ctx.lineTo(fftCanvas.width, fftCanvas.height - marginBottom);
+      ctx.stroke();
+
+      // Draw y-axis line.
+      ctx.beginPath();
+      ctx.moveTo(marginLeft, 0);
+      ctx.lineTo(marginLeft, fftCanvas.height - marginBottom);
+      ctx.stroke();
+
+      // X-axis Tick Marks & Labels.
+      if (!freqLog) {
+        const numTicks = 5;
+        for (let i = 0; i < numTicks; i++) {
+          const freq = i * fMax / (numTicks - 1);
+          const x = marginLeft + (freq / fMax) * drawAreaWidth;
+          ctx.beginPath();
+          ctx.moveTo(x, fftCanvas.height - marginBottom);
+          ctx.lineTo(x, fftCanvas.height - marginBottom + 5);
+          ctx.stroke();
+          ctx.fillText(Math.round(freq), x - 15, fftCanvas.height - marginBottom + 15);
+        }
+      } else {
+        const tickFreqs = [20, 50, 100, 200, 500, 1000, 2000, 5000, 10000, 20000];
+        const fMin = 20;
+        for (const freq of tickFreqs) {
+          if (freq < fMin || freq > fMax) continue;
+          const x = marginLeft + (Math.log10(freq) - Math.log10(fMin)) /
+                    (Math.log10(fMax) - Math.log10(fMin)) * drawAreaWidth;
+          ctx.beginPath();
+          ctx.moveTo(x, fftCanvas.height - marginBottom);
+          ctx.lineTo(x, fftCanvas.height - marginBottom + 5);
+          ctx.stroke();
+          ctx.fillText(freq, x - 15, fftCanvas.height - marginBottom + 15);
+        }
+      }
+
+      // Y-axis Tick Marks & Labels.
+      const yMaxLinear = 255;
+      const yMaxLog = Math.log(256) * 20;
+      const yMax = ampLog ? yMaxLog : yMaxLinear;
+      if (!ampLog) {
+        const ticks = [0, 64, 128, 192, 255];
+        for (const v of ticks) {
+          const y = fftCanvas.height - marginBottom - (v / yMax) * drawAreaHeight;
+          ctx.beginPath();
+          ctx.moveTo(marginLeft - 5, y);
+          ctx.lineTo(marginLeft, y);
+          ctx.stroke();
+          ctx.fillText(v, 2, y + 3);
+        }
+      } else {
+        const step = 20;
+        for (let v = 0; v <= yMax; v += step) {
+          const y = fftCanvas.height - marginBottom - (v / yMax) * drawAreaHeight;
+          ctx.beginPath();
+          ctx.moveTo(marginLeft - 5, y);
+          ctx.lineTo(marginLeft, y);
+          ctx.stroke();
+          ctx.fillText(v.toFixed(0), 2, y + 3);
+        }
+      }
+
+      // X-axis Label.
+      ctx.font = "12px sans-serif";
+      ctx.fillText("Frequency (Hz)", fftCanvas.width - 120, fftCanvas.height - 5);
+
+      // Y-axis Label (rotated).
+      ctx.save();
+      ctx.translate(10, fftCanvas.height / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText("Amplitude", 0, 0);
+      ctx.restore();
+    }
+
+    // ============== Function to Update the Waterfall Graph ==============
+    function updateWaterfall(numGroups, barWidth, groupSize) {
+      // Shift the existing waterfall image up by 1 pixel.
+      waterfallCtx.drawImage(waterfallCanvas, 0, -1);
+
+      // Calculate current group values (like our FFT bar values).
+      const drawAreaWidth = waterfallCanvas.width;
+      const groupWidth = drawAreaWidth / numGroups;
+      const newRowHeight = 1; // 1 pixel tall
+
+      // For each group, determine the average value and map to a color.
+      for (let i = 0; i < numGroups; i++) {
+        let sum = 0;
+        for (let j = 0; j < groupSize; j++) {
+          sum += dataArray[i * groupSize + j];
+        }
+        let avg = sum / groupSize;
+        // Map avg (0-255) to a grayscale intensity (0-255).
+        const intensity = Math.round(avg);
+        waterfallCtx.fillStyle = `rgb(${intensity}, ${intensity}, ${intensity})`;
+        const x = i * groupWidth;
+        waterfallCtx.fillRect(x, waterfallCanvas.height - newRowHeight, groupWidth, newRowHeight);
+      }
+    }
+  </script>
+</body>
+</html>

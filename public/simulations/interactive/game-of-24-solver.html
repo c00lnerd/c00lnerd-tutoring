@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game of 24 Solver</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .input-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #solutions {
+            margin-top: 20px;
+        }
+        .solution {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .solution-category {
+            margin-top: 15px;
+            font-weight: bold;
+            background-color: #f8f8f8;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .stats {
+            margin-top: 15px;
+            font-style: italic;
+            color: #666;
+        }
+        .no-solutions {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .help {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+        .toggle-container {
+            margin-top: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .toggle-label {
+            margin-right: 5px;
+        }
+        .categorize-container {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game of 24 Solver</h1>
+        
+        <div class="help">
+            <p>Enter four numbers between 1 and 13 to find all possible ways to make 24 using basic operations (+, -, *, /).</p>
+            <p>For example, try: 4, 7, 8, 8 or 5, 5, 5, 1</p>
+        </div>
+        
+        <div class="input-section">
+            <input type="number" min="1" max="13" id="num1" value="4">
+            <input type="number" min="1" max="13" id="num2" value="7">
+            <input type="number" min="1" max="13" id="num3" value="8">
+            <input type="number" min="1" max="13" id="num4" value="8">
+        </div>
+        
+        <div style="text-align: center;">
+            <button id="solve-btn">Find All Solutions</button>
+        </div>
+        
+        <div class="toggle-container">
+            <div>
+                <input type="checkbox" id="show-all">
+                <label for="show-all" class="toggle-label">Show all expressions</label>
+            </div>
+            <div>
+                <input type="checkbox" id="categorize-solutions">
+                <label for="categorize-solutions" class="toggle-label">Group by pattern</label>
+            </div>
+        </div>
+        
+        <div id="solutions">
+            <!-- Solutions will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Add MathJS to handle expression parsing and evaluation
+        document.getElementById('solve-btn').addEventListener('click', findSolutions);
+        document.getElementById('show-all').addEventListener('change', findSolutions);  
+        document.getElementById('categorize-solutions').addEventListener('change', findSolutions);
+        
+        // Define the Expression class for parsing and normalizing expressions
+        class Expression {
+            constructor(expr) {
+                this.originalExpr = expr;
+                // Remove the " = 24" part if present
+                this.expr = expr.replace(' = 24', '');
+                this.parsed = this.parse(this.expr);
+            }
+            
+            // Simple recursive descent parser
+            parse(expr) {
+                // Remove outer parentheses if they enclose the entire expression
+                expr = expr.trim();
+                if (expr.startsWith('(') && expr.endsWith(')')) {
+                    let depth = 0;
+                    let balanced = true;
+                    
+                    for (let i = 0; i < expr.length - 1; i++) {
+                        if (expr[i] === '(') depth++;
+                        else if (expr[i] === ')') depth--;
+                        
+                        if (depth === 0 && i < expr.length - 1) {
+                            balanced = false;
+                            break;
+                        }
+                    }
+                    
+                    if (balanced) {
+                        return this.parse(expr.substring(1, expr.length - 1));
+                    }
+                }
+                
+                // Find the main operation at this level
+                let depth = 0;
+                let mainOpIndex = -1;
+                let mainOp = null;
+                let opPrecedence = { '+': 1, '-': 1, '*': 2, '/': 2 };
+                
+                // First pass: find the last + or - at depth 0
+                for (let i = expr.length - 1; i >= 0; i--) {
+                    if (expr[i] === ')') depth++;
+                    else if (expr[i] === '(') depth--;
+                    else if (depth === 0 && (expr[i] === '+' || expr[i] === '-')) {
+                        mainOpIndex = i;
+                        mainOp = expr[i];
+                        break;
+                    }
+                }
+                
+                // Second pass: if no + or -, find the last * or / at depth 0
+                if (mainOpIndex === -1) {
+                    depth = 0;
+                    for (let i = expr.length - 1; i >= 0; i--) {
+                        if (expr[i] === ')') depth++;
+                        else if (expr[i] === '(') depth--;
+                        else if (depth === 0 && (expr[i] === '*' || expr[i] === '/')) {
+                            mainOpIndex = i;
+                            mainOp = expr[i];
+                            break;
+                        }
+                    }
+                }
+                
+                // If no operation found, this is a number
+                if (mainOpIndex === -1) {
+                    return { type: 'number', value: parseFloat(expr) };
+                }
+                
+                // Split and parse the left and right parts
+                let left = expr.substring(0, mainOpIndex).trim();
+                let right = expr.substring(mainOpIndex + 1).trim();
+                
+                return {
+                    type: 'operation',
+                    operator: mainOp,
+                    left: this.parse(left),
+                    right: this.parse(right)
+                };
+            }
+            
+            // Convert the expression to a canonical form
+            normalize() {
+                return this.normalizeNode(this.parsed);
+            }
+            
+            normalizeNode(node) {
+                if (node.type === 'number') {
+                    return node;
+                }
+                
+                let left = this.normalizeNode(node.left);
+                let right = this.normalizeNode(node.right);
+                
+                // Apply commutative property for + and *
+                if ((node.operator === '+' || node.operator === '*') && 
+                    this.compareNodes(left, right) > 0) {
+                    [left, right] = [right, left];
+                }
+                
+                // Handle associative property
+                // For a + (b + c) = (a + b) + c, we'll standardize to (a + b) + c
+                if (node.operator === '+' && right.type === 'operation' && right.operator === '+') {
+                    // Restructure (a + (b + c)) to ((a + b) + c)
+                    return {
+                        type: 'operation',
+                        operator: '+',
+                        left: {
+                            type: 'operation',
+                            operator: '+',
+                            left: left,
+                            right: right.left
+                        },
+                        right: right.right
+                    };
+                }
+                
+                // Similar for multiplication
+                if (node.operator === '*' && right.type === 'operation' && right.operator === '*') {
+                    return {
+                        type: 'operation',
+                        operator: '*',
+                        left: {
+                            type: 'operation',
+                            operator: '*',
+                            left: left,
+                            right: right.left
+                        },
+                        right: right.right
+                    };
+                }
+                
+                // Convert a - b to a + (-b)
+                if (node.operator === '-') {
+                    return {
+                        type: 'operation',
+                        operator: '+',
+                        left: left,
+                        right: this.negateNode(right)
+                    };
+                }
+                
+                // Convert a / b to a * (1/b)
+                if (node.operator === '/') {
+                    return {
+                        type: 'operation',
+                        operator: '*',
+                        left: left,
+                        right: this.reciprocalNode(right)
+                    };
+                }
+                
+                return {
+                    type: 'operation',
+                    operator: node.operator,
+                    left: left,
+                    right: right
+                };
+            }
+            
+            // Negate a node value
+            negateNode(node) {
+                if (node.type === 'number') {
+                    return { type: 'number', value: -node.value };
+                } else {
+                    // For complex expressions, we wrap in a unary negation
+                    return {
+                        type: 'operation',
+                        operator: '*',
+                        left: { type: 'number', value: -1 },
+                        right: node
+                    };
+                }
+            }
+            
+            // Get reciprocal of a node
+            reciprocalNode(node) {
+                if (node.type === 'number') {
+                    return { type: 'number', value: 1 / node.value };
+                } else {
+                    // For complex expressions, we represent as 1/node
+                    return {
+                        type: 'operation',
+                        operator: '/',
+                        left: { type: 'number', value: 1 },
+                        right: node
+                    };
+                }
+            }
+            
+            // Compare two nodes for sorting (used in commutative operations)
+            compareNodes(a, b) {
+                if (a.type === 'number' && b.type === 'number') {
+                    return a.value - b.value;
+                }
+                
+                if (a.type === 'number') return -1;
+                if (b.type === 'number') return 1;
+                
+                // Both are operations, compare operators
+                if (a.operator !== b.operator) {
+                    return a.operator.localeCompare(b.operator);
+                }
+                
+                // Compare operands
+                const leftCompare = this.compareNodes(a.left, b.left);
+                if (leftCompare !== 0) return leftCompare;
+                
+                return this.compareNodes(a.right, b.right);
+            }
+            
+            // Generate a string representation of the normalized expression
+            toString() {
+                return this.nodeToString(this.normalize());
+            }
+            
+            nodeToString(node) {
+                if (node.type === 'number') {
+                    // Handle negative numbers and format properly
+                    return node.value >= 0 ? node.value.toString() : `(${node.value})`;
+                }
+                
+                const left = this.nodeToString(node.left);
+                const right = this.nodeToString(node.right);
+                
+                return `(${left}${node.operator}${right})`;
+            }
+            
+            // Generate a category key for grouping similar expressions
+            generateCategoryKey() {
+                // Count operations by type
+                const normalized = this.normalize();
+                const operations = this.countOperations(normalized);
+                
+                // Create a key based on operations and number usage pattern
+                return `${operations.plus}+_${operations.minus}-_${operations.multiply}*_${operations.divide}/`;
+            }
+            
+            countOperations(node) {
+                if (node.type === 'number') {
+                    return { plus: 0, minus: 0, multiply: 0, divide: 0 };
+                }
+                
+                const leftOps = this.countOperations(node.left);
+                const rightOps = this.countOperations(node.right);
+                
+                const result = {
+                    plus: leftOps.plus + rightOps.plus,
+                    minus: leftOps.minus + rightOps.minus,
+                    multiply: leftOps.multiply + rightOps.multiply,
+                    divide: leftOps.divide + rightOps.divide
+                };
+                
+                // Increment the appropriate counter
+                if (node.operator === '+') result.plus++;
+                else if (node.operator === '-') result.minus++;
+                else if (node.operator === '*') result.multiply++;
+                else if (node.operator === '/') result.divide++;
+                
+                return result;
+            }
+            
+            // Evaluate the expression
+            evaluate() {
+                return this.evaluateNode(this.parsed);
+            }
+            
+            evaluateNode(node) {
+                if (node.type === 'number') {
+                    return node.value;
+                }
+                
+                const left = this.evaluateNode(node.left);
+                const right = this.evaluateNode(node.right);
+                
+                switch (node.operator) {
+                    case '+': return left + right;
+                    case '-': return left - right;
+                    case '*': return left * right;
+                    case '/': return left / right;
+                    default: throw new Error(`Unknown operator: ${node.operator}`);
+                }
+            }
+        }
+        
+        function findSolutions() {
+            const num1 = parseFloat(document.getElementById('num1').value);
+            const num2 = parseFloat(document.getElementById('num2').value);
+            const num3 = parseFloat(document.getElementById('num3').value);
+            const num4 = parseFloat(document.getElementById('num4').value);
+            
+            if (!isValidInput(num1) || !isValidInput(num2) || !isValidInput(num3) || !isValidInput(num4)) {
+                alert("Please enter numbers between 1 and 13.");
+                return;
+            }
+            
+            const numbers = [num1, num2, num3, num4];
+            const solutions = solve24(numbers);
+            
+            const showAll = document.getElementById('show-all').checked;
+            const categorize = document.getElementById('categorize-solutions').checked;
+            
+            displaySolutions(solutions, numbers, showAll, categorize);
+        }
+        
+        function isValidInput(num) {
+            return !isNaN(num) && num >= 1 && num <= 13;
+        }
+        
+        function displaySolutions(solutions, numbers, showAll, categorize) {
+            const solutionsDiv = document.getElementById('solutions');
+            solutionsDiv.innerHTML = '';
+            
+            const originalNumbers = numbers.join(', ');
+            
+            if (solutions.length === 0) {
+                solutionsDiv.innerHTML = `<div class="no-solutions">No solutions found for ${originalNumbers}</div>`;
+                return;
+            }
+            
+            // Sort solutions for better readability
+            solutions.sort();
+            
+            // Process for deduplication and categorization
+            const uniqueMap = new Map();
+            const categories = new Map();
+            const allExpressions = [];
+            
+            for (const solution of solutions) {
+                try {
+                    const expr = new Expression(solution);
+                    const normalizedKey = expr.toString();
+                    const categoryKey = expr.generateCategoryKey();
+                    
+                    // Keep track of all expressions
+                    allExpressions.push({
+                        original: solution,
+                        normalized: normalizedKey,
+                        category: categoryKey
+                    });
+                    
+                    // Store unique solutions
+                    if (!uniqueMap.has(normalizedKey)) {
+                        uniqueMap.set(normalizedKey, solution);
+                    }
+                    
+                    // Categorize solutions
+                    if (!categories.has(categoryKey)) {
+                        categories.set(categoryKey, []);
+                    }
+                    categories.get(categoryKey).push(solution);
+                } catch (e) {
+                    // If parsing fails, keep the original solution
+                    uniqueMap.set(solution, solution);
+                    if (!categories.has('other')) {
+                        categories.set('other', []);
+                    }
+                    categories.get('other').push(solution);
+                }
+            }
+            
+            // Display based on selected options
+            solutionsDiv.innerHTML = `<h3>Solutions for ${originalNumbers}:</h3>`;
+            
+            if (categorize) {
+                // Display solutions by category
+                const sortedCategories = Array.from(categories.entries())
+                    .sort((a, b) => b[1].length - a[1].length);
+                
+                for (const [category, categorySolutions] of sortedCategories) {
+                    // For each category, display unique solutions
+                    const uniqueCategorySolutions = showAll ? 
+                        categorySolutions : 
+                        Array.from(new Set(categorySolutions.map(s => {
+                            try {
+                                return new Expression(s).toString();
+                            } catch (e) {
+                                return s;
+                            }
+                        }))).map(normalized => {
+                            // Find the first solution that normalizes to this form
+                            return categorySolutions.find(s => {
+                                try {
+                                    return new Expression(s).toString() === normalized;
+                                } catch (e) {
+                                    return s === normalized;
+                                }
+                            });
+                        });
+                    
+                    // Create category header
+                    const categoryElement = document.createElement('div');
+                    categoryElement.className = 'solution-category';
+                    
+                    // Format the category name to be more readable
+                    let categoryName = category;
+                    if (category !== 'other') {
+                        const parts = category.split('_');
+                        categoryName = parts.filter(p => p.charAt(0) !== '0').join(', ');
+                    }
+                    
+                    categoryElement.textContent = `Pattern: ${categoryName} (${uniqueCategorySolutions.length} solutions)`;
+                    solutionsDiv.appendChild(categoryElement);
+                    
+                    // Display solutions in this category
+                    for (const solution of uniqueCategorySolutions) {
+                        const solutionElement = document.createElement('div');
+                        solutionElement.className = 'solution';
+                        solutionElement.textContent = solution;
+                        solutionsDiv.appendChild(solutionElement);
+                    }
+                }
+            } else {
+                // Display all solutions or just unique ones
+                const displaySolutions = showAll ? solutions : Array.from(uniqueMap.values());
+                
+                for (const solution of displaySolutions) {
+                    const solutionElement = document.createElement('div');
+                    solutionElement.className = 'solution';
+                    solutionElement.textContent = solution;
+                    solutionsDiv.appendChild(solutionElement);
+                }
+            }
+            
+            // Add statistics
+            const uniqueCount = uniqueMap.size;
+            const totalCount = solutions.length;
+            
+            const statsElement = document.createElement('div');
+            statsElement.className = 'stats';
+            
+            let statsText = `Found ${uniqueCount} mathematically unique solution${uniqueCount !== 1 ? 's' : ''}`;
+            if (uniqueCount !== totalCount) {
+                statsText += ` (${totalCount} expressions total, ${totalCount - uniqueCount} identified as equivalent)`;
+            }
+            
+            statsElement.textContent = statsText;
+            solutionsDiv.appendChild(statsElement);
+        }
+        
+        function solve24(numbers) {
+            const allSolutions = [];
+            const ops = ['+', '-', '*', '/'];
+            
+            // Generate all permutations of the numbers
+            const permutations = getAllPermutations(numbers);
+            
+            // For each permutation, try all possible operator combinations
+            permutations.forEach(perm => {
+                // For each combination of three operators
+                for (let op1 of ops) {
+                    for (let op2 of ops) {
+                        for (let op3 of ops) {
+                            // Try all possible ways of applying parentheses
+                            
+                            // ((a op1 b) op2 c) op3 d
+                            try {
+                                const result1 = calculate(calculate(calculate(perm[0], op1, perm[1]), op2, perm[2]), op3, perm[3]);
+                                if (Math.abs(result1 - 24) < 0.0001) {
+                                    allSolutions.push(`((${perm[0]} ${op1} ${perm[1]}) ${op2} ${perm[2]}) ${op3} ${perm[3]} = 24`);
+                                }
+                            } catch (e) {}
+                            
+                            // (a op1 (b op2 c)) op3 d
+                            try {
+                                const result2 = calculate(calculate(perm[0], op1, calculate(perm[1], op2, perm[2])), op3, perm[3]);
+                                if (Math.abs(result2 - 24) < 0.0001) {
+                                    allSolutions.push(`(${perm[0]} ${op1} (${perm[1]} ${op2} ${perm[2]})) ${op3} ${perm[3]} = 24`);
+                                }
+                            } catch (e) {}
+                            
+                            // a op1 ((b op2 c) op3 d)
+                            try {
+                                const result3 = calculate(perm[0], op1, calculate(calculate(perm[1], op2, perm[2]), op3, perm[3]));
+                                if (Math.abs(result3 - 24) < 0.0001) {
+                                    allSolutions.push(`${perm[0]} ${op1} ((${perm[1]} ${op2} ${perm[2]}) ${op3} ${perm[3]}) = 24`);
+                                }
+                            } catch (e) {}
+                            
+                            // a op1 (b op2 (c op3 d))
+                            try {
+                                const result4 = calculate(perm[0], op1, calculate(perm[1], op2, calculate(perm[2], op3, perm[3])));
+                                if (Math.abs(result4 - 24) < 0.0001) {
+                                    allSolutions.push(`${perm[0]} ${op1} (${perm[1]} ${op2} (${perm[2]} ${op3} ${perm[3]})) = 24`);
+                                }
+                            } catch (e) {}
+                            
+                            // (a op1 b) op2 (c op3 d)
+                            try {
+                                const result5 = calculate(calculate(perm[0], op1, perm[1]), op2, calculate(perm[2], op3, perm[3]));
+                                if (Math.abs(result5 - 24) < 0.0001) {
+                                    allSolutions.push(`(${perm[0]} ${op1} ${perm[1]}) ${op2} (${perm[2]} ${op3} ${perm[3]}) = 24`);
+                                }
+                            } catch (e) {}
+                        }
+                    }
+                }
+            });
+            
+            return allSolutions;
+        }
+        
+        function calculate(a, op, b) {
+            switch (op) {
+                case '+': return a + b;
+                case '-': return a - b;
+                case '*': return a * b;
+                case '/': 
+                    if (Math.abs(b) < 0.0001) throw new Error("Division by zero");
+                    return a / b;
+            }
+        }
+        
+        function getAllPermutations(array) {
+            const result = [];
+            
+            function permute(arr, m = []) {
+                if (arr.length === 0) {
+                    result.push(m);
+                } else {
+                    for (let i = 0; i < arr.length; i++) {
+                        const curr = [...arr];
+                        const next = curr.splice(i, 1);
+                        permute(curr, m.concat(next));
+                    }
+                }
+            }
+            
+            permute(array);
+            return result;
+        }
+        
+        // Run with default values on page load
+        window.onload = findSolutions;
+    </script>
+</body>
+</html>

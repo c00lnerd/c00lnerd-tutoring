@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Newton's Cradle</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #f4f4f4;
+            font-family: Arial, sans-serif;
+        }
+        .controls {
+            margin: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        canvas {
+            background: white;
+            border: 2px solid #333;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label>Number of Balls: <input type="number" id="numBalls" min="2" max="10" value="5"></label>
+        <button id="applySettings">Apply</button>
+    </div>
+    <canvas id="canvas" width="800" height="400" style="border:1px solid #000;"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Cradle parameters
+        const ballRadius = 15;  // ball size
+        const spacing = 2.0 * ballRadius;  // Just enough space to prevent constant collisions
+        const stringLength = 200;  // Double string length
+        const gravity = 4.0;      // Keep same gravity for same period
+        
+        let balls = [];
+        let draggedBall = null;
+
+        function createBalls(count) {
+            balls = [];
+            const totalWidth = (count - 1) * spacing;
+            const startX = canvas.width/2 - (count-1) * spacing/2;
+            const pivotY = 100;  // Move pivot point up
+
+            for (let i = 0; i < count; i++) {
+                balls.push({
+                    pivotX: startX + i * spacing,
+                    pivotY: pivotY,
+                    angle: 0,
+                    angularVelocity: 0,
+                    isDragging: false
+                });
+            }
+
+            // Pull back the first ball
+            balls[0].angle = -Math.PI/4;  // 45 degrees
+        }
+
+        function updateBalls() {
+            // Update positions and velocities
+            for (let ball of balls) {
+                if (!ball.isDragging) {
+                // Simple harmonic motion
+                const angularAcceleration = -gravity * Math.sin(ball.angle) / stringLength;
+                ball.angularVelocity += angularAcceleration;
+                ball.angle += ball.angularVelocity;
+                
+                // Prevent balls from swinging over the top
+                if (Math.abs(ball.angle) > Math.PI/2) {
+                    ball.angle = Math.sign(ball.angle) * Math.PI/2;
+                    ball.angularVelocity = 0;
+                }
+            }
+            }
+
+            // Check for collisions
+            for (let i = 0; i < balls.length - 1; i++) {
+                const b1 = balls[i];
+                const b2 = balls[i + 1];
+
+                // Calculate positions and check for collision
+                const b1x = b1.pivotX + stringLength * Math.sin(b1.angle);
+                const b2x = b2.pivotX + stringLength * Math.sin(b2.angle);
+                const distance = Math.abs(b2x - b1x);
+                
+                if (distance < 2 * ballRadius) {
+                    // Check relative velocity between balls
+                    const relativeVelocity = b2.angularVelocity - b1.angularVelocity;
+                    
+                    // First ball moving faster than second
+                    if (relativeVelocity < -0.0001) {
+                        // Perfect momentum transfer
+                        const v1 = b1.angularVelocity;
+                        const v2 = b2.angularVelocity;
+                        b1.angularVelocity = v2;
+                        b2.angularVelocity = v1;
+                        
+                        // Apply more realistic damping
+                        const dampingFactor = 0.995;  // More energy loss
+                        b1.angularVelocity *= dampingFactor;
+                        b2.angularVelocity *= dampingFactor;
+                    }
+
+                    // Keep balls separated
+                    const overlap = 2 * ballRadius - distance;
+                    const moveAngle = overlap / (2 * stringLength);
+                    b1.angle -= moveAngle;
+                    b2.angle += moveAngle;
+                }
+            }
+        }
+
+        function drawCradle() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw support beam
+            ctx.beginPath();
+            ctx.moveTo(balls[0].pivotX - spacing, balls[0].pivotY);
+            ctx.lineTo(balls[balls.length-1].pivotX + spacing, balls[0].pivotY);
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 6;  // Thicker support bar
+            ctx.stroke();
+
+            // Draw balls and strings
+            for (const ball of balls) {
+                // Calculate ball position
+                const ballX = ball.pivotX + stringLength * Math.sin(ball.angle);
+                const ballY = ball.pivotY + stringLength * Math.cos(ball.angle);
+
+                // Draw string
+                ctx.beginPath();
+                ctx.moveTo(ball.pivotX, ball.pivotY);
+                ctx.lineTo(ballX, ballY);
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 4;  // Thicker strings
+                ctx.stroke();
+
+                // Draw ball
+                ctx.beginPath();
+                ctx.arc(ballX, ballY, ballRadius, 0, 2 * Math.PI);
+                ctx.fillStyle = ball.isDragging ? '#2980b9' : '#3498db';
+                ctx.fill();
+                ctx.strokeStyle = '#222';
+                ctx.lineWidth = 2;  // ball outline
+                ctx.stroke();
+            }
+        }
+
+        function animate() {
+            updateBalls();
+            drawCradle();
+            requestAnimationFrame(animate);
+        }
+
+        // Mouse interaction
+        canvas.addEventListener('mousedown', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+
+            for (const ball of balls) {
+                const ballX = ball.pivotX + stringLength * Math.sin(ball.angle);
+                const ballY = ball.pivotY + stringLength * Math.cos(ball.angle);
+                
+                const dx = mx - ballX;
+                const dy = my - ballY;
+                if (dx * dx + dy * dy < ballRadius * ballRadius) {
+                    ball.isDragging = true;
+                    draggedBall = ball;
+                    break;
+                }
+            }
+        });
+
+        canvas.addEventListener('mousemove', function(e) {
+            if (draggedBall) {
+                const rect = canvas.getBoundingClientRect();
+                const mx = e.clientX - rect.left;
+                const my = e.clientY - rect.top;
+                
+                // Calculate angle from mouse position
+                const dx = mx - draggedBall.pivotX;
+                const dy = my - draggedBall.pivotY;
+                draggedBall.angle = Math.atan2(dx, dy);
+                draggedBall.angularVelocity = 0;
+            }
+        });
+
+        function stopDragging() {
+            if (draggedBall) {
+                draggedBall.isDragging = false;
+                draggedBall = null;
+            }
+        }
+
+        canvas.addEventListener('mouseup', stopDragging);
+        canvas.addEventListener('mouseleave', stopDragging);
+
+        // UI Controls
+
+
+        document.getElementById('applySettings').onclick = function() {
+            const count = parseInt(document.getElementById('numBalls').value);
+            createBalls(Math.min(Math.max(count, 2), 10));
+        };
+
+        // Initialize and start
+        createBalls(5);
+        animate();
+    </script>
+</body>
+</html>

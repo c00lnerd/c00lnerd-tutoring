@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Electric Field Visualizer</title>
+  <style>
+    body { 
+      font-family: sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+      background: #f0f0f0; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    canvas { 
+      border: 1px solid #333; 
+      background: #fff;
+      display: block; 
+    }
+    .controls {
+      background: #ddd;
+      padding: 15px;
+      border-radius: 5px;
+      width: 250px;
+    }
+    .instructions {
+      margin-bottom: 15px;
+      padding: 10px;
+      background: #fff;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .instructions h3 {
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+    .instructions ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+    .instructions li {
+      margin-bottom: 4px;
+    }
+    .buttons-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #bbb;
+      padding-bottom: 15px;
+    }
+    .charge-control { 
+      margin-bottom: 12px;
+      padding: 8px;
+      background: #fff;
+      border-radius: 4px;
+    }
+    .charge-control label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #333;
+    }
+    .charge-inputs {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .charge-inputs input[type="range"] {
+      flex: 1;
+    }
+    .charge-inputs input[type="number"] {
+      width: 60px;
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+    }
+    .button {
+      padding: 8px 12px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      width: 100%;
+      font-size: 14px;
+    }
+    .button:hover {
+      background-color: #45a049;
+    }
+    .button.active {
+      background-color: #357a38;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <canvas id="canvas" width="600" height="600"></canvas>
+    <div class="controls" id="controlPanel">
+      <div class="instructions">
+        <h3>Instructions</h3>
+        <ul>
+          <li><strong>Add charge:</strong> Left click on canvas</li>
+          <li><strong>Move charge:</strong> Left click and drag</li>
+          <li><strong>Delete charge:</strong> Right click on charge</li>
+          <li><strong>Adjust charge:</strong> Use slider or enter value</li>
+        </ul>
+      </div>
+      <div class="buttons-container">
+        <button id="clearButton" class="button">Clear All</button>
+        <button id="toggleFieldLines" class="button">Toggle Field Lines</button>
+        <button id="toggleForceLines" class="button">Toggle Force Lines</button>
+      </div>
+      <!-- Charge sliders will be added here dynamically -->
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const controlPanel = document.getElementById("controlPanel");
+
+    let charges = [];
+    let showFieldLines = true;
+    let showForceLines = true;
+    let draggedCharge = null;
+    let offsetX, offsetY;
+
+    function addCharge(x, y) {
+      const charge = {
+        x: x,
+        y: y,
+        q: 5.0,  // Default positive charge
+        radius: 20
+      };
+      charges.push(charge);
+      console.log("Added charge:", charge);
+      console.log("Current charges:", charges);
+      updateSliders();
+    }
+
+    function removeCharge(index) {
+      charges.splice(index, 1);
+      console.log("Removed charge at index:", index);
+      console.log("Current charges:", charges);
+      updateSliders();
+    }
+
+    function createSlider(index) {
+      const charge = charges[index];
+      const container = document.createElement("div");
+      container.className = "charge-control";
+      
+      const label = document.createElement("label");
+      label.textContent = `Charge ${index + 1}`;
+      
+      const inputsDiv = document.createElement("div");
+      inputsDiv.className = "charge-inputs";
+      
+      const slider = document.createElement("input");
+      slider.type = "range";
+      slider.min = "-10";
+      slider.max = "10";
+      slider.step = "0.1";
+      slider.value = charge.q;
+      
+      const numInput = document.createElement("input");
+      numInput.type = "number";
+      numInput.min = "-10";
+      numInput.max = "10";
+      numInput.step = "0.1";
+      numInput.value = charge.q;
+      
+      slider.oninput = () => {
+        charge.q = parseFloat(slider.value);
+        numInput.value = slider.value;
+      };
+      
+      numInput.onchange = () => {
+        let value = parseFloat(numInput.value);
+        value = Math.max(-10, Math.min(10, value)); // Clamp between -10 and 10
+        charge.q = value;
+        slider.value = value;
+        numInput.value = value; // Update in case we clamped the value
+      };
+      
+      inputsDiv.appendChild(slider);
+      inputsDiv.appendChild(numInput);
+      container.appendChild(label);
+      container.appendChild(inputsDiv);
+      controlPanel.appendChild(container);
+    }
+
+    function updateSliders() {
+      // Store the buttons HTML
+      const buttonsHTML = `
+        <div class="instructions">
+          <h3>Instructions</h3>
+          <ul>
+            <li><strong>Add charge:</strong> Left click on canvas</li>
+            <li><strong>Move charge:</strong> Left click and drag</li>
+            <li><strong>Delete charge:</strong> Right click on charge</li>
+            <li><strong>Adjust charge:</strong> Use slider or enter value</li>
+          </ul>
+        </div>
+        <div class="buttons-container">
+          <button id="clearButton" class="button">Clear All</button>
+          <button id="toggleFieldLines" class="button${showFieldLines ? ' active' : ''}">Toggle Field Lines</button>
+          <button id="toggleForceLines" class="button${showForceLines ? ' active' : ''}">Toggle Force Lines</button>
+        </div>
+      `;
+      
+      // Clear and recreate control panel
+      controlPanel.innerHTML = buttonsHTML;
+      
+      // Add charge sliders
+      charges.forEach((_, index) => createSlider(index));
+      
+      // Reattach event listeners to buttons
+      document.getElementById("clearButton").addEventListener("click", () => {
+        charges.length = 0;
+        updateSliders();
+      });
+      
+      document.getElementById("toggleFieldLines").addEventListener("click", (e) => {
+        showFieldLines = !showFieldLines;
+        e.target.classList.toggle('active');
+      });
+      
+      document.getElementById("toggleForceLines").addEventListener("click", (e) => {
+        showForceLines = !showForceLines;
+        e.target.classList.toggle('active');
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      console.log("Drawing. Number of charges:", charges.length);
+      
+      // Draw field lines first (background)
+      if (showFieldLines) {
+        drawFieldLines();
+      }
+      
+      // Draw forces next (they go under the charges)
+      if (showForceLines) {
+        drawForces();
+      }
+      
+      // Draw charges last (they should always be visible on top)
+      drawCharges();
+      
+      requestAnimationFrame(draw);
+    }
+
+    function drawCharges() {
+      console.log("Drawing charges:", charges);
+      charges.forEach((charge, i) => {
+        // Draw charge circle
+        ctx.beginPath();
+        ctx.arc(charge.x, charge.y, charge.radius, 0, 2 * Math.PI);
+        ctx.fillStyle = charge.q > 0 ? "#f55" : "#55f";
+        ctx.fill();
+        ctx.strokeStyle = "#000";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        // Display charge number and value inside the circle
+        ctx.fillStyle = "white";
+        ctx.font = "bold 12px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(`${i + 1}`, charge.x, charge.y + 11);
+        ctx.fillText(charge.q.toFixed(1), charge.x, charge.y - 7);
+      });
+    }
+
+    canvas.addEventListener("mousedown", (e) => {
+      if (e.button === 2) { // Right click
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        // Check if clicking on an existing charge
+        for (let i = charges.length - 1; i >= 0; i--) {
+          const charge = charges[i];
+          const dx = mouseX - charge.x;
+          const dy = mouseY - charge.y;
+          if (Math.sqrt(dx * dx + dy * dy) < charge.radius) {
+            removeCharge(i);
+            return;
+          }
+        }
+      } else if (e.button === 0) { // Left click
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        // Check if clicking on an existing charge
+        for (let charge of charges) {
+          const dx = mouseX - charge.x;
+          const dy = mouseY - charge.y;
+          if (Math.sqrt(dx * dx + dy * dy) < charge.radius) {
+            draggedCharge = charge;
+            offsetX = dx;
+            offsetY = dy;
+            return;
+          }
+        }
+        // If not clicking on an existing charge, add a new one
+        addCharge(mouseX, mouseY);
+      }
+    });
+
+    canvas.addEventListener("mousemove", (e) => {
+      if (draggedCharge) {
+        const rect = canvas.getBoundingClientRect();
+        draggedCharge.x = e.clientX - rect.left - offsetX;
+        draggedCharge.y = e.clientY - rect.top - offsetY;
+      }
+    });
+
+    canvas.addEventListener("mouseup", () => {
+      draggedCharge = null;
+    });
+
+    canvas.addEventListener("mouseleave", () => {
+      draggedCharge = null;
+    });
+
+    // Prevent context menu on right click
+    canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+    function computeField(x, y) {
+      let Ex = 0, Ey = 0;
+      for (let charge of charges) {
+        const dx = x - charge.x;
+        const dy = y - charge.y;
+        let r2 = dx * dx + dy * dy;
+        if (r2 < 100) r2 = 100;
+        const r = Math.sqrt(r2);
+        Ex += charge.q * dx / (r2 * r);
+        Ey += charge.q * dy / (r2 * r);
+      }
+      return { Ex, Ey };
+    }
+
+    function drawArrow(fromX, fromY, toX, toY, size = 5) {
+      const dx = toX - fromX;
+      const dy = toY - fromY;
+      const angle = Math.atan2(dy, dx);
+      
+      // Draw the main line
+      ctx.beginPath();
+      ctx.moveTo(fromX, fromY);
+      ctx.lineTo(toX, toY);
+      ctx.stroke();
+      
+      // Draw the arrowhead
+      ctx.beginPath();
+      ctx.moveTo(toX, toY);
+      ctx.lineTo(
+        toX - size * Math.cos(angle - Math.PI / 6),
+        toY - size * Math.sin(angle - Math.PI / 6)
+      );
+      ctx.lineTo(
+        toX - size * Math.cos(angle + Math.PI / 6),
+        toY - size * Math.sin(angle + Math.PI / 6)
+      );
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    function drawFieldLines() {
+      const stepSize = 2;
+      const maxSteps = 1000;
+      const terminationDist = 20;
+      
+      charges.forEach(charge => {
+        if (charge.q <= 0) return;
+        const numLines = 16;
+        for (let i = 0; i < numLines; i++) {
+          const angle = (2 * Math.PI * i) / numLines;
+          let x = charge.x + charge.radius * Math.cos(angle);
+          let y = charge.y + charge.radius * Math.sin(angle);
+          
+          // Store points for the field line
+          let points = [{x, y}];
+          let terminated = false;
+          
+          // First pass: collect all points for the field line
+          for (let j = 0; j < maxSteps && !terminated; j++) {
+            const field = computeField(x, y);
+            const mag = Math.sqrt(field.Ex * field.Ex + field.Ey * field.Ey);
+            if (mag === 0) break;
+
+            x += stepSize * field.Ex / mag;
+            y += stepSize * field.Ey / mag;
+            points.push({x, y});
+            
+            // Check termination conditions
+            for (let neg of charges) {
+              if (neg.q < 0) {
+                const dx = x - neg.x;
+                const dy = y - neg.y;
+                if (Math.sqrt(dx * dx + dy * dy) < terminationDist) {
+                  terminated = true;
+                  break;
+                }
+              }
+            }
+
+            if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) {
+              terminated = true;
+            }
+          }
+          
+          // Draw the complete field line
+          ctx.beginPath();
+          ctx.moveTo(points[0].x, points[0].y);
+          for (let p of points) {
+            ctx.lineTo(p.x, p.y);
+          }
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.5)";
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          
+          // Draw arrow at the middle point
+          if (points.length > 2) {
+            const midIndex = Math.floor(points.length / 2);
+            const p1 = points[midIndex - 1];
+            const p2 = points[midIndex];
+            drawArrow(p1.x, p1.y, p2.x, p2.y, 8); // Slightly larger arrow for better visibility
+          }
+        }
+      });
+    }
+
+    function drawForces() {
+      const k = 5000; // Force constant
+      const scaleFactor = 20; // Much larger scale factor
+      const arrowSize = 20; // Size for all arrows
+      const lineWidth = 4; // Line width for all arrows
+      
+      // Initialize net forces array
+      const netForces = charges.map(() => ({ fx: 0, fy: 0 }));
+      
+      for (let i = 0; i < charges.length; i++) {
+        for (let j = i + 1; j < charges.length; j++) {
+          const q1 = charges[i];
+          const q2 = charges[j];
+          
+          // Calculate distance and direction
+          const dx = q2.x - q1.x;
+          const dy = q2.y - q1.y;
+          const r2 = dx * dx + dy * dy;
+          const r = Math.sqrt(r2);
+          
+          if (r < 1) continue; // Avoid division by zero
+          
+          // Calculate force magnitude with stronger scaling
+          const forceMag = k * Math.abs(q1.q * q2.q) / r2;
+          const scaledForce = Math.min(forceMag * scaleFactor, 200); // Cap at 200 pixels
+          
+          // Calculate force components
+          const forceX = scaledForce * dx / r;
+          const forceY = scaledForce * dy / r;
+          
+          // Update net forces (note: forces are equal and opposite)
+          if (q1.q * q2.q > 0) { // Repulsive
+            netForces[i].fx -= forceX;
+            netForces[i].fy -= forceY;
+            netForces[j].fx += forceX;
+            netForces[j].fy += forceY;
+          } else { // Attractive
+            netForces[i].fx += forceX;
+            netForces[i].fy += forceY;
+            netForces[j].fx -= forceX;
+            netForces[j].fy -= forceY;
+          }
+          
+          // Draw individual force arrows
+          if (showForceLines) {
+            if (q1.q * q2.q > 0) {
+              // Same charge - repulsive force (bright red arrows)
+              ctx.fillStyle = '#FF0000';
+              ctx.strokeStyle = '#FF0000';
+              
+              // Draw arrows with white outline for better visibility
+              ctx.lineWidth = lineWidth + 2;
+              ctx.strokeStyle = 'white';
+              drawArrow(q1.x, q1.y, q1.x - forceX, q1.y - forceY, arrowSize);
+              drawArrow(q2.x, q2.y, q2.x + forceX, q2.y + forceY, arrowSize);
+              
+              // Draw the actual colored arrows
+              ctx.lineWidth = lineWidth;
+              ctx.strokeStyle = '#FF0000';
+              drawArrow(q1.x, q1.y, q1.x - forceX, q1.y - forceY, arrowSize);
+              drawArrow(q2.x, q2.y, q2.x + forceX, q2.y + forceY, arrowSize);
+            } else {
+              // Opposite charges - attractive force (bright blue arrows)
+              ctx.fillStyle = '#0000FF';
+              ctx.strokeStyle = '#0000FF';
+              
+              // Draw arrows with white outline for better visibility
+              ctx.lineWidth = lineWidth + 2;
+              ctx.strokeStyle = 'white';
+              drawArrow(q1.x, q1.y, q1.x + forceX, q1.y + forceY, arrowSize);
+              drawArrow(q2.x, q2.y, q2.x - forceX, q2.y - forceY, arrowSize);
+              
+              // Draw the actual colored arrows
+              ctx.lineWidth = lineWidth;
+              ctx.strokeStyle = '#0000FF';
+              drawArrow(q1.x, q1.y, q1.x + forceX, q1.y + forceY, arrowSize);
+              drawArrow(q2.x, q2.y, q2.x - forceX, q2.y - forceY, arrowSize);
+            }
+          }
+        }
+      }
+      
+      // Draw net force vectors
+      if (showForceLines) {
+        netForces.forEach((force, i) => {
+          const charge = charges[i];
+          const magnitude = Math.sqrt(force.fx * force.fx + force.fy * force.fy);
+          if (magnitude > 0) {
+            // Draw net force vector in green with white outline
+            ctx.lineWidth = lineWidth + 2;
+            ctx.strokeStyle = 'white';
+            drawArrow(charge.x, charge.y, 
+                     charge.x + force.fx, 
+                     charge.y + force.fy, 
+                     arrowSize * 1.2); // Slightly larger arrowhead
+            
+            ctx.lineWidth = lineWidth;
+            ctx.fillStyle = '#00FF00';
+            ctx.strokeStyle = '#00FF00';
+            drawArrow(charge.x, charge.y, 
+                     charge.x + force.fx, 
+                     charge.y + force.fy, 
+                     arrowSize * 1.2);
+          }
+        });
+      }
+    }
+
+    // Initialize the control panel
+    updateSliders();
+    
+    // Start the animation loop
+    draw();
+  </script>
+</body>
+</html>

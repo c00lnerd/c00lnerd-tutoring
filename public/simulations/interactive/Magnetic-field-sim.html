@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnetic Field Simulation with Save/Load</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+        #canvas {
+            border: 1px solid #333;
+            background-color: white;
+        }
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 250px;
+        }
+        .instructions, .file-controls, .slider-panel {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-controls {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+        .file-controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .file-controls button:hover {
+            background-color: #45a049;
+        }
+        .magnet-control {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .magnet-control label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .magnet-control input[type="range"] {
+            width: 100%;
+        }
+        .magnet-control .strength-value {
+            text-align: right;
+            font-size: 0.9em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <canvas id="canvas" width="900" height="700"></canvas>
+        <div class="right-panel">
+            <div class="instructions">
+                <h3>Controls</h3>
+                <p>• Left click on canvas to add a magnet</p>
+                <p>• Right click on a magnet to delete it</p>
+                <p>• Click and drag magnet center to move</p>
+                <p>• Click and drag magnet ends to rotate</p>
+            </div>
+            <div class="file-controls">
+                <h3>Save/Load Configuration</h3>
+                <button id="saveBtn">Save Configuration</button>
+                <button id="loadBtn">Load Configuration</button>
+            </div>
+            <div class="slider-panel" id="magnetControls">
+                <h3>Magnet Strengths</h3>
+            </div>
+        </div>
+    </div>
+    <script>
+class Magnet {
+    constructor(x, y, length = 100) {
+        this.x = x;
+        this.y = y;
+        this.length = length;
+        this.width = 30;
+        this.angle = 0;
+        this.dragging = false;
+        this.rotatingEnd = null;
+        this.strength = 5000;
+        this.id = 'magnet_' + Math.random().toString(36).substr(2, 9);
+    }
+
+    getNorthEnd() {
+        return {
+            x: this.x + Math.cos(this.angle) * this.length/2,
+            y: this.y + Math.sin(this.angle) * this.length/2
+        };
+    }
+
+    getSouthEnd() {
+        return {
+            x: this.x - Math.cos(this.angle) * this.length/2,
+            y: this.y - Math.sin(this.angle) * this.length/2
+        };
+    }
+
+    containsPoint(x, y) {
+        const distance = Math.sqrt((x - this.x)**2 + (y - this.y)**2);
+        return distance < this.length/2;
+    }
+
+    isNearEnd(x, y, end) {
+        const endPoint = end === 'north' ? this.getNorthEnd() : this.getSouthEnd();
+        const distance = Math.sqrt((x - endPoint.x)**2 + (y - endPoint.y)**2);
+        return distance < 20;
+    }
+
+    toJSON() {
+        return {
+            x: this.x,
+            y: this.y,
+            length: this.length,
+            angle: this.angle,
+            strength: this.strength,
+            id: this.id
+        };
+    }
+
+    static fromJSON(data) {
+        const magnet = new Magnet(data.x, data.y, data.length);
+        magnet.angle = data.angle;
+        magnet.strength = data.strength;
+        magnet.id = data.id;
+        return magnet;
+    }
+}
+
+class MagneticFieldSimulation {
+    constructor() {
+        this.canvas = document.getElementById('canvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.magnets = [];
+        this.selectedMagnet = null;
+        this.fieldLinePoints = [];
+        this.magnetControls = document.getElementById('magnetControls');
+        
+        this.setupEventListeners();
+        this.setupFileControls();
+    }
+
+    setupFileControls() {
+        document.getElementById('saveBtn').addEventListener('click', () => this.saveConfiguration());
+        document.getElementById('loadBtn').addEventListener('click', () => this.loadConfiguration());
+    }
+
+    saveConfiguration() {
+        const config = {
+            magnets: this.magnets.map(m => m.toJSON())
+        };
+        
+        const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'magnet-config.json';
+        document.body.appendChild(a);
+        a.click();
+        
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 0);
+    }
+
+    loadConfiguration() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        
+        input.onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const config = JSON.parse(e.target.result);
+                    
+                    // Clear existing magnets
+                    this.magnets.forEach(m => this.removeMagnetControl(m));
+                    this.magnets = [];
+                    
+                    // Load new magnets
+                    config.magnets.forEach(magnetData => {
+                        const magnet = Magnet.fromJSON(magnetData);
+                        this.magnets.push(magnet);
+                        this.createMagnetControl(magnet);
+                    });
+                    
+                    this.draw();
+                } catch (err) {
+                    console.error('Error loading configuration:', err);
+                    alert('Error loading configuration: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+        };
+        
+        input.click();
+    }
+
+    setupEventListeners() {
+        this.canvas.addEventListener('mousedown', (e) => this.handleMouseDown(e));
+        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
+        this.canvas.addEventListener('mouseup', () => this.handleMouseUp());
+        this.canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            this.handleRightClick(e);
+        });
+    }
+
+    createMagnetControl(magnet) {
+        const controlDiv = document.createElement('div');
+        controlDiv.className = 'magnet-control';
+        controlDiv.id = magnet.id;
+
+        const label = document.createElement('label');
+        label.textContent = 'Magnet Strength (Gauss)';
+        
+        const strengthValue = document.createElement('div');
+        strengthValue.className = 'strength-value';
+        strengthValue.textContent = magnet.strength + ' G';
+
+        const slider = document.createElement('input');
+        slider.type = 'range';
+        slider.min = '500';
+        slider.max = '15000';
+        slider.value = magnet.strength;
+        slider.step = '250';
+
+        slider.addEventListener('input', (e) => {
+            magnet.strength = parseInt(e.target.value);
+            strengthValue.textContent = magnet.strength + ' G';
+            this.draw();
+        });
+
+        controlDiv.appendChild(label);
+        controlDiv.appendChild(slider);
+        controlDiv.appendChild(strengthValue);
+        this.magnetControls.appendChild(controlDiv);
+    }
+
+    removeMagnetControl(magnet) {
+        const control = document.getElementById(magnet.id);
+        if (control) {
+            control.remove();
+        }
+    }
+
+    getMousePos(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        return {
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        };
+    }
+
+    handleMouseDown(e) {
+        const pos = this.getMousePos(e);
+        
+        for (let magnet of this.magnets) {
+            if (magnet.isNearEnd(pos.x, pos.y, 'north')) {
+                magnet.rotatingEnd = 'north';
+                this.selectedMagnet = magnet;
+                return;
+            }
+            if (magnet.isNearEnd(pos.x, pos.y, 'south')) {
+                magnet.rotatingEnd = 'south';
+                this.selectedMagnet = magnet;
+                return;
+            }
+            if (magnet.containsPoint(pos.x, pos.y)) {
+                magnet.dragging = true;
+                this.selectedMagnet = magnet;
+                return;
+            }
+        }
+
+        if (e.button === 0) {
+            const newMagnet = new Magnet(pos.x, pos.y);
+            this.magnets.push(newMagnet);
+            this.createMagnetControl(newMagnet);
+            this.selectedMagnet = newMagnet;
+            this.selectedMagnet.dragging = true;
+        }
+    }
+
+    handleMouseMove(e) {
+        const pos = this.getMousePos(e);
+        
+        if (this.selectedMagnet) {
+            if (this.selectedMagnet.rotatingEnd) {
+                this.selectedMagnet.angle = Math.atan2(
+                    pos.y - this.selectedMagnet.y,
+                    pos.x - this.selectedMagnet.x
+                );
+                if (this.selectedMagnet.rotatingEnd === 'south') {
+                    this.selectedMagnet.angle += Math.PI;
+                }
+            } else if (this.selectedMagnet.dragging) {
+                this.selectedMagnet.x = pos.x;
+                this.selectedMagnet.y = pos.y;
+            }
+        }
+        
+        this.draw();
+    }
+
+    handleMouseUp() {
+        if (this.selectedMagnet) {
+            this.selectedMagnet.dragging = false;
+            this.selectedMagnet.rotatingEnd = null;
+        }
+        this.selectedMagnet = null;
+    }
+
+    handleRightClick(e) {
+        const pos = this.getMousePos(e);
+        
+        for (let i = 0; i < this.magnets.length; i++) {
+            if (this.magnets[i].containsPoint(pos.x, pos.y)) {
+                this.removeMagnetControl(this.magnets[i]);
+                this.magnets.splice(i, 1);
+                this.draw();
+                return;
+            }
+        }
+    }
+
+    calculateFieldStrength(x, y) {
+        let Bx = 0;
+        let By = 0;
+        
+        for (const magnet of this.magnets) {
+            const north = magnet.getNorthEnd();
+            const south = magnet.getSouthEnd();
+            
+            const rNx = x - north.x;
+            const rNy = y - north.y;
+            const rN = Math.sqrt(rNx*rNx + rNy*rNy);
+            
+            const rSx = x - south.x;
+            const rSy = y - south.y;
+            const rS = Math.sqrt(rSx*rSx + rSy*rSy);
+            
+            Bx += magnet.strength * (rNx/(rN*rN*rN) - rSx/(rS*rS*rS));
+            By += magnet.strength * (rNy/(rN*rN*rN) - rSy/(rS*rS*rS));
+        }
+        
+        return { x: Bx, y: By };
+    }
+
+    drawArrow(fromX, fromY, toX, toY, arrowSize = 8) {
+        const dx = toX - fromX;
+        const dy = toY - fromY;
+        const angle = Math.atan2(dy, dx);
+        
+        this.ctx.beginPath();
+        this.ctx.moveTo(fromX, fromY);
+        this.ctx.lineTo(toX, toY);
+        
+        // Arrow head
+        const headLen = arrowSize;
+        this.ctx.lineTo(
+            toX - headLen * Math.cos(angle - Math.PI / 6),
+            toY - headLen * Math.sin(angle - Math.PI / 6)
+        );
+        this.ctx.moveTo(toX, toY);
+        this.ctx.lineTo(
+            toX - headLen * Math.cos(angle + Math.PI / 6),
+            toY - headLen * Math.sin(angle + Math.PI / 6)
+        );
+    }
+
+    drawFieldLines() {
+        const numLines = 24;
+        
+        for (const magnet of this.magnets) {
+            const startPoints = [];
+            const north = magnet.getNorthEnd();
+            const south = magnet.getSouthEnd();
+            
+            for (let i = 0; i < numLines; i++) {
+                const angle = (2 * Math.PI * i) / numLines;
+                const baseRadius = 5;
+                const radius = baseRadius * (0.8 + 0.4 * Math.abs(Math.sin(angle)));
+                
+                startPoints.push({
+                    x: north.x + radius * Math.cos(angle),
+                    y: north.y + radius * Math.sin(angle)
+                });
+            }
+
+            for (const start of startPoints) {
+                let x = start.x;
+                let y = start.y;
+                let pathPoints = [{x, y}];
+                let totalSteps = 0;
+                let lastMagnitude = Infinity;
+                let stuckCount = 0;
+                
+                while (totalSteps < 2000) {
+                    const field = this.calculateFieldStrength(x, y);
+                    const magnitude = Math.sqrt(field.x*field.x + field.y*field.y);
+                    
+                    if (magnitude < 0.00001 || stuckCount > 10) break;
+                    
+                    if (Math.abs(magnitude - lastMagnitude) < 0.0001) {
+                        stuckCount++;
+                    } else {
+                        stuckCount = 0;
+                    }
+                    lastMagnitude = magnitude;
+                    
+                    const stepSize = Math.min(2, 1 / (magnitude * 0.01));
+                    const dx = field.x / magnitude;
+                    const dy = field.y / magnitude;
+                    
+                    x += dx * stepSize;
+                    y += dy * stepSize;
+
+                    const padding = 50;
+                    if (x < -padding) x = this.canvas.width + padding;
+                    if (x > this.canvas.width + padding) x = -padding;
+                    if (y < -padding) y = this.canvas.height + padding;
+                    if (y > this.canvas.height + padding) y = -padding;
+                    
+                    let nearSouthPole = false;
+                    let minDist = Infinity;
+                    for (const m of this.magnets) {
+                        const southEnd = m.getSouthEnd();
+                        const dist = Math.sqrt((x - southEnd.x)**2 + (y - southEnd.y)**2);
+                        minDist = Math.min(minDist, dist);
+                        if (dist < 3) {
+                            nearSouthPole = true;
+                            break;
+                        }
+                    }
+                    
+                    if (nearSouthPole) break;
+                    
+                    const lastPoint = pathPoints[pathPoints.length - 1];
+                    const distFromLast = Math.sqrt((x - lastPoint.x)**2 + (y - lastPoint.y)**2);
+                    if (distFromLast > 1) {
+                        pathPoints.push({x, y});
+                    }
+                    
+                    totalSteps++;
+                }
+
+                if (pathPoints.length > 1) {
+                    // Draw the field line
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(pathPoints[0].x, pathPoints[0].y);
+                    
+                    for (let i = 1; i < pathPoints.length; i++) {
+                        const current = pathPoints[i];
+                        const prev = pathPoints[i-1];
+                        
+                        if (Math.abs(current.x - prev.x) > this.canvas.width/2 ||
+                            Math.abs(current.y - prev.y) > this.canvas.height/2) {
+                            this.ctx.stroke();
+                            this.ctx.beginPath();
+                            this.ctx.moveTo(current.x, current.y);
+                        } else {
+                            this.ctx.lineTo(current.x, current.y);
+                        }
+                    }
+                    
+                    this.ctx.strokeStyle = 'rgba(0, 0, 255, 0.2)';
+                    this.ctx.lineWidth = 1;
+                    this.ctx.stroke();
+
+                    // Draw arrow at midpoint
+                    const midIndex = Math.floor(pathPoints.length / 2);
+                    if (midIndex > 0) {
+                        const p1 = pathPoints[midIndex - 1];
+                        const p2 = pathPoints[midIndex];
+                        
+                        this.ctx.strokeStyle = 'rgba(0, 0, 255, 0.4)';
+                        this.ctx.lineWidth = 1.5;
+                        this.drawArrow(p1.x, p1.y, p2.x, p2.y);
+                        this.ctx.stroke();
+                    }
+                }
+            }
+        }
+    }
+
+    draw() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        this.drawFieldLines();
+        
+        for (const magnet of this.magnets) {
+            this.ctx.save();
+            this.ctx.translate(magnet.x, magnet.y);
+            this.ctx.rotate(magnet.angle);
+            
+            this.ctx.beginPath();
+            this.ctx.rect(-magnet.length/2, -magnet.width/2, magnet.length, magnet.width);
+            this.ctx.fillStyle = '#888';
+            this.ctx.fill();
+            
+            this.ctx.beginPath();
+            this.ctx.rect(0, -magnet.width/2, magnet.length/2, magnet.width);
+            this.ctx.fillStyle = 'red';
+            this.ctx.fill();
+            
+            this.ctx.beginPath();
+            this.ctx.rect(-magnet.length/2, -magnet.width/2, magnet.length/2, magnet.width);
+            this.ctx.fillStyle = 'blue';
+            this.ctx.fill();
+            
+            this.ctx.beginPath();
+            this.ctx.rect(-magnet.length/2, -magnet.width/2, magnet.length, magnet.width);
+            this.ctx.strokeStyle = 'black';
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
+            
+            this.ctx.restore();
+        }
+    }
+}
+
+// Start the simulation when the page loads
+window.addEventListener('load', () => {
+    const simulation = new MagneticFieldSimulation();
+    simulation.draw();
+});</script>
+</body>
+</html>

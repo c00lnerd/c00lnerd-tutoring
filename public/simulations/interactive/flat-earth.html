@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Flat Earthers - Interactive Earth Shape Demonstration</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #canvas {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        #controls {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        .control-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #4a90e2;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #357abd;
+        }
+        #info {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            max-width: 300px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="controls">
+        <div class="control-group">
+            <label>View Mode:</label>
+            <button onclick="setViewMode('globe')">Globe View</button>
+            <button onclick="setViewMode('flat')">Flat View</button>
+        </div>
+        <div class="control-group">
+            <label>Demonstration:</label>
+            <button onclick="showSunsetEffect()">Show Sunset Effect</button>
+            <button onclick="showShipHorizon()">Ship Over Horizon</button>
+        </div>
+        <div class="control-group">
+            <label>Rotation:</label>
+            <button onclick="toggleRotation()">Toggle Rotation</button>
+        </div>
+    </div>
+    <div id="info">
+        <h3>Current Demonstration:</h3>
+        <p id="info-text">Select a demonstration to begin exploring how we know Earth is a sphere.</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, earth, ship;
+        let isRotating = false;
+        let currentMode = 'globe';
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            scene.add(ambientLight);
+            const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+            sunLight.position.set(5, 3, 5);
+            scene.add(sunLight);
+
+            // Earth
+            const geometry = new THREE.SphereGeometry(2, 32, 32);
+            const texture = new THREE.TextureLoader().load('/images/earth-texture.jpg');
+            const material = new THREE.MeshPhongMaterial({ map: texture });
+            earth = new THREE.Mesh(geometry, material);
+            scene.add(earth);
+
+            // Initial camera position
+            camera.position.z = 6;
+
+            // Animation loop
+            animate();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (isRotating) {
+                earth.rotation.y += 0.005;
+            }
+            renderer.render(scene, camera);
+        }
+
+        function setViewMode(mode) {
+            currentMode = mode;
+            if (mode === 'flat') {
+                camera.position.set(0, 10, 0);
+                camera.lookAt(0, 0, 0);
+                document.getElementById('info-text').textContent = 
+                    'Flat view: Notice how this perspective distorts the surface, similar to map projections.';
+            } else {
+                camera.position.set(0, 0, 6);
+                camera.lookAt(0, 0, 0);
+                document.getElementById('info-text').textContent = 
+                    'Globe view: This is how Earth appears from space, confirmed by countless satellite images and astronaut observations.';
+            }
+        }
+
+        function showSunsetEffect() {
+            const sunGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+            const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            sun.position.set(8, 0, 0);
+            scene.add(sun);
+            
+            document.getElementById('info-text').textContent = 
+                'The sunset effect demonstrates how the spherical Earth creates different sunset times across the globe. On a flat Earth, everyone would see the sunset at the same time.';
+        }
+
+        function showShipHorizon() {
+            if (ship) scene.remove(ship);
+            
+            const shipGeometry = new THREE.BoxGeometry(0.2, 0.2, 0.4);
+            const shipMaterial = new THREE.MeshPhongMaterial({ color: 0x8b4513 });
+            ship = new THREE.Mesh(shipGeometry, shipMaterial);
+            ship.position.set(2, 2, 0);
+            scene.add(ship);
+
+            document.getElementById('info-text').textContent = 
+                'Ships appear to sink below the horizon as they sail away, which can only happen on a curved surface. On a flat Earth, you would be able to see ships at any distance with a powerful enough telescope.';
+        }
+
+        function toggleRotation() {
+            isRotating = !isRotating;
+            document.getElementById('info-text').textContent = isRotating ? 
+                'Earth\'s rotation causes day and night cycles. This rotation has been observed and measured.' :
+                'Rotation paused. You can observe Earth\'s features more easily.';
+        }
+
+        // Handle window resizing
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize the scene
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>N-Body Problem Simulation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #111;
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      display: block;
+      cursor: pointer;
+    }
+    .controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .slider-container {
+      margin: 10px 0;
+    }
+    label {
+      display: inline-block;
+      width: 150px;
+    }
+    .info {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="controls">
+    <h3>N-Body Problem Simulation</h3>
+    <div class="slider-container">
+      <label>Time Step: </label>
+      <input type="range" id="timeStep" min="0.001" max="0.1" step="0.001" value="0.01">
+      <span id="timeStepValue">0.01</span>
+    </div>
+    <div class="slider-container">
+      <label>Trail Length: </label>
+      <input type="range" id="trailLength" min="10" max="500" value="100">
+      <span id="trailLengthValue">100</span>
+    </div>
+    <button id="reset">Reset (2 Bodies)</button>
+    <button id="randomConfig">Random (3 Bodies)</button>
+    <button id="clearAll">Clear All Bodies</button>
+  </div>
+  <div class="info">
+    Left Click: Add new body | Bodies: <span id="bodyCount">0</span>
+  </div>
+
+  <script>
+    // Canvas setup
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const bodyCountElement = document.getElementById('bodyCount');
+    
+    // Make canvas fill the window
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    
+    // Constants
+    const G = 300; // Reduced gravitational constant for slower movement
+    let timeStep = 0.01;
+    let trailLength = 200;
+    const colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#a3f7bf', '#7d53de', '#f7d6e0', '#f2f0d8'];
+    let nextColorIndex = 0;
+    
+    // Controls
+    const timeStepSlider = document.getElementById('timeStep');
+    const timeStepValue = document.getElementById('timeStepValue');
+    const trailLengthSlider = document.getElementById('trailLength');
+    const trailLengthValue = document.getElementById('trailLengthValue');
+    const resetButton = document.getElementById('reset');
+    const randomButton = document.getElementById('randomConfig');
+    const clearButton = document.getElementById('clearAll');
+    
+    timeStepSlider.addEventListener('input', () => {
+      timeStep = parseFloat(timeStepSlider.value);
+      timeStepValue.textContent = timeStep.toFixed(3);
+    });
+    
+    trailLengthSlider.addEventListener('input', () => {
+      trailLength = parseInt(trailLengthSlider.value);
+      trailLengthValue.textContent = trailLength;
+      // Resize trails array for all bodies
+      bodies.forEach(body => {
+        if (body.trail.length > trailLength) {
+          body.trail = body.trail.slice(body.trail.length - trailLength);
+        }
+      });
+    });
+    
+    resetButton.addEventListener('click', () => {
+      initializeDefaultBodies();
+      updateBodyCount();
+    });
+    
+    randomButton.addEventListener('click', () => {
+      initializeRandomBodies();
+      updateBodyCount();
+    });
+    
+    clearButton.addEventListener('click', () => {
+      bodies = [];
+      updateBodyCount();
+    });
+    
+    // Body class
+    class Body {
+      constructor(x, y, vx, vy, mass, color) {
+        this.x = x;
+        this.y = y;
+        this.vx = vx;
+        this.vy = vy;
+        this.mass = mass;
+        this.radius = Math.sqrt(mass) * 0.8; // Smaller visual radius
+        this.color = color;
+        this.trail = [];
+      }
+      
+      update(dt) {
+        // Update position
+        this.x += this.vx * dt;
+        this.y += this.vy * dt;
+        
+        // Add current position to trail
+        this.trail.push({x: this.x, y: this.y});
+        
+        // Remove oldest trail positions if trail exceeds max length
+        if (this.trail.length > trailLength) {
+          this.trail.shift();
+        }
+      }
+      
+      draw() {
+        // Draw trail
+        if (this.trail.length > 1) {
+          ctx.beginPath();
+          
+          // Create gradient for trail fading
+          for (let i = 0; i < this.trail.length - 1; i++) {
+            const alpha = i / this.trail.length;
+            
+            ctx.strokeStyle = `${this.color}${Math.floor(alpha * 255).toString(16).padStart(2, '0')}`;
+            ctx.lineWidth = 1.5; // Thinner trails
+            
+            ctx.beginPath();
+            ctx.moveTo(this.trail[i].x, this.trail[i].y);
+            ctx.lineTo(this.trail[i+1].x, this.trail[i+1].y);
+            ctx.stroke();
+          }
+        }
+        
+        // Draw body
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    }
+    
+    // Initialize bodies
+    let bodies = [];
+    
+    function initializeDefaultBodies() {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      
+      bodies = [
+        // Binary star system (2 bodies)
+        new Body(centerX - 100, centerY, 0, -10, 100, colors[0]),
+        new Body(centerX + 100, centerY, 0, 10, 100, colors[1])
+      ];
+      
+      nextColorIndex = 2; // Reset next color index
+    }
+    
+    function initializeRandomBodies() {
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const radius = Math.min(canvas.width, canvas.height) / 5;
+      
+      bodies = [];
+      
+      for (let i = 0; i < 3; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = radius * 0.5 + Math.random() * radius * 0.5;
+        
+        const x = centerX + Math.cos(angle) * distance;
+        const y = centerY + Math.sin(angle) * distance;
+        
+        const orbitalAngle = angle + Math.PI/2 + (Math.random() - 0.5) * 0.5;
+        const speed = 5 + Math.random() * 15;
+        const vx = Math.cos(orbitalAngle) * speed;
+        const vy = Math.sin(orbitalAngle) * speed;
+        
+        const mass = 50 + Math.random() * 100;
+        
+        bodies.push(new Body(x, y, vx, vy, mass, colors[i % colors.length]));
+      }
+      
+      nextColorIndex = 3 % colors.length; // Set next color index
+    }
+    
+    // Add body with mouse click
+    canvas.addEventListener('click', (event) => {
+      const x = event.clientX;
+      const y = event.clientY;
+      
+      // Calculate velocity based on position relative to center
+      const centerX = canvas.width / 2;
+      const centerY = canvas.height / 2;
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      
+      // Calculate orbital velocity perpendicular to radius vector
+      const orbitalSpeed = 10 + Math.random() * 5;
+      const vx = -dy / dist * orbitalSpeed;
+      const vy = dx / dist * orbitalSpeed;
+      
+      // Random mass between 50 and 150
+      const mass = 50 + Math.random() * 100;
+      
+      // Add new body
+      bodies.push(new Body(x, y, vx, vy, mass, colors[nextColorIndex % colors.length]));
+      nextColorIndex = (nextColorIndex + 1) % colors.length;
+      
+      updateBodyCount();
+    });
+    
+    function updateBodyCount() {
+      bodyCountElement.textContent = bodies.length;
+    }
+    
+    // Physics calculations
+    function calculateForces() {
+      // Reset accelerations
+      bodies.forEach(body => {
+        body.ax = 0;
+        body.ay = 0;
+      });
+      
+      // Calculate gravitational forces between each pair of bodies
+      for (let i = 0; i < bodies.length; i++) {
+        for (let j = i + 1; j < bodies.length; j++) {
+          const body1 = bodies[i];
+          const body2 = bodies[j];
+          
+          // Calculate distance between bodies
+          const dx = body2.x - body1.x;
+          const dy = body2.y - body1.y;
+          const distSq = dx*dx + dy*dy;
+          const dist = Math.sqrt(distSq);
+          
+          // Avoid division by zero and excessive forces at very small distances
+          const minDist = body1.radius + body2.radius;
+          if (dist < minDist) {
+            continue;
+          }
+          
+          // Calculate gravitational force
+          const force = G * body1.mass * body2.mass / distSq;
+          
+          // Calculate force components
+          const fx = force * dx / dist;
+          const fy = force * dy / dist;
+          
+          // Apply forces (F = ma, so a = F/m)
+          body1.ax += fx / body1.mass;
+          body1.ay += fy / body1.mass;
+          body2.ax -= fx / body2.mass;
+          body2.ay -= fy / body2.mass;
+        }
+      }
+    }
+    
+    function updateBodies(dt) {
+      if (bodies.length <= 1) return; // Need at least 2 bodies for interaction
+      
+      calculateForces();
+      
+      // Update velocities based on accelerations
+      bodies.forEach(body => {
+        body.vx += body.ax * dt;
+        body.vy += body.ay * dt;
+        
+        // Add a very slight drag to keep system more stable over time
+        body.vx *= 0.9999;
+        body.vy *= 0.9999;
+      });
+      
+      // Update positions based on velocities
+      bodies.forEach(body => {
+        body.update(dt);
+      });
+      
+      // Keep bodies within bounds with a soft bounce
+      const padding = 50;
+      bodies.forEach(body => {
+        if (body.x < padding) {
+          body.x = padding;
+          body.vx = Math.abs(body.vx) * 0.8;
+        }
+        if (body.x > canvas.width - padding) {
+          body.x = canvas.width - padding;
+          body.vx = -Math.abs(body.vx) * 0.8;
+        }
+        if (body.y < padding) {
+          body.y = padding;
+          body.vy = Math.abs(body.vy) * 0.8;
+        }
+        if (body.y > canvas.height - padding) {
+          body.y = canvas.height - padding;
+          body.vy = -Math.abs(body.vy) * 0.8;
+        }
+      });
+    }
+    
+    // Drawing
+    function draw() {
+      // Clear canvas
+      ctx.fillStyle = '#111';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw all bodies
+      bodies.forEach(body => {
+        body.draw();
+      });
+    }
+    
+    // Animation loop
+    let lastTime = 0;
+    
+    function animate(currentTime) {
+      const deltaTime = (currentTime - lastTime) / 1000; // Convert to seconds
+      lastTime = currentTime;
+      
+      updateBodies(timeStep);
+      draw();
+      
+      requestAnimationFrame(animate);
+    }
+    
+    // Start simulation with default 2 bodies
+    initializeDefaultBodies();
+    updateBodyCount();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
