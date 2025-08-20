@@ -1,0 +1,375 @@
+---
+// Analog Clock with Degrees - Educational Tool
+---
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analog Clock with Degrees - C00lnerd Tutoring</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            opacity: 0.9;
+        }
+
+        .clock-container {
+            position: relative;
+            width: min(90vw, 400px);
+            height: min(90vw, 400px);
+            margin: 20px auto;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clock {
+            position: relative;
+            width: min(80vw, 350px);
+            height: min(80vw, 350px);
+            border: 8px solid #333;
+            border-radius: 50%;
+            background: radial-gradient(circle, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .center-dot {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 16px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .number {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            transform: translate(-50%, -50%);
+        }
+
+        .degree {
+            position: absolute;
+            font-size: 14px;
+            color: #666;
+            transform: translate(-50%, -50%);
+        }
+
+        .tick {
+            position: absolute;
+            background: #333;
+            transform-origin: center bottom;
+        }
+
+        .tick.hour {
+            width: 4px;
+            height: 30px;
+            left: calc(50% - 2px);
+            top: 10px;
+        }
+
+        .tick.minute {
+            width: 2px;
+            height: 15px;
+            left: calc(50% - 1px);
+            top: 25px;
+        }
+
+        .hand {
+            position: absolute;
+            background: #333;
+            transform-origin: bottom center;
+            border-radius: 2px;
+        }
+
+        .hour-hand {
+            width: 6px;
+            height: 80px;
+            top: 95px;
+            left: 50%;
+            margin-left: -3px;
+            background: #333;
+        }
+
+        .minute-hand {
+            width: 4px;
+            height: 110px;
+            top: 65px;
+            left: 50%;
+            margin-left: -2px;
+            background: #555;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 120px;
+            top: 55px;
+            left: 50%;
+            margin-left: -1px;
+            background: #e74c3c;
+        }
+
+        .digital-time {
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-panel {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .angle-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .angle-box {
+            padding: 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            transition: background 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .clock-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .clock {
+                width: 260px;
+                height: 260px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .angle-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-button">← Back to Home</a>
+    
+    <div class="header">
+        <h1>Analog Clock with Degrees</h1>
+        <p>Learn to read time and understand angles around the clock face</p>
+    </div>
+
+    <div class="clock-container">
+        <div class="clock" id="clock">
+            <div class="center-dot"></div>
+            
+            <!-- Hour hand -->
+            <div class="hand hour-hand" id="hourHand"></div>
+            
+            <!-- Minute hand -->
+            <div class="hand minute-hand" id="minuteHand"></div>
+            
+            <!-- Second hand -->
+            <div class="hand second-hand" id="secondHand"></div>
+        </div>
+    </div>
+
+    <div class="digital-time" id="digitalTime"></div>
+
+    <div class="info-panel">
+        <h3>🕐 Clock Hand Angles</h3>
+        <div class="angle-info">
+            <div class="angle-box">
+                <strong>Hour Hand</strong><br>
+                <span id="hourAngle">0°</span>
+            </div>
+            <div class="angle-box">
+                <strong>Minute Hand</strong><br>
+                <span id="minuteAngle">0°</span>
+            </div>
+            <div class="angle-box">
+                <strong>Second Hand</strong><br>
+                <span id="secondAngle">0°</span>
+            </div>
+        </div>
+        <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.8;">
+            💡 <strong>Fun Fact:</strong> Each hour represents 30°, each minute represents 6°, and each second represents 6°!
+        </p>
+    </div>
+
+    <script is:inline>
+        function createClockFace() {
+            const clock = document.getElementById('clock');
+            const clockRect = clock.getBoundingClientRect();
+            const clockSize = Math.min(clockRect.width, clockRect.height);
+            const centerX = clockSize / 2;
+            const centerY = clockSize / 2;
+            
+            // Create hour numbers and degree markings
+            for (let i = 1; i <= 12; i++) {
+                // Calculate angle for this hour (12 o'clock is 0°, 3 o'clock is 90°, etc.)
+                const angle = (i * 30) - 90; // -90 to start at 12 o'clock
+                const radian = (angle * Math.PI) / 180;
+                
+                // Position for numbers (closer to edge) - scale with clock size
+                const numberRadius = clockSize * 0.4;
+                const numberX = centerX + numberRadius * Math.cos(radian);
+                const numberY = centerY + numberRadius * Math.sin(radian);
+                
+                // Position for degrees (further from center) - scale with clock size
+                const degreeRadius = clockSize * 0.31;
+                const degreeX = centerX + degreeRadius * Math.cos(radian);
+                const degreeY = centerY + degreeRadius * Math.sin(radian);
+                
+                // Create number element
+                const numberElement = document.createElement('div');
+                numberElement.className = 'number';
+                numberElement.textContent = String(i);
+                numberElement.style.left = numberX + 'px';
+                numberElement.style.top = numberY + 'px';
+                clock.appendChild(numberElement);
+                
+                // Create degree element
+                const degreeElement = document.createElement('div');
+                degreeElement.className = 'degree';
+                const degreeValue = i === 12 ? 0 : (i * 30);
+                degreeElement.textContent = degreeValue + '°';
+                degreeElement.style.left = degreeX + 'px';
+                degreeElement.style.top = degreeY + 'px';
+                clock.appendChild(degreeElement);
+            }
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours() % 12;
+            const minutes = now.getMinutes();
+            const seconds = now.getSeconds();
+            
+            // Calculate angles
+            const secondAngle = seconds * 6; // 360° / 60 seconds = 6° per second
+            const minuteAngle = minutes * 6 + seconds * 0.1; // 6° per minute + smooth transition
+            const hourAngle = hours * 30 + minutes * 0.5; // 30° per hour + smooth transition
+            
+            // Update hand positions
+            document.getElementById('hourHand').style.transform = `rotate(${hourAngle}deg)`;
+            document.getElementById('minuteHand').style.transform = `rotate(${minuteAngle}deg)`;
+            document.getElementById('secondHand').style.transform = `rotate(${secondAngle}deg)`;
+            
+            // Update digital time
+            const digitalTime = now.toLocaleTimeString();
+            document.getElementById('digitalTime').textContent = digitalTime;
+            
+            // Update angle displays
+            document.getElementById('hourAngle').textContent = Math.round(hourAngle) + '°';
+            document.getElementById('minuteAngle').textContent = Math.round(minuteAngle) + '°';
+            document.getElementById('secondAngle').textContent = Math.round(secondAngle) + '°';
+        }
+
+        // Initialize clock face
+        createClockFace();
+        
+        // Update clock every second
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // Add some educational interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const clock = document.getElementById('clock');
+            
+            clock.addEventListener('click', function(e) {
+                const rect = clock.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const clickX = e.clientX - centerX;
+                const clickY = e.clientY - centerY;
+                
+                // Calculate angle from center
+                let angle = Math.atan2(clickY, clickX) * (180 / Math.PI);
+                angle = (angle + 90 + 360) % 360; // Adjust to start from 12 o'clock
+                
+                // Show angle in a temporary popup
+                const popup = document.createElement('div');
+                popup.style.position = 'fixed';
+                popup.style.left = e.clientX + 'px';
+                popup.style.top = e.clientY + 'px';
+                popup.style.background = 'rgba(0,0,0,0.8)';
+                popup.style.color = 'white';
+                popup.style.padding = '5px 10px';
+                popup.style.borderRadius = '5px';
+                popup.style.fontSize = '14px';
+                popup.style.zIndex = '1000';
+                popup.style.pointerEvents = 'none';
+                popup.textContent = `${Math.round(angle)}°`;
+                
+                document.body.appendChild(popup);
+                
+                setTimeout(() => {
+                    document.body.removeChild(popup);
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

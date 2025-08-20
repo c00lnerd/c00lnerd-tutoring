@@ -1,0 +1,43 @@
+---
+export interface Props {
+	title?: string;
+	description?: string;
+}
+
+const { title = "C00lnerd Tutoring - Expert STEM Education", description = "Professional tutoring services for Physical Science, Programming, and STEM subjects. Serving homeschool families and co-ops with proven curriculum and personalized instruction." } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="description" content={description} />
+		<meta name="keywords" content="tutoring, STEM education, physical science, programming, homeschool, co-op, Arduino, miniAuto, Christian education" />
+		<title>{title}</title>
+		
+		<!-- Google Fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+		
+		<!-- Font Awesome for icons -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	</head>
+	<body class="font-inter bg-gray-50">
+		<slot />
+	</body>
+</html>
+
+<style>
+	html {
+		font-family: 'Inter', system-ui, sans-serif;
+	}
+	
+	body {
+		margin: 0;
+		line-height: 1.6;
+	}
+</style>
