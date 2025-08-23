@@ -7,15 +7,15 @@ import Layout from '../../layouts/Layout.astro';
         <h1>24 Game Solver</h1>
         
         <div class="help">
-            <p>Enter four numbers between 1 and 13 to find all possible ways to make 24 using basic operations (+, -, *, /).</p>
+            <p>Enter four numbers between 1 and 50 to find all possible ways to make 24 using basic operations (+, -, *, /).</p>
             <p>For example, try: 4, 7, 8, 8 or 5, 5, 5, 1</p>
         </div>
         
         <div class="input-section">
-            <input type="number" min="1" max="13" id="num1" value="4">
-            <input type="number" min="1" max="13" id="num2" value="7">
-            <input type="number" min="1" max="13" id="num3" value="8">
-            <input type="number" min="1" max="13" id="num4" value="8">
+            <input type="number" min="1" max="50" id="num1" value="4">
+            <input type="number" min="1" max="50" id="num2" value="7">
+            <input type="number" min="1" max="50" id="num3" value="8">
+            <input type="number" min="1" max="50" id="num4" value="8">
         </div>
         
         <div style="text-align: center;">
@@ -427,7 +427,7 @@ import Layout from '../../layouts/Layout.astro';
             const num4 = parseFloat(document.getElementById('num4').value);
             
             if (!isValidInput(num1) || !isValidInput(num2) || !isValidInput(num3) || !isValidInput(num4)) {
-                alert("Please enter numbers between 1 and 13.");
+                alert("Please enter numbers between 1 and 50.");
                 return;
             }
             
@@ -441,7 +441,7 @@ import Layout from '../../layouts/Layout.astro';
         }
         
         function isValidInput(num) {
-            return !isNaN(num) && num >= 1 && num <= 13;
+            return !isNaN(num) && num >= 1 && num <= 50;
         }
         
         function displaySolutions(solutions, numbers, showAll, categorize) {
