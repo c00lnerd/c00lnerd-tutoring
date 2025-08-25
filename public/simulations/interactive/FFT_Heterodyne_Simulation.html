@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FFT Heterodyne Receiver Simulation</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <style>
+    body {
+      background-color: #222;
+      color: #eee;
+      font-family: sans-serif;
+      text-align: center;
+    }
+    canvas {
+      display: block;
+      margin: 10px auto;
+      background-color: #000;
+      border: 1px solid #444;
+    }
+    #controls {
+      margin: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+    .control-group {
+      background: #333;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      background: #555;
+      color: #eee;
+      border: none;
+      border-radius: 3px;
+    }
+    button:hover {
+      background: #666;
+    }
+    button.active {
+      background: #4CAF50;
+    }
+    input[type="range"] {
+      width: 200px;
+      margin: 5px;
+    }
+    label {
+      display: block;
+      margin: 5px 0;
+      font-size: 0.9rem;
+    }
+    .freq-display {
+      font-family: monospace;
+      font-size: 1.1rem;
+      color: #4CAF50;
+      margin: 5px;
+    }
+    .info-panel {
+      background: #333;
+      padding: 15px;
+      margin: 10px auto;
+      max-width: 800px;
+      border-radius: 5px;
+      text-align: left;
+    }
+    #fftCanvas {
+      cursor: crosshair;
+    }
+    #fftCanvas:hover {
+      cursor: pointer;
+    }
+    .frequency-tooltip {
+      position: fixed;
+      background: rgba(0, 0, 0, 0.8);
+      color: #4CAF50;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 12px;
+      font-family: monospace;
+      pointer-events: none;
+      z-index: 1001;
+      border: 1px solid #4CAF50;
+    }
+  </style>
+</head>
+<body>
+  <h1>FFT Heterodyne Receiver Simulation</h1>
+  <p>Ham Radio Style Frequency Translation & Zoom</p>
+  
+  <!-- Start Audio Button -->
+  <button id="startAudio">Start Audio</button>
+  
+  <!-- Control Panel -->
+  <div id="controls" style="display:none;">
+    <div class="control-group">
+      <label>Mode:</label>
+      <button id="toggleMode" class="active">Wideband FFT</button>
+    </div>
+    
+    <div class="control-group">
+      <label>Carrier Frequency (Hz):</label>
+      <input type="range" id="carrierFreq" min="100" max="20000" value="1000" step="10">
+      <div class="freq-display" id="carrierDisplay">1000 Hz</div>
+      <input type="number" id="carrierFreqInput" min="100" max="20000" value="1000" step="1" 
+             style="width: 80px; margin-top: 5px; background: #555; color: #eee; border: 1px solid #666; border-radius: 3px; padding: 3px;">
+    </div>
+    
+    <div class="control-group">
+      <label>Zoom Bandwidth (Hz):</label>
+      <input type="range" id="zoomBandwidth" min="50" max="2000" value="500" step="25">
+      <div class="freq-display" id="bandwidthDisplay">500 Hz</div>
+      <input type="number" id="zoomBandwidthInput" min="50" max="2000" value="500" step="1"
+             style="width: 80px; margin-top: 5px; background: #555; color: #eee; border: 1px solid #666; border-radius: 3px; padding: 3px;">
+    </div>
+    
+    <div class="control-group">
+      <label>Filter Order:</label>
+      <input type="range" id="filterOrder" min="2" max="8" value="4" step="1">
+      <div class="freq-display" id="filterDisplay">4</div>
+      <input type="number" id="filterOrderInput" min="2" max="8" value="4" step="1"
+             style="width: 60px; margin-top: 5px; background: #555; color: #eee; border: 1px solid #666; border-radius: 3px; padding: 3px;">
+    </div>
+    
+    <div class="control-group">
+      <button id="toggleAmp">Linear Amp</button>
+      <button id="toggleFreeze">Freeze</button>
+      <button id="toggleMax">Show Max</button>
+    </div>
+  </div>
+
+  <!-- Main FFT Canvas -->
+  <canvas id="fftCanvas" width="800" height="400"></canvas>
+  
+  <!-- Heterodyne Canvas -->
+  <canvas id="hetCanvas" width="800" height="300" style="display:none;"></canvas>
+  
+  <!-- Waterfall Canvas -->
+  <canvas id="waterfallCanvas" width="800" height="200"></canvas>
+
+  <div class="info-panel">
+    <h3>🔬 Heterodyne Receiver Theory</h3>
+    <p><strong>Frequency Translation:</strong> Mixing input signal with a local oscillator (carrier) creates sum and difference frequencies. The difference frequency centers our signal of interest around 0 Hz (baseband).</p>
+    <p><strong>Low-Pass Filtering:</strong> Removes the high-frequency sum components and noise outside our bandwidth of interest.</p>
+    <p><strong>Zoom FFT:</strong> Taking FFT of the filtered baseband signal gives high-resolution view of frequencies around the carrier.</p>
+    <p><strong>Applications:</strong> Software Defined Radio (SDR), spectrum analyzers, communication receivers.</p>
+  </div>
+
+  <script>
+    // ============== DOM and Canvas Setup ==============
+    const fftCanvas = document.getElementById("fftCanvas");
+    const ctx = fftCanvas.getContext("2d");
+    const hetCanvas = document.getElementById("hetCanvas");
+    const hetCtx = hetCanvas.getContext("2d");
+    const waterfallCanvas = document.getElementById("waterfallCanvas");
+    const waterfallCtx = waterfallCanvas.getContext("2d");
+
+    const marginLeft = 50;
+    const marginBottom = 40;
+
+    // ============== Control Variables ==============
+    let heterodyneMode = false;
+    let carrierFreq = 1000;
+    let zoomBandwidth = 500;
+    let filterOrder = 4;
+    let ampLog = false;
+    let freeze = false;
+    let showMax = false;
+
+    // ============== Audio Setup ==============
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = new AudioContext();
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 4096; // Higher resolution for better heterodyne performance
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    const timeDataArray = new Float32Array(analyser.fftSize);
+
+    // Heterodyne processing buffers
+    let mixedSignal = new Float32Array(analyser.fftSize);
+    let filteredSignal = new Float32Array(analyser.fftSize);
+
+    // ============== Digital Signal Processing Functions ==============
+    
+    // Simple Butterworth low-pass filter implementation
+    class ButterworthFilter {
+      constructor(cutoffFreq, sampleRate, order = 4) {
+        this.cutoff = cutoffFreq;
+        this.sampleRate = sampleRate;
+        this.order = order;
+        this.reset();
+      }
+      
+      reset() {
+        this.x = new Array(this.order + 1).fill(0);
+        this.y = new Array(this.order + 1).fill(0);
+        this.calculateCoefficients();
+      }
+      
+      calculateCoefficients() {
+        const wc = 2 * Math.PI * this.cutoff / this.sampleRate;
+        const k = Math.tan(wc / 2);
+        const k2 = k * k;
+        
+        // Simplified 2nd order coefficients (can be extended for higher orders)
+        const norm = 1 + Math.sqrt(2) * k + k2;
+        this.b = [(k2) / norm, (2 * k2) / norm, (k2) / norm];
+        this.a = [1, (2 * (k2 - 1)) / norm, (1 - Math.sqrt(2) * k + k2) / norm];
+      }
+      
+      process(input) {
+        // Shift delay line
+        for (let i = this.order; i > 0; i--) {
+          this.x[i] = this.x[i-1];
+          this.y[i] = this.y[i-1];
+        }
+        this.x[0] = input;
+        
+        // Calculate output (2nd order for simplicity)
+        this.y[0] = this.b[0] * this.x[0] + this.b[1] * this.x[1] + this.b[2] * this.x[2] 
+                   - this.a[1] * this.y[1] - this.a[2] * this.y[2];
+        
+        return this.y[0];
+      }
+    }
+
+    let lowPassFilter = new ButterworthFilter(zoomBandwidth / 2, audioCtx.sampleRate, filterOrder);
+
+    // ============== Heterodyne Processing ==============
+    function performHeterodyneMixing(timeData) {
+      const sampleRate = audioCtx.sampleRate;
+      const carrierAngularFreq = 2 * Math.PI * carrierFreq / sampleRate;
+      
+      // Mix with carrier (local oscillator) - both I and Q components
+      for (let i = 0; i < timeData.length; i++) {
+        const carrierI = Math.cos(carrierAngularFreq * i);
+        const carrierQ = Math.sin(carrierAngularFreq * i);
+        // Use I component for simplicity (could implement complex mixing)
+        mixedSignal[i] = timeData[i] * carrierI;
+      }
+      
+      // Low-pass filter to remove sum frequencies
+      lowPassFilter.reset(); // Reset filter state for clean processing
+      for (let i = 0; i < mixedSignal.length; i++) {
+        filteredSignal[i] = lowPassFilter.process(mixedSignal[i]);
+      }
+      
+      return filteredSignal;
+    }
+
+    // ============== Utility Functions ==============
+    function frequencyToNoteName(frequency) {
+      const noteNumber = 12 * Math.log2(frequency / 440) + 69;
+      const rounded = Math.round(noteNumber);
+      const noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      const noteIndex = ((rounded % 12) + 12) % 12;
+      const octave = Math.floor(rounded / 12) - 1;
+      return noteNames[noteIndex] + octave;
+    }
+
+    // ============== Event Listeners ==============
+    document.getElementById("startAudio").addEventListener("click", () => {
+      if (audioCtx.state === "suspended") {
+        audioCtx.resume();
+      }
+      navigator.mediaDevices.getUserMedia({ 
+        audio: { 
+          sampleRate: 24000,
+          channelCount: 1,
+          echoCancellation: false,
+          noiseSuppression: false,
+          autoGainControl: false
+        }, 
+        video: false 
+      })
+        .then(stream => {
+          const source = audioCtx.createMediaStreamSource(stream);
+          source.connect(analyser);
+          document.getElementById("startAudio").style.display = "none";
+          document.getElementById("controls").style.display = "flex";
+          draw();
+        })
+        .catch(err => {
+          console.error("Error accessing microphone:", err);
+        });
+    });
+
+    document.getElementById("toggleMode").addEventListener("click", (e) => {
+      heterodyneMode = !heterodyneMode;
+      e.target.textContent = heterodyneMode ? "Heterodyne Mode" : "Wideband FFT";
+      e.target.className = heterodyneMode ? "active" : "";
+      
+      // Show/hide appropriate canvases
+      if (heterodyneMode) {
+        hetCanvas.style.display = "block";
+        fftCanvas.style.height = "300px";
+      } else {
+        hetCanvas.style.display = "none";
+        fftCanvas.style.height = "400px";
+      }
+    });
+
+    // Carrier frequency controls
+    document.getElementById("carrierFreq").addEventListener("input", (e) => {
+      carrierFreq = parseInt(e.target.value);
+      document.getElementById("carrierDisplay").textContent = carrierFreq + " Hz";
+      document.getElementById("carrierFreqInput").value = carrierFreq;
+    });
+
+    document.getElementById("carrierFreqInput").addEventListener("input", (e) => {
+      const value = parseInt(e.target.value);
+      if (value >= 100 && value <= 20000) {
+        carrierFreq = value;
+        document.getElementById("carrierFreq").value = carrierFreq;
+        document.getElementById("carrierDisplay").textContent = carrierFreq + " Hz";
+      }
+    });
+
+    // Zoom bandwidth controls
+    document.getElementById("zoomBandwidth").addEventListener("input", (e) => {
+      zoomBandwidth = parseInt(e.target.value);
+      document.getElementById("bandwidthDisplay").textContent = zoomBandwidth + " Hz";
+      document.getElementById("zoomBandwidthInput").value = zoomBandwidth;
+      lowPassFilter = new ButterworthFilter(zoomBandwidth / 2, audioCtx.sampleRate, filterOrder);
+    });
+
+    document.getElementById("zoomBandwidthInput").addEventListener("input", (e) => {
+      const value = parseInt(e.target.value);
+      if (value >= 50 && value <= 2000) {
+        zoomBandwidth = value;
+        document.getElementById("zoomBandwidth").value = zoomBandwidth;
+        document.getElementById("bandwidthDisplay").textContent = zoomBandwidth + " Hz";
+        lowPassFilter = new ButterworthFilter(zoomBandwidth / 2, audioCtx.sampleRate, filterOrder);
+      }
+    });
+
+    // Filter order controls
+    document.getElementById("filterOrder").addEventListener("input", (e) => {
+      filterOrder = parseInt(e.target.value);
+      document.getElementById("filterDisplay").textContent = filterOrder;
+      document.getElementById("filterOrderInput").value = filterOrder;
+      lowPassFilter = new ButterworthFilter(zoomBandwidth / 2, audioCtx.sampleRate, filterOrder);
+    });
+
+    document.getElementById("filterOrderInput").addEventListener("input", (e) => {
+      const value = parseInt(e.target.value);
+      if (value >= 2 && value <= 8) {
+        filterOrder = value;
+        document.getElementById("filterOrder").value = filterOrder;
+        document.getElementById("filterDisplay").textContent = filterOrder;
+        lowPassFilter = new ButterworthFilter(zoomBandwidth / 2, audioCtx.sampleRate, filterOrder);
+      }
+    });
+
+    document.getElementById("toggleAmp").addEventListener("click", (e) => {
+      ampLog = !ampLog;
+      e.target.textContent = ampLog ? "Log Amp" : "Linear Amp";
+    });
+
+    document.getElementById("toggleFreeze").addEventListener("click", (e) => {
+      freeze = !freeze;
+      e.target.textContent = freeze ? "Unfreeze" : "Freeze";
+    });
+
+    document.getElementById("toggleMax").addEventListener("click", (e) => {
+      showMax = !showMax;
+      e.target.textContent = showMax ? "Hide Max" : "Show Max";
+    });
+
+    // Create frequency tooltip
+    let frequencyTooltip = null;
+    
+    function createFrequencyTooltip() {
+      if (!frequencyTooltip) {
+        frequencyTooltip = document.createElement('div');
+        frequencyTooltip.className = 'frequency-tooltip';
+        frequencyTooltip.style.display = 'none';
+        document.body.appendChild(frequencyTooltip);
+      }
+    }
+    
+    function getFrequencyFromMousePos(e) {
+      const rect = fftCanvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      
+      if (x >= marginLeft && x <= rect.width) {
+        // Calculate frequency based on canvas pixel position
+        const canvasWidth = fftCanvas.width;
+        const drawAreaWidth = canvasWidth - marginLeft;
+        
+        // Scale mouse position to canvas coordinates
+        const scaleX = canvasWidth / rect.width;
+        const canvasX = x * scaleX;
+        const relativeX = (canvasX - marginLeft) / drawAreaWidth;
+        
+        // Use simple Nyquist frequency calculation
+        const maxFreq = audioCtx.sampleRate / 2;
+        const frequency = relativeX * maxFreq;
+        
+        return frequency;
+      }
+      return null;
+    }
+
+    // Add mouse move handler for frequency tooltip
+    fftCanvas.addEventListener("mousemove", (e) => {
+      createFrequencyTooltip();
+      const frequency = getFrequencyFromMousePos(e);
+      
+      if (frequency !== null) {
+        frequencyTooltip.style.display = 'block';
+        frequencyTooltip.style.left = (e.clientX + 10) + 'px';
+        frequencyTooltip.style.top = (e.clientY - 30) + 'px';
+        frequencyTooltip.textContent = `${Math.round(frequency)} Hz`;
+      } else {
+        frequencyTooltip.style.display = 'none';
+      }
+    });
+
+    // Hide tooltip when mouse leaves canvas
+    fftCanvas.addEventListener("mouseleave", () => {
+      if (frequencyTooltip) {
+        frequencyTooltip.style.display = 'none';
+      }
+    });
+
+    // Add mouse click handler for carrier frequency selection
+    fftCanvas.addEventListener("click", (e) => {
+      const frequency = getFrequencyFromMousePos(e);
+      
+      if (frequency !== null) {
+        // Update carrier frequency (clamp first, then round)
+        const clampedFreq = Math.max(100, Math.min(20000, frequency));
+        carrierFreq = Math.round(clampedFreq);
+        
+        // Update slider and display
+        document.getElementById("carrierFreq").value = carrierFreq;
+        document.getElementById("carrierDisplay").textContent = carrierFreq + " Hz";
+        
+        // Update filter with new frequency
+        lowPassFilter = new ButterworthFilter(zoomBandwidth / 2, audioCtx.sampleRate, filterOrder);
+        
+        // Visual feedback - show both clicked and clamped frequencies
+        showClickFeedback(e.clientX, e.clientY, frequency, carrierFreq);
+      }
+    });
+
+    // Show visual feedback when clicking to set frequency
+    function showClickFeedback(x, y, clickedFreq, actualFreq) {
+      const feedback = document.createElement('div');
+      feedback.style.position = 'fixed';
+      feedback.style.left = x + 'px';
+      feedback.style.top = y + 'px';
+      feedback.style.background = 'rgba(255, 68, 68, 0.9)';
+      feedback.style.color = 'white';
+      feedback.style.padding = '5px 10px';
+      feedback.style.borderRadius = '5px';
+      feedback.style.fontSize = '12px';
+      feedback.style.zIndex = '1000';
+      feedback.style.pointerEvents = 'none';
+      feedback.style.transform = 'translate(-50%, -100%)';
+      
+      if (Math.abs(clickedFreq - actualFreq) > 10) {
+        feedback.textContent = `Clicked: ${Math.round(clickedFreq)} Hz → Set: ${actualFreq} Hz (clamped)`;
+        feedback.style.background = 'rgba(255, 165, 0, 0.9)'; // Orange for clamped
+      } else {
+        feedback.textContent = `Carrier: ${actualFreq} Hz`;
+      }
+      
+      document.body.appendChild(feedback);
+      
+      // Animate and remove
+      setTimeout(() => {
+        feedback.style.transition = 'opacity 0.3s, transform 0.3s';
+        feedback.style.opacity = '0';
+        feedback.style.transform = 'translate(-50%, -120%)';
+        setTimeout(() => {
+          if (feedback.parentNode) {
+            document.body.removeChild(feedback);
+          }
+        }, 300);
+      }, 1500);
+    }
+
+    // ============== Drawing Functions ==============
+    function draw() {
+      requestAnimationFrame(draw);
+      if (freeze) return;
+
+      // Get time domain data for heterodyne processing
+      analyser.getFloatTimeDomainData(timeDataArray);
+      
+      if (heterodyneMode) {
+        // Perform heterodyne mixing and filtering
+        const hetSignal = performHeterodyneMixing(timeDataArray);
+        
+        // Create a temporary audio buffer for the heterodyne signal
+        // (In a real implementation, you'd use Web Audio API's ScriptProcessorNode or AudioWorklet)
+        drawHeterodyneSpectrum(hetSignal);
+      }
+      
+      // Always draw the main wideband FFT
+      analyser.getByteFrequencyData(dataArray);
+      drawMainFFT();
+      updateWaterfall();
+    }
+
+    function drawMainFFT() {
+      const canvas = fftCanvas;
+      const context = ctx;
+      const drawAreaWidth = canvas.width - marginLeft;
+      const drawAreaHeight = canvas.height - marginBottom;
+
+      // Clear canvas
+      context.fillStyle = "#000";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw FFT bars
+      const groupSize = 4;
+      const numGroups = Math.floor(bufferLength / groupSize);
+      const barWidth = drawAreaWidth / numGroups;
+
+      let maxValue = 0;
+      let maxIndex = 0;
+
+      for (let i = 0; i < numGroups; i++) {
+        let sum = 0;
+        for (let j = 0; j < groupSize; j++) {
+          sum += dataArray[i * groupSize + j];
+        }
+        let avg = sum / groupSize;
+        let barHeight = ampLog ? Math.log(avg + 1) * 20 : avg * (drawAreaHeight / 255);
+
+        if (avg > maxValue) {
+          maxValue = avg;
+          maxIndex = i;
+        }
+
+        const x = marginLeft + i * barWidth;
+        
+        // Color coding: highlight carrier frequency region in heterodyne mode
+        if (heterodyneMode) {
+          const freqResolution = audioCtx.sampleRate / analyser.fftSize;
+          const binFreq = (i * groupSize + groupSize / 2) * freqResolution;
+          const carrierBin = carrierFreq / freqResolution / groupSize;
+          const bandwidthBins = zoomBandwidth / freqResolution / groupSize;
+          
+          if (Math.abs(i - carrierBin) < bandwidthBins / 2) {
+            context.fillStyle = "#FFD700"; // Gold for carrier region
+          } else {
+            context.fillStyle = "#444"; // Dimmed for other frequencies
+          }
+        } else {
+          context.fillStyle = "lime";
+        }
+        
+        context.fillRect(x, canvas.height - marginBottom - barHeight, barWidth, barHeight);
+      }
+
+      // Draw carrier frequency marker in heterodyne mode
+      if (heterodyneMode) {
+        // Use the same frequency scale as mouse hover calculation
+        const maxFreq = audioCtx.sampleRate / 2;
+        const carrierPosition = (carrierFreq / maxFreq) * drawAreaWidth;
+        const x = marginLeft + carrierPosition;
+        
+        context.strokeStyle = "#FF4444";
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(x, 0);
+        context.lineTo(x, canvas.height - marginBottom);
+        context.stroke();
+        
+        context.fillStyle = "#FF4444";
+        context.font = "12px sans-serif";
+        context.fillText(`Carrier: ${carrierFreq} Hz`, x + 5, 20);
+      }
+
+      // Show max marker
+      if (showMax && maxValue > 0) {
+        const freqResolution = audioCtx.sampleRate / analyser.fftSize;
+        const frequency = (maxIndex * groupSize + groupSize / 2) * freqResolution;
+        const x = marginLeft + maxIndex * barWidth;
+        const barHeight = ampLog ? Math.log(maxValue + 1) * 20 : maxValue * (drawAreaHeight / 255);
+        
+        context.fillStyle = "red";
+        context.fillRect(x, canvas.height - marginBottom - barHeight - 5, barWidth, 5);
+        
+        context.fillStyle = "white";
+        context.font = "12px sans-serif";
+        context.fillText(`Max: ${frequency.toFixed(1)} Hz`, x + 5, canvas.height - marginBottom - barHeight - 10);
+      }
+
+      drawAxes(context, canvas, audioCtx.sampleRate / 2, "Wideband Spectrum", false, heterodyneMode);
+    }
+
+    function drawHeterodyneSpectrum(hetSignal) {
+      const canvas = hetCanvas;
+      const context = hetCtx;
+      const drawAreaWidth = canvas.width - marginLeft;
+      const drawAreaHeight = canvas.height - marginBottom;
+
+      // Clear canvas
+      context.fillStyle = "#000";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Calculate frequency range for higher resolution display
+      const sampleRate = audioCtx.sampleRate;
+      const freqResolution = sampleRate / analyser.fftSize;
+      
+      // Find the frequency bins that correspond to our zoom bandwidth
+      const startFreq = carrierFreq - zoomBandwidth / 2;
+      const endFreq = carrierFreq + zoomBandwidth / 2;
+      const startBin = Math.max(0, Math.floor(startFreq / freqResolution));
+      const endBin = Math.min(dataArray.length, Math.ceil(endFreq / freqResolution));
+      
+      // Extract individual bins for higher resolution (no grouping)
+      const zoomedSpectrum = [];
+      for (let i = startBin; i < endBin; i++) {
+        if (i < dataArray.length) {
+          zoomedSpectrum.push(dataArray[i]);
+        }
+      }
+
+      // Draw zoomed spectrum data
+      const barWidth = drawAreaWidth / zoomedSpectrum.length;
+      const maxHetValue = Math.max(...zoomedSpectrum);
+
+      // Only draw if we have valid data
+      if (maxHetValue > 0 && isFinite(maxHetValue)) {
+        for (let i = 0; i < zoomedSpectrum.length; i++) {
+          const magnitude = zoomedSpectrum[i];
+          if (magnitude > 0 && isFinite(magnitude)) {
+            const normalizedMag = magnitude / maxHetValue;
+            const barHeight = normalizedMag * drawAreaHeight * 0.8;
+            
+            const x = marginLeft + i * barWidth;
+            context.fillStyle = "#00FFFF"; // Cyan for heterodyne spectrum
+            context.fillRect(x, canvas.height - marginBottom - barHeight, barWidth, barHeight);
+          }
+        }
+      } else {
+        // Draw a message if no signal detected
+        context.fillStyle = "#888";
+        context.font = "14px sans-serif";
+        context.fillText("No signal detected in heterodyne bandwidth", marginLeft + 20, canvas.height / 2);
+      }
+
+      // Draw frequency axis for heterodyne showing actual frequency range
+      drawAxes(context, canvas, zoomBandwidth, `Heterodyne Spectrum (${startFreq.toFixed(0)}-${endFreq.toFixed(0)} Hz)`, true);
+    }
+
+    function drawAxes(context, canvas, maxFreq, title, isHeterodyne = false, hasCarrierLabel = false) {
+      context.strokeStyle = "#555";
+      context.lineWidth = 1;
+      context.fillStyle = "#eee";
+      context.font = "10px sans-serif";
+
+      const drawAreaWidth = canvas.width - marginLeft;
+      const drawAreaHeight = canvas.height - marginBottom;
+
+      // Draw axes
+      context.beginPath();
+      context.moveTo(marginLeft, canvas.height - marginBottom);
+      context.lineTo(canvas.width, canvas.height - marginBottom);
+      context.moveTo(marginLeft, 0);
+      context.lineTo(marginLeft, canvas.height - marginBottom);
+      context.stroke();
+
+      // X-axis ticks
+      const numTicks = 6;
+      for (let i = 0; i <= numTicks; i++) {
+        let freq, label;
+        
+        if (isHeterodyne) {
+          // For heterodyne mode: show actual frequency range being displayed
+          const startFreq = carrierFreq - zoomBandwidth / 2;
+          const actualFreq = startFreq + (i / numTicks) * zoomBandwidth;
+          const relativeFreq = actualFreq - carrierFreq;
+          freq = actualFreq;
+          label = `${Math.round(actualFreq)} (${relativeFreq >= 0 ? '+' : ''}${Math.round(relativeFreq)})`;
+        } else {
+          // For wideband mode: show absolute frequencies using Nyquist limit
+          const nyquistFreq = audioCtx.sampleRate / 2;
+          freq = (i / numTicks) * nyquistFreq;
+          label = Math.round(freq).toString();
+        }
+        
+        const x = marginLeft + (i / numTicks) * drawAreaWidth;
+        
+        context.beginPath();
+        context.moveTo(x, canvas.height - marginBottom);
+        context.lineTo(x, canvas.height - marginBottom + 5);
+        context.stroke();
+        
+        context.fillText(label, x - 20, canvas.height - marginBottom + 15);
+      }
+
+      // Title - position to avoid carrier label
+      context.fillStyle = "#eee";
+      context.font = "12px sans-serif";
+      
+      if (hasCarrierLabel) {
+        // Move title to right side to avoid carrier label
+        context.fillText(title, canvas.width - 150, 15);
+      } else {
+        context.fillText(title, marginLeft, 15);
+      }
+      
+      if (isHeterodyne) {
+        context.fillText("Frequency: Absolute (Relative to Carrier)", canvas.width - 250, canvas.height - 5);
+      } else {
+        context.fillText("Frequency (Hz)", canvas.width - 120, canvas.height - 5);
+      }
+    }
+
+    function updateWaterfall() {
+      // Shift existing waterfall up
+      waterfallCtx.drawImage(waterfallCanvas, 0, -1);
+
+      if (heterodyneMode) {
+        // In heterodyne mode, show only the zoomed frequency range
+        const freqResolution = audioCtx.sampleRate / analyser.fftSize;
+        const startFreq = carrierFreq - zoomBandwidth / 2;
+        const endFreq = carrierFreq + zoomBandwidth / 2;
+        
+        const startBin = Math.max(0, Math.floor(startFreq / freqResolution));
+        const endBin = Math.min(dataArray.length, Math.ceil(endFreq / freqResolution));
+        const numBins = endBin - startBin;
+        
+        if (numBins > 0) {
+          const binWidth = waterfallCanvas.width / numBins;
+          
+          for (let i = 0; i < numBins; i++) {
+            const binIndex = startBin + i;
+            if (binIndex < dataArray.length) {
+              const intensity = Math.round(dataArray[binIndex]);
+              waterfallCtx.fillStyle = `rgb(${intensity}, ${intensity}, ${intensity})`;
+              
+              const x = i * binWidth;
+              waterfallCtx.fillRect(x, waterfallCanvas.height - 1, binWidth, 1);
+            }
+          }
+        }
+      } else {
+        // Wideband mode - show full spectrum with grouping
+        const groupSize = 4;
+        const numGroups = Math.floor(bufferLength / groupSize);
+        const groupWidth = waterfallCanvas.width / numGroups;
+
+        for (let i = 0; i < numGroups; i++) {
+          let sum = 0;
+          for (let j = 0; j < groupSize; j++) {
+            sum += dataArray[i * groupSize + j];
+          }
+          const avg = sum / groupSize;
+          const intensity = Math.round(avg);
+          
+          waterfallCtx.fillStyle = `rgb(${intensity}, ${intensity}, ${intensity})`;
+          
+          const x = i * groupWidth;
+          waterfallCtx.fillRect(x, waterfallCanvas.height - 1, groupWidth, 1);
+        }
+      }
+    }
+
+  </script>
+</body>
+</html>

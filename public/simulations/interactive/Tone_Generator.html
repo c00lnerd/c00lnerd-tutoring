@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Tone Generator for FFT Testing</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <style>
+    body {
+      background-color: #222;
+      color: #eee;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .control-panel {
+      background: #333;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .tone-group {
+      background: #444;
+      padding: 15px;
+      border-radius: 8px;
+      border: 2px solid #555;
+    }
+    .tone-group.active {
+      border-color: #4CAF50;
+      box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+    }
+    .tone-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .tone-title {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    .control-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 10px 0;
+    }
+    label {
+      font-size: 0.9rem;
+      min-width: 80px;
+    }
+    input[type="range"] {
+      flex: 1;
+      margin: 0 10px;
+    }
+    .value-display {
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: #4CAF50;
+      min-width: 80px;
+      text-align: right;
+    }
+    select {
+      background: #555;
+      color: #eee;
+      border: 1px solid #666;
+      border-radius: 3px;
+      padding: 5px;
+      font-size: 0.9rem;
+    }
+    button {
+      background: #555;
+      color: #eee;
+      border: none;
+      border-radius: 5px;
+      padding: 8px 15px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      margin: 5px;
+    }
+    button:hover {
+      background: #666;
+    }
+    button.active {
+      background: #4CAF50;
+    }
+    button.danger {
+      background: #f44336;
+    }
+    .master-controls {
+      background: #2a2a2a;
+      padding: 20px;
+      border-radius: 10px;
+      margin: 20px 0;
+    }
+    .preset-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .info-panel {
+      background: #333;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: left;
+      margin: 20px 0;
+    }
+    .waveform-preview {
+      width: 100%;
+      height: 60px;
+      background: #000;
+      border: 1px solid #555;
+      border-radius: 3px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎵 Multi-Tone Generator</h1>
+    <p>Generate multiple simultaneous tones with different waveforms for FFT analysis</p>
+
+    <div class="master-controls">
+      <h3>Master Controls</h3>
+      <div class="control-row">
+        <label>Audio Output Device:</label>
+        <select id="audioOutputSelect" style="flex: 1; margin: 0 10px;">
+          <option value="">Default Output Device</option>
+        </select>
+        <button onclick="refreshAudioDevices()" style="padding: 5px 10px;">🔄</button>
+      </div>
+      
+      <div class="control-row">
+        <label>Master Volume:</label>
+        <input type="range" id="masterVolume" min="0" max="100" value="50">
+        <span class="value-display" id="masterVolumeDisplay">50%</span>
+      </div>
+      
+      <div class="control-row">
+        <label>Chord Type:</label>
+        <select id="chordSelect" style="flex: 1; margin: 0 10px;">
+          <option value="c_major">C Major</option>
+          <option value="c_minor">C Minor</option>
+          <option value="d_major">D Major</option>
+          <option value="d_minor">D Minor</option>
+          <option value="e_major">E Major</option>
+          <option value="e_minor">E Minor</option>
+          <option value="f_major">F Major</option>
+          <option value="f_minor">F Minor</option>
+          <option value="g_major">G Major</option>
+          <option value="g_minor">G Minor</option>
+          <option value="a_major">A Major</option>
+          <option value="a_minor">A Minor</option>
+          <option value="b_major">B Major</option>
+          <option value="b_minor">B Minor</option>
+          <option value="c7">C7 (Dominant 7th)</option>
+          <option value="cmaj7">CMaj7 (Major 7th)</option>
+          <option value="cmin7">Cm7 (Minor 7th)</option>
+        </select>
+        <button onclick="loadChord()">Load Chord</button>
+      </div>
+      
+      <div class="control-row">
+        <label>DTMF Tone:</label>
+        <select id="dtmfSelect" style="flex: 1; margin: 0 10px;">
+          <option value="1">1 (697 + 1209 Hz)</option>
+          <option value="2">2 (697 + 1336 Hz)</option>
+          <option value="3">3 (697 + 1477 Hz)</option>
+          <option value="A">A (697 + 1633 Hz)</option>
+          <option value="4">4 (770 + 1209 Hz)</option>
+          <option value="5">5 (770 + 1336 Hz)</option>
+          <option value="6">6 (770 + 1477 Hz)</option>
+          <option value="B">B (770 + 1633 Hz)</option>
+          <option value="7">7 (852 + 1209 Hz)</option>
+          <option value="8">8 (852 + 1336 Hz)</option>
+          <option value="9">9 (852 + 1477 Hz)</option>
+          <option value="C">C (852 + 1633 Hz)</option>
+          <option value="*">* (941 + 1209 Hz)</option>
+          <option value="0">0 (941 + 1336 Hz)</option>
+          <option value="#"># (941 + 1477 Hz)</option>
+          <option value="D">D (941 + 1633 Hz)</option>
+        </select>
+        <button onclick="loadDTMF()">Load DTMF</button>
+      </div>
+      
+      <div class="preset-buttons">
+        <button onclick="loadPreset('single')">Single Tone</button>
+        <button onclick="loadPreset('harmonics')">Harmonics</button>
+        <button onclick="loadPreset('sweep')">Frequency Sweep</button>
+        <button onclick="loadPreset('noise')">Noise + Tones</button>
+        <button class="danger" onclick="stopAll()">Stop All</button>
+      </div>
+    </div>
+
+    <div class="control-panel" id="toneControls">
+      <!-- Tone generators will be added here dynamically -->
+    </div>
+
+    <button onclick="addToneGenerator()">+ Add Tone Generator</button>
+
+    <div class="info-panel">
+      <h3>🔬 Usage Instructions</h3>
+      <p><strong>For FFT Testing:</strong> Use this generator as an audio source while running the FFT Heterodyne Simulation in another tab.</p>
+      <p><strong>Waveforms:</strong></p>
+      <ul>
+        <li><strong>Sine:</strong> Pure tone, single frequency peak in FFT</li>
+        <li><strong>Square:</strong> Rich harmonics at odd multiples of fundamental</li>
+        <li><strong>Sawtooth:</strong> All harmonics decreasing in amplitude</li>
+        <li><strong>Triangle:</strong> Odd harmonics with faster rolloff than square</li>
+        <li><strong>White Noise:</strong> Flat spectrum across all frequencies</li>
+        <li><strong>Pink Noise:</strong> 1/f spectrum, more energy at low frequencies</li>
+      </ul>
+      <p><strong>Presets:</strong> Try different presets to test various FFT scenarios like chord analysis, harmonic detection, and interference patterns.</p>
+    </div>
+  </div>
+
+  <script>
+    // Audio context and tone generators
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    let masterGain = audioCtx.createGain();
+    let currentOutputDevice = null;
+    masterGain.connect(audioCtx.destination);
+    masterGain.gain.value = 0.5;
+
+    let toneGenerators = [];
+    let nextId = 1;
+
+    // Noise buffer for noise generators
+    let noiseBuffer = null;
+    let pinkNoiseBuffer = null;
+
+    // Initialize noise buffers
+    function createNoiseBuffers() {
+      const bufferSize = audioCtx.sampleRate * 2; // 2 seconds of noise
+      
+      // White noise
+      noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const whiteData = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        whiteData[i] = Math.random() * 2 - 1;
+      }
+
+      // Pink noise (1/f)
+      pinkNoiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const pinkData = pinkNoiseBuffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        pinkData[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.11;
+        b6 = white * 0.115926;
+      }
+    }
+
+    class ToneGenerator {
+      constructor(id) {
+        this.id = id;
+        this.frequency = 440;
+        this.waveform = 'sine';
+        this.volume = 50;
+        this.enabled = false;
+        this.oscillator = null;
+        this.gainNode = null;
+        this.noiseSource = null;
+        this.sweepStartFreq = 200;
+        this.sweepEndFreq = 2000;
+        this.sweepDuration = 5;
+        this.sweepActive = false;
+      }
+
+      start() {
+        if (this.enabled) return;
+        
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+
+        this.gainNode = audioCtx.createGain();
+        this.gainNode.connect(masterGain);
+        this.gainNode.gain.value = this.volume / 100;
+
+        if (this.waveform === 'white_noise' || this.waveform === 'pink_noise') {
+          this.startNoise();
+        } else if (this.waveform === 'sweep') {
+          this.startSweep();
+        } else {
+          this.startOscillator();
+        }
+
+        this.enabled = true;
+        this.updateUI();
+      }
+
+      startOscillator() {
+        this.oscillator = audioCtx.createOscillator();
+        this.oscillator.type = this.waveform;
+        this.oscillator.frequency.value = this.frequency;
+        this.oscillator.connect(this.gainNode);
+        this.oscillator.start();
+      }
+
+      startNoise() {
+        const buffer = this.waveform === 'white_noise' ? noiseBuffer : pinkNoiseBuffer;
+        this.noiseSource = audioCtx.createBufferSource();
+        this.noiseSource.buffer = buffer;
+        this.noiseSource.loop = true;
+        this.noiseSource.connect(this.gainNode);
+        this.noiseSource.start();
+      }
+
+      startSweep() {
+        this.oscillator = audioCtx.createOscillator();
+        this.oscillator.type = 'sine';
+        this.oscillator.frequency.value = this.sweepStart || this.sweepStartFreq;
+        this.oscillator.connect(this.gainNode);
+        
+        // Exponential sweep from start to end frequency
+        const now = audioCtx.currentTime;
+        this.oscillator.frequency.exponentialRampToValueAtTime(
+          this.sweepEnd || this.sweepEndFreq, 
+          now + this.sweepDuration
+        );
+        
+        this.oscillator.start();
+        this.sweepActive = true;
+        
+        // Restart sweep when it completes
+        setTimeout(() => {
+          if (this.enabled && this.sweepActive) {
+            this.stop();
+            setTimeout(() => this.start(), 100);
+          }
+        }, this.sweepDuration * 1000);
+      }
+
+      stop() {
+        if (!this.enabled) return;
+
+        if (this.oscillator) {
+          this.oscillator.stop();
+          this.oscillator = null;
+        }
+        if (this.noiseSource) {
+          this.noiseSource.stop();
+          this.noiseSource = null;
+        }
+        if (this.gainNode) {
+          this.gainNode.disconnect();
+          this.gainNode = null;
+        }
+
+        this.enabled = false;
+        this.sweepActive = false;
+        this.updateUI();
+      }
+
+      updateFrequency(freq) {
+        this.frequency = freq;
+        if (this.oscillator && this.waveform !== 'sweep') {
+          this.oscillator.frequency.value = freq;
+        }
+      }
+
+      updateVolume(vol) {
+        this.volume = vol;
+        if (this.gainNode) {
+          this.gainNode.gain.value = vol / 100;
+        }
+      }
+
+      updateWaveform(waveform) {
+        const wasEnabled = this.enabled;
+        if (wasEnabled) this.stop();
+        this.waveform = waveform;
+        if (wasEnabled) this.start();
+      }
+
+      updateUI() {
+        const element = document.getElementById(`tone-${this.id}`);
+        if (element) {
+          element.classList.toggle('active', this.enabled);
+          const button = element.querySelector('.toggle-btn');
+          button.textContent = this.enabled ? 'Stop' : 'Start';
+          button.className = this.enabled ? 'toggle-btn active' : 'toggle-btn';
+        }
+      }
+
+      remove() {
+        this.stop();
+        const element = document.getElementById(`tone-${this.id}`);
+        if (element) {
+          element.remove();
+        }
+        // Remove from array
+        const index = toneGenerators.findIndex(t => t.id === this.id);
+        if (index >= 0) {
+          toneGenerators.splice(index, 1);
+        }
+      }
+    }
+
+    // Initialize
+    createNoiseBuffers();
+    loadAudioDevices();
+
+    // Audio output device management
+    async function loadAudioDevices() {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioOutputs = devices.filter(device => device.kind === 'audiooutput');
+        
+        const select = document.getElementById('audioOutputSelect');
+        select.innerHTML = '<option value="">Default Output Device</option>';
+        
+        audioOutputs.forEach(device => {
+          const option = document.createElement('option');
+          option.value = device.deviceId;
+          option.textContent = device.label || `Audio Output ${device.deviceId.substr(0, 8)}...`;
+          select.appendChild(option);
+        });
+      } catch (error) {
+        console.log('Audio device enumeration not supported or failed:', error);
+      }
+    }
+
+    function refreshAudioDevices() {
+      loadAudioDevices();
+    }
+
+    async function changeAudioOutput(deviceId) {
+      try {
+        if (deviceId && audioCtx.setSinkId) {
+          await audioCtx.setSinkId(deviceId);
+          currentOutputDevice = deviceId;
+          console.log('Audio output changed to:', deviceId);
+        } else if (!deviceId) {
+          if (audioCtx.setSinkId) {
+            await audioCtx.setSinkId('');
+          }
+          currentOutputDevice = null;
+          console.log('Audio output reset to default');
+        }
+      } catch (error) {
+        console.error('Failed to change audio output:', error);
+        alert('Failed to change audio output device. This feature may not be supported in your browser.');
+      }
+    }
+
+    // Audio output device selection
+    document.getElementById('audioOutputSelect').addEventListener('change', (e) => {
+      changeAudioOutput(e.target.value);
+    });
+
+    // Master volume control
+    document.getElementById('masterVolume').addEventListener('input', (e) => {
+      const volume = e.target.value / 100;
+      masterGain.gain.value = volume;
+      document.getElementById('masterVolumeDisplay').textContent = e.target.value + '%';
+    });
+
+    function addToneGenerator() {
+      const generator = new ToneGenerator(nextId++);
+      toneGenerators.push(generator);
+      createToneUI(generator);
+    }
+
+    function createToneUI(generator) {
+      const container = document.getElementById('toneControls');
+      const div = document.createElement('div');
+      div.className = 'tone-group';
+      div.id = `tone-${generator.id}`;
+      
+      div.innerHTML = `
+        <div class="tone-header">
+          <span class="tone-title">Tone ${generator.id}</span>
+          <div>
+            <button class="toggle-btn" onclick="toggleTone(${generator.id})">Start</button>
+            <button onclick="removeTone(${generator.id})">Remove</button>
+          </div>
+        </div>
+        
+        <div class="control-row">
+          <label>Waveform:</label>
+          <select onchange="updateWaveform(${generator.id}, this.value)">
+            <option value="sine">Sine Wave</option>
+            <option value="square">Square Wave</option>
+            <option value="sawtooth">Sawtooth Wave</option>
+            <option value="triangle">Triangle Wave</option>
+            <option value="white_noise">White Noise</option>
+            <option value="pink_noise">Pink Noise</option>
+            <option value="sweep">Frequency Sweep</option>
+          </select>
+        </div>
+        
+        <div class="control-row frequency-control">
+          <label>Frequency:</label>
+          <input type="range" min="20" max="8000" value="440" 
+                 onchange="updateFrequency(${generator.id}, this.value)">
+          <span class="value-display freq-display">440 Hz</span>
+          <input type="number" min="20" max="8000" value="440" step="1"
+                 style="width: 80px; margin-left: 10px; background: #555; color: #eee; border: 1px solid #666; border-radius: 3px; padding: 3px;"
+                 onchange="updateFrequencyInput(${generator.id}, this.value)">
+        </div>
+        
+        <div class="control-row">
+          <label>Volume:</label>
+          <input type="range" min="0" max="100" value="50" 
+                 onchange="updateVolume(${generator.id}, this.value)">
+          <span class="value-display vol-display">50%</span>
+          <input type="number" min="0" max="100" value="50" step="1"
+                 style="width: 60px; margin-left: 10px; background: #555; color: #eee; border: 1px solid #666; border-radius: 3px; padding: 3px;"
+                 onchange="updateVolumeInput(${generator.id}, this.value)">
+        </div>
+        
+        <div class="sweep-controls" style="display: none;">
+          <div class="control-row">
+            <label>Sweep Start:</label>
+            <input type="range" min="20" max="4000" value="200" 
+                   onchange="updateSweepStart(${generator.id}, this.value)">
+            <span class="value-display">200 Hz</span>
+          </div>
+          <div class="control-row">
+            <label>Sweep End:</label>
+            <input type="range" min="100" max="8000" value="2000" 
+                   onchange="updateSweepEnd(${generator.id}, this.value)">
+            <span class="value-display">2000 Hz</span>
+          </div>
+        </div>
+      `;
+      
+      container.appendChild(div);
+    }
+
+    function toggleTone(id) {
+      const generator = toneGenerators.find(t => t.id === id);
+      if (generator) {
+        if (generator.enabled) {
+          generator.stop();
+        } else {
+          generator.start();
+        }
+      }
+    }
+
+    function removeTone(id) {
+      const generator = toneGenerators.find(t => t.id === id);
+      if (generator) {
+        generator.remove();
+      }
+    }
+
+    function updateFrequency(id, freq) {
+      const generator = toneGenerators.find(t => t.id === id);
+      if (generator) {
+        generator.updateFrequency(freq);
+        const element = document.getElementById(`tone-${id}`);
+        element.querySelector('.freq-display').textContent = freq + ' Hz';
+        element.querySelector('input[type="number"]').value = freq;
+      }
+    }
+
+    function updateFrequencyInput(id, freq) {
+      const value = parseInt(freq);
+      if (value >= 20 && value <= 8000) {
+        const generator = toneGenerators.find(t => t.id === id);
+        if (generator) {
+          generator.updateFrequency(value);
+          const element = document.getElementById(`tone-${id}`);
+          element.querySelector('input[type="range"]').value = value;
+          element.querySelector('.freq-display').textContent = value + ' Hz';
+        }
+      }
+    }
+
+    function updateVolume(id, vol) {
+      const generator = toneGenerators.find(t => t.id === id);
+      if (generator) {
+        generator.updateVolume(vol);
+        const element = document.getElementById(`tone-${id}`);
+        element.querySelector('.vol-display').textContent = vol + '%';
+        element.querySelectorAll('input[type="number"]')[1].value = vol;
+      }
+    }
+
+    function updateVolumeInput(id, vol) {
+      const value = parseInt(vol);
+      if (value >= 0 && value <= 100) {
+        const generator = toneGenerators.find(t => t.id === id);
+        if (generator) {
+          generator.updateVolume(value);
+          const element = document.getElementById(`tone-${id}`);
+          element.querySelectorAll('input[type="range"]')[1].value = value;
+          element.querySelector('.vol-display').textContent = value + '%';
+        }
+      }
+    }
+
+    function updateSweepStart(id, freq) {
+      const value = parseInt(freq);
+      if (value >= 20 && value <= 4000) {
+        const generator = toneGenerators.find(t => t.id === id);
+        if (generator) {
+          generator.sweepStart = value;
+          const element = document.getElementById(`tone-${id}`);
+          const sweepControls = element.querySelector('.sweep-controls');
+          sweepControls.querySelector('.control-row:first-child .value-display').textContent = value + ' Hz';
+        }
+      }
+    }
+
+    function updateSweepEnd(id, freq) {
+      const value = parseInt(freq);
+      if (value >= 100 && value <= 8000) {
+        const generator = toneGenerators.find(t => t.id === id);
+        if (generator) {
+          generator.sweepEnd = value;
+          const element = document.getElementById(`tone-${id}`);
+          const sweepControls = element.querySelector('.sweep-controls');
+          sweepControls.querySelector('.control-row:last-child .value-display').textContent = value + ' Hz';
+        }
+      }
+    }
+
+    function updateWaveform(id, waveform) {
+      const generator = toneGenerators.find(t => t.id === id);
+      if (generator) {
+        generator.updateWaveform(waveform);
+        const element = document.getElementById(`tone-${id}`);
+        const freqControl = element.querySelector('.frequency-control');
+        const sweepControls = element.querySelector('.sweep-controls');
+        
+        if (waveform === 'sweep') {
+          freqControl.style.display = 'none';
+          sweepControls.style.display = 'block';
+        } else if (waveform === 'white_noise' || waveform === 'pink_noise') {
+          freqControl.style.display = 'none';
+          sweepControls.style.display = 'none';
+        } else {
+          freqControl.style.display = 'flex';
+          sweepControls.style.display = 'none';
+        }
+      }
+    }
+
+    function stopAll() {
+      toneGenerators.forEach(generator => generator.stop());
+    }
+
+    // Chord definitions
+    const chords = {
+      c_major: [261.63, 329.63, 392.00], // C, E, G
+      c_minor: [261.63, 311.13, 392.00], // C, Eb, G
+      d_major: [293.66, 369.99, 440.00], // D, F#, A
+      d_minor: [293.66, 349.23, 440.00], // D, F, A
+      e_major: [329.63, 415.30, 493.88], // E, G#, B
+      e_minor: [329.63, 392.00, 493.88], // E, G, B
+      f_major: [349.23, 440.00, 523.25], // F, A, C
+      f_minor: [349.23, 415.30, 523.25], // F, Ab, C
+      g_major: [392.00, 493.88, 587.33], // G, B, D
+      g_minor: [392.00, 466.16, 587.33], // G, Bb, D
+      a_major: [440.00, 554.37, 659.25], // A, C#, E
+      a_minor: [440.00, 523.25, 659.25], // A, C, E
+      b_major: [493.88, 622.25, 739.99], // B, D#, F#
+      b_minor: [493.88, 587.33, 739.99], // B, D, F#
+      c7: [261.63, 329.63, 392.00, 466.16], // C, E, G, Bb
+      cmaj7: [261.63, 329.63, 392.00, 493.88], // C, E, G, B
+      cmin7: [261.63, 311.13, 392.00, 466.16]  // C, Eb, G, Bb
+    };
+
+    // DTMF tone definitions (row + column frequencies)
+    const dtmfTones = {
+      '1': [697, 1209], '2': [697, 1336], '3': [697, 1477], 'A': [697, 1633],
+      '4': [770, 1209], '5': [770, 1336], '6': [770, 1477], 'B': [770, 1633],
+      '7': [852, 1209], '8': [852, 1336], '9': [852, 1477], 'C': [852, 1633],
+      '*': [941, 1209], '0': [941, 1336], '#': [941, 1477], 'D': [941, 1633]
+    };
+
+    function loadChord() {
+      const selectedChord = document.getElementById('chordSelect').value;
+      const frequencies = chords[selectedChord];
+      
+      if (!frequencies) return;
+      
+      stopAll();
+      // Clear existing generators - force DOM cleanup
+      const container = document.getElementById('toneControls');
+      container.innerHTML = '';
+      toneGenerators = [];
+      nextId = 1; // Reset ID counter
+      
+      // Create tone generators for each frequency
+      frequencies.forEach((freq, index) => {
+        addToneGenerator();
+        updateFrequency(index + 1, freq);
+        toggleTone(index + 1);
+      });
+    }
+
+    function loadDTMF() {
+      const selectedDTMF = document.getElementById('dtmfSelect').value;
+      const frequencies = dtmfTones[selectedDTMF];
+      
+      if (!frequencies) return;
+      
+      stopAll();
+      // Clear existing generators - force DOM cleanup
+      const container = document.getElementById('toneControls');
+      container.innerHTML = '';
+      toneGenerators = [];
+      nextId = 1; // Reset ID counter
+      
+      // Create tone generators for each frequency
+      frequencies.forEach((freq, index) => {
+        addToneGenerator();
+        updateFrequency(index + 1, freq);
+        toggleTone(index + 1);
+      });
+    }
+
+    // Preset configurations
+    function loadPreset(preset) {
+      stopAll();
+      // Clear existing generators - force DOM cleanup
+      const container = document.getElementById('toneControls');
+      container.innerHTML = '';
+      toneGenerators = [];
+      nextId = 1; // Reset ID counter
+      
+      switch(preset) {
+        case 'single':
+          addToneGenerator();
+          break;
+          
+        case 'harmonics':
+          // Fundamental + harmonics
+          addToneGenerator();
+          updateFrequency(1, 220); // A3
+          toggleTone(1);
+          addToneGenerator();
+          updateFrequency(2, 440); // A4 (2nd harmonic)
+          updateVolume(2, 30);
+          toggleTone(2);
+          addToneGenerator();
+          updateFrequency(3, 880); // A5 (4th harmonic)
+          updateVolume(3, 15);
+          toggleTone(3);
+          break;
+          
+        case 'sweep':
+          addToneGenerator();
+          updateWaveform(1, 'sweep');
+          toggleTone(1);
+          break;
+          
+        case 'noise':
+          addToneGenerator();
+          updateWaveform(1, 'white_noise');
+          updateVolume(1, 20);
+          toggleTone(1);
+          addToneGenerator();
+          updateFrequency(2, 1000);
+          toggleTone(2);
+          break;
+          
+        case 'dtmf':
+          // DTMF tone for digit '5' (770 Hz + 1336 Hz)
+          addToneGenerator();
+          updateFrequency(1, 770);
+          toggleTone(1);
+          addToneGenerator();
+          updateFrequency(2, 1336);
+          toggleTone(2);
+          break;
+      }
+    }
+
+    // Initialize with one tone generator
+    addToneGenerator();
+  </script>
+</body>
+</html>
