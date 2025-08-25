@@ -175,10 +175,12 @@
     let showMax = false;
 
     // ============== Audio Setup ==============
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+      sampleRate: 24000
+    });
     const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 4096; // Higher resolution for better heterodyne performance
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.3;
     const bufferLength = analyser.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
     const timeDataArray = new Float32Array(analyser.fftSize);
@@ -285,6 +287,10 @@
           source.connect(analyser);
           document.getElementById("startAudio").style.display = "none";
           document.getElementById("controls").style.display = "flex";
+          
+          // Display actual sample rate
+          console.log(`Requested: 24kHz, Actual: ${audioCtx.sampleRate}Hz`);
+          
           draw();
         })
         .catch(err => {
