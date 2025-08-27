@@ -126,6 +126,21 @@ import Layout from '../../layouts/Layout.astro';
                 <li class="mb-2">
                     Add the solid solute and mix. Record your observations.
                 </li>
+                
+                <!-- Timer Section after Step 3 -->
+                <div class="timer-section bg-yellow-50 border-2 border-yellow-300 rounded-lg p-4 my-4">
+                    <h4 class="text-lg font-bold text-yellow-800 mb-2">3-Minute Timer for Temperature Measurement</h4>
+                    <div class="timer-container text-center">
+                        <div class="timer-display text-4xl font-bold text-gray-800 my-4 font-mono border-2 border-gray-300 rounded-lg p-4 bg-white inline-block min-w-32" id="timerDisplay1">3:00</div>
+                        <div class="timer-controls my-4">
+                            <button class="timer-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="startTimer1">Start Timer</button>
+                            <button class="timer-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="resetTimer1">Reset</button>
+                            <button class="timer-btn bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="audioToggle1" title="Toggle countdown sounds">🔊</button>
+                        </div>
+                        <div class="timer-status text-lg text-gray-700 font-medium" id="timerStatus1">Ready to start 3-minute timing</div>
+                    </div>
+                </div>
+                
                 <li class="mb-2">
                     Wait 3 minutes and record the final temperature of the solution. It's important to measure the temperature of each solution at three minutes. Taking the temperature measurements at the same time for each trial allows you to compare the combinations.
                 </li>
@@ -138,12 +153,42 @@ import Layout from '../../layouts/Layout.astro';
                 <li class="mb-2">
                     For combination 5, place the steel wool pad in the beaker and cover it with vinegar. Let it set for 2 minutes.
                 </li>
+                
+                <!-- Timer Section after Step 7 -->
+                <div class="timer-section bg-blue-50 border-2 border-blue-300 rounded-lg p-4 my-4">
+                    <h4 class="text-lg font-bold text-blue-800 mb-2">2-Minute Timer for Steel Wool Soaking</h4>
+                    <div class="timer-container text-center">
+                        <div class="timer-display text-4xl font-bold text-gray-800 my-4 font-mono border-2 border-gray-300 rounded-lg p-4 bg-white inline-block min-w-32" id="timerDisplay2">2:00</div>
+                        <div class="timer-controls my-4">
+                            <button class="timer-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="startTimer2">Start Timer</button>
+                            <button class="timer-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="resetTimer2">Reset</button>
+                            <button class="timer-btn bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="audioToggle2" title="Toggle countdown sounds">🔊</button>
+                        </div>
+                        <div class="timer-status text-lg text-gray-700 font-medium" id="timerStatus2">Ready to start 2-minute timing</div>
+                    </div>
+                </div>
+                
                 <li class="mb-2">
                     After 2 minutes take the steel wool pad out of the vinegar and squeeze out any excess liquid. Drain the vinegar and dry the beaker.
                 </li>
                 <li class="mb-2">
                     Wrap the steel wool pad securely around the base of the thermometer and place the steel wool wrapped thermometer back into the empty beaker. Cover the beaker with a paper towel. Record the initial temperature as soon as you set them in the beaker. Wait 3 minutes.
                 </li>
+                
+                <!-- Timer Section after Step 9 -->
+                <div class="timer-section bg-green-50 border-2 border-green-300 rounded-lg p-4 my-4">
+                    <h4 class="text-lg font-bold text-green-800 mb-2">3-Minute Timer for Steel Wool Temperature Reading</h4>
+                    <div class="timer-container text-center">
+                        <div class="timer-display text-4xl font-bold text-gray-800 my-4 font-mono border-2 border-gray-300 rounded-lg p-4 bg-white inline-block min-w-32" id="timerDisplay3">3:00</div>
+                        <div class="timer-controls my-4">
+                            <button class="timer-btn bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="startTimer3">Start Timer</button>
+                            <button class="timer-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="resetTimer3">Reset</button>
+                            <button class="timer-btn bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 mx-2 rounded-lg transition-all" id="audioToggle3" title="Toggle countdown sounds">🔊</button>
+                        </div>
+                        <div class="timer-status text-lg text-gray-700 font-medium" id="timerStatus3">Ready to start 3-minute timing</div>
+                    </div>
+                </div>
+                
                 <li class="mb-2">
                     After 3 minutes record the temperature of the steel wool.
                 </li>
@@ -343,11 +388,6 @@ import Layout from '../../layouts/Layout.astro';
         <section class="mb-8">
             <h3 class="text-xl font-bold text-blue-700">SUBMIT YOUR RESULTS:</h3>
             <div class="bg-blue-50 p-4 rounded-lg">
-                <div class="mb-4">
-                    <label for="teacherEmail" class="block text-gray-700 font-bold mb-2">Teacher's Email:</label>
-                    <input type="email" id="teacherEmail" class="w-full px-3 py-2 border rounded-lg" placeholder="Teacher's Email" value="chuck@c00lnerd.com">
-                </div>
-                
                 <button id="submitBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Submit Experiment Results
                 </button>
@@ -358,18 +398,26 @@ import Layout from '../../layouts/Layout.astro';
     </main>
 </Layout>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
+    // Wait for EmailJS to load, then initialize
+    function initializeEmailJS() {
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init("ct_s19oZHppLy9BlW");
+            console.log('EmailJS initialized successfully');
+        } else {
+            // Retry after a short delay
+            setTimeout(initializeEmailJS, 100);
+        }
+    }
 
     // DOM Elements
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize EmailJS
+        initializeEmailJS();
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
-        const teacherEmailInput = document.getElementById('teacherEmail');
         
         // Load saved data from localStorage
         if (localStorage.getItem('studentName')) {
@@ -380,10 +428,6 @@ import Layout from '../../layouts/Layout.astro';
             studentEmailInput.value = localStorage.getItem('studentEmail');
         }
         
-        if (localStorage.getItem('teacherEmail')) {
-            teacherEmailInput.value = localStorage.getItem('teacherEmail');
-        }
-        
         // Save data to localStorage when inputs change
         studentNameInput.addEventListener('change', function() {
             localStorage.setItem('studentName', this.value);
@@ -391,10 +435,6 @@ import Layout from '../../layouts/Layout.astro';
         
         studentEmailInput.addEventListener('change', function() {
             localStorage.setItem('studentEmail', this.value);
-        });
-        
-        teacherEmailInput.addEventListener('change', function() {
-            localStorage.setItem('teacherEmail', this.value);
         });
         
         // Auto-calculate temperature change when initial and final temperatures are entered
@@ -415,6 +455,257 @@ import Layout from '../../layouts/Layout.astro';
             }
         }
         
+        // Timer functionality
+        let audioContext = null;
+        
+        function initAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+        
+        function playCountdownBeep() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+        
+        function playFinalBeep() {
+            if (!audioContext) return;
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 1);
+        }
+        
+        // Timer 1 (3-minute timer after Step 3)
+        const timerDisplay1 = document.getElementById('timerDisplay1');
+        const startTimerBtn1 = document.getElementById('startTimer1');
+        const resetTimerBtn1 = document.getElementById('resetTimer1');
+        const timerStatus1 = document.getElementById('timerStatus1');
+        const audioToggle1 = document.getElementById('audioToggle1');
+        let timerInterval1 = null;
+        let timeRemaining1 = 180; // 3 minutes
+        let audioEnabled1 = true;
+        
+        if (audioToggle1) {
+            audioToggle1.addEventListener('click', function() {
+                audioEnabled1 = !audioEnabled1;
+                audioToggle1.textContent = audioEnabled1 ? '🔊' : '🔇';
+                audioToggle1.title = audioEnabled1 ? 'Disable countdown sounds' : 'Enable countdown sounds';
+            });
+        }
+        
+        if (startTimerBtn1) {
+            startTimerBtn1.addEventListener('click', function() {
+                if (timerInterval1) return;
+                initAudioContext();
+                startTimerBtn1.disabled = true;
+                timerDisplay1.classList.add('counting');
+                timerStatus1.textContent = 'Timer running... Temperature measurement in progress';
+                
+                timerInterval1 = setInterval(function() {
+                    timeRemaining1--;
+                    const minutes = Math.floor(timeRemaining1 / 60);
+                    const seconds = timeRemaining1 % 60;
+                    timerDisplay1.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (audioEnabled1 && timeRemaining1 <= 5 && timeRemaining1 > 0) {
+                        playCountdownBeep();
+                    }
+                    
+                    if (timeRemaining1 <= 0) {
+                        clearInterval(timerInterval1);
+                        timerInterval1 = null;
+                        timerDisplay1.classList.remove('counting');
+                        timerDisplay1.classList.add('finished');
+                        timerStatus1.textContent = '⏰ Time\'s up! Record the final temperature.';
+                        startTimerBtn1.disabled = false;
+                        if (audioEnabled1) playFinalBeep();
+                        
+                        setTimeout(function() {
+                            timeRemaining1 = 180;
+                            timerDisplay1.textContent = '3:00';
+                            timerDisplay1.classList.remove('counting', 'finished');
+                            timerStatus1.textContent = 'Ready to start 3-minute timing';
+                        }, 2000);
+                    }
+                }, 1000);
+            });
+        }
+        
+        if (resetTimerBtn1) {
+            resetTimerBtn1.addEventListener('click', function() {
+                if (timerInterval1) {
+                    clearInterval(timerInterval1);
+                    timerInterval1 = null;
+                }
+                timeRemaining1 = 180;
+                timerDisplay1.textContent = '3:00';
+                timerDisplay1.classList.remove('counting', 'finished');
+                timerStatus1.textContent = 'Ready to start 3-minute timing';
+                startTimerBtn1.disabled = false;
+            });
+        }
+        
+        // Timer 2 (2-minute timer after Step 7)
+        const timerDisplay2 = document.getElementById('timerDisplay2');
+        const startTimerBtn2 = document.getElementById('startTimer2');
+        const resetTimerBtn2 = document.getElementById('resetTimer2');
+        const timerStatus2 = document.getElementById('timerStatus2');
+        const audioToggle2 = document.getElementById('audioToggle2');
+        let timerInterval2 = null;
+        let timeRemaining2 = 120; // 2 minutes
+        let audioEnabled2 = true;
+        
+        if (audioToggle2) {
+            audioToggle2.addEventListener('click', function() {
+                audioEnabled2 = !audioEnabled2;
+                audioToggle2.textContent = audioEnabled2 ? '🔊' : '🔇';
+                audioToggle2.title = audioEnabled2 ? 'Disable countdown sounds' : 'Enable countdown sounds';
+            });
+        }
+        
+        if (startTimerBtn2) {
+            startTimerBtn2.addEventListener('click', function() {
+                if (timerInterval2) return;
+                initAudioContext();
+                startTimerBtn2.disabled = true;
+                timerDisplay2.classList.add('counting');
+                timerStatus2.textContent = 'Timer running... Steel wool soaking in vinegar';
+                
+                timerInterval2 = setInterval(function() {
+                    timeRemaining2--;
+                    const minutes = Math.floor(timeRemaining2 / 60);
+                    const seconds = timeRemaining2 % 60;
+                    timerDisplay2.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (audioEnabled2 && timeRemaining2 <= 5 && timeRemaining2 > 0) {
+                        playCountdownBeep();
+                    }
+                    
+                    if (timeRemaining2 <= 0) {
+                        clearInterval(timerInterval2);
+                        timerInterval2 = null;
+                        timerDisplay2.classList.remove('counting');
+                        timerDisplay2.classList.add('finished');
+                        timerStatus2.textContent = '⏰ Time\'s up! Remove steel wool from vinegar.';
+                        startTimerBtn2.disabled = false;
+                        if (audioEnabled2) playFinalBeep();
+                        
+                        setTimeout(function() {
+                            timeRemaining2 = 120;
+                            timerDisplay2.textContent = '2:00';
+                            timerDisplay2.classList.remove('counting', 'finished');
+                            timerStatus2.textContent = 'Ready to start 2-minute timing';
+                        }, 2000);
+                    }
+                }, 1000);
+            });
+        }
+        
+        if (resetTimerBtn2) {
+            resetTimerBtn2.addEventListener('click', function() {
+                if (timerInterval2) {
+                    clearInterval(timerInterval2);
+                    timerInterval2 = null;
+                }
+                timeRemaining2 = 120;
+                timerDisplay2.textContent = '2:00';
+                timerDisplay2.classList.remove('counting', 'finished');
+                timerStatus2.textContent = 'Ready to start 2-minute timing';
+                startTimerBtn2.disabled = false;
+            });
+        }
+        
+        // Timer 3 (3-minute timer after Step 9)
+        const timerDisplay3 = document.getElementById('timerDisplay3');
+        const startTimerBtn3 = document.getElementById('startTimer3');
+        const resetTimerBtn3 = document.getElementById('resetTimer3');
+        const timerStatus3 = document.getElementById('timerStatus3');
+        const audioToggle3 = document.getElementById('audioToggle3');
+        let timerInterval3 = null;
+        let timeRemaining3 = 180; // 3 minutes
+        let audioEnabled3 = true;
+        
+        if (audioToggle3) {
+            audioToggle3.addEventListener('click', function() {
+                audioEnabled3 = !audioEnabled3;
+                audioToggle3.textContent = audioEnabled3 ? '🔊' : '🔇';
+                audioToggle3.title = audioEnabled3 ? 'Disable countdown sounds' : 'Enable countdown sounds';
+            });
+        }
+        
+        if (startTimerBtn3) {
+            startTimerBtn3.addEventListener('click', function() {
+                if (timerInterval3) return;
+                initAudioContext();
+                startTimerBtn3.disabled = true;
+                timerDisplay3.classList.add('counting');
+                timerStatus3.textContent = 'Timer running... Steel wool temperature reaction';
+                
+                timerInterval3 = setInterval(function() {
+                    timeRemaining3--;
+                    const minutes = Math.floor(timeRemaining3 / 60);
+                    const seconds = timeRemaining3 % 60;
+                    timerDisplay3.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    if (audioEnabled3 && timeRemaining3 <= 5 && timeRemaining3 > 0) {
+                        playCountdownBeep();
+                    }
+                    
+                    if (timeRemaining3 <= 0) {
+                        clearInterval(timerInterval3);
+                        timerInterval3 = null;
+                        timerDisplay3.classList.remove('counting');
+                        timerDisplay3.classList.add('finished');
+                        timerStatus3.textContent = '⏰ Time\'s up! Record steel wool temperature.';
+                        startTimerBtn3.disabled = false;
+                        if (audioEnabled3) playFinalBeep();
+                        
+                        setTimeout(function() {
+                            timeRemaining3 = 180;
+                            timerDisplay3.textContent = '3:00';
+                            timerDisplay3.classList.remove('counting', 'finished');
+                            timerStatus3.textContent = 'Ready to start 3-minute timing';
+                        }, 2000);
+                    }
+                }, 1000);
+            });
+        }
+        
+        if (resetTimerBtn3) {
+            resetTimerBtn3.addEventListener('click', function() {
+                if (timerInterval3) {
+                    clearInterval(timerInterval3);
+                    timerInterval3 = null;
+                }
+                timeRemaining3 = 180;
+                timerDisplay3.textContent = '3:00';
+                timerDisplay3.classList.remove('counting', 'finished');
+                timerStatus3.textContent = 'Ready to start 3-minute timing';
+                startTimerBtn3.disabled = false;
+            });
+        }
+        
         // Email Submission
         const submitBtn = document.getElementById('submitBtn');
         const submissionMessage = document.getElementById('submissionMessage');
@@ -423,10 +714,9 @@ import Layout from '../../layouts/Layout.astro';
             // Validate required fields
             const studentName = studentNameInput.value.trim();
             const studentEmail = studentEmailInput.value.trim();
-            const teacherEmail = teacherEmailInput.value.trim();
             
-            if (!studentName || !studentEmail || !teacherEmail) {
-                showMessage("Please fill in all required fields (student name, student email, and teacher email).", "error");
+            if (!studentName || !studentEmail) {
+                showMessage("Please fill in all required fields (student name and student email).", "error");
                 return;
             }
             
@@ -437,8 +727,8 @@ import Layout from '../../layouts/Layout.astro';
             // Collect all data from the data table
             const experimentData = {
                 // Student info
-                studentName: studentName,
-                studentEmail: studentEmail,
+                studentName: studentNameInput.value,
+                studentEmail: studentEmailInput.value,
                 
                 // Hypothesis and conclusion
                 hypothesis: document.getElementById('hypothesesInput').value,
@@ -491,6 +781,7 @@ import Layout from '../../layouts/Layout.astro';
                 ]
             };
             
+            
             // Format detailed experiment data for email - matching working template structure
             const reactionsData = experimentData.reactions.map(reaction => 
                 `${reaction.name}:
@@ -540,3 +831,78 @@ import Layout from '../../layouts/Layout.astro';
         }
     });
 </script>
+
+<style>
+    .timer-section {
+        margin: 1rem 0;
+    }
+    
+    .timer-display {
+        font-family: 'Courier New', monospace;
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #1f2937;
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        display: inline-block;
+        min-width: 8rem;
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .timer-display.counting {
+        border-color: #10b981;
+        background-color: #ecfdf5;
+        color: #065f46;
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+    }
+    
+    .timer-display.finished {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+        color: #991b1b;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+        animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .timer-btn {
+        font-weight: bold;
+        padding: 0.5rem 1rem;
+        margin: 0 0.25rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 0.875rem;
+    }
+    
+    .timer-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .timer-btn:active {
+        transform: translateY(0);
+    }
+    
+    .timer-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+    
+    .timer-status {
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: #374151;
+        margin-top: 0.5rem;
+    }
+</style>

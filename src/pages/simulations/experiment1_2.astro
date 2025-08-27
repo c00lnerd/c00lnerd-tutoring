@@ -37,20 +37,6 @@ import Layout from '../../layouts/Layout.astro';
             </ul>
         </div>
 
-        <!-- 30-Second Timer Section -->
-        <div class="timer-section">
-            <h3>🕐 Built-in 30-Second Timer</h3>
-            <p>Use this timer for your pendulum swing measurements. Click "Start Timer" and begin counting swings when it reaches zero.</p>
-            <div class="timer-container">
-                <div class="timer-display" id="timerDisplay">30</div>
-                <div class="timer-controls">
-                    <button id="startTimer" class="timer-btn start-btn">Start Timer</button>
-                    <button id="resetTimer" class="timer-btn reset-btn">Reset</button>
-                </div>
-                <div class="timer-status" id="timerStatus">Ready to start</div>
-            </div>
-        </div>
-
         <div class="hypothesis-section">
             <h3>Question:</h3>
             <p>How does changing the mass of a pendulum affect the number of swings in one minute? How does changing the length of a pendulum affect the number of swings in one minute?</p>
@@ -131,6 +117,21 @@ import Layout from '../../layouts/Layout.astro';
                             <p><strong>Figure 1.32:</strong> Pendulum swing positions - Release from A, through rest position B, to C, and back</p>
                         </div>
                     </div>
+                    
+                    <!-- Timer Section for Part 1 -->
+                    <div class="timer-section">
+                        <h4>30-Second Timer for Mass Testing</h4>
+                        <div class="timer-container">
+                            <div class="timer-display" id="timerDisplay">30</div>
+                            <div class="timer-controls">
+                                <button class="timer-btn start-btn" id="startTimer">Start Timer</button>
+                                <button class="timer-btn reset-btn" id="resetTimer">Reset</button>
+                                <button class="timer-btn audio-btn" id="audioToggle1" title="Toggle countdown sounds">🔊</button>
+                            </div>
+                            <div class="timer-status" id="timerStatus">Ready to start</div>
+                        </div>
+                    </div>
+                    
                     <div class="mass-data-table">
                         <h5>Data Collection - Mass Effect</h5>
                         <table id="massDataTable">
@@ -202,6 +203,20 @@ import Layout from '../../layouts/Layout.astro';
                 <div class="step">
                     <h4>Step 16: Reset Mass</h4>
                     <p>Remove 3 washers from the paperclip. You should have 2 washers on the paperclip for the rest of this experiment.</p>
+                </div>
+
+                <!-- Timer Section for Part 2 -->
+                <div class="timer-section">
+                    <h4>30-Second Timer for Length Testing</h4>
+                    <div class="timer-container">
+                        <div class="timer-display" id="timerDisplay2">30</div>
+                        <div class="timer-controls">
+                            <button class="timer-btn start-btn" id="startBtn2">Start Timer</button>
+                            <button class="timer-btn reset-btn" id="resetBtn2">Reset</button>
+                            <button class="timer-btn audio-btn" id="audioToggle2" title="Toggle countdown sounds">🔊</button>
+                        </div>
+                        <div class="timer-status" id="timerStatus2">Ready to start</div>
+                    </div>
                 </div>
 
                 <div class="length-data-table">
@@ -614,7 +629,27 @@ import Layout from '../../layouts/Layout.astro';
     .submit-btn:hover {
         background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .audio-btn {
+        background: #6c757d;
+        font-size: 1.2rem;
+        min-width: 50px;
+        margin-left: 0.5rem;
+    }
+
+    .audio-btn:hover {
+        background: #5a6268;
+    }
+
+    .audio-btn.muted {
+        background: #dc3545;
+        opacity: 0.7;
+    }
+
+    .audio-btn.muted:hover {
+        background: #c82333;
     }
 
     .submit-btn:disabled {
@@ -739,11 +774,47 @@ import Layout from '../../layouts/Layout.astro';
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Audio functionality
+        let audioEnabled1 = true;
+        let audioEnabled2 = true;
+        
+        // Create audio context and sounds
+        function createBeepSound(frequency = 800, duration = 200) {
+            if (!window.AudioContext && !window.webkitAudioContext) return null;
+            
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+            
+            return { audioContext, oscillator, gainNode };
+        }
+        
+        function playCountdownBeep() {
+            createBeepSound(600, 150);
+        }
+        
+        function playFinalBeep() {
+            createBeepSound(1000, 500);
+        }
+
         // Timer functionality
         const timerDisplay = document.getElementById('timerDisplay');
         const startTimerBtn = document.getElementById('startTimer');
         const resetTimerBtn = document.getElementById('resetTimer');
         const timerStatus = document.getElementById('timerStatus');
+        const audioToggle1 = document.getElementById('audioToggle1');
         
         let timerInterval = null;
         let timeRemaining = 30;
@@ -760,6 +831,11 @@ import Layout from '../../layouts/Layout.astro';
                 timeRemaining--;
                 timerDisplay.textContent = timeRemaining;
                 
+                // Play countdown beeps
+                if (audioEnabled1 && timeRemaining <= 5 && timeRemaining > 0) {
+                    playCountdownBeep();
+                }
+                
                 if (timeRemaining <= 0) {
                     clearInterval(timerInterval);
                     timerInterval = null;
@@ -767,7 +843,20 @@ import Layout from '../../layouts/Layout.astro';
                     timerDisplay.classList.add('finished');
                     timerDisplay.textContent = '0';
                     timerStatus.textContent = '⏰ Time\'s up! Stop counting and record your result.';
-                    startTimerBtn.disabled = false;
+                    
+                    // Play final beep
+                    if (audioEnabled1) {
+                        playFinalBeep();
+                    }
+                    
+                    // Auto-reset after 2 seconds
+                    setTimeout(function() {
+                        timeRemaining = 30;
+                        timerDisplay.textContent = '30';
+                        timerDisplay.classList.remove('counting', 'finished');
+                        timerStatus.textContent = 'Ready to start';
+                        startTimerBtn.disabled = false;
+                    }, 2000);
                 }
             }, 1000);
         });
@@ -783,6 +872,99 @@ import Layout from '../../layouts/Layout.astro';
             timerDisplay.classList.remove('counting', 'finished');
             timerStatus.textContent = 'Ready to start';
             startTimerBtn.disabled = false;
+        });
+        
+        // Audio toggle for timer 1
+        audioToggle1.addEventListener('click', function() {
+            audioEnabled1 = !audioEnabled1;
+            if (audioEnabled1) {
+                audioToggle1.textContent = '🔊';
+                audioToggle1.classList.remove('muted');
+                audioToggle1.title = 'Disable countdown sounds';
+            } else {
+                audioToggle1.textContent = '🔇';
+                audioToggle1.classList.add('muted');
+                audioToggle1.title = 'Enable countdown sounds';
+            }
+        });
+
+        // Second Timer functionality for Part 2
+        const timerDisplay2 = document.getElementById('timerDisplay2');
+        const startTimerBtn2 = document.getElementById('startBtn2');
+        const resetTimerBtn2 = document.getElementById('resetBtn2');
+        const timerStatus2 = document.getElementById('timerStatus2');
+        const audioToggle2 = document.getElementById('audioToggle2');
+        
+        let timerInterval2 = null;
+        let timeRemaining2 = 30;
+        
+        // Start timer 2 function
+        startTimerBtn2.addEventListener('click', function() {
+            if (timerInterval2) return; // Prevent multiple timers
+            
+            startTimerBtn2.disabled = true;
+            timerDisplay2.classList.add('counting');
+            timerStatus2.textContent = 'Timer running... Start counting swings!';
+            
+            timerInterval2 = setInterval(function() {
+                timeRemaining2--;
+                timerDisplay2.textContent = timeRemaining2;
+                
+                // Play countdown beeps
+                if (audioEnabled2 && timeRemaining2 <= 5 && timeRemaining2 > 0) {
+                    playCountdownBeep();
+                }
+                
+                if (timeRemaining2 <= 0) {
+                    clearInterval(timerInterval2);
+                    timerInterval2 = null;
+                    timerDisplay2.classList.remove('counting');
+                    timerDisplay2.classList.add('finished');
+                    timerDisplay2.textContent = '0';
+                    timerStatus2.textContent = '⏰ Time\'s up! Stop counting and record your result.';
+                    
+                    // Play final beep
+                    if (audioEnabled2) {
+                        playFinalBeep();
+                    }
+                    
+                    // Auto-reset after 2 seconds
+                    setTimeout(function() {
+                        timeRemaining2 = 30;
+                        timerDisplay2.textContent = '30';
+                        timerDisplay2.classList.remove('counting', 'finished');
+                        timerStatus2.textContent = 'Ready to start';
+                        startTimerBtn2.disabled = false;
+                    }, 2000);
+                }
+            }, 1000);
+        });
+        
+        // Reset timer 2 function
+        resetTimerBtn2.addEventListener('click', function() {
+            if (timerInterval2) {
+                clearInterval(timerInterval2);
+                timerInterval2 = null;
+            }
+            timeRemaining2 = 30;
+            timerDisplay2.textContent = '30';
+            timerDisplay2.classList.remove('counting', 'finished');
+            timerStatus2.textContent = 'Ready to start';
+            startTimerBtn2.disabled = false;
+        });
+        
+        // Audio toggle for timer 2
+        audioToggle2.addEventListener('click', function() {
+            audioEnabled2 = !audioEnabled2;
+            if (audioEnabled2) {
+                audioToggle2.textContent = '🔊';
+                audioToggle2.classList.remove('muted');
+                audioToggle2.title = 'Disable countdown sounds';
+            } else {
+                audioToggle2.textContent = '🔇';
+                audioToggle2.classList.add('muted');
+                audioToggle2.title = 'Enable countdown sounds';
+            }
         });
 
         // Email functionality

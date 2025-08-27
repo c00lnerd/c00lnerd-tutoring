@@ -71,20 +71,20 @@ import Layout from '../../layouts/Layout.astro';
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <label for="initialVelocity" class="block text-gray-700 font-bold mb-2">Initial Velocity (m/s):</label>
-                    <input type="range" id="initialVelocity" min="1" max="50" value="20" class="w-full">
-                    <div class="flex justify-between">
-                        <span>1</span>
-                        <span id="velocityValue">20</span>
-                        <span>50</span>
+                    <input type="range" id="initialVelocity" min="1" max="50" value="20" class="w-full mb-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">1</span>
+                        <input type="number" id="velocityInput" min="1" max="50" value="20" class="w-16 px-2 py-1 border rounded text-center">
+                        <span class="text-sm">50</span>
                     </div>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <label for="launchAngle" class="block text-gray-700 font-bold mb-2">Launch Angle (degrees):</label>
-                    <input type="range" id="launchAngle" min="0" max="90" value="45" class="w-full">
-                    <div class="flex justify-between">
-                        <span>0°</span>
-                        <span id="angleValue">45°</span>
-                        <span>90°</span>
+                    <input type="range" id="launchAngle" min="0" max="90" value="45" class="w-full mb-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm">0°</span>
+                        <input type="number" id="angleInput" min="0" max="90" value="45" class="w-16 px-2 py-1 border rounded text-center">
+                        <span class="text-sm">90°</span>
                     </div>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-lg flex items-center justify-center">
@@ -291,12 +291,49 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
+    // Load and initialize EmailJS dynamically
+    function loadEmailJS() {
+        return new Promise((resolve, reject) => {
+            if (typeof emailjs !== 'undefined') {
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+            script.onload = () => {
+                console.log('EmailJS CDN loaded successfully');
+                resolve();
+            };
+            script.onerror = () => {
+                console.error('Failed to load EmailJS CDN');
+                reject(new Error('EmailJS CDN failed to load'));
+            };
+            document.head.appendChild(script);
+        });
+    }
 
-    document.addEventListener('DOMContentLoaded', function() {
+    // Initialize EmailJS with robust loading
+    async function initializeEmailJS() {
+        try {
+            await loadEmailJS();
+            if (typeof emailjs !== 'undefined') {
+                emailjs.init("ct_s19oZHppLy9BlW");
+                console.log('EmailJS initialized successfully');
+                return true;
+            } else {
+                throw new Error('EmailJS not available after loading');
+            }
+        } catch (error) {
+            console.error('EmailJS initialization failed:', error);
+            return false;
+        }
+    }
+    
+    // Start initialization when DOM is ready
+    let emailJSReady = false;
+    document.addEventListener('DOMContentLoaded', async function() {
+        emailJSReady = await initializeEmailJS();
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
@@ -334,8 +371,8 @@ import Layout from '../../layouts/Layout.astro';
         const ctx = canvas.getContext('2d');
         const initialVelocitySlider = document.getElementById('initialVelocity');
         const launchAngleSlider = document.getElementById('launchAngle');
-        const velocityValue = document.getElementById('velocityValue');
-        const angleValue = document.getElementById('angleValue');
+        const velocityInput = document.getElementById('velocityInput');
+        const angleInput = document.getElementById('angleInput');
         const launchBtn = document.getElementById('launchBtn');
         const maxHeightDisplay = document.getElementById('maxHeight');
         const rangeDisplay = document.getElementById('range');
@@ -490,19 +527,49 @@ import Layout from '../../layouts/Layout.astro';
             ctx.restore();
         }
         
-        // Update display values when sliders change
-        initialVelocitySlider.addEventListener('input', function() {
-            initialVelocity = parseFloat(this.value);
-            velocityValue.textContent = initialVelocity;
+        // Sync slider and text input values
+        function updateVelocity(value) {
+            const clampedValue = Math.max(1, Math.min(50, parseFloat(value) || 1));
+            initialVelocity = clampedValue;
+            initialVelocitySlider.value = clampedValue;
+            velocityInput.value = clampedValue;
             drawCoordinateSystem();
             updateVelocityVector();
+        }
+        
+        function updateAngle(value) {
+            const clampedValue = Math.max(0, Math.min(90, parseFloat(value) || 0));
+            launchAngle = clampedValue;
+            launchAngleSlider.value = clampedValue;
+            angleInput.value = clampedValue;
+            drawCoordinateSystem();
+            updateVelocityVector();
+        }
+        
+        // Event listeners for sliders
+        initialVelocitySlider.addEventListener('input', function() {
+            updateVelocity(this.value);
         });
         
         launchAngleSlider.addEventListener('input', function() {
-            launchAngle = parseFloat(this.value);
-            angleValue.textContent = launchAngle + '°';
-            drawCoordinateSystem();
-            updateVelocityVector();
+            updateAngle(this.value);
+        });
+        
+        // Event listeners for text inputs
+        velocityInput.addEventListener('input', function() {
+            updateVelocity(this.value);
+        });
+        
+        velocityInput.addEventListener('blur', function() {
+            updateVelocity(this.value);
+        });
+        
+        angleInput.addEventListener('input', function() {
+            updateAngle(this.value);
+        });
+        
+        angleInput.addEventListener('blur', function() {
+            updateAngle(this.value);
         });
         
         // Launch button click handler
@@ -682,6 +749,12 @@ import Layout from '../../layouts/Layout.astro';
                 'ANALYSIS QUESTIONS:\n' + questionsData + '\n\n' +
                 'CONCLUSION:\n' + conclusion + '\n\n' +
                 'Experiment completed: ' + new Date().toLocaleString();
+
+            // Check if EmailJS is ready
+            if (!emailJSReady) {
+                showMessage('Email system is still loading. Please wait a moment and try again.', 'error');
+                return;
+            }
 
             // Disable button and show loading state
             submitBtn.disabled = true;

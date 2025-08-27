@@ -256,10 +256,55 @@ import Layout from '../../layouts/Layout.astro';
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
+    // EmailJS loading and initialization with retry logic
+    let emailjsReady = false;
+    
+    function loadEmailJS() {
+        return new Promise((resolve, reject) => {
+            if (window.emailjs) {
+                emailjsReady = true;
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+            script.onload = function() {
+                if (window.emailjs) {
+                    try {
+                        emailjs.init("ct_s19oZHppLy9BlW");
+                        emailjsReady = true;
+                        resolve();
+                    } catch (error) {
+                        console.error('EmailJS initialization failed:', error);
+                        reject(error);
+                    }
+                } else {
+                    reject(new Error('EmailJS failed to load'));
+                }
+            };
+            script.onerror = function() {
+                reject(new Error('Failed to load EmailJS script'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+    
+    // Initialize EmailJS with retry logic
+    function initializeEmailJS() {
+        loadEmailJS().catch(error => {
+            console.error('EmailJS loading failed:', error);
+            // Retry after 2 seconds
+            setTimeout(() => {
+                loadEmailJS().catch(err => {
+                    console.error('EmailJS retry failed:', err);
+                });
+            }, 2000);
+        });
+    }
+    
+    // Start loading EmailJS immediately
+    initializeEmailJS();
 
     document.addEventListener('DOMContentLoaded', function() {
         // Store student information in local storage
@@ -449,50 +494,57 @@ import Layout from '../../layouts/Layout.astro';
             const question4 = document.getElementById('question4').value.trim();
             const question5 = document.getElementById('question5').value.trim();
 
-            // Prepare comprehensive experiment data for email
-            const experimentData = `
-EXPERIMENT: Energy of a Rubber Band
+            // Prepare comprehensive experiment data matching working experiment format
+            const questionsData = 
+                '1. Based on your graph, what is the relationship between the stretch length and the distance the rubber band travels?\n' +
+                (question1 || 'Not answered') + '\n\n' +
+                '2. How does the potential energy of the rubber band change as you stretch it further?\n' +
+                (question2 || 'Not answered') + '\n\n' +
+                '3. What happens to the potential energy when you release the rubber band?\n' +
+                (question3 || 'Not answered') + '\n\n' +
+                '4. What factors might affect the accuracy of your experiment?\n' +
+                (question4 || 'Not answered') + '\n\n' +
+                '5. How could you improve this experiment to get more accurate results?\n' +
+                (question5 || 'Not answered');
 
-STUDENT: ${studentName}
-EMAIL: ${studentEmail}
+            const stretchDataText = 
+                `10cm Stretch: Trials: ${dataValues.stretch_10_trial_1}, ${dataValues.stretch_10_trial_2}, ${dataValues.stretch_10_trial_3}, ${dataValues.stretch_10_trial_4}, ${dataValues.stretch_10_trial_5}. Average: ${dataValues.stretch_10_avg}\n` +
+                `15cm Stretch: Trials: ${dataValues.stretch_15_trial_1}, ${dataValues.stretch_15_trial_2}, ${dataValues.stretch_15_trial_3}, ${dataValues.stretch_15_trial_4}, ${dataValues.stretch_15_trial_5}. Average: ${dataValues.stretch_15_avg}\n` +
+                `20cm Stretch: Trials: ${dataValues.stretch_20_trial_1}, ${dataValues.stretch_20_trial_2}, ${dataValues.stretch_20_trial_3}, ${dataValues.stretch_20_trial_4}, ${dataValues.stretch_20_trial_5}. Average: ${dataValues.stretch_20_avg}\n` +
+                `25cm Stretch: Trials: ${dataValues.stretch_25_trial_1}, ${dataValues.stretch_25_trial_2}, ${dataValues.stretch_25_trial_3}, ${dataValues.stretch_25_trial_4}, ${dataValues.stretch_25_trial_5}. Average: ${dataValues.stretch_25_avg}`;
 
-HYPOTHESIS:
-${hypothesis || 'Not provided'}
-
-STRETCH DATA:
-10cm Stretch: Trials: ${dataValues.stretch_10_trial_1}, ${dataValues.stretch_10_trial_2}, ${dataValues.stretch_10_trial_3}, ${dataValues.stretch_10_trial_4}, ${dataValues.stretch_10_trial_5}. Average: ${dataValues.stretch_10_avg}
-15cm Stretch: Trials: ${dataValues.stretch_15_trial_1}, ${dataValues.stretch_15_trial_2}, ${dataValues.stretch_15_trial_3}, ${dataValues.stretch_15_trial_4}, ${dataValues.stretch_15_trial_5}. Average: ${dataValues.stretch_15_avg}
-20cm Stretch: Trials: ${dataValues.stretch_20_trial_1}, ${dataValues.stretch_20_trial_2}, ${dataValues.stretch_20_trial_3}, ${dataValues.stretch_20_trial_4}, ${dataValues.stretch_20_trial_5}. Average: ${dataValues.stretch_20_avg}
-25cm Stretch: Trials: ${dataValues.stretch_25_trial_1}, ${dataValues.stretch_25_trial_2}, ${dataValues.stretch_25_trial_3}, ${dataValues.stretch_25_trial_4}, ${dataValues.stretch_25_trial_5}. Average: ${dataValues.stretch_25_avg}
-
-ANALYSIS QUESTIONS:
-1. ${question1 || 'Not answered'}
-2. ${question2 || 'Not answered'}
-3. ${question3 || 'Not answered'}
-4. ${question4 || 'Not answered'}
-5. ${question5 || 'Not answered'}
-
-CONCLUSION:
-${conclusion}
-            `.trim();
-
-            // Use proven EmailJS parameter structure from experiment3_2
-            const templateParams = {
-                student_name: studentName,
-                student_email: studentEmail,
-                experiment_title: 'Experiment 8.1: Energy of a Rubber Band',
-                hypothesis: hypothesis || 'Not provided',
-                missing_elements: `10cm: ${dataValues.stretch_10_avg || 'N/A'} | 15cm: ${dataValues.stretch_15_avg || 'N/A'} | 20cm: ${dataValues.stretch_20_avg || 'N/A'} | 25cm: ${dataValues.stretch_25_avg || 'N/A'}`,
-                conclusion: experimentData,
-                subject: `Physical Science Experiment 8.1 Results - ${studentName}`
-            };
+            const experimentData = 
+                'EXPERIMENT 8.1: ENERGY OF A RUBBER BAND - DETAILED RESULTS\n\n' +
+                'Student: ' + studentName + '\n' +
+                'Email: ' + studentEmail + '\n\n' +
+                'HYPOTHESIS:\n' + (hypothesis || 'Not provided') + '\n\n' +
+                'STRETCH DATA:\n' + stretchDataText + '\n\n' +
+                'ANALYSIS QUESTIONS:\n' + questionsData + '\n\n' +
+                'CONCLUSION:\n' + conclusion + '\n\n' +
+                'Experiment completed: ' + new Date().toLocaleString();
 
             // Disable button and show loading state
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
-            // Send email using EmailJS
-            emailjs.send('service_ot1jg6s', 'template_y556rhr', templateParams)
+            // Check if EmailJS is ready before sending
+            if (!emailjsReady) {
+                showMessage('Email service is still loading. Please wait a moment and try again.', 'error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Results';
+                return;
+            }
+
+            // Send email using EmailJS with exact parameter structure from working experiment6_2
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', {
+                student_name: studentName,
+                student_email: studentEmail,
+                experiment_title: 'Experiment 8.1: Energy of a Rubber Band',
+                hypothesis: hypothesis || 'Not provided',
+                missing_elements: questionsData,
+                conclusion: experimentData,
+                subject: `Experiment 8.1 - ${studentName}`
+            })
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     showMessage('Your experiment results have been submitted successfully!', 'success');

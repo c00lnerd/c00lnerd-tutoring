@@ -95,6 +95,20 @@ import Layout from '../../layouts/Layout.astro';
                     <textarea id="step8_observations" placeholder="Record detailed observations of bubble formation..."></textarea>
                 </div>
 
+                <!-- Timer Section for 10-minute timing -->
+                <div class="timer-section">
+                    <h4>10-Minute Timer for Experiment Duration</h4>
+                    <div class="timer-container">
+                        <div class="timer-display" id="timerDisplay">10:00</div>
+                        <div class="timer-controls">
+                            <button class="timer-btn start-btn" id="startTimer">Start Timer</button>
+                            <button class="timer-btn reset-btn" id="resetTimer">Reset</button>
+                            <button class="timer-btn audio-btn" id="audioToggle" title="Toggle countdown sounds">🔊</button>
+                        </div>
+                        <div class="timer-status" id="timerStatus">Ready to start 10-minute experiment timing</div>
+                    </div>
+                </div>
+
                 <div class="step">
                     <h4>Step 9: Check Wire Changes</h4>
                     <p>Allow the experiment to run for about 10 minutes. After that time, pull the wires out of the solution and look at the bare ends. What do you see? Well, one of the wires should not look very different from when you started. It might be darker than it was, but that should be it. What about the end of the other wire? It should now be a different color. What color is it? Write that color down.</p>
@@ -246,6 +260,115 @@ Clues Observed: ${data.clues_observed}
                         '<span style="color: red;">✗ Failed to send results.</span>';
                 });
         });
+
+        // Timer functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Audio context for beeps
+            let audioCtx = null;
+            let audioEnabled = true;
+
+            function initAudioContext() {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            function playCountdownBeep() {
+                if (!audioCtx) return;
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 800;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.1);
+            }
+
+            function playFinalBeep() {
+                if (!audioCtx) return;
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                oscillator.frequency.value = 1000;
+                oscillator.type = 'sine';
+                gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + 0.5);
+            }
+
+            // 10-minute countdown timer
+            const timerDisplay = document.getElementById('timerDisplay');
+            const startTimerBtn = document.getElementById('startTimer');
+            const resetTimerBtn = document.getElementById('resetTimer');
+            const timerStatus = document.getElementById('timerStatus');
+            const audioToggle = document.getElementById('audioToggle');
+            let timerInterval = null;
+            let timeRemaining = 600; // 10 minutes
+
+            if (startTimerBtn) {
+                startTimerBtn.addEventListener('click', function() {
+                    if (timerInterval) return;
+                    initAudioContext();
+                    startTimerBtn.disabled = true;
+                    timerDisplay.classList.add('counting');
+                    timerStatus.textContent = 'Timer running... Experiment in progress';
+                    
+                    timerInterval = setInterval(function() {
+                        timeRemaining--;
+                        const minutes = Math.floor(timeRemaining / 60);
+                        const seconds = timeRemaining % 60;
+                        timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                        
+                        if (audioEnabled && timeRemaining <= 5 && timeRemaining > 0) {
+                            playCountdownBeep();
+                        }
+                        
+                        if (timeRemaining <= 0) {
+                            clearInterval(timerInterval);
+                            timerInterval = null;
+                            timerDisplay.classList.remove('counting');
+                            timerDisplay.classList.add('finished');
+                            timerStatus.textContent = '⏰ Time\'s up! Check wire changes in Step 9.';
+                            startTimerBtn.disabled = false;
+                            if (audioEnabled) playFinalBeep();
+                            
+                            setTimeout(function() {
+                                timeRemaining = 600;
+                                timerDisplay.textContent = '10:00';
+                                timerDisplay.classList.remove('counting', 'finished');
+                                timerStatus.textContent = 'Ready to start 10-minute experiment timing';
+                            }, 2000);
+                        }
+                    }, 1000);
+                });
+            }
+
+            if (resetTimerBtn) {
+                resetTimerBtn.addEventListener('click', function() {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    timeRemaining = 600;
+                    timerDisplay.textContent = '10:00';
+                    timerDisplay.classList.remove('counting', 'finished');
+                    timerStatus.textContent = 'Ready to start 10-minute experiment timing';
+                    startTimerBtn.disabled = false;
+                });
+            }
+
+            if (audioToggle) {
+                audioToggle.addEventListener('click', function() {
+                    audioEnabled = !audioEnabled;
+                    audioToggle.textContent = audioEnabled ? '🔊' : '🔇';
+                    audioToggle.style.backgroundColor = audioEnabled ? '#4CAF50' : '#f44336';
+                    audioToggle.style.color = 'white';
+                });
+            }
+        });
     </script>
 
     <style>
@@ -267,6 +390,27 @@ Clues Observed: ${data.clues_observed}
         .submit-btn { background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; }
         .submit-btn:hover { background: #218838; }
         .submit-status { margin-top: 15px; font-weight: bold; }
-        @media (max-width: 768px) { .container { padding: 15px; } .materials-grid { grid-template-columns: 1fr; } }
+        
+        /* Timer Styles */
+        .timer-section { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 20px 0; border-left: 4px solid #fdcb6e; }
+        .timer-section h4 { color: #2c3e50; margin-top: 0; border-bottom: 2px solid #fdcb6e; padding-bottom: 8px; }
+        .timer-container { text-align: center; }
+        .timer-display { font-size: 3em; font-weight: bold; color: #2c3e50; margin: 20px 0; font-family: 'Courier New', monospace; border: 3px solid #ddd; border-radius: 12px; padding: 20px; background: #f8f9fa; display: inline-block; min-width: 150px; }
+        .timer-display.counting { color: #e17055; border-color: #e17055; background: #fff5f5; animation: pulse 1s infinite; }
+        .timer-display.finished { color: #00b894; border-color: #00b894; background: #f0fff4; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        .timer-controls { margin: 20px 0; }
+        .timer-btn { background: #3498db; color: white; border: none; padding: 12px 20px; margin: 0 8px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; }
+        .timer-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .timer-btn:disabled { background: #95a5a6; cursor: not-allowed; transform: none; box-shadow: none; }
+        .timer-btn.start-btn { background: #27ae60; }
+        .timer-btn.start-btn:hover { background: #229954; }
+        .timer-btn.reset-btn { background: #e74c3c; }
+        .timer-btn.reset-btn:hover { background: #c0392b; }
+        .timer-btn.audio-btn { background: #f39c12; }
+        .timer-btn.audio-btn:hover { background: #e67e22; }
+        .timer-status { font-size: 1.1em; color: #2c3e50; margin-top: 15px; font-weight: 500; }
+        
+        @media (max-width: 768px) { .container { padding: 15px; } .materials-grid { grid-template-columns: 1fr; } .timer-display { font-size: 2.5em; padding: 15px; } .timer-btn { padding: 10px 15px; margin: 5px; font-size: 14px; } }
     </style>
 </Layout>

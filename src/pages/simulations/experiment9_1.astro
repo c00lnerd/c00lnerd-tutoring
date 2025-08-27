@@ -17,6 +17,10 @@ import Layout from '../../layouts/Layout.astro';
                     <input type="email" id="studentEmail" class="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter your email address" required>
                 </div>
             </div>
+            <div class="mt-4 flex items-center gap-3">
+                <button id="saveEmail" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors">Save Email</button>
+                <div id="emailStatus" class="text-sm"></div>
+            </div>
         </section>
 
         <h1>Experiment 9.1: Sound Wave Visualization</h1>
@@ -821,14 +825,15 @@ window.addEventListener('load', function() {
         console.log('Student Email:', savedEmail);
         console.log('Student Conclusions:', conclusions);
         
-        if (typeof emailjs !== 'undefined') {
-            // Disable button and show loading state
-            submitResultsBtn.disabled = true;
-            submitResultsBtn.textContent = 'Submitting...';
-            
-            // Initialize EmailJS right before sending
-            emailjs.init("ct_s19oZHppLy9BlW");
-            console.log('EmailJS initialized successfully');
+        // Check if EmailJS is ready before sending
+        if (!emailjsReady) {
+            showSubmissionMessage('Email service is still loading. Please wait a moment and try again.', 'error');
+            return;
+        }
+
+        // Disable button and show loading state
+        submitResultsBtn.disabled = true;
+        submitResultsBtn.textContent = 'Submitting...';
             
             // Extract student name from email or use default
             const studentName = savedEmail.split('@')[0] || 'Student';
@@ -858,7 +863,7 @@ The student completed the sound wave visualization experiment, observing how sou
             };
 
             // Send via EmailJS
-            emailjs.send("service_ot1jg6s", "template_y556rhr", templateParams)
+            window.emailjs.send("service_ot1jg6s", "template_y556rhr", templateParams)
                 .then(function(response) {
                     console.log('Experiment results sent successfully:', response);
                     showSubmissionMessage('Experiment submitted successfully!', 'success');
@@ -871,14 +876,11 @@ The student completed the sound wave visualization experiment, observing how sou
                     submitResultsBtn.textContent = 'Submit to Teacher';
                     submitResultsBtn.disabled = false;
                 });
-        } else {
-            console.warn('EmailJS not available - typeof emailjs:', typeof emailjs);
-            showSubmissionMessage('Email service not available. Please try again later.', 'error');
-        }
     });
     }
     
     function showSubmissionMessage(message, type) {
+        const submissionMessage = document.getElementById('submissionMessage');
         if (submissionMessage) {
             submissionMessage.textContent = message;
             submissionMessage.style.display = 'block';
@@ -890,12 +892,62 @@ The student completed the sound wave visualization experiment, observing how sou
 });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
-
 <script client:load>
+// Dynamic EmailJS loading with retry logic
+let emailjsReady = false;
+let emailjsRetryCount = 0;
+const maxRetries = 3;
+
+function loadEmailJS() {
+    return new Promise((resolve, reject) => {
+        if (window.emailjs) {
+            emailjsReady = true;
+            window.emailjs.init("ct_s19oZHppLy9BlW");
+            resolve();
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+        script.onload = () => {
+            if (window.emailjs) {
+                emailjsReady = true;
+                window.emailjs.init("ct_s19oZHppLy9BlW");
+                console.log('EmailJS loaded and initialized successfully');
+                resolve();
+            } else {
+                reject(new Error('EmailJS not available after script load'));
+            }
+        };
+        script.onerror = () => reject(new Error('Failed to load EmailJS script'));
+        document.head.appendChild(script);
+    });
+}
+
+function retryEmailJSLoad() {
+    if (emailjsRetryCount < maxRetries) {
+        emailjsRetryCount++;
+        console.log(`Retrying EmailJS load (attempt ${emailjsRetryCount}/${maxRetries})`);
+        setTimeout(() => {
+            loadEmailJS().catch(() => {
+                if (emailjsRetryCount < maxRetries) {
+                    retryEmailJSLoad();
+                } else {
+                    console.error('Failed to load EmailJS after maximum retries');
+                }
+            });
+        }, 1000 * emailjsRetryCount);
+    }
+}
+
 window.addEventListener('load', function() {
-    // Wait for DOM and resources to be fully loaded
     console.log('Window load event fired');
+    
+    // Load EmailJS
+    loadEmailJS().catch(() => {
+        console.warn('Initial EmailJS load failed, starting retry logic');
+        retryEmailJSLoad();
+    });
         
     // Set up volume control
     const volumeControl = document.getElementById('volume');

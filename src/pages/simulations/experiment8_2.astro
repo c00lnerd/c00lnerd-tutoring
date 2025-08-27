@@ -96,10 +96,68 @@ import Layout from '../../layouts/Layout.astro';
             <ol class="list-decimal pl-8 mb-4">
                 <li class="mb-2">Using a bathroom scale, measure your weight. You will need to convert your weight in pounds to kilograms (1 pound = 0.45 kg). Record your weight in kilograms.</li>
                 <li class="mb-2">
-                    Since we are going to determine the work and power required to lift your weight from the first floor to the second floor (red arrow on Figure 8.25), we are only concerned with the vertical height of the stairs, not the horizontal distance of the stairs. Remember that, although the force you will be applying is in the direction of the orange vector in Figure 8.25, the only part of the force that is used to lift you is the red arrow. The force represented by the yellow arrow does not help to lift you up the stairs.
-                    <div class="my-4 text-center">
-                        <img src="/images/stair-vectors.jpg" alt="Figure 8.25 showing force vectors on stairs" class="inline-block max-w-full h-auto">
-                        <p class="text-sm text-gray-600 mt-2">FIGURE 8.25</p>
+                    Since we are going to determine the work and power required to lift your weight from the first floor to the second floor, we are only concerned with the vertical height of the stairs, not the horizontal distance of the stairs. Remember that, although the force you will be applying is in the direction along the stairs, the only part of the force that is used to lift you is the vertical component. The horizontal component does not help to lift you up the stairs.
+                    <div class="my-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg">
+                        <div class="text-center">
+                            <svg width="300" height="200" viewBox="0 0 300 200" class="inline-block">
+                                <!-- Stairs -->
+                                <g stroke="#333" stroke-width="2" fill="none">
+                                    <path d="M50 180 L80 180 L80 160 L110 160 L110 140 L140 140 L140 120 L170 120 L170 100 L200 100"/>
+                                </g>
+                                
+                                <!-- Force vectors -->
+                                <!-- Orange vector (applied force along stairs) -->
+                                <g stroke="orange" stroke-width="3" fill="orange">
+                                    <path d="M125 150 L180 105" marker-end="url(#arrowOrange)"/>
+                                    <text x="155" y="125" font-size="12" fill="orange">Applied Force</text>
+                                </g>
+                                
+                                <!-- Red vector (vertical component) -->
+                                <g stroke="red" stroke-width="3" fill="red">
+                                    <path d="M125 150 L125 105" marker-end="url(#arrowRed)"/>
+                                    <text x="85" y="125" font-size="12" fill="red">Vertical</text>
+                                    <text x="85" y="138" font-size="12" fill="red">Component</text>
+                                </g>
+                                
+                                <!-- Yellow vector (horizontal component) -->
+                                <g stroke="gold" stroke-width="3" fill="gold">
+                                    <path d="M125 105 L180 105" marker-end="url(#arrowYellow)"/>
+                                    <text x="145" y="95" font-size="12" fill="gold">Horizontal</text>
+                                    <text x="145" y="85" font-size="12" fill="gold">Component</text>
+                                </g>
+                                
+                                <!-- Blue arrows for step heights -->
+                                <g stroke="blue" stroke-width="2" fill="blue">
+                                    <path d="M65 180 L65 160" marker-end="url(#arrowBlue)"/>
+                                    <path d="M95 160 L95 140" marker-end="url(#arrowBlue)"/>
+                                    <path d="M125 140 L125 120" marker-end="url(#arrowBlue)"/>
+                                    <path d="M155 120 L155 100" marker-end="url(#arrowBlue)"/>
+                                </g>
+                                
+                                <!-- Arrow markers -->
+                                <defs>
+                                    <marker id="arrowOrange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" fill="orange"/>
+                                    </marker>
+                                    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" fill="red"/>
+                                    </marker>
+                                    <marker id="arrowYellow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" fill="gold"/>
+                                    </marker>
+                                    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                        <path d="M0,0 L0,6 L9,3 z" fill="blue"/>
+                                    </marker>
+                                </defs>
+                            </svg>
+                        </div>
+                        <p class="text-sm text-gray-600 mt-2 text-center"><strong>FIGURE 8.25</strong> - Force Components on Stairs</p>
+                        <div class="text-xs mt-2">
+                            <p><span class="text-orange-600">●</span> <strong>Orange:</strong> Applied force along stairs</p>
+                            <p><span class="text-red-600">●</span> <strong>Red:</strong> Vertical component (does work against gravity)</p>
+                            <p><span class="text-yellow-500">●</span> <strong>Yellow:</strong> Horizontal component (no work against gravity)</p>
+                            <p><span class="text-blue-600">●</span> <strong>Blue:</strong> Individual step heights</p>
+                        </div>
                     </div>
                     So to determine the vertical height of the stairs, measure the height of each step (blue arrows) and add them together. (You should find that each step is the same height, so once you measure one or two—to be certain they are the same height—you can simply count the number of steps and multiply the number of steps by the height of one step to find the total vertical height.) Record the distance (total vertical height of the stairs) in your data table.
                 </li>
@@ -276,10 +334,55 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
+    // EmailJS loading and initialization with retry logic
+    let emailjsReady = false;
+    
+    function loadEmailJS() {
+        return new Promise((resolve, reject) => {
+            if (window.emailjs) {
+                emailjsReady = true;
+                resolve();
+                return;
+            }
+            
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+            script.onload = function() {
+                if (window.emailjs) {
+                    try {
+                        emailjs.init("ct_s19oZHppLy9BlW");
+                        emailjsReady = true;
+                        resolve();
+                    } catch (error) {
+                        console.error('EmailJS initialization failed:', error);
+                        reject(error);
+                    }
+                } else {
+                    reject(new Error('EmailJS failed to load'));
+                }
+            };
+            script.onerror = function() {
+                reject(new Error('Failed to load EmailJS script'));
+            };
+            document.head.appendChild(script);
+        });
+    }
+    
+    // Initialize EmailJS with retry logic
+    function initializeEmailJS() {
+        loadEmailJS().catch(error => {
+            console.error('EmailJS loading failed:', error);
+            // Retry after 2 seconds
+            setTimeout(() => {
+                loadEmailJS().catch(err => {
+                    console.error('EmailJS retry failed:', err);
+                });
+            }, 2000);
+        });
+    }
+    
+    // Start loading EmailJS immediately
+    initializeEmailJS();
 
     document.addEventListener('DOMContentLoaded', function() {
         // Store student information in local storage
@@ -462,22 +565,26 @@ ${conclusion3}
 ${conclusion4}
             `.trim();
 
-            const templateParams = {
+            // Check if EmailJS is ready before sending
+            if (!emailjsReady) {
+                showMessage('Email service is still loading. Please wait a moment and try again.', 'error');
+                return;
+            }
+
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            // Send email using EmailJS with exact parameter structure from working experiments
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', {
                 student_name: studentName,
                 student_email: studentEmail,
                 experiment_title: 'Experiment 8.2: How Fast Can You Do Work?',
                 hypothesis: hypothesis || 'Exploring work and power calculations in physical activities',
                 missing_elements: `Arms: ${armWork ? '✓' : '✗'} | Legs: ${legWork ? '✓' : '✗'} | Conclusions: ${conclusion1 && conclusion2 ? '✓' : '✗'}`,
                 conclusion: experimentData,
-                subject: `Physical Science Experiment 8.2 Results - ${studentName}`
-            };
-
-            // Disable button and show loading state
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            
-            // Send email using EmailJS
-            emailjs.send('service_ot1jg6s', 'template_y556rhr', templateParams)
+                subject: `Experiment 8.2 - ${studentName}`
+            })
                 .then(function(response) {
                     console.log('SUCCESS!', response.status, response.text);
                     showMessage('Experiment submitted successfully!', 'success');
