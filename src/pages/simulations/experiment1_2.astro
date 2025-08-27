@@ -27,7 +27,7 @@ import Layout from '../../layouts/Layout.astro';
             <ul>
                 <li>String</li>
                 <li>Masking tape</li>
-                <li>Stopwatch or other 30-second timer</li>
+                <li>Stopwatch or use the built-in 30-second timer below</li>
                 <li>Pencil</li>
                 <li>Paper clip</li>
                 <li>5 Washers</li>
@@ -35,6 +35,20 @@ import Layout from '../../layouts/Layout.astro';
                 <li>Protractor</li>
                 <li>Metric ruler</li>
             </ul>
+        </div>
+
+        <!-- 30-Second Timer Section -->
+        <div class="timer-section">
+            <h3>🕐 Built-in 30-Second Timer</h3>
+            <p>Use this timer for your pendulum swing measurements. Click "Start Timer" and begin counting swings when it reaches zero.</p>
+            <div class="timer-container">
+                <div class="timer-display" id="timerDisplay">30</div>
+                <div class="timer-controls">
+                    <button id="startTimer" class="timer-btn start-btn">Start Timer</button>
+                    <button id="resetTimer" class="timer-btn reset-btn">Reset</button>
+                </div>
+                <div class="timer-status" id="timerStatus">Ready to start</div>
+            </div>
         </div>
 
         <div class="hypothesis-section">
@@ -615,10 +629,162 @@ import Layout from '../../layouts/Layout.astro';
         font-size: 0.9rem;
         line-height: 1.4;
     }
+
+    /* Timer Section Styling */
+    .timer-section {
+        background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+        padding: 2rem;
+        border-radius: 12px;
+        margin: 2rem 0;
+        border: 2px solid #fdcb6e;
+        text-align: center;
+    }
+
+    .timer-section h3 {
+        color: #d63031;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+    }
+
+    .timer-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .timer-display {
+        font-size: 4rem;
+        font-weight: bold;
+        color: #2d3436;
+        background: white;
+        border: 3px solid #fdcb6e;
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+    }
+
+    .timer-display.counting {
+        border-color: #e17055;
+        color: #d63031;
+        transform: scale(1.05);
+    }
+
+    .timer-display.finished {
+        border-color: #00b894;
+        color: #00b894;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+
+    .timer-controls {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .timer-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .start-btn {
+        background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+        color: white;
+    }
+
+    .start-btn:hover {
+        background: linear-gradient(135deg, #00a085 0%, #008f76 100%);
+        transform: translateY(-2px);
+    }
+
+    .start-btn:disabled {
+        background: #ddd;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .reset-btn {
+        background: linear-gradient(135deg, #636e72 0%, #2d3436 100%);
+        color: white;
+    }
+
+    .reset-btn:hover {
+        background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+        transform: translateY(-2px);
+    }
+
+    .timer-status {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #2d3436;
+        margin-top: 0.5rem;
+    }
 </style>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Timer functionality
+        const timerDisplay = document.getElementById('timerDisplay');
+        const startTimerBtn = document.getElementById('startTimer');
+        const resetTimerBtn = document.getElementById('resetTimer');
+        const timerStatus = document.getElementById('timerStatus');
+        
+        let timerInterval = null;
+        let timeRemaining = 30;
+        
+        // Start timer function
+        startTimerBtn.addEventListener('click', function() {
+            if (timerInterval) return; // Prevent multiple timers
+            
+            startTimerBtn.disabled = true;
+            timerDisplay.classList.add('counting');
+            timerStatus.textContent = 'Timer running... Start counting swings!';
+            
+            timerInterval = setInterval(function() {
+                timeRemaining--;
+                timerDisplay.textContent = timeRemaining;
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    timerDisplay.classList.remove('counting');
+                    timerDisplay.classList.add('finished');
+                    timerDisplay.textContent = '0';
+                    timerStatus.textContent = '⏰ Time\'s up! Stop counting and record your result.';
+                    startTimerBtn.disabled = false;
+                }
+            }, 1000);
+        });
+        
+        // Reset timer function
+        resetTimerBtn.addEventListener('click', function() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            timeRemaining = 30;
+            timerDisplay.textContent = '30';
+            timerDisplay.classList.remove('counting', 'finished');
+            timerStatus.textContent = 'Ready to start';
+            startTimerBtn.disabled = false;
+        });
+
         // Email functionality
         const emailInput = document.getElementById('studentEmail');
         const saveEmailBtn = document.getElementById('saveEmail');
