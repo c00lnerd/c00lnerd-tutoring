@@ -2,13 +2,15 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>FFT Visualizer with Max Hold and Waterfall</title>
+  <title>FFT Visualizer with Sample Rate Selection, Max Hold, and Waterfall</title>
   <style>
     body {
       background-color: #222;
       color: #eee;
       font-family: sans-serif;
       text-align: center;
+      margin: 0;
+      padding: 0;
     }
     canvas {
       display: block;
@@ -16,10 +18,10 @@
       background-color: #000;
       border: 1px solid #444;
     }
-    #controls {
+    #controls, #samplerate {
       margin-top: 10px;
     }
-    button {
+    button, select {
       margin: 5px;
       padding: 10px 15px;
       font-size: 1rem;
@@ -32,13 +34,25 @@
   </style>
 </head>
 <body>
-  <h1>FFT Visualizer with Max Hold and Waterfall</h1>
+  <h1>FFT Visualizer with Sample Rate, Max Hold, and Waterfall</h1>
+  <!-- Sampling Frequency Drop-down -->
+  <div id="samplerate">
+    <label for="sampleRateSelect">Sampling Frequency:</label>
+    <select id="sampleRateSelect">
+      <option value="11025">11025 Hz</option>
+      <option value="22050">22050 Hz</option>
+      <option value="44100" selected>44100 Hz</option>
+      <option value="48000">48000 Hz</option>
+      <option value="96000">96000 Hz</option>
+    </select>
+  </div>
   <!-- Start Audio Button -->
   <button id="startAudio">Start Audio</button>
   <!-- Main FFT Canvas -->
   <canvas id="fftCanvas" width="800" height="400"></canvas>
   <!-- Waterfall Canvas Beneath the Main Graph -->
   <canvas id="waterfallCanvas" width="800" height="200"></canvas>
+  <!-- Simulation Controls -->
   <div id="controls" style="display:none;">
     <button id="toggleAmp">Linear Amp Scale</button>
     <button id="toggleFreq">Linear Freq Scale</button>
@@ -68,13 +82,8 @@
     // Array to store max hold values per group.
     let maxHold = [];
 
-    // ============== Audio Setup ==============
-    const AudioContext = window.AudioContext || window.webkitAudioContext;
-    const audioCtx = new AudioContext();
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 2048;
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
+    // Global objects that will be created on start.
+    let audioCtx, analyser, bufferLength, dataArray;
 
     // ============== Utility: Frequency to Note Name ==============
     function frequencyToNoteName(frequency) {
@@ -88,14 +97,33 @@
 
     // ============== Start Button Handler ==============
     document.getElementById("startAudio").addEventListener("click", () => {
+      // Read selected sample rate from the drop-down.
+      const selectedRate = parseInt(document.getElementById("sampleRateSelect").value, 10);
+      
+      // Create a new AudioContext with the chosen sample rate.
+      // (Note: The actual sample rate may differ based on hardware.)
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate: selectedRate
+      });
+      
+      // Resume AudioContext if suspended.
       if (audioCtx.state === "suspended") {
         audioCtx.resume();
       }
+      
+      // Set up the analyser node.
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      bufferLength = analyser.frequencyBinCount;
+      dataArray = new Uint8Array(bufferLength);
+
+      // Request microphone access.
       navigator.mediaDevices.getUserMedia({ audio: true, video: false })
         .then(stream => {
           const source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
           document.getElementById("startAudio").style.display = "none";
+          document.getElementById("samplerate").style.display = "none";
           document.getElementById("controls").style.display = "block";
           draw(); // Start the visualization loop.
         })
