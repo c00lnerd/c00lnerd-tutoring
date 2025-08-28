@@ -823,21 +823,8 @@ import Layout from '../../layouts/Layout.astro';
                             return `Student changed ${data.parameter} to ${data.value}`;
                         default:
                             return `Student performed action: ${action}`;
-            // Get human-readable activity descriptions
-            function getActivityDescription(action, data) {
-                switch(action) {
-                    case 'experiment_9_2_started':
-                        return 'Student started Experiment 9.2: Speed of Sound';
-                    case 'simulation_started':
-                        return `Student started simulation with distance: ${data.distance}m, temperature: ${data.temperature}°C`;
-                    case 'simulation_reset':
-                        return 'Student reset the simulation';
-                    case 'parameter_changed':
-                        return `Student changed ${data.parameter} to ${data.value}`;
-                    default:
-                        return `Student performed action: ${action}`;
+                    }
                 }
-            }
 
             // Log simulation interactions
             if (startButton) {
