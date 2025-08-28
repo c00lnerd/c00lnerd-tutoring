@@ -453,6 +453,10 @@ import Layout from '../../layouts/Layout.astro';
         const submissionMessage = document.getElementById('submissionMessage');
 
         submitBtn.addEventListener('click', function() {
+            // Disable button immediately to prevent multiple clicks
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
             // Validate required fields
             const studentName = studentNameInput.value.trim();
             const studentEmail = studentEmailInput.value.trim();

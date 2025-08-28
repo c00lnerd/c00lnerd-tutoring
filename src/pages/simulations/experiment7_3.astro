@@ -308,19 +308,27 @@ import Layout from '../../layouts/Layout.astro';
         const submissionMessage = document.getElementById('submissionMessage');
 
         submitBtn.addEventListener('click', function() {
+            // Disable button immediately to prevent multiple clicks
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
             // Validate required fields
             const studentName = studentNameInput.value.trim();
             const studentEmail = studentEmailInput.value.trim();
             const teacherEmail = teacherEmailInput.value.trim();
             const conclusion = document.getElementById('conclusion').value.trim();
 
-            if (!studentName || !studentEmail || !teacherEmail) {
-                showMessage('Please fill in all required student and teacher information.', 'error');
+            if (!studentName || !studentEmail) {
+                submissionMessage.innerHTML = '<span style="color: red;">⚠ Please fill in all required fields</span>';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Results';
                 return;
             }
 
-            if (!conclusion) {
-                showMessage('Please complete your conclusion before submitting.', 'error');
+            if (!isValidEmail(studentEmail)) {
+                submissionMessage.innerHTML = '<span style="color: red;">⚠ Please enter a valid email address</span>';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Results';
                 return;
             }
 

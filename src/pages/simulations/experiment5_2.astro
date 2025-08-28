@@ -711,12 +711,18 @@ import Layout from '../../layouts/Layout.astro';
         const submissionMessage = document.getElementById('submissionMessage');
         
         submitBtn.addEventListener('click', function() {
+            // Disable button immediately to prevent multiple clicks
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
             // Validate required fields
             const studentName = studentNameInput.value.trim();
             const studentEmail = studentEmailInput.value.trim();
             
             if (!studentName || !studentEmail) {
-                showMessage("Please fill in all required fields (student name and student email).", "error");
+                submissionMessage.innerHTML = '<span style="color: red;">⚠ Please fill in all required fields</span>';
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Results';
                 return;
             }
             

@@ -525,9 +525,15 @@ import Layout from '../../layouts/Layout.astro';
         
         // Submit results functionality
         submitResultsBtn.addEventListener('click', function() {
+            // Disable button immediately to prevent multiple clicks
+            submitResultsBtn.disabled = true;
+            submitResultsBtn.textContent = 'Submitting...';
+            
             const email = localStorage.getItem('studentEmail');
             if (!email) {
                 emailStatus.innerHTML = '<span style="color: red;">⚠ Please enter and save your email address first!</span>';
+                submitResultsBtn.disabled = false;
+                submitResultsBtn.textContent = 'Submit to Teacher';
                 return;
             }
             
@@ -536,6 +542,8 @@ import Layout from '../../layouts/Layout.astro';
             
             if (!conclusions) {
                 emailStatus.innerHTML = '<span style="color: red;">⚠ Please complete the conclusions section before submitting.</span>';
+                submitResultsBtn.disabled = false;
+                submitResultsBtn.textContent = 'Submit to Teacher';
                 return;
             }
             
@@ -548,21 +556,6 @@ import Layout from '../../layouts/Layout.astro';
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
-        
-        // Send experiment results via EmailJS
-        submitResultsBtn.addEventListener('click', function() {
-            const savedEmail = localStorage.getItem('studentEmail');
-            if (savedEmail) {
-                const conclusions = document.getElementById('conclusions').value.trim();
-                if (conclusions) {
-                    sendExperimentResults(savedEmail, conclusions);
-                } else {
-                    alert('Please fill in your conclusions before submitting');
-                }
-            } else {
-                alert('Please save your email address before submitting');
-            }
-        });
         
         // Send experiment results via EmailJS
         function sendExperimentResults(email, conclusions) {

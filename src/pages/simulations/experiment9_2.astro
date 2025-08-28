@@ -710,117 +710,94 @@ import Layout from '../../layouts/Layout.astro';
                 isRunning = true;
                 startTime = Date.now();
                 startButton.disabled = true;
-                animateSound();
-            }
 
-            function reset() {
-                isRunning = false;
-                if (animationId) {
-                    cancelAnimationFrame(animationId);
-                }
-                startTime = 0;
-                displayTime.textContent = '0.000';
-                displaySpeed.textContent = '0';
-                startButton.disabled = false;
-                drawScene();
-            }
+                    for (let i = 0; i < timeInputs.length; i++) {
+                        const distance = parseFloat(distanceInputs[i].value) || 0;
+                        const time = parseFloat(timeInputs[i].value) || 0;
+                        
+                        if (distance && time) {
+                            const speed = distance / time;
+                            speedResults[i].textContent = speed.toFixed(1);
+                            totalSpeed += speed;
+                            validMeasurements++;
+                        } else {
+                            speedResults[i].textContent = '0';
+                        }
+                    }
 
-            // Event listeners
-            distanceInput.addEventListener('input', () => {
-                displayDistance.textContent = distanceInput.value;
-                reset();
-            });
-
-            startButton.addEventListener('click', startMeasurement);
-            resetButton.addEventListener('click', reset);
-
-            // Data table calculations
-            function updateSpeeds() {
-                let totalSpeed = 0;
-                let validMeasurements = 0;
-
-                for (let i = 0; i < timeInputs.length; i++) {
-                    const distance = parseFloat(distanceInputs[i].value) || 0;
-                    const time = parseFloat(timeInputs[i].value) || 0;
-                    
-                    if (distance && time) {
-                        const speed = distance / time;
-                        speedResults[i].textContent = speed.toFixed(1);
-                        totalSpeed += speed;
-                        validMeasurements++;
+                    if (validMeasurements > 0) {
+                        averageSpeed.textContent = (totalSpeed / validMeasurements).toFixed(1);
                     } else {
-                        speedResults[i].textContent = '0';
+                        averageSpeed.textContent = '0';
                     }
                 }
 
-                if (validMeasurements > 0) {
-                    averageSpeed.textContent = (totalSpeed / validMeasurements).toFixed(1);
-                } else {
-                    averageSpeed.textContent = '0';
-                }
-            }
+                timeInputs.forEach(input => input.addEventListener('input', updateSpeeds));
+                distanceInputs.forEach(input => input.addEventListener('input', updateSpeeds));
 
-            timeInputs.forEach(input => input.addEventListener('input', updateSpeeds));
-            distanceInputs.forEach(input => input.addEventListener('input', updateSpeeds));
+                // Add event listeners for environmental controls
+                document.getElementById('temperature').addEventListener('input', updateEnvironmentalEffects);
+                document.getElementById('wind').addEventListener('input', updateEnvironmentalEffects);
+                document.getElementById('humidity').addEventListener('input', updateEnvironmentalEffects);
 
-            // Add event listeners for environmental controls
-            document.getElementById('temperature').addEventListener('input', updateEnvironmentalEffects);
-            document.getElementById('wind').addEventListener('input', updateEnvironmentalEffects);
-            document.getElementById('humidity').addEventListener('input', updateEnvironmentalEffects);
+                // Initial draw
+                drawScene();
+                updateEnvironmentalEffects();
 
-            // Initial draw
-            drawScene();
-            updateEnvironmentalEffects();
+                // Email tracking functionality
+                const emailInput = document.getElementById('studentEmail');
+                const saveEmailButton = document.getElementById('saveEmail');
+                const emailStatus = document.getElementById('emailStatus');
 
-            // Email tracking functionality
-            const emailInput = document.getElementById('studentEmail');
-            const saveEmailButton = document.getElementById('saveEmail');
-            const emailStatus = document.getElementById('emailStatus');
-
-            // Check if email is already saved
-            const savedEmail = localStorage.getItem('studentEmail');
-            if (savedEmail) {
-                emailInput.value = savedEmail;
-                emailStatus.textContent = `Email saved: ${savedEmail}`;
-                emailStatus.style.color = '#28a745';
-            }
-
-            saveEmailButton.addEventListener('click', () => {
-                const email = emailInput.value.trim();
-                if (email && isValidEmail(email)) {
-                    localStorage.setItem('studentEmail', email);
-                    emailStatus.textContent = `Email saved: ${email}`;
-                    emailStatus.style.color = '#28a745';
-                    
-                    // Send experiment start notification via EmailJS
-                    sendExperimentNotification('experiment_9_2_started', {
-                        email: email,
-                        experiment: 'Experiment 9.2: Speed of Sound',
-                        timestamp: new Date().toLocaleString(),
-                        activity: 'Student started the experiment'
-                    });
-                } else {
-                    emailStatus.textContent = 'Please enter a valid email address';
-                    emailStatus.style.color = '#dc3545';
-                }
-            });
-
-            // Email validation
-            function isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
-
-            // Email validation
-            function isValidEmail(email) {
-                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return emailRegex.test(email);
-            }
-
-            // Log experiment activities
-            function logExperimentActivity(action, data) {
+                // Check if email is already saved
                 const savedEmail = localStorage.getItem('studentEmail');
                 if (savedEmail) {
+                    emailInput.value = savedEmail;
+                    emailStatus.textContent = `Email saved: ${savedEmail}`;
+                    emailStatus.style.color = '#28a745';
+                }
+
+                saveEmailButton.addEventListener('click', () => {
+                    const email = emailInput.value.trim();
+                    if (email && isValidEmail(email)) {
+                        localStorage.setItem('studentEmail', email);
+                        emailStatus.textContent = `Email saved: ${email}`;
+                        emailStatus.style.color = '#28a745';
+                        
+                        // Send experiment start notification via EmailJS
+                        sendExperimentNotification('experiment_9_2_started', {
+                            email: email,
+                            experiment: 'Experiment 9.2: Speed of Sound',
+                            timestamp: new Date().toLocaleString(),
+                            activity: 'Student started the experiment'
+                        });
+                    } else {
+                        emailStatus.textContent = 'Please enter a valid email address';
+                        emailStatus.style.color = '#dc3545';
+                    }
+                });
+
+                // Email validation
+                function isValidEmail(email) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                }
+
+                // Email validation
+                function isValidEmail(email) {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    return emailRegex.test(email);
+                }
+
+                // Log experiment activities
+                function logExperimentActivity(action, data) {
+                    const savedEmail = localStorage.getItem('studentEmail');
+                    if (!savedEmail) {
+                        alert('Please save your email address before submitting');
+                        submitResultsButton.disabled = false;
+                        submitResultsButton.textContent = 'Submit Results';
+                        return;
+                    }
                     // Store activity in localStorage
                     const activities = JSON.parse(localStorage.getItem('experimentActivities') || '[]');
                     const activityData = {
@@ -832,8 +809,20 @@ import Layout from '../../layouts/Layout.astro';
                     localStorage.setItem('experimentActivities', JSON.stringify(activities));
                     // No emails sent for individual actions, only on final submission
                 }
-            }
 
+                // Get human-readable activity descriptions
+                function getActivityDescription(action, data) {
+                    switch(action) {
+                        case 'experiment_9_2_started':
+                            return 'Student started Experiment 9.2: Speed of Sound';
+                        case 'simulation_started':
+                            return `Student started simulation with distance: ${data.distance}m, temperature: ${data.temperature}°C`;
+                        case 'simulation_reset':
+                            return 'Student reset the simulation';
+                        case 'parameter_changed':
+                            return `Student changed ${data.parameter} to ${data.value}`;
+                        default:
+                            return `Student performed action: ${action}`;
             // Get human-readable activity descriptions
             function getActivityDescription(action, data) {
                 switch(action) {
@@ -900,6 +889,10 @@ import Layout from '../../layouts/Layout.astro';
             const submitResultsButton = document.getElementById('submitResults');
             const submissionMessage = document.getElementById('submissionMessage');
             submitResultsButton.addEventListener('click', function() {
+                // Disable button immediately to prevent multiple clicks
+                submitResultsButton.disabled = true;
+                submitResultsButton.textContent = 'Submitting...';
+                
                 const savedEmail = localStorage.getItem('studentEmail');
                 
                 console.log('=== EXPERIMENT 9.2 RESULTS SUBMISSION ===');
