@@ -255,10 +255,19 @@ import Layout from '../../../layouts/Layout.astro';
     <!-- EmailJS Script -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // Initialize EmailJS
-        (function(){
-            emailjs.init('ct_s19oZHppLy9BlW');
-        })();
+        // Global variable to track EmailJS initialization
+        let emailjsReady = false;
+        
+        // Wait for EmailJS to load, then initialize
+        window.addEventListener('load', function() {
+            if (typeof (window as any).emailjs !== 'undefined') {
+                (window as any).emailjs.init('ct_s19oZHppLy9BlW');
+                emailjsReady = true;
+                console.log('EmailJS initialized successfully');
+            } else {
+                console.error('EmailJS failed to load');
+            }
+        });
 
         // Quiz data with correct answers
         const quizData = {
@@ -282,17 +291,31 @@ import Layout from '../../../layouts/Layout.astro';
             }
         };
 
-        document.getElementById('quizForm').addEventListener('submit', function(e) {
+        document.getElementById('quizForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+            }
+            
+            // Check if EmailJS is available
+            if (!emailjsReady || typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Quiz';
+                }
+                return;
+            }
             
             // Get form data
-            const formData = new FormData(this);
-            const studentName = document.getElementById('quiz2StudentName').value;
-            const studentEmail = document.getElementById('quiz2StudentEmail').value;
+            const formData = new FormData(this as HTMLFormElement);
+            const studentNameEl = document.getElementById('quiz2StudentName') as HTMLInputElement;
+            const studentEmailEl = document.getElementById('quiz2StudentEmail') as HTMLInputElement;
+            const studentName = studentNameEl ? studentNameEl.value : '';
+            const studentEmail = studentEmailEl ? studentEmailEl.value : '';
             
             // Calculate score and build results
             let score = 0;
@@ -303,13 +326,13 @@ import Layout from '../../../layouts/Layout.astro';
             for (let i = 1; i <= 6; i++) {
                 const questionKey = `q${i}`;
                 const studentAnswer = formData.get(questionKey);
-                const correctAnswer = quizData.correctAnswers[questionKey];
+                const correctAnswer = (quizData.correctAnswers as any)[questionKey];
                 const isCorrect = studentAnswer === correctAnswer;
                 
                 if (isCorrect) score++;
                 
                 results.push({
-                    question: quizData.questionText[questionKey],
+                    question: (quizData.questionText as any)[questionKey],
                     studentAnswer: studentAnswer || 'No answer',
                     correctAnswer: correctAnswer,
                     isCorrect: isCorrect
@@ -413,23 +436,23 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             `;
             
-            document.getElementById('resultsContent').innerHTML = resultsHTML;
-            document.getElementById('quizResults').style.display = 'block';
+            const resultsContent = document.getElementById('resultsContent');
+            const quizResults = document.getElementById('quizResults');
+            
+            if (resultsContent) resultsContent.innerHTML = resultsHTML;
+            if (quizResults) quizResults.style.display = 'block';
             
             // Scroll to results
-            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+            if (quizResults) quizResults.scrollIntoView({ behavior: 'smooth' });
             
             // Send email using EmailJS
-            // Initialize EmailJS right before sending
-            emailjs.init('ct_s19oZHppLy9BlW');
-            
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
                 message: message,
                 subject: `Week 2 Arduino Quiz - ${studentName} (${percentage}%)`
-            }).then(function(response) {
+            }).then(function(response: any) {
                 console.log('Quiz results sent successfully!', response.status, response.text);
                 alert('Quiz results sent successfully!');
                 
@@ -454,9 +477,9 @@ import Layout from '../../../layouts/Layout.astro';
                     })
                 })
                 .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
-                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+                .catch((error: any) => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
                 
-            }, function(error) {
+            }, function(error: any) {
                 console.log('Failed to send quiz results...', error);
                 alert('There was an issue sending your quiz results. Please contact your instructor.');
             });
