@@ -407,8 +407,14 @@ import Layout from '../../../layouts/Layout.astro';
         }
 
         function sendQuizResults(studentName, studentEmail, score, total, percentage, results, q9Answer, q10Answer) {
+            // Check if EmailJS is available
+            if (typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                return;
+            }
+            
             // Initialize EmailJS
-            emailjs.init('ct_s19oZHppLy9BlW');
+            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
             let emailContent = `Week 13 Quiz Results - Communication Protocols and Sensor Integration\n\n`;
             emailContent += `Student: ${studentName}\n`;

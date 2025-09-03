@@ -404,9 +404,14 @@ import Layout from '../../../layouts/Layout.astro';
 
         function sendQuizResults(studentName, studentEmail, score, total, percentage, results, q9Answer, q10Answer) {
 
-            // Initialize EmailJS
-            console.log('🚀 Starting EmailJS section...');
-            emailjs.init('ct_s19oZHppLy9BlW');
+            // Check if EmailJS is available
+            if (typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                return;
+            }
+            
+            // Initialize EmailJS right before sending
+            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
             let emailContent = `Week 12 Quiz Results - Ultrasonic Sensors and Distance Measurement\n\n`;
             emailContent += `Student: ${studentName}\n`;

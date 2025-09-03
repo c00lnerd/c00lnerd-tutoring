@@ -323,10 +323,16 @@ Please review the short answer responses and provide feedback to the student.`;
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
             
-            // Initialize EmailJS right before sending
-            emailjs.init('ct_s19oZHppLy9BlW');
+            // Check if EmailJS is available
+            if (typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                return;
+            }
             
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            // Initialize EmailJS right before sending
+            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
+            
+            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',

@@ -385,8 +385,14 @@ title: "Week 27 Quiz: Machine Learning & AI Integration"
         }
         
         function sendResultsEmail(data) {
+            // Check if EmailJS is available
+            if (typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                return;
+            }
+            
             // Initialize EmailJS
-            emailjs.init('ct_s19oZHppLy9BlW');
+            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
             // Debug: Log the answers to see what's being sent
             console.log('Email data.answers:', data.answers);

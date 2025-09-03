@@ -327,10 +327,16 @@ Please review the short answer responses and provide feedback to the student.`;
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
+            // Check if EmailJS is available
+            if (typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                return;
+            }
+            
             // Initialize EmailJS
-            emailjs.init('ct_s19oZHppLy9BlW');
+            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
 
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: studentName,
                 from_email: studentEmail,

@@ -109,6 +109,18 @@
             transform-origin: 50% 175px;
         }
 
+        @media (max-width: 768px) {
+            .tick.hour {
+                margin-top: -130px;
+                transform-origin: 50% 130px;
+            }
+            
+            .tick.minute {
+                margin-top: -130px;
+                transform-origin: 50% 130px;
+            }
+        }
+
         .hand {
             position: absolute;
             background: #333;
@@ -195,6 +207,29 @@
             .angle-info {
                 grid-template-columns: 1fr;
             }
+            
+            .hour-hand {
+                height: 60px;
+                top: 70px;
+            }
+            
+            .minute-hand {
+                height: 82px;
+                top: 48px;
+            }
+            
+            .second-hand {
+                height: 90px;
+                top: 40px;
+            }
+            
+            .number {
+                font-size: 18px;
+            }
+            
+            .degree {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -246,21 +281,26 @@
         function createClockFace() {
             const clock = document.getElementById('clock');
             
+            // Get actual clock dimensions for responsive positioning
+            const clockRect = clock.getBoundingClientRect();
+            const clockSize = clockRect.width;
+            const center = clockSize / 2;
+            
             // Create hour numbers and degree markings
             for (let i = 1; i <= 12; i++) {
                 // Calculate angle for this hour (12 o'clock is 0°, 3 o'clock is 90°, etc.)
                 const angle = (i * 30) - 90; // -90 to start at 12 o'clock
                 const radian = (angle * Math.PI) / 180;
                 
-                // Position for numbers (closer to edge)
-                const numberRadius = 140;
-                const numberX = 175 + numberRadius * Math.cos(radian);
-                const numberY = 175 + numberRadius * Math.sin(radian);
+                // Position for numbers (closer to edge) - responsive to clock size
+                const numberRadius = clockSize * 0.4; // 40% of clock radius
+                const numberX = center + numberRadius * Math.cos(radian);
+                const numberY = center + numberRadius * Math.sin(radian);
                 
-                // Position for degrees (further from center)
-                const degreeRadius = 110;
-                const degreeX = 175 + degreeRadius * Math.cos(radian);
-                const degreeY = 175 + degreeRadius * Math.sin(radian);
+                // Position for degrees (further from center) - responsive to clock size
+                const degreeRadius = clockSize * 0.31; // 31% of clock radius
+                const degreeX = center + degreeRadius * Math.cos(radian);
+                const degreeY = center + degreeRadius * Math.sin(radian);
                 
                 // Create number element
                 const numberElement = document.createElement('div');

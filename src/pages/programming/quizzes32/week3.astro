@@ -255,10 +255,19 @@ Serial.println(temperature);</code></pre>
     <!-- EmailJS Script -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // Initialize EmailJS
-        (function(){
-            emailjs.init('ct_s19oZHppLy9BlW');
-        })();
+        // Global variable to track EmailJS initialization
+        let emailjsReady = false;
+        
+        // Wait for EmailJS to load, then initialize
+        window.addEventListener('load', function() {
+            if (typeof (window as any).emailjs !== 'undefined') {
+                (window as any).emailjs.init('ct_s19oZHppLy9BlW');
+                emailjsReady = true;
+                console.log('EmailJS initialized successfully');
+            } else {
+                console.error('EmailJS failed to load');
+            }
+        });
 
         // Quiz data with correct answers
         const quizData = {
@@ -419,11 +428,14 @@ Serial.println(temperature);</code></pre>
             // Scroll to results
             document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
             
-            // Send email using EmailJS
-            // Initialize EmailJS right before sending
-            emailjs.init('ct_s19oZHppLy9BlW');
+            // Check if EmailJS is available
+            if (!emailjsReady || typeof (window as any).emailjs === 'undefined') {
+                alert('Email service is not available. Please refresh the page and try again.');
+                return;
+            }
             
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            // Send email using EmailJS
+            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
