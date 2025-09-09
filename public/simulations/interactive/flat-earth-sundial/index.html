@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat Earth Sundial vs Reality</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+
+        .header p {
+            color: #666;
+            margin: 5px 0;
+            line-height: 1.4;
+        }
+
+        .simulation-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .model-section {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .model-section h2 {
+            text-align: center;
+            margin: 0 0 15px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .flat-earth h2 {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        .spherical-earth h2 {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        canvas {
+            display: block;
+            margin: 0 auto 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        input, button, select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 15px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        button.secondary {
+            background-color: #2196F3;
+        }
+
+        button.secondary:hover {
+            background-color: #1976D2;
+        }
+
+        .info-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .info-section h3 {
+            color: #333;
+            margin: 0 0 10px 0;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 5px;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .data-value {
+            color: #333;
+            font-family: monospace;
+        }
+
+        .explanation {
+            background: #f8f9fa;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .explanation h4 {
+            color: #333;
+            margin: 0 0 10px 0;
+        }
+
+        .explanation p {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        .warning {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            color: #856404;
+        }
+
+        .error {
+            background: #f8d7da;
+            border-left: 4px solid #dc3545;
+            color: #721c24;
+        }
+
+        .success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+        }
+
+        .sundial-display {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .time-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .flat-earth .time-display {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .spherical-earth .time-display {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+
+        @media (max-width: 768px) {
+            .simulation-container {
+                flex-direction: column;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Flat Earth Sundial vs Reality</h1>
+            <p>This simulation demonstrates how a sundial designed for a flat earth model would theoretically work, but fails when compared to reality.</p>
+            <p>The flat earth sundial assumes the sun moves in a circle above a flat plane, while a real sundial accounts for Earth's spherical geometry and axial tilt.</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label>Date</label>
+                <input type="date" id="dateInput" value="2025-06-21">
+            </div>
+            <div class="control-group">
+                <label>Local Time</label>
+                <input type="time" id="timeInput" value="12:00">
+            </div>
+            <div class="control-group">
+                <label>Latitude</label>
+                <input type="number" id="latInput" min="-90" max="90" value="40" step="0.1">°
+            </div>
+            <div class="control-group">
+                <label>Longitude</label>
+                <input type="number" id="lonInput" min="-180" max="180" value="-74" step="0.1">°
+            </div>
+            <div class="control-group">
+                <label>Gnomon Height</label>
+                <input type="number" id="gnomonHeight" min="1" max="20" value="10" step="0.5"> cm
+            </div>
+            <div class="control-group">
+                <button id="playButton">Play Animation</button>
+                <button id="resetButton" class="secondary">Reset</button>
+            </div>
+        </div>
+
+        <div class="simulation-container">
+            <div class="model-section flat-earth">
+                <h2>Flat Earth Sundial Model</h2>
+                <canvas id="flatEarthCanvas" width="600" height="400"></canvas>
+                <div class="sundial-display">
+                    <div class="time-display" id="flatEarthTime">12:00 PM</div>
+                    <div>Shadow Length: <span id="flatShadowLength">0.0</span> cm</div>
+                    <div>Shadow Angle: <span id="flatShadowAngle">0</span>°</div>
+                </div>
+            </div>
+
+            <div class="model-section spherical-earth">
+                <h2>Spherical Earth Sundial (Reality)</h2>
+                <canvas id="sphericalEarthCanvas" width="600" height="400"></canvas>
+                <div class="sundial-display">
+                    <div class="time-display" id="sphericalEarthTime">12:00 PM</div>
+                    <div>Shadow Length: <span id="realShadowLength">0.0</span> cm</div>
+                    <div>Shadow Angle: <span id="realShadowAngle">0</span>°</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <div class="info-grid">
+                <div class="info-section">
+                    <h3>Sun Position Data</h3>
+                    <div class="data-row">
+                        <span class="data-label">Solar Elevation:</span>
+                        <span class="data-value" id="solarElevation">0°</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Solar Azimuth:</span>
+                        <span class="data-value" id="solarAzimuth">0°</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Hour Angle:</span>
+                        <span class="data-value" id="hourAngle">0°</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Declination:</span>
+                        <span class="data-value" id="declination">0°</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <h3>Sundial Comparison</h3>
+                    <div class="data-row">
+                        <span class="data-label">Time Difference:</span>
+                        <span class="data-value" id="timeDifference">0 minutes</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Shadow Length Diff:</span>
+                        <span class="data-value" id="shadowLengthDiff">0.0 cm</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Shadow Angle Diff:</span>
+                        <span class="data-value" id="shadowAngleDiff">0°</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Accuracy Error:</span>
+                        <span class="data-value" id="accuracyError">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="explanation success" id="explanationBox">
+                <h4>How This Demonstrates Flat Earth Problems</h4>
+                <p>The flat earth sundial model assumes the sun moves in a perfect circle above a flat plane at constant height. This creates several issues:</p>
+                <ul>
+                    <li><strong>Seasonal Variations:</strong> Real sundials account for the sun's changing declination throughout the year due to Earth's axial tilt.</li>
+                    <li><strong>Latitude Effects:</strong> The flat earth model cannot properly account for how sundial accuracy changes with latitude.</li>
+                    <li><strong>Time Zones:</strong> A flat earth sundial would show the same time everywhere at the same longitude, ignoring Earth's curvature.</li>
+                    <li><strong>Shadow Patterns:</strong> Real shadows follow predictable patterns based on spherical trigonometry, not flat geometry.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="sundial-simulation.js"></script>
+</body>
+</html>
