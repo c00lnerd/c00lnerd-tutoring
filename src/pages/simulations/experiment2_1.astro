@@ -907,6 +907,120 @@ ${experimentData.real_world_applications}
             font-weight: bold;
         }
 
+        /* Timer Styles */
+        .timer-section {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #fdcb6e;
+        }
+
+        .timer-section h4 {
+            color: #2c3e50;
+            margin-top: 0;
+            border-bottom: 2px solid #fdcb6e;
+            padding-bottom: 8px;
+        }
+
+        .timer-container {
+            text-align: center;
+        }
+
+        .timer-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            padding: 20px;
+            background: #f8f9fa;
+            display: inline-block;
+            min-width: 150px;
+        }
+
+        .timer-display.counting {
+            color: #e17055;
+            border-color: #e17055;
+            background: #fff5f5;
+            animation: pulse 1s infinite;
+        }
+
+        .timer-display.finished {
+            color: #00b894;
+            border-color: #00b894;
+            background: #f0fff4;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .timer-controls {
+            margin: 20px 0;
+        }
+
+        .timer-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin: 0 8px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .timer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .timer-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .timer-btn.start-btn {
+            background: #27ae60;
+        }
+
+        .timer-btn.start-btn:hover {
+            background: #229954;
+        }
+
+        .timer-btn.reset-btn {
+            background: #e74c3c;
+        }
+
+        .timer-btn.reset-btn:hover {
+            background: #c0392b;
+        }
+
+        .timer-btn.audio-btn {
+            background: #f39c12;
+        }
+
+        .timer-btn.audio-btn:hover {
+            background: #e67e22;
+        }
+
+        .timer-status {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-top: 15px;
+            font-weight: 500;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -917,6 +1031,17 @@ ${experimentData.real_world_applications}
             }
             
             .data-table {
+                font-size: 14px;
+            }
+
+            .timer-display {
+                font-size: 2.5em;
+                padding: 15px;
+            }
+
+            .timer-btn {
+                padding: 10px 15px;
+                margin: 5px;
                 font-size: 14px;
             }
         }
