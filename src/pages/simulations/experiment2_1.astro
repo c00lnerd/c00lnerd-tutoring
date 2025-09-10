@@ -156,17 +156,17 @@ import Layout from '../../layouts/Layout.astro';
                     </div>
                 </div>
 
-                <!-- Up Counter for Reaction Timing -->
+                <!-- Countdown Timer for Reaction Timing -->
                 <div class="timer-section">
-                    <h4>Reaction Timer (Count Up)</h4>
+                    <h4>Reaction Timer (5-Minute Countdown)</h4>
                     <div class="timer-container">
-                        <div class="timer-display" id="timerDisplay3">00:00</div>
+                        <div class="timer-display" id="timerDisplay3">5:00</div>
                         <div class="timer-controls">
                             <button class="timer-btn start-btn" id="startTimer3">Start Timer</button>
-                            <button class="timer-btn reset-btn" id="resetTimer3">Stop & Reset</button>
-                            <button class="timer-btn audio-btn" id="audioToggle3" title="Toggle timer sounds">🔊</button>
+                            <button class="timer-btn reset-btn" id="resetTimer3">Reset</button>
+                            <button class="timer-btn audio-btn" id="audioToggle3" title="Toggle countdown sounds">🔊</button>
                         </div>
-                        <div class="timer-status" id="timerStatus3">Ready to start timing reaction</div>
+                        <div class="timer-status" id="timerStatus3">Ready to start 5-minute reaction timer</div>
                     </div>
                 </div>
 
@@ -177,15 +177,15 @@ import Layout from '../../layouts/Layout.astro';
 
                 <!-- Timer for Diffusion Timing -->
                 <div class="timer-section">
-                    <h4>Diffusion Timer (Count Up)</h4>
+                    <h4>Diffusion Timer (10-Minute Countdown)</h4>
                     <div class="timer-container">
-                        <div class="timer-display" id="timerDisplay4">00:00</div>
+                        <div class="timer-display" id="timerDisplay4">10:00</div>
                         <div class="timer-controls">
                             <button class="timer-btn start-btn" id="startTimer4">Start Timer</button>
-                            <button class="timer-btn reset-btn" id="resetTimer4">Stop & Reset</button>
-                            <button class="timer-btn audio-btn" id="audioToggle4" title="Toggle timer sounds">🔊</button>
+                            <button class="timer-btn reset-btn" id="resetTimer4">Reset</button>
+                            <button class="timer-btn audio-btn" id="audioToggle4" title="Toggle countdown sounds">🔊</button>
                         </div>
-                        <div class="timer-status" id="timerStatus4">Ready to time diffusion process</div>
+                        <div class="timer-status" id="timerStatus4">Ready to start 10-minute diffusion timer</div>
                     </div>
                 </div>
 
@@ -608,38 +608,50 @@ ${experimentData.real_world_applications}
                 });
             }
 
-            // Timer 3 (Count up timer after Step 7)
+            // Timer 3 (5-minute countdown timer after Step 7)
             const timerDisplay3 = document.getElementById('timerDisplay3');
             const startTimerBtn3 = document.getElementById('startTimer3');
             const resetTimerBtn3 = document.getElementById('resetTimer3');
             const timerStatus3 = document.getElementById('timerStatus3');
             const audioToggle3 = document.getElementById('audioToggle3');
             let timerInterval3 = null;
-            let timeElapsed3 = 0;
+            let timeRemaining3 = 300; // 5 minutes
 
             if (startTimerBtn3) {
                 startTimerBtn3.addEventListener('click', function() {
-                    if (timerInterval3) {
-                        // Stop timer
-                        clearInterval(timerInterval3);
-                        timerInterval3 = null;
-                        startTimerBtn3.textContent = 'Start Timer';
-                        timerDisplay3.classList.remove('counting');
-                        timerStatus3.textContent = `Reaction timed: ${Math.floor(timeElapsed3 / 60)}:${(timeElapsed3 % 60).toString().padStart(2, '0')}`;
-                    } else {
-                        // Start timer
-                        initAudioContext();
-                        startTimerBtn3.textContent = 'Stop Timer';
-                        timerDisplay3.classList.add('counting');
-                        timerStatus3.textContent = 'Timing reaction...';
+                    if (timerInterval3) return;
+                    initAudioContext();
+                    startTimerBtn3.disabled = true;
+                    timerDisplay3.classList.add('counting');
+                    timerStatus3.textContent = 'Timer running... Timing reaction';
+                    
+                    timerInterval3 = setInterval(function() {
+                        timeRemaining3--;
+                        const minutes = Math.floor(timeRemaining3 / 60);
+                        const seconds = timeRemaining3 % 60;
+                        timerDisplay3.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                         
-                        timerInterval3 = setInterval(function() {
-                            timeElapsed3++;
-                            const minutes = Math.floor(timeElapsed3 / 60);
-                            const seconds = timeElapsed3 % 60;
-                            timerDisplay3.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        }, 1000);
-                    }
+                        if (audioEnabled3 && timeRemaining3 <= 5 && timeRemaining3 > 0) {
+                            playCountdownBeep();
+                        }
+                        
+                        if (timeRemaining3 <= 0) {
+                            clearInterval(timerInterval3);
+                            timerInterval3 = null;
+                            timerDisplay3.classList.remove('counting');
+                            timerDisplay3.classList.add('finished');
+                            timerStatus3.textContent = '⏰ Time\'s up! Check reaction progress.';
+                            startTimerBtn3.disabled = false;
+                            if (audioEnabled3) playFinalBeep();
+                            
+                            setTimeout(function() {
+                                timeRemaining3 = 300;
+                                timerDisplay3.textContent = '5:00';
+                                timerDisplay3.classList.remove('counting', 'finished');
+                                timerStatus3.textContent = 'Ready to start 5-minute reaction timer';
+                            }, 2000);
+                        }
+                    }, 1000);
                 });
             }
 
@@ -647,11 +659,11 @@ ${experimentData.real_world_applications}
                 resetTimerBtn3.addEventListener('click', function() {
                     clearInterval(timerInterval3);
                     timerInterval3 = null;
-                    timeElapsed3 = 0;
-                    timerDisplay3.textContent = '00:00';
+                    timeRemaining3 = 300;
+                    timerDisplay3.textContent = '5:00';
                     timerDisplay3.classList.remove('counting', 'finished');
-                    timerStatus3.textContent = 'Ready to start timing reaction';
-                    startTimerBtn3.textContent = 'Start Timer';
+                    timerStatus3.textContent = 'Ready to start 5-minute reaction timer';
+                    startTimerBtn3.disabled = false;
                 });
             }
 
@@ -664,38 +676,50 @@ ${experimentData.real_world_applications}
                 });
             }
 
-            // Timer 4 (Count up timer before Step 9)
+            // Timer 4 (10-minute countdown timer before Step 9)
             const timerDisplay4 = document.getElementById('timerDisplay4');
             const startTimerBtn4 = document.getElementById('startTimer4');
             const resetTimerBtn4 = document.getElementById('resetTimer4');
             const timerStatus4 = document.getElementById('timerStatus4');
             const audioToggle4 = document.getElementById('audioToggle4');
             let timerInterval4 = null;
-            let timeElapsed4 = 0;
+            let timeRemaining4 = 600; // 10 minutes
 
             if (startTimerBtn4) {
                 startTimerBtn4.addEventListener('click', function() {
-                    if (timerInterval4) {
-                        // Stop timer
-                        clearInterval(timerInterval4);
-                        timerInterval4 = null;
-                        startTimerBtn4.textContent = 'Start Timer';
-                        timerDisplay4.classList.remove('counting');
-                        timerStatus4.textContent = `Diffusion timed: ${Math.floor(timeElapsed4 / 60)}:${(timeElapsed4 % 60).toString().padStart(2, '0')}`;
-                    } else {
-                        // Start timer
-                        initAudioContext();
-                        startTimerBtn4.textContent = 'Stop Timer';
-                        timerDisplay4.classList.add('counting');
-                        timerStatus4.textContent = 'Timing diffusion process...';
+                    if (timerInterval4) return;
+                    initAudioContext();
+                    startTimerBtn4.disabled = true;
+                    timerDisplay4.classList.add('counting');
+                    timerStatus4.textContent = 'Timer running... Timing diffusion process';
+                    
+                    timerInterval4 = setInterval(function() {
+                        timeRemaining4--;
+                        const minutes = Math.floor(timeRemaining4 / 60);
+                        const seconds = timeRemaining4 % 60;
+                        timerDisplay4.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
                         
-                        timerInterval4 = setInterval(function() {
-                            timeElapsed4++;
-                            const minutes = Math.floor(timeElapsed4 / 60);
-                            const seconds = timeElapsed4 % 60;
-                            timerDisplay4.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-                        }, 1000);
-                    }
+                        if (audioEnabled4 && timeRemaining4 <= 5 && timeRemaining4 > 0) {
+                            playCountdownBeep();
+                        }
+                        
+                        if (timeRemaining4 <= 0) {
+                            clearInterval(timerInterval4);
+                            timerInterval4 = null;
+                            timerDisplay4.classList.remove('counting');
+                            timerDisplay4.classList.add('finished');
+                            timerStatus4.textContent = '⏰ Time\'s up! Check diffusion completion.';
+                            startTimerBtn4.disabled = false;
+                            if (audioEnabled4) playFinalBeep();
+                            
+                            setTimeout(function() {
+                                timeRemaining4 = 600;
+                                timerDisplay4.textContent = '10:00';
+                                timerDisplay4.classList.remove('counting', 'finished');
+                                timerStatus4.textContent = 'Ready to start 10-minute diffusion timer';
+                            }, 2000);
+                        }
+                    }, 1000);
                 });
             }
 
@@ -703,11 +727,11 @@ ${experimentData.real_world_applications}
                 resetTimerBtn4.addEventListener('click', function() {
                     clearInterval(timerInterval4);
                     timerInterval4 = null;
-                    timeElapsed4 = 0;
-                    timerDisplay4.textContent = '00:00';
+                    timeRemaining4 = 600;
+                    timerDisplay4.textContent = '10:00';
                     timerDisplay4.classList.remove('counting', 'finished');
-                    timerStatus4.textContent = 'Ready to time diffusion process';
-                    startTimerBtn4.textContent = 'Start Timer';
+                    timerStatus4.textContent = 'Ready to start 10-minute diffusion timer';
+                    startTimerBtn4.disabled = false;
                 });
             }
 
