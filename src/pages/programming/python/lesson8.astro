@@ -419,40 +419,57 @@ sys.exit()`}</code></pre>
 </Layout>
 
 <script>
-function copyCode(button) {
+// Make functions globally accessible
+window.copyCode = function(button) {
     const codeBlock = button.parentElement.querySelector('code');
     
     if (!codeBlock) {
-        showCopyFeedback(button, false);
+        window.showCopyFeedback(button, false);
         return;
     }
     
-    let codeText = codeBlock.textContent || codeBlock.innerText;
+    // Try multiple methods to get the text content
+    let codeText = '';
     
-    // Clean up any extra whitespace that might be added by template literals
+    // Method 1: Try textContent first
+    if (codeBlock.textContent) {
+        codeText = codeBlock.textContent;
+    }
+    // Method 2: Try innerText as fallback
+    else if (codeBlock.innerText) {
+        codeText = codeBlock.innerText;
+    }
+    // Method 3: Try innerHTML and strip tags as last resort
+    else if (codeBlock.innerHTML) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = codeBlock.innerHTML;
+        codeText = tempDiv.textContent || tempDiv.innerText || '';
+    }
+    
+    // Clean up the text
     codeText = codeText.trim();
     
     if (!codeText) {
-        showCopyFeedback(button, false);
+        window.showCopyFeedback(button, false);
         return;
     }
     
     try {
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText).then(() => {
-                showCopyFeedback(button, true);
+                window.showCopyFeedback(button, true);
             }).catch(() => {
-                fallbackCopy(codeText, button);
+                window.fallbackCopy(codeText, button);
             });
         } else {
-            fallbackCopy(codeText, button);
+            window.fallbackCopy(codeText, button);
         }
     } catch (err) {
-        showCopyFeedback(button, false);
+        window.showCopyFeedback(button, false);
     }
-}
+};
 
-function fallbackCopy(text, button) {
+window.fallbackCopy = function(text, button) {
     try {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -464,13 +481,13 @@ function fallbackCopy(text, button) {
         textarea.setSelectionRange(0, 99999);
         const successful = document.execCommand('copy');
         document.body.removeChild(textarea);
-        showCopyFeedback(button, successful);
+        window.showCopyFeedback(button, successful);
     } catch (err) {
-        showCopyFeedback(button, false);
+        window.showCopyFeedback(button, false);
     }
-}
+};
 
-function showCopyFeedback(button, success) {
+window.showCopyFeedback = function(button, success) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
     
@@ -486,5 +503,5 @@ function showCopyFeedback(button, success) {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);
-}
+};
 </script>
