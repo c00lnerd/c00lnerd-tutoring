@@ -435,16 +435,17 @@ def move_aliens(aliens):
         # Move all aliens down and reverse direction
         for alien in aliens:
             alien.drop_down()
-            alien.speed = -alien.speed
-            # Check if aliens reached the bottom
-            if alien.y + alien.height >= SCREEN_HEIGHT - 100:
-                lives -= 1
-                if lives <= 0:
-                    game_over = True
-    else:
-        # Move aliens horizontally
+            alien.speed = -alien.speed  # This reverses the direction
+        
+        # Check if any aliens reached the bottom (after moving down)
         for alien in aliens:
-            alien.x += alien.speed
+            if alien.y + alien.height >= SCREEN_HEIGHT - 100:
+                game_over = True
+                break
+    
+    # Always move aliens horizontally (whether direction changed or not)
+    for alien in aliens:
+        alien.x += alien.speed
 
 def draw_ui(screen):
     font = pygame.font.Font(None, 36)

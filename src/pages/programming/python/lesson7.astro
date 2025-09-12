@@ -1,0 +1,526 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 7: Physics-Based Games - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/programming.html" class="text-purple-600 hover:text-purple-800 font-medium">
+                            ← Back to Programming
+                        </a>
+                        <div class="text-gray-300">|</div>
+                        <h1 class="text-2xl font-bold text-gray-900">Python Course</h1>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Lesson 7 of 8
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Lesson Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-rocket text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Physics-Based Games</h1>
+                            <p class="text-gray-600 mt-2">Learn realistic physics to make your games feel amazing!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-900 mb-3">Learning Objectives</h2>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Understand gravity, velocity, and acceleration
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create realistic bouncing and collision effects
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Build a platformer game with jumping mechanics
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Add projectile physics for shooting games
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    <!-- Physics Concepts -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Understanding Game Physics</h2>
+                        <p class="text-gray-700 mb-4">
+                            Real-world physics makes games feel more natural and fun! Here are the key concepts:
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h3 class="font-bold text-green-800 mb-2">
+                                    <i class="fas fa-arrow-down mr-2"></i>Gravity
+                                </h3>
+                                <p class="text-green-700 text-sm">Pulls objects downward</p>
+                                <code class="block bg-green-100 p-2 rounded mt-2 text-xs">velocity_y += gravity</code>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h3 class="font-bold text-blue-800 mb-2">
+                                    <i class="fas fa-tachometer-alt mr-2"></i>Velocity
+                                </h3>
+                                <p class="text-blue-700 text-sm">How fast and in what direction</p>
+                                <code class="block bg-blue-100 p-2 rounded mt-2 text-xs">x += velocity_x</code>
+                            </div>
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                                <h3 class="font-bold text-red-800 mb-2">
+                                    <i class="fas fa-compress-arrows-alt mr-2"></i>Collision
+                                </h3>
+                                <p class="text-red-700 text-sm">When objects hit each other</p>
+                                <code class="block bg-red-100 p-2 rounded mt-2 text-xs">velocity = -velocity * bounce</code>
+                            </div>
+                            <div class="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                                <h3 class="font-bold text-orange-800 mb-2">
+                                    <i class="fas fa-hand-paper mr-2"></i>Friction
+                                </h3>
+                                <p class="text-orange-700 text-sm">Objects slow down over time</p>
+                                <code class="block bg-orange-100 p-2 rounded mt-2 text-xs">velocity_x *= friction</code>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Bouncing Ball with Gravity -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Realistic Bouncing Ball</h2>
+                        <p class="text-gray-700 mb-4">
+                            Create a ball that falls with gravity and bounces realistically:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import pygame
+import sys
+
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Physics Ball!")
+clock = pygame.time.Clock()
+
+# Colors
+BLACK = (0, 0, 0)
+RED = (255, 100, 100)
+WHITE = (255, 255, 255)
+
+# Ball properties
+ball_x = 400
+ball_y = 100
+ball_radius = 20
+velocity_x = 5  # Horizontal speed
+velocity_y = 0  # Vertical speed (starts at 0)
+gravity = 0.5   # How fast things fall
+bounce = 0.8    # Energy lost when bouncing
+friction = 0.99 # Air resistance
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                # Reset ball position
+                ball_x, ball_y = 400, 100
+                velocity_x, velocity_y = 5, 0
+    
+    # Apply physics
+    velocity_y += gravity  # Gravity pulls down
+    velocity_x *= friction # Air slows things down
+    velocity_y *= friction
+    
+    # Move the ball
+    ball_x += velocity_x
+    ball_y += velocity_y
+    
+    # Bounce off walls
+    if ball_x <= ball_radius or ball_x >= 800 - ball_radius:
+        velocity_x = -velocity_x * bounce
+        ball_x = max(ball_radius, min(800 - ball_radius, ball_x))
+    
+    # Bounce off ground and ceiling
+    if ball_y <= ball_radius or ball_y >= 600 - ball_radius:
+        velocity_y = -velocity_y * bounce
+        ball_y = max(ball_radius, min(600 - ball_radius, ball_y))
+    
+    # Draw everything
+    screen.fill(BLACK)
+    pygame.draw.circle(screen, RED, (int(ball_x), int(ball_y)), ball_radius)
+    
+    # Show physics info
+    font = pygame.font.Font(None, 24)
+    text = font.render(f"Velocity: ({velocity_x:.1f}, {velocity_y:.1f})", True, WHITE)
+    screen.blit(text, (10, 10))
+    
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()`}</code></pre>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                            <p class="text-blue-800"><strong>Try this:</strong> Watch how the ball bounces lower each time due to energy loss! Press SPACE to reset.</p>
+                        </div>
+                    </section>
+
+                    <!-- Platformer Game -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Platformer Game with Jumping</h2>
+                        <p class="text-gray-700 mb-4">
+                            Build a character that can jump on platforms with realistic physics:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import pygame
+import sys
+
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Physics Platformer!")
+clock = pygame.time.Clock()
+
+# Colors
+BLACK = (0, 0, 0)
+BLUE = (100, 150, 255)
+BROWN = (139, 69, 19)
+WHITE = (255, 255, 255)
+
+class Player:
+    def __init__(self):
+        self.x = 100
+        self.y = 400
+        self.width = 30
+        self.height = 40
+        self.velocity_x = 0
+        self.velocity_y = 0
+        self.on_ground = False
+        self.speed = 5
+        self.jump_power = -12
+        self.gravity = 0.8
+    
+    def update(self, platforms):
+        # Handle input
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.velocity_x = -self.speed
+        elif keys[pygame.K_RIGHT]:
+            self.velocity_x = self.speed
+        else:
+            self.velocity_x *= 0.8  # Friction when not moving
+        
+        if keys[pygame.K_SPACE] and self.on_ground:
+            self.velocity_y = self.jump_power
+            self.on_ground = False
+        
+        # Apply gravity
+        self.velocity_y += self.gravity
+        
+        # Update position
+        self.x += self.velocity_x
+        self.y += self.velocity_y
+        
+        # Check platform collisions
+        self.on_ground = False
+        for platform in platforms:
+            if self.check_collision(platform):
+                # Landing on top of platform
+                if self.velocity_y > 0 and self.y < platform['y']:
+                    self.y = platform['y'] - self.height
+                    self.velocity_y = 0
+                    self.on_ground = True
+        
+        # Keep player on screen
+        if self.x < 0:
+            self.x = 0
+        elif self.x > 800 - self.width:
+            self.x = 800 - self.width
+        
+        # Ground collision
+        if self.y > 600 - self.height:
+            self.y = 600 - self.height
+            self.velocity_y = 0
+            self.on_ground = True
+    
+    def check_collision(self, platform):
+        return (self.x < platform['x'] + platform['width'] and
+                self.x + self.width > platform['x'] and
+                self.y < platform['y'] + platform['height'] and
+                self.y + self.height > platform['y'])
+    
+    def draw(self, screen):
+        # Body
+        pygame.draw.rect(screen, BLUE, (self.x, self.y, self.width, self.height))
+        # Eyes
+        pygame.draw.circle(screen, WHITE, (self.x + 8, self.y + 10), 3)
+        pygame.draw.circle(screen, WHITE, (self.x + 22, self.y + 10), 3)
+
+# Create platforms
+platforms = [
+    {'x': 200, 'y': 500, 'width': 150, 'height': 20},
+    {'x': 400, 'y': 400, 'width': 150, 'height': 20},
+    {'x': 600, 'y': 300, 'width': 150, 'height': 20},
+    {'x': 300, 'y': 200, 'width': 200, 'height': 20},
+]
+
+player = Player()
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # Update
+    player.update(platforms)
+    
+    # Draw everything
+    screen.fill(BLACK)
+    
+    # Draw platforms
+    for platform in platforms:
+        pygame.draw.rect(screen, BROWN, (platform['x'], platform['y'], platform['width'], platform['height']))
+    
+    # Draw ground
+    pygame.draw.rect(screen, BROWN, (0, 580, 800, 20))
+    
+    # Draw player
+    player.draw(screen)
+    
+    # Instructions
+    font = pygame.font.Font(None, 24)
+    text1 = font.render("Arrow Keys: Move", True, WHITE)
+    text2 = font.render("Space: Jump", True, WHITE)
+    screen.blit(text1, (10, 10))
+    screen.blit(text2, (10, 35))
+    
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()`}</code></pre>
+                        </div>
+                        <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
+                            <p class="text-green-800"><strong>Game Controls:</strong> Use arrow keys to move and SPACE to jump between platforms!</p>
+                        </div>
+                    </section>
+
+                    <!-- Projectile Physics -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Projectile Physics Game</h2>
+                        <p class="text-gray-700 mb-4">
+                            Create a cannon that shoots projectiles with realistic arc trajectories:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import pygame
+import math
+import sys
+
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Projectile Physics!")
+clock = pygame.time.Clock()
+
+# Colors
+BLACK = (0, 0, 0)
+RED = (255, 100, 100)
+YELLOW = (255, 255, 100)
+WHITE = (255, 255, 255)
+GRAY = (128, 128, 128)
+
+class Projectile:
+    def __init__(self, x, y, velocity_x, velocity_y):
+        self.x = x
+        self.y = y
+        self.velocity_x = velocity_x
+        self.velocity_y = velocity_y
+        self.gravity = 0.3
+        self.active = True
+    
+    def update(self):
+        if self.active:
+            # Apply gravity
+            self.velocity_y += self.gravity
+            
+            # Update position
+            self.x += self.velocity_x
+            self.y += self.velocity_y
+            
+            # Remove if off screen
+            if self.x < 0 or self.x > 800 or self.y > 600:
+                self.active = False
+    
+    def draw(self, screen):
+        if self.active:
+            pygame.draw.circle(screen, YELLOW, (int(self.x), int(self.y)), 5)
+
+# Cannon properties
+cannon_x = 50
+cannon_y = 550
+cannon_angle = -45  # Degrees
+cannon_length = 40
+launch_power = 15
+
+projectiles = []
+charging = False
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                cannon_angle = max(-90, cannon_angle - 5)
+            elif event.key == pygame.K_DOWN:
+                cannon_angle = min(0, cannon_angle + 5)
+            elif event.key == pygame.K_SPACE:
+                # Fire projectile
+                angle_rad = math.radians(cannon_angle)
+                vel_x = math.cos(angle_rad) * launch_power
+                vel_y = math.sin(angle_rad) * launch_power
+                
+                projectiles.append(Projectile(cannon_x, cannon_y, vel_x, vel_y))
+    
+    # Update projectiles
+    for projectile in projectiles[:]:
+        projectile.update()
+        if not projectile.active:
+            projectiles.remove(projectile)
+    
+    # Draw everything
+    screen.fill(BLACK)
+    
+    # Draw ground
+    pygame.draw.rect(screen, GRAY, (0, 570, 800, 30))
+    
+    # Draw cannon
+    end_x = cannon_x + math.cos(math.radians(cannon_angle)) * cannon_length
+    end_y = cannon_y + math.sin(math.radians(cannon_angle)) * cannon_length
+    pygame.draw.line(screen, RED, (cannon_x, cannon_y), (end_x, end_y), 8)
+    pygame.draw.circle(screen, RED, (cannon_x, cannon_y), 15)
+    
+    # Draw projectiles
+    for projectile in projectiles:
+        projectile.draw(screen)
+    
+    # Instructions
+    font = pygame.font.Font(None, 24)
+    text1 = font.render("Up/Down: Aim cannon", True, WHITE)
+    text2 = font.render("Space: Fire!", True, WHITE)
+    text3 = font.render(f"Angle: {int(cannon_angle)}°", True, WHITE)
+    screen.blit(text1, (10, 10))
+    screen.blit(text2, (10, 35))
+    screen.blit(text3, (10, 60))
+    
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()`}</code></pre>
+                        </div>
+                        <div class="bg-purple-50 border-l-4 border-purple-400 p-4 mb-4">
+                            <p class="text-purple-800"><strong>Physics Challenge:</strong> Try different angles to see how projectiles follow curved paths due to gravity!</p>
+                        </div>
+                    </section>
+
+                    <!-- Navigation -->
+                    <div class="flex justify-between items-center pt-8 border-t">
+                        <a href="/programming/python/lesson6.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+                            ← Previous: Space Invaders
+                        </a>
+                        <div class="text-center">
+                            <p class="text-gray-600 mb-2">Ready for advanced physics?</p>
+                            <a href="/programming/python/lesson8.html" class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+                                Next: Advanced Physics →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+function copyCode(button) {
+    const codeBlock = button.parentElement.querySelector('code');
+    const codeText = codeBlock.textContent;
+    
+    try {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
