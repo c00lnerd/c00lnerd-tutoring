@@ -1,0 +1,502 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 5: Build Pong Game - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/programming.html" class="text-purple-600 hover:text-purple-800 font-medium">
+                            ← Back to Programming
+                        </a>
+                        <div class="text-gray-300">|</div>
+                        <h1 class="text-2xl font-bold text-gray-900">Python Course</h1>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Lesson 5 of 8
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Lesson Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-table-tennis text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Build Your Own Pong Game!</h1>
+                            <p class="text-gray-600 mt-2">Create the classic arcade game with paddles, ball, and scoring</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-900 mb-3">Learning Objectives</h2>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create player-controlled paddles using keyboard input
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Program ball physics and collision detection
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Add scoring system and game reset functionality
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Build a complete playable game from scratch
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    <!-- Game Overview -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">What is Pong?</h2>
+                        <div class="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-6 mb-4">
+                            <p class="text-gray-700 mb-4">
+                                Pong is one of the first video games ever made! It's like table tennis - two players control paddles to hit a ball back and forth. The goal is to make your opponent miss the ball.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">🏓 Left Paddle</h4>
+                                    <p class="text-gray-600 text-sm">Player 1 uses W and S keys</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">⚽ Ball</h4>
+                                    <p class="text-gray-600 text-sm">Bounces around the screen</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">🏓 Right Paddle</h4>
+                                    <p class="text-gray-600 text-sm">Player 2 uses UP and DOWN arrows</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Step 1: Basic Setup -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 1: Game Setup</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's start by creating the game window and basic variables:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Game settings
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+PADDLE_WIDTH = 15
+PADDLE_HEIGHT = 90
+BALL_SIZE = 15
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+BLUE = (0, 100, 255)
+
+# Create the screen
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Awesome Pong Game!")
+clock = pygame.time.Clock()
+
+# Game variables
+player1_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
+player2_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
+ball_x = SCREEN_WIDTH // 2
+ball_y = SCREEN_HEIGHT // 2
+ball_speed_x = 5
+ball_speed_y = 3
+player1_score = 0
+player2_score = 0</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Step 2: Drawing Everything -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 2: Drawing the Game</h2>
+                        <p class="text-gray-700 mb-4">
+                            Now let's create a function to draw all the game objects:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def draw_game():
+    # Fill screen with black
+    screen.fill(BLACK)
+    
+    # Draw center line
+    for i in range(0, SCREEN_HEIGHT, 20):
+        pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH//2 - 2, i, 4, 10))
+    
+    # Draw paddles
+    pygame.draw.rect(screen, WHITE, (30, player1_y, PADDLE_WIDTH, PADDLE_HEIGHT))
+    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH - 30 - PADDLE_WIDTH, player2_y, PADDLE_WIDTH, PADDLE_HEIGHT))
+    
+    # Draw ball
+    pygame.draw.rect(screen, WHITE, (ball_x, ball_y, BALL_SIZE, BALL_SIZE))
+    
+    # Draw scores
+    font = pygame.font.Font(None, 74)
+    score1_text = font.render(str(player1_score), True, WHITE)
+    score2_text = font.render(str(player2_score), True, WHITE)
+    screen.blit(score1_text, (SCREEN_WIDTH//4, 50))
+    screen.blit(score2_text, (3*SCREEN_WIDTH//4, 50))</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Step 3: Player Controls -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 3: Player Controls</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's add keyboard controls so players can move their paddles:
+                        </p>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-blue-800 mb-2">
+                                <i class="fas fa-keyboard mr-2"></i>Control Scheme
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-3 rounded">
+                                    <strong>Player 1 (Left):</strong><br>
+                                    W = Move Up<br>
+                                    S = Move Down
+                                </div>
+                                <div class="bg-white p-3 rounded">
+                                    <strong>Player 2 (Right):</strong><br>
+                                    ↑ = Move Up<br>
+                                    ↓ = Move Down
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def handle_input():
+    keys = pygame.key.get_pressed()
+    
+    # Player 1 controls (W and S)
+    if keys[pygame.K_w] and player1_y > 0:
+        player1_y -= 7
+    if keys[pygame.K_s] and player1_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
+        player1_y += 7
+    
+    # Player 2 controls (UP and DOWN arrows)
+    if keys[pygame.K_UP] and player2_y > 0:
+        player2_y -= 7
+    if keys[pygame.K_DOWN] and player2_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
+        player2_y += 7</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Step 4: Ball Physics -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 4: Ball Movement and Collisions</h2>
+                        <p class="text-gray-700 mb-4">
+                            The most exciting part - making the ball bounce around and hit the paddles!
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def update_ball():
+    global ball_x, ball_y, ball_speed_x, ball_speed_y, player1_score, player2_score
+    
+    # Move ball
+    ball_x += ball_speed_x
+    ball_y += ball_speed_y
+    
+    # Bounce off top and bottom walls
+    if ball_y <= 0 or ball_y >= SCREEN_HEIGHT - BALL_SIZE:
+        ball_speed_y = -ball_speed_y
+    
+    # Check paddle collisions
+    # Left paddle
+    if (ball_x <= 45 and ball_x >= 30 and 
+        ball_y >= player1_y and ball_y <= player1_y + PADDLE_HEIGHT):
+        ball_speed_x = -ball_speed_x
+        ball_speed_y += (ball_y - (player1_y + PADDLE_HEIGHT//2)) * 0.1
+    
+    # Right paddle
+    if (ball_x >= SCREEN_WIDTH - 45 - BALL_SIZE and ball_x <= SCREEN_WIDTH - 30 - BALL_SIZE and
+        ball_y >= player2_y and ball_y <= player2_y + PADDLE_HEIGHT):
+        ball_speed_x = -ball_speed_x
+        ball_speed_y += (ball_y - (player2_y + PADDLE_HEIGHT//2)) * 0.1
+    
+    # Score points
+    if ball_x < 0:
+        player2_score += 1
+        reset_ball()
+    elif ball_x > SCREEN_WIDTH:
+        player1_score += 1
+        reset_ball()
+
+def reset_ball():
+    global ball_x, ball_y, ball_speed_x, ball_speed_y
+    ball_x = SCREEN_WIDTH // 2
+    ball_y = SCREEN_HEIGHT // 2
+    ball_speed_x = -ball_speed_x  # Change direction
+    ball_speed_y = 3</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Complete Game -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Pong Game</h2>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                            <h3 class="font-bold text-green-800 mb-3">
+                                <i class="fas fa-play mr-2"></i>Put It All Together!
+                            </h3>
+                            <p class="text-green-700 mb-4">
+                                Here's the complete game code. Copy this into Spyder and run it to play Pong!
+                            </p>
+                            <div class="relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                    📋 Copy
+                                </button>
+                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>import pygame
+import sys
+
+pygame.init()
+
+# Game settings
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+PADDLE_WIDTH = 15
+PADDLE_HEIGHT = 90
+BALL_SIZE = 15
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# Create screen
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Awesome Pong Game!")
+clock = pygame.time.Clock()
+
+# Game variables
+player1_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
+player2_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
+ball_x = SCREEN_WIDTH // 2
+ball_y = SCREEN_HEIGHT // 2
+ball_speed_x = 5
+ball_speed_y = 3
+player1_score = 0
+player2_score = 0
+
+def draw_game():
+    screen.fill(BLACK)
+    
+    # Center line
+    for i in range(0, SCREEN_HEIGHT, 20):
+        pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH//2 - 2, i, 4, 10))
+    
+    # Paddles
+    pygame.draw.rect(screen, WHITE, (30, player1_y, PADDLE_WIDTH, PADDLE_HEIGHT))
+    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH - 30 - PADDLE_WIDTH, player2_y, PADDLE_WIDTH, PADDLE_HEIGHT))
+    
+    # Ball
+    pygame.draw.rect(screen, WHITE, (ball_x, ball_y, BALL_SIZE, BALL_SIZE))
+    
+    # Scores
+    font = pygame.font.Font(None, 74)
+    score1_text = font.render(str(player1_score), True, WHITE)
+    score2_text = font.render(str(player2_score), True, WHITE)
+    screen.blit(score1_text, (SCREEN_WIDTH//4, 50))
+    screen.blit(score2_text, (3*SCREEN_WIDTH//4, 50))
+
+def handle_input():
+    global player1_y, player2_y
+    keys = pygame.key.get_pressed()
+    
+    if keys[pygame.K_w] and player1_y > 0:
+        player1_y -= 7
+    if keys[pygame.K_s] and player1_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
+        player1_y += 7
+    if keys[pygame.K_UP] and player2_y > 0:
+        player2_y -= 7
+    if keys[pygame.K_DOWN] and player2_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
+        player2_y += 7
+
+def update_ball():
+    global ball_x, ball_y, ball_speed_x, ball_speed_y, player1_score, player2_score
+    
+    ball_x += ball_speed_x
+    ball_y += ball_speed_y
+    
+    if ball_y <= 0 or ball_y >= SCREEN_HEIGHT - BALL_SIZE:
+        ball_speed_y = -ball_speed_y
+    
+    # Paddle collisions
+    if (ball_x <= 45 and ball_x >= 30 and 
+        ball_y >= player1_y and ball_y <= player1_y + PADDLE_HEIGHT):
+        ball_speed_x = -ball_speed_x
+    
+    if (ball_x >= SCREEN_WIDTH - 45 - BALL_SIZE and ball_x <= SCREEN_WIDTH - 30 - BALL_SIZE and
+        ball_y >= player2_y and ball_y <= player2_y + PADDLE_HEIGHT):
+        ball_speed_x = -ball_speed_x
+    
+    # Scoring
+    if ball_x < 0:
+        player2_score += 1
+        ball_x, ball_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
+        ball_speed_x = -ball_speed_x
+    elif ball_x > SCREEN_WIDTH:
+        player1_score += 1
+        ball_x, ball_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
+        ball_speed_x = -ball_speed_x
+
+# Main game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    handle_input()
+    update_ball()
+    draw_game()
+    
+    pygame.display.flip()
+    clock.tick(60)
+
+pygame.quit()
+sys.exit()</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Fun Challenges -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Fun Challenges</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <h3 class="font-bold text-yellow-800 mb-3">
+                                    <i class="fas fa-star mr-2"></i>Easy Challenges
+                                </h3>
+                                <ul class="space-y-2 text-yellow-700 text-sm">
+                                    <li>• Change the ball and paddle colors</li>
+                                    <li>• Make the ball move faster</li>
+                                    <li>• Add sound effects when ball hits paddle</li>
+                                    <li>• Change the background color</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <h3 class="font-bold text-purple-800 mb-3">
+                                    <i class="fas fa-trophy mr-2"></i>Hard Challenges
+                                </h3>
+                                <ul class="space-y-2 text-purple-700 text-sm">
+                                    <li>• Add a "Game Over" screen at 5 points</li>
+                                    <li>• Make the ball speed up after each hit</li>
+                                    <li>• Add power-ups that appear randomly</li>
+                                    <li>• Create an AI opponent</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+                    <a href="/programming/python/lesson4.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium">
+                        ← Previous Lesson
+                    </a>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-2">Lesson 5 of 8</p>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 62.5%"></div>
+                        </div>
+                    </div>
+                    <a href="/programming/python/lesson6.html" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium">
+                        Next Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>

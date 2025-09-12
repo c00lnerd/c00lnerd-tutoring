@@ -257,14 +257,14 @@
             <div class="control-group">
                 <label>Latitude</label>
                 <div style="display: flex; align-items: center; gap: 3px;">
-                    <input type="number" id="latInput" min="-90" max="90" value="40" step="0.1">
+                    <input type="number" id="latInput" min="-90" max="90" value="33.59" step="0.1">
                     <span>°</span>
                 </div>
             </div>
             <div class="control-group">
                 <label>Longitude</label>
                 <div style="display: flex; align-items: center; gap: 3px;">
-                    <input type="number" id="lonInput" min="-180" max="180" value="-74" step="0.1">
+                    <input type="number" id="lonInput" min="-180" max="180" value="-86.49" step="0.1">
                     <span>°</span>
                 </div>
             </div>
@@ -276,14 +276,22 @@
                 </div>
             </div>
             <div class="control-group">
+                <label>Sun Height (Flat Earth)</label>
+                <div style="display: flex; align-items: center; gap: 3px;">
+                    <input type="number" id="sunHeightFE" min="1000" max="10000" value="5000" step="100">
+                    <span>km</span>
+                </div>
+            </div>
+            <div class="control-group">
                 <button id="playButton">Play Animation</button>
                 <button id="resetButton" class="secondary">Reset</button>
             </div>
         </div>
 
         <div class="simulation-container">
-            <div class="model-section flat-earth">
+            <div class="sundial-panel">
                 <h2>Flat Earth Sundial Model</h2>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">Viewing Direction: Looking North</p>
                 <canvas id="flatEarthCanvas" width="600" height="400"></canvas>
                 <div class="sundial-display">
                     <div class="time-display" id="flatEarthTime">12:00 PM</div>
@@ -294,6 +302,7 @@
 
             <div class="model-section spherical-earth">
                 <h2>Spherical Earth Sundial (Reality)</h2>
+                <p style="font-size: 12px; color: #666; margin: 5px 0;">Viewing Direction: Looking North</p>
                 <canvas id="sphericalEarthCanvas" width="600" height="400"></canvas>
                 <div class="sundial-display">
                     <div class="time-display" id="sphericalEarthTime">12:00 PM</div>
@@ -308,8 +317,12 @@
                 <div class="info-section">
                     <h3>Sun Position Data</h3>
                     <div class="data-row">
-                        <span class="data-label">Solar Elevation:</span>
+                        <span class="data-label">Solar Elevation (Globe):</span>
                         <span class="data-value" id="solarElevation">0°</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="data-label">Solar Elevation (Flat Earth):</span>
+                        <span class="data-value" id="flatEarthElevation">0°</span>
                     </div>
                     <div class="data-row">
                         <span class="data-label">Solar Azimuth:</span>

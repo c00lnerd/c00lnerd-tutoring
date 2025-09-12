@@ -17,7 +17,10 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Interactive Code Section -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <h2 class="text-xl font-bold text-gray-800 mb-4">🎮 Try This Code!</h2>
-                <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                <div class="bg-gray-900 rounded-lg p-4 mb-4 relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                        📋 Copy
+                    </button>
                     <pre class="text-green-400 text-sm overflow-x-auto"><code>{`# 🎮 Welcome to Python Adventure! 🎮
 print("Hello! I'm your computer friend!")
 print("Let's solve some mystery numbers! 🕵️")
@@ -52,7 +55,10 @@ print("🎉 Great job, Detective! You're learning programming!")`}</code></pre>
             <!-- Visual Example -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <h2 class="text-xl font-bold text-gray-800 mb-4">📊 Add Visual Magic</h2>
-                <div class="bg-gray-900 rounded-lg p-4 mb-4">
+                <div class="bg-gray-900 rounded-lg p-4 mb-4 relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                        📋 Copy
+                    </button>
                     <pre class="text-green-400 text-sm overflow-x-auto"><code>{`# Add this to see your mystery numbers as a graph!
 import matplotlib.pyplot as plt
 
@@ -133,7 +139,7 @@ print("Look! Your mystery numbers make a straight line pattern!")`}</code></pre>
 
             <!-- Navigation -->
             <div class="flex justify-between items-center">
-                <a href="/programming/python-fundamentals" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium">
+                <a href="/programming/python-fundamentals.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium">
                     ← Back to Course
                 </a>
                 <div class="text-center">
@@ -142,10 +148,81 @@ print("Look! Your mystery numbers make a straight line pattern!")`}</code></pre>
                         <div class="bg-green-500 h-2 rounded-full" style="width: 12.5%"></div>
                     </div>
                 </div>
-                <a href="/programming/python/lesson2" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium">
+                <a href="/programming/python/lesson2.html" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium">
                     Next Lesson →
                 </a>
             </div>
         </div>
     </main>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        // Find the code element
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        // Try modern clipboard API first (works on HTTPS and localhost)
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            // Use fallback method
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        // Create temporary textarea
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        // Select and copy
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // For mobile devices
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>

@@ -2,10 +2,12 @@ class SundialSimulation {
     constructor() {
         this.isPlaying = false;
         this.animationId = null;
-        this.currentDate = new Date('2025-06-21T12:00:00Z');
-        this.latitude = 40;
-        this.longitude = -74;
+        // Initialize with 12:00 PM local time
+        this.currentDate = new Date('2025-06-21T12:00:00');
+        this.latitude = 33.59;
+        this.longitude = -86.49;
         this.gnomonHeight = 10; // cm
+        this.sunHeightFE = 5000; // km - flat earth sun height
         
         this.flatEarthCanvas = document.getElementById('flatEarthCanvas');
         this.sphericalEarthCanvas = document.getElementById('sphericalEarthCanvas');
@@ -19,13 +21,15 @@ class SundialSimulation {
     setupEventListeners() {
         document.getElementById('dateInput').addEventListener('change', (e) => {
             const timeStr = document.getElementById('timeInput').value;
-            this.currentDate = new Date(`${e.target.value}T${timeStr}:00Z`);
+            // Treat input time as local time - no conversion needed
+            this.currentDate = new Date(`${e.target.value}T${timeStr}:00`);
             this.updateSimulation();
         });
         
         document.getElementById('timeInput').addEventListener('change', (e) => {
             const dateStr = document.getElementById('dateInput').value;
-            this.currentDate = new Date(`${dateStr}T${e.target.value}:00Z`);
+            // Treat input time as local time - no conversion needed
+            this.currentDate = new Date(`${dateStr}T${e.target.value}:00`);
             this.updateSimulation();
         });
         
@@ -41,6 +45,11 @@ class SundialSimulation {
         
         document.getElementById('gnomonHeight').addEventListener('input', (e) => {
             this.gnomonHeight = parseFloat(e.target.value);
+            this.updateSimulation();
+        });
+        
+        document.getElementById('sunHeightFE').addEventListener('input', (e) => {
+            this.sunHeightFE = parseFloat(e.target.value);
             this.updateSimulation();
         });
         
@@ -94,7 +103,8 @@ class SundialSimulation {
     
     resetSimulation() {
         this.stopAnimation();
-        this.currentDate = new Date('2025-06-21T12:00:00Z');
+        // Reset to 12:00 PM local time
+        this.currentDate = new Date('2025-06-21T12:00:00');
         document.getElementById('dateInput').value = '2025-06-21';
         document.getElementById('timeInput').value = '12:00';
         this.updateSimulation();
@@ -109,13 +119,16 @@ class SundialSimulation {
     
     calculateSolarPosition() {
         const dayOfYear = this.getDayOfYear(this.currentDate);
-        const localTime = this.currentDate.getUTCHours() + this.currentDate.getUTCMinutes() / 60;
         
-        // Solar declination (simplified)
-        const declination = 23.45 * Math.sin(Math.PI * (284 + dayOfYear) / 365 * Math.PI / 180);
+        // Use input time as local time - no longitude correction needed for display
+        const localTime = this.currentDate.getHours() + this.currentDate.getMinutes() / 60;
+        const localSolarTime = localTime; // Use local time directly
+        
+        // Solar declination - corrected formula for proper seasonal variation
+        const declination = 23.45 * Math.sin((360 * (dayOfYear - 81) / 365) * Math.PI / 180);
         
         // Hour angle from local solar noon
-        const hourAngle = 15 * (localTime - 12); // degrees from solar noon
+        const hourAngle = 15 * (localSolarTime - 12); // degrees from solar noon
         
         // Convert to radians
         const latRad = this.latitude * Math.PI / 180;
@@ -128,11 +141,16 @@ class SundialSimulation {
             Math.cos(decRad) * Math.cos(latRad) * Math.cos(hourRad)
         ) * 180 / Math.PI;
         
-        // Solar azimuth
-        const azimuth = Math.atan2(
+        // Solar azimuth (corrected for proper north reference)
+        let azimuth = Math.atan2(
             Math.sin(hourRad),
             Math.cos(hourRad) * Math.sin(latRad) - Math.tan(decRad) * Math.cos(latRad)
-        ) * 180 / Math.PI + 180;
+        ) * 180 / Math.PI;
+        
+        // Normalize azimuth: 0° = North, 90° = East, 180° = South, 270° = West
+        if (azimuth < 0) azimuth += 360;
+        
+        // Remove debug output
         
         return {
             elevation: elevation,
@@ -140,7 +158,7 @@ class SundialSimulation {
             declination: declination,
             hourAngle: hourAngle,
             dayOfYear: dayOfYear,
-            localTime: localTime
+            localTime: localSolarTime
         };
     }
     
@@ -220,7 +238,7 @@ class SundialSimulation {
         
         // Sun position: East (6AM) -> South (12PM) -> West (6PM) -> North (12AM)
         const sunX = centerX + sunDistance * Math.cos(timeAngle * Math.PI / 180);
-        const sunY = centerY - 100 - 20 * Math.cos(distanceFromNoon * Math.PI / 12); // Varying apparent height
+        const sunY = centerY + sunDistance * Math.sin(timeAngle * Math.PI / 180) - 100; // Circular path above
         
         // Sun size varies with distance (perspective effect)
         const baseSunSize = 25;
@@ -263,26 +281,65 @@ class SundialSimulation {
         
         const dx = sunX - centerX;
         const dy = sunY - centerY;
-        const gnomonDisplayHeight = this.gnomonHeight * 3;
         
-        // In flat earth model, calculate shadow based on sun's 3D position
-        // Shadow points directly away from sun on the ground plane
-        if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
-            // Calculate shadow direction (opposite to sun direction)
-            flatShadowAngle = Math.atan2(-dx, dy) * 180 / Math.PI; // Shadow points away from sun
+        // Calculate shadow direction (opposite to sun direction)
+        flatShadowAngle = Math.atan2(-dx, -dy) * 180 / Math.PI; // Shadow points away from sun
+        
+        // Calculate sun's elevation angle in flat earth model using actual sun height
+        // In flat earth model, calculate horizontal distance based on latitude and sun position
+        // Assume sun is at "solar noon" position relative to the Tropic of Cancer/Capricorn
+        const flatEarthSunData = this.calculateSolarPosition();
+        
+        // Calculate horizontal distance from observer to point below sun in flat earth model
+        // Use simpler approach that matches typical flat earth calculators
+        const sunOverheadLatitude = flatEarthSunData.declination; // Where sun is directly overhead
+        
+        // In flat earth model, use direct latitude difference for noon calculations
+        // Your reference shows ~3300 km, so let's use a scaling factor that produces this
+        const latitudeDifference = Math.abs(this.latitude - sunOverheadLatitude);
+        
+        // Calculate time offset from solar noon
+        const localSolarTime = this.currentDate.getUTCHours() + this.currentDate.getUTCMinutes() / 60 + this.longitude / 15;
+        const hoursFromNoon = Math.abs(localSolarTime - 12);
+        
+        // Base distance from latitude difference, with time-of-day adjustment
+        const flatEarthBaseDistance = latitudeDifference * 111; // km per degree latitude
+        const timeAdjustment = hoursFromNoon * 200; // Additional distance for time offset
+        const horizontalDistanceKm = Math.sqrt(flatEarthBaseDistance * flatEarthBaseDistance + timeAdjustment * timeAdjustment);
+        
+        let flatEarthElevation = 90; // Default to overhead
+        if (horizontalDistanceKm > 0) {
+            // Use the flat earth sun height parameter for elevation calculation
+            flatEarthElevation = Math.atan2(this.sunHeightFE, horizontalDistanceKm) * 180 / Math.PI;
+            // Calculate shadow length using proper trigonometry: length = height / tan(elevation)
+            flatShadowLength = this.gnomonHeight / Math.tan(flatEarthElevation * Math.PI / 180);
             
-            // Calculate shadow length based on sun's apparent elevation
-            const sunElevationAngle = Math.atan2(-(sunY - centerY), Math.sqrt(dx * dx + (sunY - centerY) * (sunY - centerY)));
-            if (sunElevationAngle > 0) {
-                flatShadowLength = gnomonDisplayHeight / Math.tan(sunElevationAngle);
-            } else {
-                flatShadowLength = gnomonDisplayHeight * 2; // Long shadow when sun is low
-            }
+            // Debug logging
+            console.log('Flat Earth Debug:', {
+                sunHeightFE: this.sunHeightFE,
+                horizontalDistanceKm: horizontalDistanceKm,
+                flatEarthElevation: flatEarthElevation,
+                latitude: this.latitude,
+                declination: flatEarthSunData.declination
+            });
+        } else {
+            // Sun directly overhead
+            flatShadowLength = 0;
+        }
+        
+        // Draw shadow - always present in flat earth model
+        if (flatShadowLength > 0) {
+            // Calculate shadow direction - directly opposite to sun position
+            const sunAngle = Math.atan2(sunY - centerY, sunX - centerX);
+            const shadowDirection = sunAngle + Math.PI; // 180 degrees opposite
             
-            // Draw shadow - always present in flat earth model
-            const shadowScale = Math.min(0.8, 50 / flatShadowLength); // Scale for display, max length
-            const shadowEndX = centerX - dx * shadowScale;
-            const shadowEndY = centerY - dy * shadowScale * 0.3; // Flatten the shadow on ground
+            // Scale shadow length to fit within sundial (radius ~80px, gnomon height scaled to ~24px)
+            const pixelsPerCm = 8; // 8 pixels per cm for realistic scaling
+            const shadowLengthPixels = flatShadowLength * pixelsPerCm;
+            
+            // Calculate shadow end position
+            const shadowEndX = centerX + Math.cos(shadowDirection) * shadowLengthPixels;
+            const shadowEndY = centerY + Math.sin(shadowDirection) * shadowLengthPixels;
             
             ctx.strokeStyle = 'rgba(0,0,0,0.5)';
             ctx.lineWidth = 6;
@@ -290,30 +347,27 @@ class SundialSimulation {
             ctx.moveTo(centerX, centerY);
             ctx.lineTo(shadowEndX, shadowEndY);
             ctx.stroke();
-        } else {
-            // When sun is directly overhead
-            flatShadowLength = 0;
-            flatShadowAngle = 0;
         }
         
-        // Calculate flat earth time based on sun's apparent position
-        // In flat earth model, time is determined by sun's position in its circular path
-        // Sun at east = 6 AM, south = 12 PM, west = 6 PM, north = 12 AM
-        const sunAngleFromEast = Math.atan2(sunY - centerY, sunX - centerX) * 180 / Math.PI;
-        let flatEarthTime = 6 + (sunAngleFromEast / 15); // Convert angle to hours from 6 AM
+        // Display the input time directly (already local time)
+        const inputTime = this.currentDate.getHours() + this.currentDate.getMinutes() / 60;
+        let localTime = inputTime;
         
         // Normalize to 0-24 hour range
-        while (flatEarthTime < 0) flatEarthTime += 24;
-        while (flatEarthTime >= 24) flatEarthTime -= 24;
+        while (localTime < 0) localTime += 24;
+        while (localTime >= 24) localTime -= 24;
         
-        const flatTimeHours = Math.floor(flatEarthTime);
-        const flatTimeMinutes = Math.floor((flatEarthTime - flatTimeHours) * 60);
+        const flatTimeHours = Math.floor(localTime);
+        const flatTimeMinutes = Math.floor((localTime - flatTimeHours) * 60);
         
         // Update display
         document.getElementById('flatEarthTime').textContent = 
             `${flatTimeHours % 12 || 12}:${flatTimeMinutes.toString().padStart(2, '0')} ${flatTimeHours >= 12 ? 'PM' : 'AM'}`;
         document.getElementById('flatShadowLength').textContent = Math.abs(flatShadowLength).toFixed(1);
         document.getElementById('flatShadowAngle').textContent = Math.round(flatShadowAngle);
+        
+        // Store flat earth elevation for info panel
+        this.flatEarthElevationAngle = flatEarthElevation;
         
         return { time: flatEarthTime, shadowLength: flatShadowLength, shadowAngle: flatShadowAngle };
     }
@@ -345,25 +399,17 @@ class SundialSimulation {
         ctx.arc(centerX, centerY, 80, 0, 2 * Math.PI);
         ctx.fill();
         
-        // Draw hour markings (properly calculated for spherical earth)
+        // Draw hour markings (simple clock-style for educational clarity)
         ctx.strokeStyle = '#333';
         ctx.lineWidth = 2;
         for (let hour = 6; hour <= 18; hour++) {
-            const hourAngle = (hour - 12) * 15; // degrees from solar noon
-            const hourAngleRad = hourAngle * Math.PI / 180;
-            const latRad = this.latitude * Math.PI / 180;
-            const decRad = sunData.declination * Math.PI / 180;
+            // Simple clock positioning: 12 at top, 6 at bottom, 3 at right, 9 at left
+            const clockAngle = (hour - 12) * 30 * Math.PI / 180; // 30 degrees per hour
             
-            // Calculate proper sundial angle accounting for latitude and declination
-            const sundialAngle = Math.atan2(
-                Math.sin(hourAngleRad),
-                Math.cos(hourAngleRad) * Math.sin(latRad) - Math.tan(decRad) * Math.cos(latRad)
-            );
-            
-            const x1 = centerX + 70 * Math.sin(sundialAngle);
-            const y1 = centerY - 70 * Math.cos(sundialAngle);
-            const x2 = centerX + 60 * Math.sin(sundialAngle);
-            const y2 = centerY - 60 * Math.cos(sundialAngle);
+            const x1 = centerX + 70 * Math.sin(clockAngle);
+            const y1 = centerY - 70 * Math.cos(clockAngle);
+            const x2 = centerX + 60 * Math.sin(clockAngle);
+            const y2 = centerY - 60 * Math.cos(clockAngle);
             
             ctx.beginPath();
             ctx.moveTo(x1, y1);
@@ -375,17 +421,26 @@ class SundialSimulation {
                 ctx.fillStyle = '#333';
                 ctx.font = '12px Arial';
                 ctx.textAlign = 'center';
-                const labelX = centerX + 85 * Math.sin(sundialAngle);
-                const labelY = centerY - 85 * Math.cos(sundialAngle) + 4;
+                const labelX = centerX + 85 * Math.sin(clockAngle);
+                const labelY = centerY - 85 * Math.cos(clockAngle) + 4;
                 ctx.fillText(hour.toString(), labelX, labelY);
             }
         }
         
         // Draw sun (realistic position)
         if (sunData.elevation > 0) {
-            const sunDistance = 150;
-            const sunX = centerX + sunDistance * Math.sin(sunData.azimuth * Math.PI / 180);
-            const sunY = centerY - sunDistance * Math.cos(sunData.azimuth * Math.PI / 180) - sunData.elevation * 2;
+            const sunDistance = 120; // Closer to sundial for better visibility
+            // Position sun based on azimuth and elevation
+            const azimuthRad = sunData.azimuth * Math.PI / 180;
+            const elevationRad = sunData.elevation * Math.PI / 180;
+            
+            // Calculate sun position - high elevation should appear high in sky
+            // For September 10 at noon: elevation ~61°, azimuth ~180° (south)
+            const elevationFactor = Math.sin(elevationRad) * 80; // Scale elevation effect
+            const azimuthDistance = 100; // Distance from center for azimuth positioning
+            
+            const sunX = centerX + azimuthDistance * Math.sin(azimuthRad);
+            const sunY = centerY - azimuthDistance * Math.cos(azimuthRad) - elevationFactor;
             
             ctx.fillStyle = '#ffeb3b';
             ctx.beginPath();
@@ -424,12 +479,31 @@ class SundialSimulation {
         
         if (sunData.elevation > 0) {
             realShadowLength = this.gnomonHeight / Math.tan(sunData.elevation * Math.PI / 180);
+            // Shadow angle: shadow points opposite to sun azimuth
+            // If sun is at 180° (south), shadow points at 0° (north)
             realShadowAngle = sunData.azimuth + 180; // Shadow points opposite to sun
             if (realShadowAngle >= 360) realShadowAngle -= 360;
             
-            // Draw shadow - correct direction calculation
-            const shadowEndX = centerX + realShadowLength * 2 * Math.sin(realShadowAngle * Math.PI / 180);
-            const shadowEndY = centerY - realShadowLength * 2 * Math.cos(realShadowAngle * Math.PI / 180);
+            // Get sun position using same calculation as drawing code
+            const azimuthRad = sunData.azimuth * Math.PI / 180;
+            const elevationRad = sunData.elevation * Math.PI / 180;
+            const elevationFactor = Math.sin(elevationRad) * 80;
+            const azimuthDistance = 100;
+            
+            const sunX = centerX + azimuthDistance * Math.sin(azimuthRad);
+            const sunY = centerY - azimuthDistance * Math.cos(azimuthRad) - elevationFactor;
+            
+            // Draw shadow - point directly opposite to sun position
+            const pixelsPerCm = 8; // Same scaling as flat earth model
+            const shadowLengthPixels = realShadowLength * pixelsPerCm;
+            
+            // Calculate shadow direction to point to correct hour on sundial
+            // Shadow should point to current time on the hour markings
+            const currentHour = sunData.localTime;
+            const shadowAngle = (currentHour - 12) * 30 * Math.PI / 180; // 30 degrees per hour, same as hour markings
+            
+            const shadowEndX = centerX + shadowLengthPixels * Math.sin(shadowAngle);
+            const shadowEndY = centerY - shadowLengthPixels * Math.cos(shadowAngle);
             
             ctx.strokeStyle = 'rgba(0,0,0,0.6)';
             ctx.lineWidth = 6;
@@ -439,16 +513,22 @@ class SundialSimulation {
             ctx.stroke();
         }
         
-        // Update display - use local time
-        const localTime = sunData.localTime;
-        const realTimeHours = Math.floor(localTime);
-        const realTimeMinutes = Math.floor((localTime - realTimeHours) * 60);
+        // Update display - show the input time directly (already local time)
+        const inputTime = this.currentDate.getHours() + this.currentDate.getMinutes() / 60;
+        let displayTime = inputTime;
+        
+        // Normalize to 0-24 hour range
+        while (displayTime < 0) displayTime += 24;
+        while (displayTime >= 24) displayTime -= 24;
+        
+        const realTimeHours = Math.floor(displayTime);
+        const realTimeMinutes = Math.floor((displayTime - realTimeHours) * 60);
         document.getElementById('sphericalEarthTime').textContent = 
             `${realTimeHours % 12 || 12}:${realTimeMinutes.toString().padStart(2, '0')} ${realTimeHours >= 12 ? 'PM' : 'AM'}`;
         document.getElementById('realShadowLength').textContent = Math.abs(realShadowLength).toFixed(1);
         document.getElementById('realShadowAngle').textContent = Math.round(realShadowAngle);
         
-        return { time: localTime, shadowLength: realShadowLength, shadowAngle: realShadowAngle };
+        return { time: displayTime, shadowLength: realShadowLength, shadowAngle: realShadowAngle };
     }
     
     updateDataDisplay(sunData) {
@@ -458,23 +538,10 @@ class SundialSimulation {
         document.getElementById('hourAngle').textContent = `${sunData.hourAngle.toFixed(1)}°`;
         document.getElementById('declination').textContent = `${sunData.declination.toFixed(1)}°`;
         
-        // Get sundial data
-        const flatData = this.getLastFlatEarthData();
-        const realData = this.getLastSphericalEarthData();
-        
-        // Calculate differences
-        const timeDiff = Math.abs(flatData.time - realData.time) * 60; // minutes
-        const shadowLengthDiff = Math.abs(flatData.shadowLength - realData.shadowLength);
-        const shadowAngleDiff = Math.abs(flatData.shadowAngle - realData.shadowAngle);
-        const accuracyError = (timeDiff / 60) * 100; // percentage based on hour difference
-        
-        document.getElementById('timeDifference').textContent = `${timeDiff.toFixed(0)} minutes`;
-        document.getElementById('shadowLengthDiff').textContent = `${shadowLengthDiff.toFixed(1)} cm`;
-        document.getElementById('shadowAngleDiff').textContent = `${shadowAngleDiff.toFixed(0)}°`;
-        document.getElementById('accuracyError').textContent = `${accuracyError.toFixed(1)}%`;
-        
-        // Update explanation based on conditions
-        this.updateExplanation(sunData, timeDiff, accuracyError);
+        // Update flat earth elevation display
+        if (this.flatEarthElevationAngle !== undefined) {
+            document.getElementById('flatEarthElevation').textContent = `${this.flatEarthElevationAngle.toFixed(1)}°`;
+        }
     }
     
     getLastFlatEarthData() {

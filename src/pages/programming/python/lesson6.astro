@@ -1,0 +1,722 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 6: Space Invaders Game - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/programming.html" class="text-purple-600 hover:text-purple-800 font-medium">
+                            ← Back to Programming
+                        </a>
+                        <div class="text-gray-300">|</div>
+                        <h1 class="text-2xl font-bold text-gray-900">Python Course</h1>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Lesson 6 of 8
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Lesson Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-rocket text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Space Invaders Game!</h1>
+                            <p class="text-gray-600 mt-2">Build the classic arcade shooter with aliens, lasers, and power-ups</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-900 mb-3">Learning Objectives</h2>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create a player spaceship with smooth movement
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Program enemy aliens that move and attack
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Add shooting mechanics and collision detection
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Build a complete game with levels and scoring
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    <!-- Game Overview -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">What is Space Invaders?</h2>
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6 mb-4">
+                            <p class="text-gray-700 mb-4">
+                                Space Invaders is a classic arcade game where you control a spaceship defending Earth from waves of alien invaders! Shoot the aliens before they reach the bottom of the screen.
+                            </p>
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">🚀 Player Ship</h4>
+                                    <p class="text-gray-600 text-sm">Move with arrow keys, shoot with spacebar</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">👾 Aliens</h4>
+                                    <p class="text-gray-600 text-sm">Move side to side, drop down when hitting edges</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">💥 Lasers</h4>
+                                    <p class="text-gray-600 text-sm">Player and alien bullets that destroy on contact</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">🏆 Score</h4>
+                                    <p class="text-gray-600 text-sm">Points for each alien destroyed</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Step 1: Game Setup -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 1: Game Setup and Classes</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's start by setting up our game and creating classes for our game objects:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import pygame
+import random
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Game settings
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 60
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+BLUE = (0, 100, 255)
+YELLOW = (255, 255, 0)
+
+# Create screen
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("🚀 Space Invaders! 👾")
+clock = pygame.time.Clock()
+
+# Game variables
+score = 0
+lives = 3
+game_over = False</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Step 2: Player Class -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 2: Create the Player Spaceship</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's create a Player class to handle our spaceship:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>class Player:
+    def __init__(self):
+        self.width = 50
+        self.height = 30
+        self.x = SCREEN_WIDTH // 2 - self.width // 2
+        self.y = SCREEN_HEIGHT - self.height - 10
+        self.speed = 5
+        self.bullets = []
+    
+    def move_left(self):
+        if self.x > 0:
+            self.x -= self.speed
+    
+    def move_right(self):
+        if self.x &lt; SCREEN_WIDTH - self.width:
+            self.x += self.speed
+    
+    def shoot(self):
+        bullet = &#123;
+            'x': self.x + self.width // 2 - 2,
+            'y': self.y,
+            'width': 4,
+            'height': 10,
+            'speed': 7
+        &#125;
+        self.bullets.append(bullet)
+    
+    def update_bullets(self):
+        for bullet in self.bullets[:]:  # Copy list to avoid issues
+            bullet['y'] -= bullet['speed']
+            if bullet['y'] &lt; 0:
+                self.bullets.remove(bullet)
+    
+    def draw(self, screen):
+        # Draw spaceship as a triangle
+        points = [
+            (self.x + self.width // 2, self.y),
+            (self.x, self.y + self.height),
+            (self.x + self.width, self.y + self.height)
+        ]
+        pygame.draw.polygon(screen, GREEN, points)
+        
+        # Draw bullets
+        for bullet in self.bullets:
+            pygame.draw.rect(screen, YELLOW, (bullet['x'], bullet['y'], bullet['width'], bullet['height']))</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Step 3: Alien Class -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 3: Create the Alien Invaders</h2>
+                        <p class="text-gray-700 mb-4">
+                            Now let's create the alien enemies that move in formation:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>class Alien:
+    def __init__(self, x, y):
+        self.width = 40
+        self.height = 30
+        self.x = x
+        self.y = y
+        self.speed = 1
+    
+    def move(self, direction):
+        self.x += direction * self.speed
+    
+    def drop_down(self):
+        self.y += 20
+    
+    def draw(self, screen):
+        # Draw alien as a rectangle with "eyes"
+        pygame.draw.rect(screen, RED, (self.x, self.y, self.width, self.height))
+        # Eyes
+        pygame.draw.circle(screen, WHITE, (self.x + 10, self.y + 10), 5)
+        pygame.draw.circle(screen, WHITE, (self.x + 30, self.y + 10), 5)
+        pygame.draw.circle(screen, BLACK, (self.x + 10, self.y + 10), 2)
+        pygame.draw.circle(screen, BLACK, (self.x + 30, self.y + 10), 2)
+
+def create_alien_army():
+    aliens = []
+    for row in range(5):
+        for col in range(10):
+            x = 75 + col * 60
+            y = 50 + row * 50
+            aliens.append(Alien(x, y))
+    return aliens</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Step 4: Game Logic -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 4: Game Logic and Collisions</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's add collision detection and game logic:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def check_collisions(player, aliens):
+    global score
+    
+    # Check bullet-alien collisions
+    for bullet in player.bullets[:]:
+        for alien in aliens[:]:
+            if (bullet['x'] &lt; alien.x + alien.width and
+                bullet['x'] + bullet['width'] &gt; alien.x and
+                bullet['y'] &lt; alien.y + alien.height and
+                bullet['y'] + bullet['height'] &gt; alien.y):
+                
+                player.bullets.remove(bullet)
+                aliens.remove(alien)
+                score += 10
+                break
+
+def move_aliens(aliens):
+    global lives, game_over
+    
+    # Check if aliens need to change direction
+    change_direction = False
+    for alien in aliens:
+        if alien.x &lt;= 0 or alien.x &gt;= SCREEN_WIDTH - alien.width:
+            change_direction = True
+            break
+    
+    if change_direction:
+        for alien in aliens:
+            alien.drop_down()
+            alien.speed = -alien.speed
+            # Check if aliens reached the bottom
+            if alien.y + alien.height &gt;= SCREEN_HEIGHT - 100:
+                lives -= 1
+                if lives &lt;= 0:
+                    game_over = True
+    else:
+        for alien in aliens:
+            alien.move(1 if alien.speed &gt; 0 else -1)
+
+def draw_ui(screen):
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Score: &#123;score&#125;", True, WHITE)
+    lives_text = font.render(f"Lives: &#123;lives&#125;", True, WHITE)
+    screen.blit(score_text, (10, 10))
+    screen.blit(lives_text, (10, 50))</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Complete Game -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Space Invaders Game</h2>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                            <h3 class="font-bold text-green-800 mb-3">
+                                <i class="fas fa-play mr-2"></i>Full Game Code!
+                            </h3>
+                            <p class="text-green-700 mb-4">
+                                Here's the complete Space Invaders game. Copy this into Spyder and defend Earth!
+                            </p>
+                            <div class="relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                    📋 Copy
+                                </button>
+                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>import pygame
+import random
+import sys
+
+pygame.init()
+
+# Game settings
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 600
+FPS = 60
+
+# Colors
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
+RED = (255, 0, 0)
+BLUE = (0, 100, 255)
+YELLOW = (255, 255, 0)
+
+screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("🚀 Space Invaders! 👾")
+clock = pygame.time.Clock()
+
+score = 0
+lives = 3
+game_over = False
+
+class Player:
+    def __init__(self):
+        self.width = 50
+        self.height = 30
+        self.x = SCREEN_WIDTH // 2 - self.width // 2
+        self.y = SCREEN_HEIGHT - self.height - 10
+        self.speed = 5
+        self.bullets = []
+    
+    def move_left(self):
+        if self.x > 0:
+            self.x -= self.speed
+    
+    def move_right(self):
+        if self.x &lt; SCREEN_WIDTH - self.width:
+            self.x += self.speed
+    
+    def shoot(self):
+        bullet = &#123;
+            'x': self.x + self.width // 2 - 2,
+            'y': self.y,
+            'width': 4,
+            'height': 10,
+            'speed': 7
+        &#125;
+        self.bullets.append(bullet)
+    
+    def update_bullets(self):
+        for bullet in self.bullets[:]:
+            bullet['y'] -= bullet['speed']
+            if bullet['y'] &lt; 0:
+                self.bullets.remove(bullet)
+    
+    def draw(self, screen):
+        points = [
+            (self.x + self.width // 2, self.y),
+            (self.x, self.y + self.height),
+            (self.x + self.width, self.y + self.height)
+        ]
+        pygame.draw.polygon(screen, GREEN, points)
+        
+        for bullet in self.bullets:
+            pygame.draw.rect(screen, YELLOW, (bullet['x'], bullet['y'], bullet['width'], bullet['height']))
+
+class Alien:
+    def __init__(self, x, y):
+        self.width = 40
+        self.height = 30
+        self.x = x
+        self.y = y
+        self.speed = 1
+    
+    def move(self, direction):
+        self.x += direction * self.speed
+    
+    def drop_down(self):
+        self.y += 20
+    
+    def draw(self, screen):
+        pygame.draw.rect(screen, RED, (self.x, self.y, self.width, self.height))
+        pygame.draw.circle(screen, WHITE, (self.x + 10, self.y + 10), 5)
+        pygame.draw.circle(screen, WHITE, (self.x + 30, self.y + 10), 5)
+        pygame.draw.circle(screen, BLACK, (self.x + 10, self.y + 10), 2)
+        pygame.draw.circle(screen, BLACK, (self.x + 30, self.y + 10), 2)
+
+def create_alien_army():
+    aliens = []
+    for row in range(5):
+        for col in range(10):
+            x = 75 + col * 60
+            y = 50 + row * 50
+            aliens.append(Alien(x, y))
+    return aliens
+
+def check_collisions(player, aliens):
+    global score
+    for bullet in player.bullets[:]:
+        for alien in aliens[:]:
+            if (bullet['x'] &lt; alien.x + alien.width and
+                bullet['x'] + bullet['width'] &gt; alien.x and
+                bullet['y'] &lt; alien.y + alien.height and
+                bullet['y'] + bullet['height'] &gt; alien.y):
+                player.bullets.remove(bullet)
+                aliens.remove(alien)
+                score += 10
+                break
+
+def move_aliens(aliens):
+    global lives, game_over
+    change_direction = False
+    
+    # Check if any alien hits the edge
+    for alien in aliens:
+        if alien.x <= 0 or alien.x >= SCREEN_WIDTH - alien.width:
+            change_direction = True
+            break
+    
+    if change_direction:
+        # Move all aliens down and reverse direction
+        for alien in aliens:
+            alien.drop_down()
+            alien.speed = -alien.speed
+            # Check if aliens reached the bottom
+            if alien.y + alien.height >= SCREEN_HEIGHT - 100:
+                lives -= 1
+                if lives <= 0:
+                    game_over = True
+    else:
+        # Move aliens horizontally
+        for alien in aliens:
+            alien.x += alien.speed
+
+def draw_ui(screen):
+    font = pygame.font.Font(None, 36)
+    score_text = font.render(f"Score: &#123;score&#125;", True, WHITE)
+    lives_text = font.render(f"Lives: &#123;lives&#125;", True, WHITE)
+    screen.blit(score_text, (10, 10))
+    screen.blit(lives_text, (10, 50))
+
+# Create game objects
+player = Player()
+aliens = create_alien_army()
+
+# Main game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                player.shoot()
+    
+    if not game_over:
+        # Handle input
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            player.move_left()
+        if keys[pygame.K_RIGHT]:
+            player.move_right()
+        
+        # Update game objects
+        player.update_bullets()
+        move_aliens(aliens)
+        check_collisions(player, aliens)
+        
+        # Check win condition
+        if not aliens:
+            aliens = create_alien_army()  # New wave!
+    
+    # Draw everything
+    screen.fill(BLACK)
+    
+    if not game_over:
+        player.draw(screen)
+        for alien in aliens:
+            alien.draw(screen)
+        draw_ui(screen)
+    else:
+        font = pygame.font.Font(None, 74)
+        game_over_text = font.render("GAME OVER", True, RED)
+        final_score_text = font.render(f"Final Score: &#123;score&#125;", True, WHITE)
+        screen.blit(game_over_text, (SCREEN_WIDTH//2 - 150, SCREEN_HEIGHT//2 - 50))
+        screen.blit(final_score_text, (SCREEN_WIDTH//2 - 120, SCREEN_HEIGHT//2 + 20))
+    
+    pygame.display.flip()
+    clock.tick(FPS)
+
+pygame.quit()
+sys.exit()</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Fun Challenges -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Epic Challenges</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <h3 class="font-bold text-yellow-800 mb-3">
+                                    <i class="fas fa-star mr-2"></i>Easy Challenges
+                                </h3>
+                                <ul class="space-y-2 text-yellow-700 text-sm">
+                                    <li>• Change alien colors and shapes</li>
+                                    <li>• Make bullets move faster</li>
+                                    <li>• Add sound effects for shooting</li>
+                                    <li>• Change the background color</li>
+                                    <li>• Make aliens worth different points</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <h3 class="font-bold text-purple-800 mb-3">
+                                    <i class="fas fa-trophy mr-2"></i>Super Challenges
+                                </h3>
+                                <ul class="space-y-2 text-purple-700 text-sm">
+                                    <li>• Add alien bullets that shoot at player</li>
+                                    <li>• Create power-ups (rapid fire, shield)</li>
+                                    <li>• Make aliens move faster each wave</li>
+                                    <li>• Add boss aliens with more health</li>
+                                    <li>• Create multiple player lives with respawn</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Game Controls -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">How to Play</h2>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                            <h3 class="font-bold text-blue-800 mb-3">
+                                <i class="fas fa-gamepad mr-2"></i>Game Controls
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <i class="fas fa-arrow-left text-2xl text-blue-600 mb-2"></i>
+                                    <p class="font-semibold">Left Arrow</p>
+                                    <p class="text-sm text-gray-600">Move ship left</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <i class="fas fa-arrow-right text-2xl text-blue-600 mb-2"></i>
+                                    <p class="font-semibold">Right Arrow</p>
+                                    <p class="text-sm text-gray-600">Move ship right</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <i class="fas fa-space-shuttle text-2xl text-blue-600 mb-2"></i>
+                                    <p class="font-semibold">Spacebar</p>
+                                    <p class="text-sm text-gray-600">Shoot lasers</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gameplay Instructions Window -->
+                        <div class="bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-6 shadow-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-purple-100 p-3 rounded-full mr-4">
+                                    <i class="fas fa-info-circle text-purple-600 text-xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold text-purple-900">🎮 Gameplay Instructions</h3>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Objective -->
+                                <div class="bg-white rounded-lg p-4 shadow">
+                                    <h4 class="font-bold text-purple-800 mb-3 flex items-center">
+                                        <i class="fas fa-bullseye text-red-500 mr-2"></i>Objective
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li>• Destroy all alien invaders before they reach Earth</li>
+                                        <li>• Protect your spaceship from alien attacks</li>
+                                        <li>• Score points by shooting aliens</li>
+                                        <li>• Survive as long as possible!</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Game Rules -->
+                                <div class="bg-white rounded-lg p-4 shadow">
+                                    <h4 class="font-bold text-purple-800 mb-3 flex items-center">
+                                        <i class="fas fa-list-check text-green-500 mr-2"></i>Game Rules
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li>• Aliens move side-to-side and descend slowly</li>
+                                        <li>• You lose if aliens reach the bottom</li>
+                                        <li>• Each alien destroyed gives you points</li>
+                                        <li>• Game gets faster as you progress</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Tips & Strategy -->
+                                <div class="bg-white rounded-lg p-4 shadow">
+                                    <h4 class="font-bold text-purple-800 mb-3 flex items-center">
+                                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>Pro Tips
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li>• Aim carefully - don't waste shots</li>
+                                        <li>• Target aliens on the edges first</li>
+                                        <li>• Keep moving to avoid alien fire</li>
+                                        <li>• Stay calm under pressure!</li>
+                                    </ul>
+                                </div>
+
+                                <!-- Scoring -->
+                                <div class="bg-white rounded-lg p-4 shadow">
+                                    <h4 class="font-bold text-purple-800 mb-3 flex items-center">
+                                        <i class="fas fa-trophy text-gold-500 mr-2"></i>Scoring
+                                    </h4>
+                                    <ul class="space-y-2 text-gray-700 text-sm">
+                                        <li>• Bottom row aliens: 10 points</li>
+                                        <li>• Middle row aliens: 20 points</li>
+                                        <li>• Top row aliens: 30 points</li>
+                                        <li>• Bonus points for speed!</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <p class="text-yellow-800 text-center font-semibold">
+                                    <i class="fas fa-rocket mr-2"></i>
+                                    Ready to defend Earth? Copy the complete game code above and start your space mission!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+                    <a href="/programming/python/lesson5.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium">
+                        ← Previous Lesson
+                    </a>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-2">Lesson 6 of 8</p>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+                    <a href="/programming/python/lesson7.html" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium">
+                        Next Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>

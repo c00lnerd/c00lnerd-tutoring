@@ -1,0 +1,527 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 4: Graphics and Games with Pygame - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/programming.html" class="text-purple-600 hover:text-purple-800 font-medium">
+                            ← Back to Programming
+                        </a>
+                        <div class="text-gray-300">|</div>
+                        <h1 class="text-2xl font-bold text-gray-900">Python Course</h1>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Lesson 4 of 8
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Lesson Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-gamepad text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Graphics and Games with Pygame</h1>
+                            <p class="text-gray-600 mt-2">Create your first visual programs and simple games!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-900 mb-3">Learning Objectives</h2>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Install and set up Pygame for graphics programming
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create windows and draw basic shapes
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Add colors and movement to your graphics
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Build a simple bouncing ball animation
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    <!-- Installing Pygame -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Setting Up Pygame</h2>
+                        <p class="text-gray-700 mb-4">
+                            Pygame is a special Python library that makes it easy to create games and graphics. Let's install it first!
+                        </p>
+                        <!-- Online Installation -->
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-4">
+                            <h3 class="font-bold text-green-800 mb-3">
+                                <i class="fas fa-wifi mr-2"></i>Option 1: Online Installation (Requires Internet)
+                            </h3>
+                            <ol class="list-decimal list-inside space-y-2 text-green-700">
+                                <li>Open Spyder</li>
+                                <li>In the console (bottom right), type: <code class="bg-green-100 px-2 py-1 rounded">pip install pygame</code></li>
+                                <li>Press Enter and wait for it to install</li>
+                                <li>You should see "Successfully installed pygame"</li>
+                            </ol>
+                        </div>
+
+                        <!-- Offline Installation -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
+                            <h3 class="font-bold text-blue-800 mb-3">
+                                <i class="fas fa-download mr-2"></i>Option 2: Offline Installation (No Internet Required)
+                            </h3>
+                            <p class="text-blue-700 mb-3">If you don't have internet access, here are several alternatives:</p>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-blue-900 mb-2">Method A: Pre-downloaded Wheel Files</h4>
+                                    <ol class="list-decimal list-inside space-y-1 text-blue-700 text-sm">
+                                        <li>Download pygame wheel file (.whl) from <code>https://pypi.org/project/pygame/#files</code> on a computer with internet</li>
+                                        <li>Transfer the .whl file to your offline computer via USB drive</li>
+                                        <li>In Spyder console, navigate to the file location: <code class="bg-blue-100 px-1 rounded">cd C:\path\to\wheel\file</code></li>
+                                        <li>Install: <code class="bg-blue-100 px-1 rounded">pip install pygame-2.5.2-cp311-cp311-win_amd64.whl</code></li>
+                                    </ol>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-blue-900 mb-2">Method B: Portable Python with Pygame</h4>
+                                    <p class="text-blue-700 text-sm">Use WinPython or Anaconda distributions that come with pygame pre-installed. These can be downloaded once and used offline.</p>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-blue-900 mb-2">Method C: Alternative - Use Turtle Graphics</h4>
+                                    <p class="text-blue-700 text-sm">Python's built-in <code>turtle</code> module works offline and can create graphics and simple games. We'll show examples of both!</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Verification -->
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h4 class="font-semibold text-gray-800 mb-2">✅ Test Your Installation</h4>
+                            <p class="text-gray-700 text-sm mb-2">Try this in Spyder console to verify pygame works:</p>
+                            <div class="bg-gray-800 text-green-400 p-2 rounded text-sm relative">
+                                <button onclick="copyCode(this)" class="absolute top-1 right-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                    📋 Copy
+                                </button>
+                                <code>import pygame
+print("Pygame version:", pygame.version.ver)</code>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Turtle Graphics Alternative -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Alternative: Turtle Graphics (No Installation Required)</h2>
+                        <p class="text-gray-700 mb-4">
+                            If you can't install pygame, Python's built-in turtle module works great for graphics and simple games!
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import turtle
+
+# Create a screen
+screen = turtle.Screen()
+screen.bgcolor("lightblue")
+screen.title("My First Graphics Window")
+screen.setup(width=800, height=600)
+
+# Create a turtle
+my_turtle = turtle.Turtle()
+my_turtle.shape("turtle")
+my_turtle.color("green")
+
+# Draw a colorful square
+colors = ["red", "blue", "yellow", "purple"]
+for i in range(4):
+    my_turtle.color(colors[i])
+    my_turtle.forward(100)
+    my_turtle.right(90)
+
+# Keep window open
+screen.exitonclick()  # Click to close</code></pre>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                            <p class="text-blue-800"><strong>💡 Tip:</strong> Turtle graphics is perfect for learning! It's built into Python, works offline, and teaches the same programming concepts as pygame.</p>
+                        </div>
+                    </section>
+
+                    <!-- Your First Graphics Window -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Your First Graphics Window</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's create a colorful window that stays open until you close it:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the display
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("My First Graphics Window!")
+
+# Colors (Red, Green, Blue values)
+BLUE = (0, 100, 255)
+WHITE = (255, 255, 255)
+
+# Main game loop
+running = True
+while running:
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # Fill the screen with blue
+    screen.fill(BLUE)
+    
+    # Update the display
+    pygame.display.flip()
+
+# Quit
+pygame.quit()
+sys.exit()</code></pre>
+                            <div class="mt-3 p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-blue-800 text-sm">
+                                    <i class="fas fa-play mr-2"></i>
+                                    <strong>Run this code!</strong> You should see a blue window appear. Click the X to close it.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Drawing Shapes -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Drawing Cool Shapes</h2>
+                        <p class="text-gray-700 mb-4">
+                            Now let's add some colorful shapes to our window:
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <!-- Basic Shapes -->
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h3 class="font-bold text-green-800 mb-2">
+                                    <i class="fas fa-shapes mr-2"></i>Shape Functions
+                                </h3>
+                                <div class="relative">
+                                    <button onclick="copyCode(this)" class="absolute top-1 right-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                        📋 Copy
+                                    </button>
+                                    <pre class="bg-green-100 p-3 rounded text-sm"><code># Rectangle
+pygame.draw.rect(screen, RED, (50, 50, 100, 75))
+
+# Circle
+pygame.draw.circle(screen, GREEN, (400, 300), 50)
+
+# Line
+pygame.draw.line(screen, YELLOW, (0, 0), (800, 600), 5)</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Colors -->
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <h3 class="font-bold text-purple-800 mb-2">
+                                    <i class="fas fa-palette mr-2"></i>Fun Colors
+                                </h3>
+                                <div class="relative">
+                                    <button onclick="copyCode(this)" class="absolute top-1 right-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                        📋 Copy
+                                    </button>
+                                    <pre class="bg-purple-100 p-3 rounded text-sm"><code>RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+PURPLE = (255, 0, 255)
+ORANGE = (255, 165, 0)</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <h3 class="font-semibold text-gray-900 mb-2">Complete Shape Drawing Program:</h3>
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import pygame
+import sys
+
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Colorful Shapes!")
+
+# Colors
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+PURPLE = (255, 0, 255)
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # Black background
+    screen.fill(BLACK)
+    
+    # Draw shapes
+    pygame.draw.rect(screen, RED, (100, 100, 150, 100))      # Red rectangle
+    pygame.draw.circle(screen, GREEN, (400, 200), 75)        # Green circle
+    pygame.draw.rect(screen, BLUE, (500, 400, 100, 100))     # Blue square
+    pygame.draw.circle(screen, YELLOW, (200, 450), 50)       # Yellow circle
+    pygame.draw.line(screen, PURPLE, (0, 300), (800, 300), 10) # Purple line
+    
+    pygame.display.flip()
+
+pygame.quit()
+sys.exit()</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Moving Objects -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Making Things Move!</h2>
+                        <p class="text-gray-700 mb-4">
+                            The real fun begins when we make objects move around the screen:
+                        </p>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-4">
+                            <h3 class="font-bold text-blue-800 mb-3">
+                                <i class="fas fa-running mr-2"></i>Bouncing Ball Animation
+                            </h3>
+                            <div class="relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                    📋 Copy
+                                </button>
+                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import pygame
+import sys
+
+pygame.init()
+screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption("Bouncing Ball!")
+clock = pygame.time.Clock()
+
+# Colors
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+
+# Ball properties
+ball_x = 400
+ball_y = 300
+ball_speed_x = 5
+ball_speed_y = 3
+ball_radius = 25
+
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+    
+    # Move the ball
+    ball_x += ball_speed_x
+    ball_y += ball_speed_y
+    
+    # Bounce off walls
+    if ball_x <= ball_radius or ball_x >= 800 - ball_radius:
+        ball_speed_x = -ball_speed_x
+    if ball_y <= ball_radius or ball_y >= 600 - ball_radius:
+        ball_speed_y = -ball_speed_y
+    
+    # Draw everything
+    screen.fill(BLACK)
+    pygame.draw.circle(screen, RED, (int(ball_x), int(ball_y)), ball_radius)
+    
+    pygame.display.flip()
+    clock.tick(60)  # 60 FPS
+
+pygame.quit()
+sys.exit()
+</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Practice Exercise -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Practice Exercise</h2>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                            <h3 class="font-bold text-yellow-800 mb-3">
+                                <i class="fas fa-code mr-2"></i>Create Your Own Art
+                            </h3>
+                            <p class="text-yellow-700 mb-4">
+                                Modify the shape drawing program to create your own masterpiece:
+                            </p>
+                            <ul class="list-disc list-inside space-y-2 text-yellow-700 mb-4">
+                                <li>Add more shapes in different positions</li>
+                                <li>Try new colors (mix different RGB values)</li>
+                                <li>Draw a simple house, car, or robot</li>
+                                <li>Make overlapping shapes for cool effects</li>
+                            </ul>
+                            <div class="bg-yellow-100 p-3 rounded">
+                                <p class="text-yellow-800 text-sm">
+                                    <i class="fas fa-lightbulb mr-2"></i>
+                                    <strong>Tip:</strong> RGB colors go from 0 to 255. Try (255, 100, 50) for orange or (100, 255, 100) for light green!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Fun Challenge -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Fun Challenge</h2>
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                            <h3 class="font-bold text-purple-800 mb-3">
+                                <i class="fas fa-star mr-2"></i>Rainbow Bouncing Balls
+                            </h3>
+                            <p class="text-purple-700 mb-4">
+                                Can you create multiple bouncing balls with different colors?
+                            </p>
+                            <div class="relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                    📋 Copy
+                                </button>
+                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code># Challenge: Add a second ball with different color and speed
+# Hint: You'll need ball2_x, ball2_y, ball2_speed_x, ball2_speed_y
+# And draw both balls in the main loop!
+
+# Try making one ball red and one ball blue
+# Make them bounce at different speeds</code></pre>
+                            </div>
+                            <div class="mt-3 p-3 bg-purple-100 rounded">
+                                <p class="text-purple-800 text-sm">
+                                    <i class="fas fa-trophy mr-2"></i>
+                                    <strong>Super Challenge:</strong> Make the balls change color when they bounce off walls!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- What's Next -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">What's Coming Next</h2>
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-6">
+                            <h3 class="font-bold text-blue-800 mb-3">
+                                <i class="fas fa-rocket mr-2"></i>Future Lessons Preview
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">🎮 Lesson 5: Pong Game</h4>
+                                    <p class="text-gray-600 text-sm">Build the classic Pong game with paddles and ball physics</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow">
+                                    <h4 class="font-semibold text-gray-900 mb-2">👾 Lesson 6: Space Invaders</h4>
+                                    <p class="text-gray-600 text-sm">Create a space shooter with enemies and power-ups</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+                    <a href="/programming/python/lesson3.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium">
+                        ← Previous Lesson
+                    </a>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-2">Lesson 4 of 8</p>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 50%"></div>
+                        </div>
+                    </div>
+                    <a href="/programming/python/lesson5.html" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium">
+                        Next Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>

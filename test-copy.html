@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Copy Button Test</title>
+    <style>
+        .code-container {
+            position: relative;
+            background: #1f2937;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .copy-btn:hover {
+            background: #1d4ed8;
+        }
+        code {
+            color: #10b981;
+            font-family: monospace;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <h1>Copy Button Test</h1>
+    
+    <div class="code-container">
+        <button onclick="copyCode(this)" class="copy-btn">📋 Copy</button>
+        <code>print("Hello, World!")
+name = "Student"
+print(f"Welcome, {name}!")</code>
+    </div>
+
+    <div class="code-container">
+        <button onclick="copyCode(this)" class="copy-btn">📋 Copy</button>
+        <code>for i in range(5):
+    print(f"Number: {i}")</code>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            try {
+                console.log('Copy button clicked');
+                const codeElement = button.parentElement.querySelector('code');
+                if (!codeElement) {
+                    console.error('Code element not found');
+                    button.textContent = '❌ Failed';
+                    setTimeout(() => button.textContent = '📋 Copy', 2000);
+                    return;
+                }
+                
+                const codeText = codeElement.textContent || codeElement.innerText;
+                console.log('Code text to copy:', codeText);
+                
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    console.log('Using modern clipboard API');
+                    navigator.clipboard.writeText(codeText).then(() => {
+                        console.log('Clipboard API success');
+                        const originalText = button.textContent;
+                        button.textContent = '✅ Copied!';
+                        button.style.backgroundColor = '#10b981';
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.style.backgroundColor = '#2563eb';
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Clipboard API failed:', err);
+                        fallbackCopy(codeText, button);
+                    });
+                } else {
+                    console.log('Using fallback copy method');
+                    fallbackCopy(codeText, button);
+                }
+            } catch (err) {
+                console.error('Copy function error:', err);
+                button.textContent = '❌ Failed';
+                setTimeout(() => button.textContent = '📋 Copy', 2000);
+            }
+        }
+
+        function fallbackCopy(text, button) {
+            try {
+                console.log('Attempting fallback copy');
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                
+                const successful = document.execCommand('copy');
+                document.body.removeChild(textarea);
+                console.log('execCommand result:', successful);
+                
+                if (successful) {
+                    const originalText = button.textContent;
+                    button.textContent = '✅ Copied!';
+                    button.style.backgroundColor = '#10b981';
+                    setTimeout(() => {
+                        button.textContent = originalText;
+                        button.style.backgroundColor = '#2563eb';
+                    }, 2000);
+                } else {
+                    throw new Error('execCommand failed');
+                }
+            } catch (err) {
+                console.error('Fallback copy failed:', err);
+                button.textContent = '❌ Failed';
+                setTimeout(() => button.textContent = '📋 Copy', 2000);
+            }
+        }
+
+        // Test clipboard availability on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Clipboard API available:', !!navigator.clipboard);
+            console.log('writeText available:', !!(navigator.clipboard && navigator.clipboard.writeText));
+            console.log('execCommand available:', !!document.execCommand);
+        });
+    </script>
+</body>
+</html>

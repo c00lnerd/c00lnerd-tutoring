@@ -1,0 +1,360 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 3: Input and Output - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-purple-50 to-indigo-100">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/programming.html" class="text-purple-600 hover:text-purple-800 font-medium">
+                            ← Back to Programming
+                        </a>
+                        <div class="text-gray-300">|</div>
+                        <h1 class="text-2xl font-bold text-gray-900">Python Course</h1>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Lesson 3 of 8
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Lesson Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-comments text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Input and Output</h1>
+                            <p class="text-gray-600 mt-2">Learn how to get information from users and display results</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-900 mb-3">Learning Objectives</h2>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Use the input() function to get information from users
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Format output with print() in different ways
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create interactive programs that respond to user input
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Build a simple conversation program
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    <!-- Getting Input from Users -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Getting Input from Users</h2>
+                        <p class="text-gray-700 mb-4">
+                            The <code class="bg-gray-100 px-2 py-1 rounded">input()</code> function lets your program ask questions and wait for the user to type an answer. It's like having a conversation with your computer!
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                            <h3 class="font-semibold text-gray-900 mb-2">Your First Interactive Program:</h3>
+                            <div class="bg-gray-800 p-4 rounded-lg overflow-x-auto relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                    📋 Copy
+                                </button>
+                                <pre class="text-green-400"><code># Ask the user for their name
+name = input("What is your name? ")
+print("Hello,", name, "!")
+
+# Ask for their age
+age = input("How old are you? ")
+print("Wow,", age, "is a great age!")</code></pre>
+                            <div class="mt-3 p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+                                <p class="text-blue-800 text-sm">
+                                    <i class="fas fa-lightbulb mr-2"></i>
+                                    <strong>Try it!</strong> Type this code in Spyder and run it. The program will wait for you to type your answers!
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Different Ways to Print -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Creative Ways to Display Information</h2>
+                        <p class="text-gray-700 mb-4">
+                            There are many ways to make your output look nice and organized:
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <!-- Basic Print -->
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h3 class="font-bold text-green-800 mb-2">
+                                    <i class="fas fa-print mr-2"></i>Basic Printing
+                                </h3>
+                                <pre class="bg-green-100 p-3 rounded text-sm"><code>name = "Alex"
+age = 12
+
+print("Name:", name)
+print("Age:", age)
+print("Nice to meet you!", name)</code></pre>
+                            </div>
+
+                            <!-- F-strings -->
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h3 class="font-bold text-blue-800 mb-2">
+                                    <i class="fas fa-magic mr-2"></i>F-strings (Cool!)
+                                </h3>
+                                <pre class="bg-blue-100 p-3 rounded text-sm"><code>name = "Alex"
+age = 12
+
+print(f"Hi &#123;name&#125;!")
+print(f"You are &#123;age&#125; years old")
+print(f"Next year you'll be &#123;age + 1&#125;!")</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                            <h3 class="font-bold text-yellow-800 mb-2">
+                                <i class="fas fa-star mr-2"></i>Making Pretty Output
+                            </h3>
+                            <div class="bg-gray-800 p-4 rounded-lg overflow-x-auto relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                    📋 Copy
+                                </button>
+                                <pre class="text-green-400"><code># Create a nice-looking profile
+name = input("Enter your name: ")
+hobby = input("What's your favorite hobby? ")
+color = input("What's your favorite color? ")
+
+print("=" * 30)
+print(f"    PROFILE: &#123;name&#125;")
+print("=" * 30)
+print(f"Hobby: &#123;hobby&#125;")
+print(f"Color: &#123;color&#125;")
+print("=" * 30)</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Working with Numbers -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Getting Numbers from Users</h2>
+                        <p class="text-gray-700 mb-4">
+                            When you use <code class="bg-gray-100 px-2 py-1 rounded">input()</code>, Python treats everything as text. To do math, you need to convert it to numbers:
+                        </p>
+                        
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-red-800 mb-2">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>This Won't Work as Expected:
+                            </h3>
+                            <pre class="bg-red-100 p-3 rounded text-sm"><code>num1 = input("Enter first number: ")  # User types "5"
+num2 = input("Enter second number: ") # User types "3"
+result = num1 + num2                  # This gives "53", not 8!
+print(f"The answer is: &#123;result&#125;")</code></pre>
+                        </div>
+
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                            <h3 class="font-bold text-green-800 mb-2">
+                                <i class="fas fa-check-circle mr-2"></i>The Right Way:
+                            </h3>
+                            <pre class="bg-green-100 p-3 rounded text-sm"><code>num1 = int(input("Enter first number: "))  # Convert to integer
+num2 = int(input("Enter second number: ")) # Convert to integer
+result = num1 + num2                       # Now this gives 8!
+print(f"Result: &#123;result&#125;")</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Practice Exercise -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Practice Exercise</h2>
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                            <h3 class="font-bold text-yellow-800 mb-3">
+                                <i class="fas fa-code mr-2"></i>Build a Simple Calculator
+                            </h3>
+                            <p class="text-yellow-700 mb-4">
+                                Create a program that asks for two numbers and shows their sum:
+                            </p>
+                            <div class="bg-gray-800 p-4 rounded-lg overflow-x-auto relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                    📋 Copy
+                                </button>
+                                <pre class="text-green-400"><code># Simple Calculator
+print("=== SIMPLE CALCULATOR ===")
+print()
+
+# Get two numbers from the user
+first_number = int(input("Enter the first number: "))
+second_number = int(input("Enter the second number: "))
+
+# Calculate the sum
+total = first_number + second_number
+print(f"The answer is &#123;total&#125;!")
+print()
+print(f"&#123;first_number&#125; + &#123;second_number&#125; = &#123;total&#125;")
+print("Thanks for using the calculator!")</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Fun Challenge -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Fun Challenge</h2>
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                            <h3 class="font-bold text-purple-800 mb-3">
+                                <i class="fas fa-robot mr-2"></i>Create a Chatbot
+                            </h3>
+                            <p class="text-purple-700 mb-4">
+                                Make a simple chatbot that asks questions and responds:
+                            </p>
+                            <div class="bg-gray-800 p-4 rounded-lg overflow-x-auto relative">
+                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors">
+                                    📋 Copy
+                                </button>
+                                <pre class="text-green-400"><code># Simple Chatbot
+print("🤖 Hello! I'm a friendly chatbot!")
+print()
+
+name = input("What's your name? ")
+print(f"Nice to meet you, &#123;name&#125;!")
+
+age = int(input("How old are you? "))
+if age < 13:
+    print(f"You picked &#123;age&#125;! That's a great choice.")
+elif age < 20:
+    print("You're a teenager! Cool!")
+else:
+    print("You're an adult! Nice!")
+
+favorite_animal = input("What's your favorite animal? ")
+print(f"I love &#123;favorite_animal&#125;s too!")</code></pre>
+                            <div class="mt-3 p-3 bg-purple-100 rounded">
+                                <p class="text-purple-800 text-sm">
+                                    <i class="fas fa-lightbulb mr-2"></i>
+                                    <strong>Challenge:</strong> Can you add more questions to make the chatbot even more interesting?
+                                </p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tips and Tricks -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Tips and Tricks</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <h3 class="font-bold text-blue-800 mb-2">
+                                    <i class="fas fa-lightbulb mr-2"></i>Making Input Clear
+                                </h3>
+                                <pre class="bg-blue-100 p-3 rounded text-sm"><code># Good: Clear instructions
+name = input("Please enter your name: ")
+
+# Better: Even clearer
+name = input("What should I call you? ")</code></pre>
+                            </div>
+
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h3 class="font-bold text-green-800 mb-2">
+                                    <i class="fas fa-palette mr-2"></i>Adding Style
+                                </h3>
+                                <pre class="bg-green-100 p-3 rounded text-sm"><code># Use emojis and symbols
+print("🎉 Welcome to my program! 🎉")
+print("-" * 25)
+print("✨ Let's get started! ✨")</code></pre>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Navigation -->
+                <div class="flex justify-between items-center mt-12 pt-8 border-t border-gray-200">
+                    <a href="/programming/python/lesson2.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium">
+                        ← Previous Lesson
+                    </a>
+                    <div class="text-center">
+                        <p class="text-sm text-gray-500 mb-2">Lesson 3 of 8</p>
+                        <div class="w-32 bg-gray-200 rounded-full h-2">
+                            <div class="bg-green-500 h-2 rounded-full" style="width: 37.5%"></div>
+                        </div>
+                    </div>
+                    <a href="/programming/python/lesson4.html" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium">
+                        Next Lesson →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
