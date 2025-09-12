@@ -471,7 +471,10 @@ sys.exit()`}</code></pre>
 <script>
 function copyCode(button) {
     const codeBlock = button.parentElement.querySelector('code');
-    const codeText = codeBlock.textContent;
+    let codeText = codeBlock.textContent || codeBlock.innerText;
+    
+    // Clean up any extra whitespace that might be added by template literals
+    codeText = codeText.trim();
     
     try {
         if (navigator.clipboard && window.isSecureContext) {
@@ -484,6 +487,7 @@ function copyCode(button) {
             fallbackCopy(codeText, button);
         }
     } catch (err) {
+        console.error('Copy failed:', err);
         showCopyFeedback(button, false);
     }
 }
