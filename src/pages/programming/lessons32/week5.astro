@@ -90,7 +90,11 @@ import Layout from '../../../layouts/Layout.astro';
                         The <code>analogRead()</code> function returns a value between 0 and 1023, representing the voltage on the analog pin.
                     </p>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Analog Reading
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Analog Reading
 const int analogPin = A0;
 
 void setup() {
@@ -112,6 +116,7 @@ void loop() {
   
   delay(500);
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -159,6 +164,7 @@ void loop() {
   
   delay(100);
 }`}</code></pre>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
@@ -201,6 +207,7 @@ void loop() {
   
   delay(200);
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -257,6 +264,7 @@ void loop() {
   
   delay(200);
 }`}</code></pre>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
@@ -295,6 +303,7 @@ void loop() {
   
   delay(1000);
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -363,6 +372,7 @@ void loop() {
   
   delay(100);
 }`}</code></pre>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
@@ -395,6 +405,7 @@ void loop() {
   
   delay(100);
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -509,6 +520,7 @@ void loop() {
   
   delay(1000);
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -601,6 +613,72 @@ void loop() {
         </div>
     </main>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
 
 
 

@@ -114,21 +114,24 @@ import Layout from '../../../layouts/Layout.astro';
                             <li>Select correct COM port</li>
                         </ol>
                     </div>
-                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
-                        <div class="text-gray-400">// Your first Arduino program (sketch)</div>
-                        <div class="text-gray-400">// setup() runs once when Arduino starts</div>
-                        <div>void setup() {</div>
-                        <div class="ml-4">pinMode(LED_BUILTIN, OUTPUT);</div>
-                        <div class="ml-4">Serial.begin(9600);</div>
-                        <div class="ml-4">Serial.println("Arduino started!");</div>
-                        <div>}</div>
-                        <div class="mt-2 text-gray-400">// loop() runs repeatedly forever</div>
-                        <div>void loop() {</div>
-                        <div class="ml-4">digitalWrite(LED_BUILTIN, HIGH);</div>
-                        <div class="ml-4">delay(1000);</div>
-                        <div class="ml-4">digitalWrite(LED_BUILTIN, LOW);</div>
-                        <div class="ml-4">delay(1000);</div>
-                        <div>}</div>
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"><code>{`// Your first Arduino program (sketch)
+// setup() runs once when Arduino starts
+void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+    Serial.begin(9600);
+    Serial.println("Arduino started!");
+}
+// loop() runs repeatedly forever
+void loop() {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(1000);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(1000);
+}`}</code></pre>
                     </div>
                 </div>
 
@@ -327,3 +330,69 @@ for (int i = 0; i < 10; i++) {
         </div>
     </main>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
