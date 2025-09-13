@@ -371,6 +371,186 @@ sys.exit()`}</code></pre>
                         </div>
                     </section>
 
+                    <!-- Tkinter Ball Game -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Tkinter Ball & Paddle Game</h2>
+                        <p class="text-gray-700 mb-4">
+                            Here's a classic ball and paddle game using tkinter. This version includes improved keyboard handling for Spyder:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import tkinter as tk
+import random
+import time
+
+class Ball:
+    def __init__(self, canvas, paddle, color):
+        self.canvas = canvas
+        self.paddle = paddle
+        self.id = canvas.create_oval(10, 10, 25, 25, fill=color)
+        self.canvas.move(self.id, 245, 100)
+        starts = [-3, -2, -1, 1, 2, 3]
+        random.shuffle(starts)
+        self.x = starts[0]
+        self.y = -3
+        self.canvas_height = self.canvas.winfo_height()
+        self.canvas_width = self.canvas.winfo_width()
+        self.hit_bottom = False
+
+    def hit_paddle(self, pos):
+        paddle_pos = self.canvas.coords(self.paddle.id)
+        # pos = [x1, y1, x2, y2] for the ball
+        # paddle_pos = [x1, y1, x2, y2] for the paddle
+        if pos[2] >= paddle_pos[0] and pos[0] <= paddle_pos[2]:
+            if pos[3] >= paddle_pos[1] and pos[3] <= paddle_pos[3]:
+                return True
+        return False
+
+    def draw(self):
+        self.canvas.move(self.id, self.x, self.y)
+        pos = self.canvas.coords(self.id)
+
+        if pos[1] <= 0:
+            self.y = 3
+        if pos[3] >= self.canvas_height:
+            self.hit_bottom = True
+        if self.hit_paddle(pos):
+            self.y = -3
+        if pos[0] <= 0:
+            self.x = 3
+        if pos[2] >= self.canvas_width:
+            self.x = -3
+
+
+class Paddle:
+    def __init__(self, root, canvas, color):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(0, 0, 100, 10, fill=color)
+        self.canvas.move(self.id, 200, 300)
+        self.x = 0
+        self.canvas_width = self.canvas.winfo_width()
+        self.left_pressed = False
+        self.right_pressed = False
+        
+        # Bind arrow keys to root and canvas for better Spyder compatibility
+        root.bind('<Left>', self.turn_left)
+        root.bind('<Right>', self.turn_right)
+        root.bind('<KeyRelease-Left>', self.stop_move)
+        root.bind('<KeyRelease-Right>', self.stop_move)
+        
+        # Also bind to canvas
+        canvas.bind('<Left>', self.turn_left)
+        canvas.bind('<Right>', self.turn_right)
+        canvas.bind('<KeyRelease-Left>', self.stop_move)
+        canvas.bind('<KeyRelease-Right>', self.stop_move)
+        
+        # Make canvas focusable
+        canvas.focus_set()
+
+    def draw(self):
+        # Continuous movement based on key states
+        if self.left_pressed:
+            self.x = -3
+        elif self.right_pressed:
+            self.x = 3
+        else:
+            self.x = 0
+            
+        self.canvas.move(self.id, self.x, 0)
+        pos = self.canvas.coords(self.id)
+        if pos[0] <= 0:
+            self.canvas.coords(self.id, 0, pos[1], 100, pos[3])
+        elif pos[2] >= self.canvas_width:
+            self.canvas.coords(self.id, self.canvas_width-100, pos[1], self.canvas_width, pos[3])
+
+    def turn_left(self, event):
+        self.left_pressed = True
+        self.right_pressed = False
+
+    def turn_right(self, event):
+        self.right_pressed = True
+        self.left_pressed = False
+
+    def stop_move(self, event):
+        if event.keysym == 'Left':
+            self.left_pressed = False
+        elif event.keysym == 'Right':
+            self.right_pressed = False
+
+
+def main():
+    root = tk.Tk()
+    root.title("Ball & Paddle Game (Spyder Compatible)")
+    root.resizable(0, 0)
+    root.wm_attributes("-topmost", 1)
+
+    canvas = tk.Canvas(root, width=500, height=400, bd=0, highlightthickness=0, bg='black')
+    canvas.pack()
+
+    # Important: update before getting width/height and set focus
+    root.update()
+    canvas.focus_set()
+    
+    # Add instructions
+    instructions = canvas.create_text(250, 50, text="Use Arrow Keys to Move Paddle", 
+                                    fill='white', font=('Arial', 12))
+
+    paddle = Paddle(root, canvas, 'blue')
+    ball = Ball(canvas, paddle, 'red')
+
+    # Main game loop
+    while True:
+        if not ball.hit_bottom:
+            ball.draw()
+            paddle.draw()
+            root.update_idletasks()
+            root.update()
+            time.sleep(0.01)
+        else:
+            # Game over
+            canvas.create_text(250, 200, text="Game Over!", 
+                             font=('Arial', 24), fill='red')
+            canvas.create_text(250, 230, text="Close window to exit", 
+                             font=('Arial', 12), fill='white')
+            break
+
+    # Keep window open after game over
+    root.mainloop()
+
+
+if __name__ == "__main__":
+    main()`}</code></pre>
+                        </div>
+                        
+                        <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-exclamation-triangle text-orange-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-orange-700">
+                                        <strong>Spyder Compatibility:</strong> This version includes improved keyboard handling for Spyder. The paddle uses continuous movement tracking and binds keys to both root and canvas for better responsiveness in IDE environments.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                            <div class="flex">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-info-circle text-blue-400"></i>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm text-blue-700">
+                                        <strong>Tkinter vs Pygame:</strong> While tkinter comes built-in with Python, pygame offers better game development features. Tkinter is great for simple games and learning, but pygame provides smoother animation and better input handling for complex games.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Challenge Section -->
                     <section>
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Your Physics Game Challenge</h2>
