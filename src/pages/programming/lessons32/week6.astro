@@ -116,7 +116,11 @@ import Layout from '../../../layouts/Layout.astro';
                         the pin number and the PWM value (0-255).
                     </p>
                     
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic analogWrite() syntax
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic analogWrite() syntax
 analogWrite(pin, value);
 
 // Examples
@@ -127,17 +131,21 @@ analogWrite(9, 255);   // LED full brightness (100%)
 
 // Variable control
 int brightness = 100;
-analogWrite(ledPin, brightness);`}</code></pre>
-                </div>
+analogWrite(11, 128);  // 50% brightness on pin 11`}</code></pre>
+                    </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">LED Brightness Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        One of the most common uses of PWM is controlling LED brightness. Here's a complete example 
-                        that gradually fades an LED in and out:
-                    </p>
-                    
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// LED Fading Example
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">LED Brightness Control</h3>
+                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                            One of the most common uses of PWM is controlling LED brightness. Here's a complete example 
+                            that gradually fades an LED in and out:
+                        </p>
+                        
+                        <div class="relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// LED Fading Example
 const int ledPin = 9;  // PWM pin
 int brightness = 0;    // LED brightness
 int fadeAmount = 5;    // How much to change brightness
@@ -162,14 +170,9 @@ void loop() {
     fadeAmount = -fadeAmount;
   }
   
-  delay(30);  // Smooth fading speed
+  delay(30);  // Small delay for smooth fading
 }`}</code></pre>
-                </div>
-            </div>
-
-            <!-- Section 3: RGB LED Control -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🌈 Section 3: RGB LED Control</h2>
+                        </div>
                 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Color Mixing with PWM</h3>
@@ -198,7 +201,11 @@ void loop() {
                         Here's an example that cycles through different colors on an RGB LED:
                     </p>
                     
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// RGB LED Color Cycling
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// RGB LED Color Cycling
 const int redPin = 9;    // Red LED pin
 const int greenPin = 10; // Green LED pin
 const int bluePin = 11;  // Blue LED pin
@@ -313,7 +320,69 @@ void setColor(int red, int green, int blue) {
     </main>
 </Layout>
 
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
 
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
 
-
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
 
