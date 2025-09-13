@@ -230,6 +230,57 @@ void loop() {
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
                 <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔄 Section 3: Combining Input and Output</h2>
                 
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #38b2ac; margin-bottom: 1.5rem;">
+                    <h3 style="color: #2c7a7b; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">🔧 Introduction to Breadboards</h3>
+                    <p style="color: #2c7a7b; line-height: 1.6; margin-bottom: 1rem;">
+                        A breadboard is a reusable platform for building electronic circuits without soldering. It makes connecting components to your Arduino much easier!
+                    </p>
+                    
+                    <div style="background: #b2f5ea; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <h5 style="color: #2c7a7b; font-weight: bold; margin-bottom: 0.5rem;">How Breadboards Work:</h5>
+                        <ul style="color: #2c7a7b; line-height: 1.6; margin-left: 1rem;">
+                            <li><strong>Rows:</strong> Each numbered row (1-30) has 5 connected holes on each side</li>
+                            <li><strong>Power Rails:</strong> The long strips marked + and - run the full length</li>
+                            <li><strong>Center Gap:</strong> Separates left and right sides of each row</li>
+                            <li><strong>No Connection:</strong> Holes in different rows are not connected</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: #b2f5ea; padding: 1rem; border-radius: 6px;">
+                        <h5 style="color: #2c7a7b; font-weight: bold; margin-bottom: 0.5rem;">Breadboard Setup Tips:</h5>
+                        <ul style="color: #2c7a7b; line-height: 1.6; margin-left: 1rem;">
+                            <li>Connect Arduino 5V to the + power rail (red stripe)</li>
+                            <li>Connect Arduino GND to the - power rail (blue/black stripe)</li>
+                            <li>Use jumper wires to connect components to Arduino pins</li>
+                            <li>Keep wires neat and use different colors for organization</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                    <h3 style="color: #742a2a; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">🔌 Push Button Wiring with Breadboard</h3>
+                    
+                    <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
+                        <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Step-by-Step Wiring:</h5>
+                        <ol style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
+                            <li><strong>Set up power rails:</strong> Connect Arduino 5V to breadboard + rail, GND to - rail</li>
+                            <li><strong>Place push button:</strong> Insert button across the center gap (e.g., rows 10-12)</li>
+                            <li><strong>Connect to pin 2:</strong> Wire from Arduino digital pin 2 to one side of button</li>
+                            <li><strong>Connect to ground:</strong> Wire from other side of button to - power rail (GND)</li>
+                            <li><strong>No resistor needed:</strong> The code uses INPUT_PULLUP mode</li>
+                        </ol>
+                    </div>
+                    
+                    <p style="color: #742a2a; font-size: 0.9rem; margin-top: 1rem;">
+                        <strong>💡 Why INPUT_PULLUP works:</strong> This mode connects an internal 20kΩ resistor between the pin and 5V. When the button is pressed, it connects the pin to ground (LOW). When released, the pull-up resistor keeps the pin at 5V (HIGH).
+                    </p>
+                    
+                    <p style="color: #742a2a; font-size: 0.9rem; margin-top: 0.5rem;">
+                        <strong>Note:</strong> The built-in button on the expansion board is connected to reset, not pin 2, so we need an external button for this exercise.
+                    </p>
+                </div>
+                </div>
+                
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Interactive LED Control</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
@@ -281,6 +332,29 @@ void loop() {
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
                         Let's create more complex patterns using multiple LEDs and timing.
                     </p>
+                    
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 Multiple LED Wiring with Breadboard</h4>
+                        
+                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
+                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Traffic Light LED Setup:</h5>
+                            <ol style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
+                                <li><strong>Red LED:</strong> Long leg → 220Ω resistor → Arduino pin 11, Short leg → GND rail</li>
+                                <li><strong>Yellow LED:</strong> Long leg → 220Ω resistor → Arduino pin 12, Short leg → GND rail</li>
+                                <li><strong>Green LED:</strong> Long leg → 220Ω resistor → Arduino pin 13, Short leg → GND rail</li>
+                                <li><strong>Push button:</strong> One side → Arduino pin 2, Other side → GND rail</li>
+                                <li><strong>Power rails:</strong> Connect Arduino GND to breadboard - rail</li>
+                            </ol>
+                        </div>
+                        
+                        <p style="color: #742a2a; font-size: 0.9rem; margin-top: 1rem;">
+                            <strong>💡 LED Polarity:</strong> LEDs have polarity - the long leg (anode) connects to the positive side through a resistor, and the short leg (cathode) connects to ground.
+                        </p>
+                        
+                        <p style="color: #742a2a; font-size: 0.9rem; margin-top: 0.5rem;">
+                            <strong>⚡ Why 220Ω resistors:</strong> These limit current to protect the LEDs from burning out. Each LED needs its own resistor.
+                        </p>
+                    </div>
 
                     <div class="relative">
                         <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">

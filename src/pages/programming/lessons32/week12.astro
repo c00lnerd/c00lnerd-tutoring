@@ -96,7 +96,9 @@ import Layout from '../../../layouts/Layout.astro';
                         Basic program to read distance from an HC-SR04 sensor:
                     </p>
                     
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic HC-SR04 Distance Measurement
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic HC-SR04 Distance Measurement
 const int trigPin = 9;    // Trigger pin
 const int echoPin = 10;   // Echo pin
 
@@ -132,6 +134,7 @@ void loop() {
   
   delay(500);
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -145,7 +148,9 @@ void loop() {
                         Combine sensors with LEDs and buzzers for obstacle alerts:
                     </p>
                     
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Obstacle Detection System
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Obstacle Detection System
 const int trigPin = 9;
 const int echoPin = 10;
 const int redLED = 13;
@@ -201,6 +206,7 @@ int getDistance() {
   long duration = pulseIn(echoPin, HIGH);
   return duration * 0.0343 / 2;
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -271,6 +277,68 @@ int getDistance() {
     </main>
 </Layout>
 
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
 
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
 
-
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>

@@ -110,7 +110,26 @@ import Layout from '../../../layouts/Layout.astro';
                         way for users to interact with your Arduino projects.
                     </p>
                     
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Button Reading Example
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 Button Wiring Options</h4>
+                        
+                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
+                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">External Push Button Wiring:</h5>
+                            <ul style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
+                                <li><strong>Connect one leg of button to digital pin 2</strong></li>
+                                <li><strong>Connect other leg of button to GND</strong></li>
+                                <li>No external resistor needed - code uses INPUT_PULLUP</li>
+                                <li>The built-in button on the expansion board is connected to reset, not pin 2</li>
+                                <li>You'll need an external push button for this exercise</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Basic Button Reading Example
 const int buttonPin = 2;    // Button connected to pin 2
 const int ledPin = 13;      // Built-in LED
 int buttonState = 0;        // Variable to store button state
@@ -132,9 +151,9 @@ void loop() {
     digitalWrite(ledPin, LOW);    // Turn LED off
     Serial.println("Button released - LED OFF");
   }
-  
-  delay(100);
+  delay(50);  // Small delay for stability
 }`}</code></pre>
+                    </div>
                 </div>
             </div>
 
@@ -149,7 +168,33 @@ void loop() {
                         controlling brightness, volume, or speed.
                     </p>
                     
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Potentiometer Reading Example
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 Potentiometer Wiring Options</h4>
+                        
+                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Option 1: Use Built-in Potentiometer on Expansion Board</h5>
+                            <ul style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
+                                <li>The expansion board has a built-in potentiometer connected to analog pin A0</li>
+                                <li>Turn the knob to test the code - no additional wiring needed!</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
+                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Option 2: External Potentiometer</h5>
+                            <ul style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
+                                <li><strong>Connect left pin to GND</strong></li>
+                                <li><strong>Connect middle pin (wiper) to analog pin A0</strong></li>
+                                <li><strong>Connect right pin to 5V</strong></li>
+                                <li>Note: Pin order may vary by potentiometer model</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>${`// Potentiometer Reading Example
 const int potPin = A0;      // Potentiometer connected to analog pin A0
 const int ledPin = 9;       // PWM LED connected to pin 9
 
@@ -245,8 +290,71 @@ void loop() {
     </main>
 </Layout>
 
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
 
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
 
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
 
 
 

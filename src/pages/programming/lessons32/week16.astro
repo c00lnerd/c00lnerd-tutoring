@@ -99,7 +99,9 @@ import Layout from '../../../layouts/Layout.astro';
                     Break your project into manageable modules that can be developed and tested independently:
                 </p>
                 
-                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
 <code>${`// Example: Search and Rescue Robot Architecture
 class SearchRescueRobot {
 private:
@@ -172,6 +174,7 @@ private:
   }
 };`}</code>
                 </pre>
+                </div>
             </div>
 
             <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
@@ -180,7 +183,9 @@ private:
                     Implement comprehensive testing to ensure reliability:
                 </p>
                 
-                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
 <code>${`class TestSuite {
 public:
   void runAllTests() {
@@ -242,6 +247,7 @@ private:
   }
 };`}</code>
                 </pre>
+                </div>
             </div>
         </div>
 
@@ -458,3 +464,69 @@ private:
         </div>
     </div>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
