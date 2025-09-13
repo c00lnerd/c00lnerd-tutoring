@@ -80,15 +80,18 @@ import Layout from '../../../layouts/Layout.astro';
                             <li>• Variable names should be descriptive</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
-                        <div class="text-gray-400"># Creating variables</div>
-                        <div>name = "Alex"</div>
-                        <div>age = 15</div>
-                        <div>height = 5.6</div>
-                        <div>is_student = True</div>
-                        <div class="mt-2 text-gray-400"># Using variables</div>
-                        <div>print("My name is", name)</div>
-                        <div>print("I am", age, "years old")</div>
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4 overflow-x-auto"><code># Creating variables
+name = "Alex"
+age = 15
+height = 5.6
+is_student = True
+# Using variables
+print("My name is", name)
+print("I am", age, "years old")</code></pre>
                     </div>
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <h4 class="font-semibold text-blue-800 mb-2">Instructor Notes:</h4>
@@ -159,7 +162,11 @@ import Layout from '../../../layouts/Layout.astro';
                             <li>• Program waits for user to press Enter</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4">
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm mb-4 overflow-x-auto"><code>
                         <div class="text-gray-400"># Getting user input</div>
                         <div>name = input("What is your name? ")</div>
                         <div>print("Hello,", name)</div>
@@ -357,3 +364,69 @@ import Layout from '../../../layouts/Layout.astro';
         </div>
     </main>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
