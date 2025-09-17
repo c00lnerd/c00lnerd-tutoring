@@ -54,6 +54,18 @@ const getModuleDescription = (moduleNum: number) => {
                         <a href="/practice/chemistry/stoichiometry" class="resource-link">Practice Now</a>
                     </div>
                 </div>
+                <div class="resource-card">
+                    <div class="resource-preview">
+                        <img src="/images/previews/periodic-table-preview.png" alt="Preview of Interactive Periodic Table" class="resource-image">
+                    </div>
+                    <div class="resource-content">
+                        <h3>Interactive Periodic Table</h3>
+                        <p>Explore the elements with the Royal Society of Chemistry's comprehensive interactive periodic table. Click on any element to discover its properties, history, and uses.</p>
+                        <div class="resource-links">
+                            <a href="https://periodic-table.rsc.org/" target="_blank" rel="noopener noreferrer" class="resource-link">Explore Elements</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -196,10 +208,17 @@ const getModuleDescription = (moduleNum: number) => {
 
         .resource-card {
             background: white;
-            padding: 2rem;
+            padding: 0;
             border-radius: 0.5rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.2s, transform 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resource-card:not(:has(.resource-preview)) {
+            padding: 2rem;
         }
 
         .resource-card:hover {
@@ -238,6 +257,34 @@ const getModuleDescription = (moduleNum: number) => {
 
         .resource-link:hover {
             background: #4338ca;
+        }
+
+        .resource-preview {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .resource-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .resource-card:hover .resource-image {
+            transform: scale(1.05);
+        }
+
+        .resource-content {
+            padding: 2rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .resource-content .resource-links {
+            margin-top: auto;
         }
 
         /* Experiments Section Styles */
