@@ -91,86 +91,62 @@ import Layout from '../../../layouts/Layout.astro';
                     <section>
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 1: Game Setup</h2>
                         <p class="text-gray-700 mb-4">
-                            Let's start by creating the game window and basic variables:
+                            Let's start by importing the libraries we need and setting up our game window:
                         </p>
                         <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
                             <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                                 📋 Copy
                             </button>
-                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import pygame
-import sys
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>from tkinter import *
+import random
+import time
 
-# Initialize Pygame
-pygame.init()
+# Create the main game window
+tk = Tk()
+tk.title("Pong Game - Arrow Keys: Move | Space: Restart")
+tk.resizable(0, 0)
+tk.wm_attributes("-topmost", 1)
+canvas = Canvas(tk, width=500, height=400, bd=0, highlightthickness=0)
+canvas.pack()
 
-# Game settings
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-PADDLE_WIDTH = 15
-PADDLE_HEIGHT = 90
-BALL_SIZE = 15
-
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-BLUE = (0, 100, 255)
-
-# Create the screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Awesome Pong Game!")
-clock = pygame.time.Clock()
-
-# Game variables
-player1_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
-player2_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
-ball_x = SCREEN_WIDTH // 2
-ball_y = SCREEN_HEIGHT // 2
-ball_speed_x = 5
-ball_speed_y = 3
-player1_score = 0
-player2_score = 0</code></pre>
+# Make sure the window can receive keyboard input
+canvas.focus_set()
+tk.update()</code></pre>
                         </div>
                     </section>
 
-                    <!-- Step 2: Drawing Everything -->
+                    <!-- Step 2: Creating the Ball Class -->
                     <section>
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 2: Drawing the Game</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 2: Creating the Ball Class</h2>
                         <p class="text-gray-700 mb-4">
-                            Now let's create a function to draw all the game objects:
+                            Let's create a Ball class that handles the ball's movement and collision detection:
                         </p>
                         <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
                             <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                                 📋 Copy
                             </button>
-                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def draw_game():
-    # Fill screen with black
-    screen.fill(BLACK)
-    
-    # Draw center line
-    for i in range(0, SCREEN_HEIGHT, 20):
-        pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH//2 - 2, i, 4, 10))
-    
-    # Draw paddles
-    pygame.draw.rect(screen, WHITE, (30, player1_y, PADDLE_WIDTH, PADDLE_HEIGHT))
-    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH - 30 - PADDLE_WIDTH, player2_y, PADDLE_WIDTH, PADDLE_HEIGHT))
-    
-    # Draw ball
-    pygame.draw.rect(screen, WHITE, (ball_x, ball_y, BALL_SIZE, BALL_SIZE))
-    
-    # Draw scores
-    font = pygame.font.Font(None, 74)
-    score1_text = font.render(str(player1_score), True, WHITE)
-    score2_text = font.render(str(player2_score), True, WHITE)
-    screen.blit(score1_text, (SCREEN_WIDTH//4, 50))
-    screen.blit(score2_text, (3*SCREEN_WIDTH//4, 50))</code></pre>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>class Ball:
+    def __init__(self, canvas, paddle, color):
+        self.canvas = canvas
+        self.paddle = paddle
+        self.id = canvas.create_oval(10, 10, 25, 25, fill=color)
+        self.canvas.move(self.id, 245, 100)
+        starts = [-3, -2, -1, 1, 2, 3]
+        random.shuffle(starts)
+        self.x = starts[0]
+        self.y = -3
+        self.canvas_height = self.canvas.winfo_height()
+        self.canvas_width = self.canvas.winfo_width()
+        self.hit_bottom = False
+        self.score = 0</code></pre>
                         </div>
                     </section>
 
-                    <!-- Step 3: Player Controls -->
+                    <!-- Step 3: Creating the Paddle Class -->
                     <section>
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 3: Player Controls</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 3: Creating the Paddle Class</h2>
                         <p class="text-gray-700 mb-4">
-                            Let's add keyboard controls so players can move their paddles:
+                            Now let's create the Paddle class that handles player controls:
                         </p>
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                             <h3 class="font-bold text-blue-800 mb-2">
@@ -178,14 +154,13 @@ player2_score = 0</code></pre>
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="bg-white p-3 rounded">
-                                    <strong>Player 1 (Left):</strong><br>
-                                    W = Move Up<br>
-                                    S = Move Down
+                                    <strong>Arrow Keys:</strong><br>
+                                    ← = Move Left<br>
+                                    → = Move Right
                                 </div>
                                 <div class="bg-white p-3 rounded">
-                                    <strong>Player 2 (Right):</strong><br>
-                                    ↑ = Move Up<br>
-                                    ↓ = Move Down
+                                    <strong>Game Control:</strong><br>
+                                    Spacebar = Restart Game
                                 </div>
                             </div>
                         </div>
@@ -193,71 +168,21 @@ player2_score = 0</code></pre>
                             <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                                 📋 Copy
                             </button>
-                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def handle_input():
-    keys = pygame.key.get_pressed()
-    
-    # Player 1 controls (W and S)
-    if keys[pygame.K_w] and player1_y > 0:
-        player1_y -= 7
-    if keys[pygame.K_s] and player1_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
-        player1_y += 7
-    
-    # Player 2 controls (UP and DOWN arrows)
-    if keys[pygame.K_UP] and player2_y > 0:
-        player2_y -= 7
-    if keys[pygame.K_DOWN] and player2_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
-        player2_y += 7</code></pre>
-                        </div>
-                    </section>
-
-                    <!-- Step 4: Ball Physics -->
-                    <section>
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Step 4: Ball Movement and Collisions</h2>
-                        <p class="text-gray-700 mb-4">
-                            The most exciting part - making the ball bounce around and hit the paddles!
-                        </p>
-                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
-                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                                📋 Copy
-                            </button>
-                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>def update_ball():
-    global ball_x, ball_y, ball_speed_x, ball_speed_y, player1_score, player2_score
-    
-    # Move ball
-    ball_x += ball_speed_x
-    ball_y += ball_speed_y
-    
-    # Bounce off top and bottom walls
-    if ball_y <= 0 or ball_y >= SCREEN_HEIGHT - BALL_SIZE:
-        ball_speed_y = -ball_speed_y
-    
-    # Check paddle collisions
-    # Left paddle
-    if (ball_x <= 45 and ball_x >= 30 and 
-        ball_y >= player1_y and ball_y <= player1_y + PADDLE_HEIGHT):
-        ball_speed_x = -ball_speed_x
-        ball_speed_y += (ball_y - (player1_y + PADDLE_HEIGHT//2)) * 0.1
-    
-    # Right paddle
-    if (ball_x >= SCREEN_WIDTH - 45 - BALL_SIZE and ball_x <= SCREEN_WIDTH - 30 - BALL_SIZE and
-        ball_y >= player2_y and ball_y <= player2_y + PADDLE_HEIGHT):
-        ball_speed_x = -ball_speed_x
-        ball_speed_y += (ball_y - (player2_y + PADDLE_HEIGHT//2)) * 0.1
-    
-    # Score points
-    if ball_x < 0:
-        player2_score += 1
-        reset_ball()
-    elif ball_x > SCREEN_WIDTH:
-        player1_score += 1
-        reset_ball()
-
-def reset_ball():
-    global ball_x, ball_y, ball_speed_x, ball_speed_y
-    ball_x = SCREEN_WIDTH // 2
-    ball_y = SCREEN_HEIGHT // 2
-    ball_speed_x = -ball_speed_x  # Change direction
-    ball_speed_y = 3</code></pre>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>class Paddle:
+    def __init__(self, canvas, color):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(0, 0, 100, 10, fill=color)
+        self.canvas.move(self.id, 200, 300)
+        self.x = 0
+        self.canvas_width = self.canvas.winfo_width()
+        self.left_pressed = False
+        self.right_pressed = False
+        
+        # Bind key press and release events
+        self.canvas.bind_all('<KeyPress-Left>', self.left_down)
+        self.canvas.bind_all('<KeyRelease-Left>', self.left_up)
+        self.canvas.bind_all('<KeyPress-Right>', self.right_down)
+        self.canvas.bind_all('<KeyRelease-Right>', self.right_up)</code></pre>
                         </div>
                     </section>
 
@@ -436,7 +361,7 @@ while 1:
         paddle.draw()
         
         # Update score display
-        canvas.itemconfig(score_text, text=f"Score: {ball.score}")
+        canvas.itemconfig(score_text, text="Score: " + str(ball.score))
         
         # Remove game over text if it exists
         if game_over_text:
@@ -446,7 +371,7 @@ while 1:
         # Game over - show message
         if not game_over_text:
             game_over_text = canvas.create_text(250, 200, 
-                text=f"GAME OVER!\nFinal Score: {ball.score}\nPress SPACE to restart", 
+                text="GAME OVER!\nFinal Score: " + str(ball.score) + "\nPress SPACE to restart", 
                 fill="red", font=("Arial", 20), justify="center")
     
     tk.update_idletasks()
