@@ -263,127 +263,195 @@ def reset_ball():
 
                     <!-- Complete Game -->
                     <section>
-                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Pong Game</h2>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Complete Pong Game - Enhanced Version!</h2>
                         <div class="bg-green-50 border border-green-200 rounded-lg p-6">
                             <h3 class="font-bold text-green-800 mb-3">
-                                <i class="fas fa-play mr-2"></i>Put It All Together!
+                                <i class="fas fa-play mr-2"></i>Enhanced Pong with Scoring & Restart!
                             </h3>
                             <p class="text-green-700 mb-4">
-                                Here's the complete game code. Copy this into Spyder and run it to play Pong!
+                                Here's our improved Pong game with scoring, game over screen, and restart functionality! 
+                                Copy this into Spyder and run it to play the enhanced version.
                             </p>
+                            
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                                <h4 class="font-bold text-blue-800 mb-2">
+                                    <i class="fas fa-gamepad mr-2"></i>Game Features
+                                </h4>
+                                <ul class="text-blue-700 text-sm space-y-1">
+                                    <li>• <strong>Arrow Keys:</strong> Move the paddle left and right</li>
+                                    <li>• <strong>Live Score:</strong> See your score update in real-time</li>
+                                    <li>• <strong>Game Over Screen:</strong> Shows final score when you miss</li>
+                                    <li>• <strong>Spacebar:</strong> Restart the game instantly</li>
+                                    <li>• <strong>Smooth Controls:</strong> Responsive paddle movement</li>
+                                </ul>
+                            </div>
+                            
                             <div class="relative">
                                 <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                                     📋 Copy
                                 </button>
-                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>import pygame
-import sys
+                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>from tkinter import *
+import random
+import time
 
-pygame.init()
+class Ball:
+    def __init__(self, canvas, paddle, color):
+        self.canvas = canvas
+        self.paddle = paddle
+        self.id = canvas.create_oval(10, 10, 25, 25, fill=color)
+        self.canvas.move(self.id, 245, 100)
+        starts = [-3, -2, -1, 1, 2, 3]
+        random.shuffle(starts)
+        self.x = starts[0]
+        self.y = -3
+        self.canvas_height = self.canvas.winfo_height()
+        self.canvas_width = self.canvas.winfo_width()
+        self.hit_bottom = False
+        self.score = 0
+    
+    def hit_paddle(self, pos):
+        paddle_pos = self.canvas.coords(self.paddle.id)
+        if pos[2] >= paddle_pos[0] and pos[0] <= paddle_pos[2]:
+            if pos[3] >= paddle_pos[1] and pos[3] <= paddle_pos[3]:
+                return True
+        return False
+    
+    def draw(self):
+        self.canvas.move(self.id, self.x, self.y)
+        pos = self.canvas.coords(self.id)
+        
+        # Ball hits top of screen
+        if pos[1] <= 0:
+            self.y = 3
+        
+        # Ball hits bottom of screen
+        if pos[3] >= self.canvas_height:
+            self.hit_bottom = True
+        
+        # Ball hits paddle
+        if self.hit_paddle(pos) == True:
+            self.y = -3
+            self.score += 1
+        
+        # Ball hits left side
+        if pos[0] <= 0:
+            self.x = 3
+        
+        # Ball hits right side
+        if pos[2] >= self.canvas_width:
+            self.x = -3
+    
+    def reset(self):
+        """Reset ball to starting position"""
+        self.canvas.coords(self.id, 10, 10, 25, 25)
+        self.canvas.move(self.id, 245, 100)
+        starts = [-3, -2, -1, 1, 2, 3]
+        random.shuffle(starts)
+        self.x = starts[0]
+        self.y = -3
+        self.hit_bottom = False
+        self.score = 0
 
-# Game settings
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-PADDLE_WIDTH = 15
-PADDLE_HEIGHT = 90
-BALL_SIZE = 15
+class Paddle:
+    def __init__(self, canvas, color):
+        self.canvas = canvas
+        self.id = canvas.create_rectangle(0, 0, 100, 10, fill=color)
+        self.canvas.move(self.id, 200, 300)
+        self.x = 0
+        self.canvas_width = self.canvas.winfo_width()
+        self.left_pressed = False
+        self.right_pressed = False
+        
+        # Bind key press and release events
+        self.canvas.bind_all('<KeyPress-Left>', self.left_down)
+        self.canvas.bind_all('<KeyRelease-Left>', self.left_up)
+        self.canvas.bind_all('<KeyPress-Right>', self.right_down)
+        self.canvas.bind_all('<KeyRelease-Right>', self.right_up)
+        self.canvas.bind_all('<KeyPress-space>', self.restart_game)
+        
+        # Store reference to ball for restart functionality
+        self.ball = None
+    
+    def draw(self):
+        # Update movement based on key states
+        if self.left_pressed:
+            self.x = -3
+        elif self.right_pressed:
+            self.x = 3
+        else:
+            self.x = 0
+            
+        self.canvas.move(self.id, self.x, 0)
+        pos = self.canvas.coords(self.id)
+        
+        # Keep paddle on screen
+        if pos[0] <= 0:
+            self.canvas.move(self.id, -pos[0], 0)
+        elif pos[2] >= self.canvas_width:
+            self.canvas.move(self.id, self.canvas_width - pos[2], 0)
+    
+    def left_down(self, evt):
+        self.left_pressed = True
+    
+    def left_up(self, evt):
+        self.left_pressed = False
+    
+    def right_down(self, evt):
+        self.right_pressed = True
+    
+    def right_up(self, evt):
+        self.right_pressed = False
+    
+    def restart_game(self, evt):
+        if self.ball and self.ball.hit_bottom:
+            self.ball.reset()
 
-# Colors
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
+# Create the main game window
+tk = Tk()
+tk.title("Pong Game - Arrow Keys: Move | Space: Restart")
+tk.resizable(0, 0)
+tk.wm_attributes("-topmost", 1)
+canvas = Canvas(tk, width=500, height=400, bd=0, highlightthickness=0)
+canvas.pack()
 
-# Create screen
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Awesome Pong Game!")
-clock = pygame.time.Clock()
+# Make sure the window can receive keyboard input
+canvas.focus_set()
+tk.update()
 
-# Game variables
-player1_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
-player2_y = SCREEN_HEIGHT // 2 - PADDLE_HEIGHT // 2
-ball_x = SCREEN_WIDTH // 2
-ball_y = SCREEN_HEIGHT // 2
-ball_speed_x = 5
-ball_speed_y = 3
-player1_score = 0
-player2_score = 0
+# Create paddle and ball
+paddle = Paddle(canvas, 'blue')
+ball = Ball(canvas, paddle, 'red')
 
-def draw_game():
-    screen.fill(BLACK)
-    
-    # Center line
-    for i in range(0, SCREEN_HEIGHT, 20):
-        pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH//2 - 2, i, 4, 10))
-    
-    # Paddles
-    pygame.draw.rect(screen, WHITE, (30, player1_y, PADDLE_WIDTH, PADDLE_HEIGHT))
-    pygame.draw.rect(screen, WHITE, (SCREEN_WIDTH - 30 - PADDLE_WIDTH, player2_y, PADDLE_WIDTH, PADDLE_HEIGHT))
-    
-    # Ball
-    pygame.draw.rect(screen, WHITE, (ball_x, ball_y, BALL_SIZE, BALL_SIZE))
-    
-    # Scores
-    font = pygame.font.Font(None, 74)
-    score1_text = font.render(str(player1_score), True, WHITE)
-    score2_text = font.render(str(player2_score), True, WHITE)
-    screen.blit(score1_text, (SCREEN_WIDTH//4, 50))
-    screen.blit(score2_text, (3*SCREEN_WIDTH//4, 50))
+# Link paddle to ball for restart functionality
+paddle.ball = ball
 
-def handle_input():
-    global player1_y, player2_y
-    keys = pygame.key.get_pressed()
-    
-    if keys[pygame.K_w] and player1_y > 0:
-        player1_y -= 7
-    if keys[pygame.K_s] and player1_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
-        player1_y += 7
-    if keys[pygame.K_UP] and player2_y > 0:
-        player2_y -= 7
-    if keys[pygame.K_DOWN] and player2_y < SCREEN_HEIGHT - PADDLE_HEIGHT:
-        player2_y += 7
+# Create score display
+score_text = canvas.create_text(50, 20, text="Score: 0", fill="black", font=("Arial", 16))
+game_over_text = None
 
-def update_ball():
-    global ball_x, ball_y, ball_speed_x, ball_speed_y, player1_score, player2_score
+# Game loop
+while 1:
+    if ball.hit_bottom == False:
+        ball.draw()
+        paddle.draw()
+        
+        # Update score display
+        canvas.itemconfig(score_text, text=f"Score: {ball.score}")
+        
+        # Remove game over text if it exists
+        if game_over_text:
+            canvas.delete(game_over_text)
+            game_over_text = None
+    else:
+        # Game over - show message
+        if not game_over_text:
+            game_over_text = canvas.create_text(250, 200, 
+                text=f"GAME OVER!\nFinal Score: {ball.score}\nPress SPACE to restart", 
+                fill="red", font=("Arial", 20), justify="center")
     
-    ball_x += ball_speed_x
-    ball_y += ball_speed_y
-    
-    if ball_y <= 0 or ball_y >= SCREEN_HEIGHT - BALL_SIZE:
-        ball_speed_y = -ball_speed_y
-    
-    # Paddle collisions
-    if (ball_x <= 45 and ball_x >= 30 and 
-        ball_y >= player1_y and ball_y <= player1_y + PADDLE_HEIGHT):
-        ball_speed_x = -ball_speed_x
-    
-    if (ball_x >= SCREEN_WIDTH - 45 - BALL_SIZE and ball_x <= SCREEN_WIDTH - 30 - BALL_SIZE and
-        ball_y >= player2_y and ball_y <= player2_y + PADDLE_HEIGHT):
-        ball_speed_x = -ball_speed_x
-    
-    # Scoring
-    if ball_x < 0:
-        player2_score += 1
-        ball_x, ball_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
-        ball_speed_x = -ball_speed_x
-    elif ball_x > SCREEN_WIDTH:
-        player1_score += 1
-        ball_x, ball_y = SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2
-        ball_speed_x = -ball_speed_x
-
-# Main game loop
-running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    
-    handle_input()
-    update_ball()
-    draw_game()
-    
-    pygame.display.flip()
-    clock.tick(60)
-
-pygame.quit()
-sys.exit()</code></pre>
+    tk.update_idletasks()
+    tk.update()
+    time.sleep(0.01)</code></pre>
                             </div>
                         </div>
                     </section>
