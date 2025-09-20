@@ -1,0 +1,541 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Interactive Particle Flow Explorer - C00lnerd Simulations">
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+        <!-- Header -->
+        <div class="bg-black bg-opacity-50 backdrop-blur-sm border-b border-blue-500">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/simulations.html" class="text-blue-300 hover:text-blue-100 font-medium">
+                            ← Back to Simulations
+                        </a>
+                        <div class="text-blue-500">|</div>
+                        <h1 class="text-2xl font-bold text-white">Interactive Particle Flow Explorer</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Introduction -->
+            <div class="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-blue-500">
+                <h2 class="text-2xl font-bold text-white mb-4">Explore Particle Flow Dynamics</h2>
+                <p class="text-blue-100 mb-4">
+                    Particle flow systems demonstrate how mathematical vector fields create organic, flowing motion. 
+                    Each particle follows complex flow equations while leaving beautiful trails that reveal the underlying mathematical structure.
+                </p>
+                <div class="grid md:grid-cols-2 gap-4 text-sm text-blue-200">
+                    <div>
+                        <strong class="text-cyan-300">Mathematical Concepts:</strong><br>
+                        • Vector fields and flow equations<br>
+                        • Particle physics and dynamics<br>
+                        • Harmonic motion and turbulence
+                    </div>
+                    <div>
+                        <strong class="text-yellow-300">Applications:</strong><br>
+                        • Fluid dynamics simulation<br>
+                        • Weather pattern modeling<br>
+                        • Electromagnetic field visualization
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Container -->
+            <div class="grid lg:grid-cols-4 gap-6">
+                <!-- Canvas Area -->
+                <div class="lg:col-span-3">
+                    <div class="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-6 border border-blue-500">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-white">Live Particle Flow</h3>
+                            <div class="space-x-2">
+                                <button id="clearBtn" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    Clear Particles
+                                </button>
+                                <button id="resetBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        <canvas id="flowCanvas" width="800" height="600" 
+                                class="border border-gray-600 rounded-lg bg-black w-full max-w-full h-auto">
+                        </canvas>
+                        <div id="infoDisplay" class="mt-4 text-center">
+                            <div class="text-cyan-300 font-mono text-sm" id="particleCount"></div>
+                            <div class="text-yellow-300 font-mono text-sm" id="flowInfo"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Panel -->
+                <div class="lg:col-span-1">
+                    <div class="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-6 border border-blue-500 space-y-6">
+                        <!-- Flow Controls -->
+                        <div>
+                            <h4 class="text-lg font-bold text-cyan-300 mb-3">Flow Dynamics</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Flow Strength</label>
+                                    <input type="range" id="flowStrength" min="0" max="1" step="0.05" value="0.3" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="flowStrengthValue" class="text-blue-300 text-sm">0.3</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Flow Complexity</label>
+                                    <input type="range" id="flowComplexity" min="0.005" max="0.05" step="0.005" value="0.02" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="flowComplexityValue" class="text-blue-300 text-sm">0.02</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Center Movement</label>
+                                    <input type="range" id="centerMovement" min="0" max="100" step="5" value="50" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="centerMovementValue" class="text-blue-300 text-sm">50</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Particle Controls -->
+                        <div>
+                            <h4 class="text-lg font-bold text-yellow-300 mb-3">Particle System</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Max Particles</label>
+                                    <input type="range" id="maxParticles" min="10" max="150" step="10" value="50" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="maxParticlesValue" class="text-blue-300 text-sm">50</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Particle Speed</label>
+                                    <input type="range" id="particleSpeed" min="0.5" max="5" step="0.1" value="2" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="particleSpeedValue" class="text-blue-300 text-sm">2.0</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Trail Length</label>
+                                    <input type="range" id="trailLength" min="5" max="50" step="5" value="20" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="trailLengthValue" class="text-blue-300 text-sm">20</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visual Controls -->
+                        <div>
+                            <h4 class="text-lg font-bold text-lime-300 mb-3">Visual Effects</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Flow Lines</label>
+                                    <input type="range" id="showFlowLines" min="0" max="1" step="1" value="1" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="showFlowLinesValue" class="text-blue-300 text-sm">On</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Flow Opacity</label>
+                                    <input type="range" id="flowOpacity" min="0.1" max="1" step="0.1" value="0.3" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="flowOpacityValue" class="text-blue-300 text-sm">0.3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Presets -->
+                        <div>
+                            <h4 class="text-lg font-bold text-magenta-300 mb-3">Presets</h4>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button class="preset-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="gentle">Gentle Flow</button>
+                                <button class="preset-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="turbulent">Turbulent</button>
+                                <button class="preset-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="swarm">Particle Swarm</button>
+                                <button class="preset-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="chaos">Chaotic Flow</button>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div>
+                            <h4 class="text-lg font-bold text-orange-300 mb-3">Instructions</h4>
+                            <ul class="text-white text-sm space-y-1">
+                                <li>• Adjust flow strength for particle attraction</li>
+                                <li>• Higher complexity creates turbulence</li>
+                                <li>• Clear particles to see immediate changes</li>
+                                <li>• Try different presets for variety</li>
+                                <li>• Watch mathematical flow patterns emerge</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="mt-8 grid md:grid-cols-2 gap-6">
+                <div class="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 border border-blue-500">
+                    <h3 class="text-xl font-bold text-cyan-300 mb-4">Flow Field Mathematics</h3>
+                    <ul class="text-blue-100 space-y-2">
+                        <li><strong>Vector Fields:</strong> Mathematical functions assigning vectors to space points</li>
+                        <li><strong>Differential Equations:</strong> Describe how particles move through fields</li>
+                        <li><strong>Harmonic Motion:</strong> Sine/cosine waves create complex patterns</li>
+                        <li><strong>Turbulence:</strong> Chaotic behavior from nonlinear interactions</li>
+                        <li><strong>Phase Space:</strong> Mathematical representation of system states</li>
+                    </ul>
+                </div>
+                <div class="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 border border-blue-500">
+                    <h3 class="text-xl font-bold text-yellow-300 mb-4">Real-World Applications</h3>
+                    <ul class="text-blue-100 space-y-2">
+                        <li><strong>Weather Systems:</strong> Air particle movement and storm formation</li>
+                        <li><strong>Ocean Currents:</strong> Water flow patterns and marine navigation</li>
+                        <li><strong>Electromagnetic Fields:</strong> Charged particle behavior in fields</li>
+                        <li><strong>Computer Graphics:</strong> Realistic fluid and smoke simulation</li>
+                        <li><strong>Biology:</strong> Cell movement and swarm behavior modeling</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .slider::-webkit-slider-thumb {
+        appearance: none;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #3b82f6;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+    }
+
+    .slider::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #3b82f6;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+    }
+
+    .magenta-300 {
+        color: #f0abfc;
+    }
+
+    canvas {
+        image-rendering: pixelated;
+    }
+</style>
+
+<script>
+class ParticleFlowExplorer {
+    constructor() {
+        this.canvas = document.getElementById('flowCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.particles = [];
+        this.startTime = Date.now();
+        this.animationId = null;
+        
+        // Parameters
+        this.params = {
+            flowStrength: 0.3,
+            flowComplexity: 0.02,
+            centerMovement: 50,
+            maxParticles: 50,
+            particleSpeed: 2.0,
+            trailLength: 20,
+            showFlowLines: true,
+            flowOpacity: 0.3
+        };
+        
+        this.setupControls();
+        this.setupPresets();
+        this.setupButtons();
+        this.startAnimation();
+    }
+    
+    setupControls() {
+        const controls = ['flowStrength', 'flowComplexity', 'centerMovement', 'maxParticles', 'particleSpeed', 'trailLength', 'showFlowLines', 'flowOpacity'];
+        
+        controls.forEach(control => {
+            const slider = document.getElementById(control);
+            const valueDisplay = document.getElementById(control + 'Value');
+            
+            slider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                this.params[control] = control === 'showFlowLines' ? value === 1 : value;
+                
+                if (control === 'showFlowLines') {
+                    valueDisplay.textContent = value === 1 ? 'On' : 'Off';
+                } else {
+                    valueDisplay.textContent = value.toFixed(control.includes('Complexity') ? 3 : (control.includes('Particles') ? 0 : 1));
+                }
+                
+                this.updateInfo();
+            });
+        });
+    }
+    
+    setupPresets() {
+        const presets = {
+            gentle: { flowStrength: 0.2, flowComplexity: 0.01, maxParticles: 30, particleSpeed: 1.5, centerMovement: 30 },
+            turbulent: { flowStrength: 0.8, flowComplexity: 0.04, maxParticles: 80, particleSpeed: 3.0, centerMovement: 80 },
+            swarm: { flowStrength: 0.5, flowComplexity: 0.015, maxParticles: 120, particleSpeed: 2.5, centerMovement: 20 },
+            chaos: { flowStrength: 1.0, flowComplexity: 0.05, maxParticles: 100, particleSpeed: 4.0, centerMovement: 100 }
+        };
+        
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = presets[btn.dataset.preset];
+                Object.keys(preset).forEach(key => {
+                    this.params[key] = preset[key];
+                    const slider = document.getElementById(key);
+                    const valueDisplay = document.getElementById(key + 'Value');
+                    slider.value = preset[key];
+                    valueDisplay.textContent = preset[key].toFixed(key.includes('Complexity') ? 3 : (key.includes('Particles') ? 0 : 1));
+                });
+                this.updateInfo();
+            });
+        });
+    }
+    
+    setupButtons() {
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            this.particles = [];
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            this.particles = [];
+            this.startTime = Date.now();
+        });
+    }
+    
+    updateInfo() {
+        document.getElementById('particleCount').textContent = `Particles: ${this.particles.length}`;
+        document.getElementById('flowInfo').textContent = `Flow: ${this.params.flowStrength.toFixed(2)} | Complexity: ${this.params.flowComplexity.toFixed(3)}`;
+    }
+    
+    createParticle(centerX, centerY) {
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 100 + Math.random() * 150;
+        const x = Math.max(50, Math.min(750, centerX + distance * Math.cos(angle)));
+        const y = Math.max(50, Math.min(550, centerY + distance * Math.sin(angle)));
+        
+        return {
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            life: 150 + Math.random() * 150,
+            maxLife: 300,
+            trail: [],
+            hue: Math.random() * 360
+        };
+    }
+    
+    updateParticle(particle, centerX, centerY, t) {
+        // Flow field calculation
+        const dx = particle.x - centerX;
+        const dy = particle.y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 0) {
+            const angle = Math.atan2(dy, dx);
+            let flowAngle = angle + Math.PI / 2 + Math.sin(t * 0.001 + distance * this.params.flowComplexity) * 0.8;
+            flowAngle += Math.cos(t * 0.0015 + distance * this.params.flowComplexity * 0.5) * 0.3;
+            flowAngle += Math.sin(t * 0.002 + angle * 3) * 0.2;
+            
+            const flowStrength = Math.max(0, 250 - distance) / 250 * this.params.flowStrength;
+            
+            particle.vx += Math.cos(flowAngle) * flowStrength * 0.15;
+            particle.vy += Math.sin(flowAngle) * flowStrength * 0.15;
+        }
+        
+        // Add turbulence
+        particle.vx += (Math.random() - 0.5) * 0.1;
+        particle.vy += (Math.random() - 0.5) * 0.1;
+        
+        // Limit speed
+        const speed = Math.sqrt(particle.vx * particle.vx + particle.vy * particle.vy);
+        if (speed > this.params.particleSpeed) {
+            particle.vx = (particle.vx / speed) * this.params.particleSpeed;
+            particle.vy = (particle.vy / speed) * this.params.particleSpeed;
+        }
+        
+        // Update position
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.life -= 1;
+        
+        // Add to trail
+        particle.trail.push({ x: particle.x, y: particle.y });
+        if (particle.trail.length > this.params.trailLength) {
+            particle.trail.shift();
+        }
+        
+        // Wrap around screen
+        if (particle.x < 0) particle.x = 800;
+        if (particle.x > 800) particle.x = 0;
+        if (particle.y < 0) particle.y = 600;
+        if (particle.y > 600) particle.y = 0;
+    }
+    
+    drawFlowField(centerX, centerY, t) {
+        if (!this.params.showFlowLines) return;
+        
+        const opacity = this.params.flowOpacity;
+        this.ctx.globalAlpha = opacity;
+        
+        // Draw flow field lines
+        for (let angle = 0; angle < 360; angle += 15) {
+            this.ctx.beginPath();
+            let prevX, prevY;
+            
+            for (let r = 20; r < 300; r += 5) {
+                const rad = (angle * Math.PI) / 180;
+                let flowAngle = rad + r * 0.015;
+                flowAngle += Math.sin(t * 0.0008 + r * 0.008) * 0.4;
+                flowAngle += Math.cos(t * 0.0012 + angle * 0.1) * 0.3;
+                
+                const x = centerX + r * Math.cos(flowAngle);
+                const y = centerY + r * Math.sin(flowAngle);
+                
+                if (x >= 0 && x <= 800 && y >= 0 && y <= 600) {
+                    if (prevX !== undefined) {
+                        const fade = (300 - r) / 300;
+                        this.ctx.strokeStyle = `rgba(100, 150, 255, ${fade * opacity})`;
+                        this.ctx.lineWidth = 1;
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(prevX, prevY);
+                        this.ctx.lineTo(x, y);
+                        this.ctx.stroke();
+                    }
+                    prevX = x;
+                    prevY = y;
+                } else {
+                    break;
+                }
+            }
+        }
+        
+        this.ctx.globalAlpha = 1;
+    }
+    
+    drawParticle(particle) {
+        if (particle.life <= 0) return;
+        
+        // Draw trail
+        for (let i = 1; i < particle.trail.length; i++) {
+            const fade = (i / particle.trail.length) * (particle.life / particle.maxLife);
+            
+            // Rainbow colors
+            const hueRad = (particle.hue + i * 10) * Math.PI / 180;
+            const r = Math.floor(128 + 127 * Math.sin(hueRad) * fade);
+            const g = Math.floor(128 + 127 * Math.sin(hueRad + 2.09) * fade);
+            const b = Math.floor(128 + 127 * Math.sin(hueRad + 4.19) * fade);
+            
+            this.ctx.strokeStyle = `rgb(${Math.max(0, Math.min(255, r))}, ${Math.max(0, Math.min(255, g))}, ${Math.max(0, Math.min(255, b))})`;
+            this.ctx.lineWidth = Math.max(1, fade * 3);
+            this.ctx.beginPath();
+            this.ctx.moveTo(particle.trail[i-1].x, particle.trail[i-1].y);
+            this.ctx.lineTo(particle.trail[i].x, particle.trail[i].y);
+            this.ctx.stroke();
+        }
+        
+        // Draw particle
+        if (particle.trail.length > 0) {
+            const current = particle.trail[particle.trail.length - 1];
+            const fade = particle.life / particle.maxLife;
+            const size = 2 * fade;
+            
+            this.ctx.fillStyle = 'white';
+            this.ctx.strokeStyle = 'cyan';
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.arc(current.x, current.y, size, 0, 2 * Math.PI);
+            this.ctx.fill();
+            this.ctx.stroke();
+        }
+    }
+    
+    animate() {
+        const currentTime = Date.now();
+        const t = currentTime - this.startTime;
+        
+        // Clear canvas
+        this.ctx.fillStyle = '#000000';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Calculate center position
+        const centerX = 400 + this.params.centerMovement * Math.sin(t * 0.0008);
+        const centerY = 300 + this.params.centerMovement * 0.6 * Math.cos(t * 0.0012);
+        
+        // Draw flow field
+        this.drawFlowField(centerX, centerY, t);
+        
+        // Particle management
+        if (this.particles.length < this.params.maxParticles && Math.random() < 0.3) {
+            this.particles.push(this.createParticle(centerX, centerY));
+        }
+        
+        // Update and draw particles
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const particle = this.particles[i];
+            this.updateParticle(particle, centerX, centerY, t);
+            
+            if (particle.life <= 0) {
+                this.particles.splice(i, 1);
+            } else {
+                this.drawParticle(particle);
+            }
+        }
+        
+        // Draw center point
+        const pulse = 8 + 5 * Math.sin(t * 0.005);
+        const glowPulse = 15 + 8 * Math.sin(t * 0.003);
+        
+        // Outer glow
+        this.ctx.strokeStyle = 'cyan';
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, glowPulse, 0, 2 * Math.PI);
+        this.ctx.stroke();
+        
+        // Inner core
+        this.ctx.fillStyle = 'white';
+        this.ctx.strokeStyle = 'yellow';
+        this.ctx.lineWidth = 2;
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, pulse, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.stroke();
+        
+        // Update info display
+        this.updateInfo();
+        
+        // Title
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '16px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('Interactive Particle Flow Explorer', 400, 30);
+        
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+    
+    startAnimation() {
+        this.animate();
+    }
+    
+    stop() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new ParticleFlowExplorer();
+});
+</script>

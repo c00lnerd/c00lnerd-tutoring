@@ -139,6 +139,240 @@ if __name__ == "__main__":
                         </div>
                     </section>
 
+                    <!-- Particle Flow Art -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">5. Particle Flow Visualization</h2>
+                        <div class="bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-lg p-6 mb-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-blue-100 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-water text-blue-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-blue-900">Flow Fields & Particle Systems</h3>
+                                    <p class="text-blue-700">Create mesmerizing particle flows using vector mathematics!</p>
+                                </div>
+                            </div>
+                            <p class="text-blue-800 mb-4">
+                                This advanced visualization combines <strong>vector mathematics</strong>, <strong>particle physics</strong>, 
+                                and <strong>flow field theory</strong> to create beautiful flowing patterns. Each particle follows 
+                                mathematical flow equations while leaving colorful trails.
+                            </p>
+                            <div class="bg-blue-100 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold text-blue-900 mb-2">Mathematical Concepts:</h4>
+                                <ul class="text-blue-800 space-y-1">
+                                    <li><strong>Vector Fields:</strong> Mathematical functions that assign vectors to points in space</li>
+                                    <li><strong>Flow Equations:</strong> Differential equations describing particle movement</li>
+                                    <li><strong>Harmonic Motion:</strong> Multiple sine/cosine waves creating complex patterns</li>
+                                    <li><strong>Particle Physics:</strong> Velocity, acceleration, and force interactions</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">Interactive Particle Flow Code:</h3>
+                            <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto relative">
+                                <button class="copy-btn absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs" onclick="copyCode(this)">
+                                    📋 Copy
+                                </button>
+<pre>{`import math
+import tkinter as tk
+from tkinter import Canvas, Scale, Label, Frame
+import time
+import random
+
+def create_particle_flow():
+    """
+    Interactive particle flow with mathematical flow fields
+    """
+    root = tk.Tk()
+    root.title("Particle Flow Art")
+    root.geometry("1000x700")
+    root.configure(bg='black')
+    
+    # Create main layout
+    main_frame = Frame(root, bg='black')
+    main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    
+    canvas = Canvas(main_frame, width=700, height=600, bg='black')
+    canvas.pack(side=tk.LEFT, padx=(0, 20))
+    
+    # Control panel
+    control_frame = Frame(main_frame, bg='black', width=250)
+    control_frame.pack(side=tk.RIGHT, fill=tk.Y)
+    
+    # Parameters with sliders
+    flow_strength = tk.DoubleVar(value=0.3)
+    particle_count = tk.IntVar(value=50)
+    trail_length = tk.IntVar(value=20)
+    
+    # Create sliders
+    Label(control_frame, text="Flow Controls", fg="cyan", bg="black", 
+          font=("Arial", 14, "bold")).pack(pady=10)
+    
+    Scale(control_frame, from_=0.0, to=1.0, resolution=0.05, 
+          orient=tk.HORIZONTAL, variable=flow_strength, label="Flow Strength",
+          bg="gray20", fg="white").pack(fill=tk.X, pady=5)
+    
+    Scale(control_frame, from_=10, to=100, resolution=10, 
+          orient=tk.HORIZONTAL, variable=particle_count, label="Particles",
+          bg="gray20", fg="white").pack(fill=tk.X, pady=5)
+    
+    Scale(control_frame, from_=5, to=40, resolution=5, 
+          orient=tk.HORIZONTAL, variable=trail_length, label="Trail Length",
+          bg="gray20", fg="white").pack(fill=tk.X, pady=5)
+    
+    particles = []
+    
+    class Particle:
+        def __init__(self, x, y):
+            self.x = x
+            self.y = y
+            self.vx = random.uniform(-1, 1)
+            self.vy = random.uniform(-1, 1)
+            self.life = random.uniform(100, 200)
+            self.max_life = self.life
+            self.trail = []
+            self.hue = random.uniform(0, 360)
+        
+        def update(self, center_x, center_y, t, strength):
+            # Calculate flow field
+            dx = self.x - center_x
+            dy = self.y - center_y
+            distance = math.sqrt(dx*dx + dy*dy)
+            
+            if distance > 0:
+                # Create swirling flow
+                angle = math.atan2(dy, dx)
+                flow_angle = angle + math.pi/2 + math.sin(t * 0.001 + distance * 0.02) * 0.5
+                
+                # Apply flow force
+                flow_force = max(0, 200 - distance) / 200 * strength
+                self.vx += math.cos(flow_angle) * flow_force * 0.1
+                self.vy += math.sin(flow_angle) * flow_force * 0.1
+            
+            # Limit speed
+            speed = math.sqrt(self.vx*self.vx + self.vy*self.vy)
+            if speed > 3:
+                self.vx = (self.vx / speed) * 3
+                self.vy = (self.vy / speed) * 3
+            
+            # Update position
+            self.x += self.vx
+            self.y += self.vy
+            self.life -= 1
+            
+            # Add to trail
+            self.trail.append((self.x, self.y))
+            if len(self.trail) > trail_length.get():
+                self.trail.pop(0)
+            
+            # Wrap around screen
+            if self.x < 0: self.x = 700
+            if self.x > 700: self.x = 0
+            if self.y < 0: self.y = 600
+            if self.y > 600: self.y = 0
+        
+        def draw(self, canvas):
+            if self.life <= 0:
+                return
+            
+            # Draw colorful trail
+            for i in range(1, len(self.trail)):
+                fade = (i / len(self.trail)) * (self.life / self.max_life)
+                
+                # Rainbow colors
+                hue_rad = math.radians(self.hue + i * 10)
+                r = int(128 + 127 * math.sin(hue_rad) * fade)
+                g = int(128 + 127 * math.sin(hue_rad + 2.09) * fade)
+                b = int(128 + 127 * math.sin(hue_rad + 4.19) * fade)
+                
+                r = max(0, min(255, r))
+                g = max(0, min(255, g))
+                b = max(0, min(255, b))
+                
+                color = f"#{r:02x}{g:02x}{b:02x}"
+                
+                x1, y1 = self.trail[i-1]
+                x2, y2 = self.trail[i]
+                canvas.create_line(x1, y1, x2, y2, fill=color, width=2)
+            
+            # Draw particle
+            if self.trail:
+                x, y = self.trail[-1]
+                canvas.create_oval(x-2, y-2, x+2, y+2, fill="white", outline="cyan")
+    
+    def draw_frame():
+        canvas.delete("all")
+        current_time = time.time() * 1000
+        
+        # Moving center point
+        center_x = 350 + 50 * math.sin(current_time * 0.0008)
+        center_y = 300 + 30 * math.cos(current_time * 0.0012)
+        
+        # Manage particles
+        max_particles = particle_count.get()
+        if len(particles) < max_particles and random.random() < 0.2:
+            angle = random.uniform(0, 2 * math.pi)
+            distance = random.uniform(100, 200)
+            x = center_x + distance * math.cos(angle)
+            y = center_y + distance * math.sin(angle)
+            particles.append(Particle(x, y))
+        
+        # Update and draw particles
+        strength = flow_strength.get()
+        for particle in particles[:]:
+            particle.update(center_x, center_y, current_time, strength)
+            if particle.life <= 0:
+                particles.remove(particle)
+            else:
+                particle.draw(canvas)
+        
+        # Draw center point
+        pulse = 5 + 3 * math.sin(current_time * 0.005)
+        canvas.create_oval(center_x-pulse, center_y-pulse, 
+                          center_x+pulse, center_y+pulse, 
+                          fill="white", outline="yellow", width=2)
+        
+        # Info display
+        canvas.create_text(350, 30, text="Particle Flow Visualization", 
+                          fill="white", font=("Arial", 16, "bold"))
+        canvas.create_text(350, 50, text=f"Particles: {len(particles)}", 
+                          fill="cyan", font=("Arial", 12))
+        
+        root.after(50, draw_frame)
+    
+    # Clear button
+    def clear_particles():
+        particles.clear()
+    
+    tk.Button(control_frame, text="Clear Particles", command=clear_particles,
+              bg="orange", fg="white", font=("Arial", 12)).pack(pady=20)
+    
+    # Instructions
+    instructions = [
+        "• Adjust flow strength to change particle behavior",
+        "• Increase particle count for denser flows",
+        "• Longer trails create more flowing effects",
+        "• Watch how math creates organic motion!"
+    ]
+    
+    Label(control_frame, text="Instructions:", fg="yellow", bg="black", 
+          font=("Arial", 10, "bold")).pack(pady=(20, 5))
+    
+    for instruction in instructions:
+        Label(control_frame, text=instruction, fg="white", bg="black", 
+              font=("Arial", 8), wraplength=200).pack(anchor="w", padx=5)
+    
+    # Start animation
+    draw_frame()
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_particle_flow()`}</pre>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Web Version -->
                     <section>
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Try the Interactive Web Version!</h2>
@@ -148,23 +382,35 @@ if __name__ == "__main__":
                                     <i class="fas fa-globe text-purple-600 text-2xl"></i>
                                 </div>
                                 <div>
-                                    <h3 class="text-xl font-bold text-purple-900">Interactive Lissajous Curve Explorer</h3>
-                                    <p class="text-purple-700">Experience the same mathematical beauty in your web browser!</p>
+                                    <h3 class="text-xl font-bold text-purple-900">Interactive Mathematical Art Simulations</h3>
+                                    <p class="text-purple-700">Experience mathematical beauty in your web browser!</p>
                                 </div>
                             </div>
                             <p class="text-purple-800 mb-4">
-                                We've created a web-based version of the Lissajous curve explorer that runs directly in your browser. 
-                                It includes all the same interactive features: sliders for frequency ratios, amplitude controls, 
-                                phase shifts, and preset patterns.
+                                We've created web-based versions of these mathematical art generators that run directly in your browser. 
+                                Both include interactive controls, real-time parameter adjustment, and beautiful visual effects.
                             </p>
-                            <div class="flex space-x-4">
-                                <a href="/simulations/lissajous-explorer.html" target="_blank" 
-                                   class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center">
-                                    <i class="fas fa-external-link-alt mr-2"></i>
-                                    Launch Web Explorer
-                                </a>
+                            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-purple-100 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-purple-900 mb-2">🌀 Lissajous Curve Explorer</h4>
+                                    <p class="text-purple-700 text-sm mb-3">Interactive parametric equations with frequency ratios, amplitudes, and phase controls.</p>
+                                    <a href="/simulations/lissajous-explorer.html" target="_blank" 
+                                       class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium transition-colors duration-200 text-sm">
+                                        Launch Lissajous Explorer
+                                    </a>
+                                </div>
+                                <div class="bg-blue-100 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-blue-900 mb-2">💫 Particle Flow Simulator</h4>
+                                    <p class="text-blue-700 text-sm mb-3">Interactive particle systems with flow fields, trails, and dynamic physics controls.</p>
+                                    <a href="/simulations/particle-flow-explorer.html" target="_blank" 
+                                       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors duration-200 text-sm">
+                                        Launch Particle Flow
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="text-center">
                                 <a href="/simulations.html" 
-                                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center">
+                                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 inline-flex items-center">
                                     <i class="fas fa-flask mr-2"></i>
                                     Browse All Simulations
                                 </a>
