@@ -26,12 +26,16 @@ import Layout from '../../layouts/Layout.astro';
 								<span id="scoreDisplay">0</span>
 							</div>
 							<div class="stat">
-								<span class="label">Lives:</span>
+								<span class="stat-label">Lives:</span>
 								<span id="livesDisplay">3</span>
 							</div>
 							<div class="stat">
-								<span class="label">Fuel:</span>
+								<span class="stat-label">⛽ Fuel:</span>
 								<span id="fuelDisplay">100%</span>
+							</div>
+							<div class="stat">
+								<span class="stat-label">🔫 Ammo:</span>
+								<span id="ammoDisplay">10/10</span>
 							</div>
 						</div>
 					</div>
@@ -298,6 +302,14 @@ import Layout from '../../layouts/Layout.astro';
 				this.mouseY = 0;
 				this.mouseDown = false;
 				
+				// Shooting mechanics
+				this.lastShotTime = 0;
+				this.shotCooldown = 200; // milliseconds between shots
+				this.maxAmmo = 10;
+				this.currentAmmo = this.maxAmmo;
+				this.ammoRegenRate = 1000; // milliseconds to regenerate 1 ammo
+				this.lastAmmoRegen = 0;
+				
 				this.setupControls();
 				this.startLevel();
 				this.gameLoop();
@@ -326,7 +338,7 @@ import Layout from '../../layouts/Layout.astro';
 				document.addEventListener('keydown', (e) => {
 					if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
 						e.preventDefault();
-						this.shoot();
+						this.tryShoot();
 					} else if (e.code === 'KeyP') {
 						this.paused = !this.paused;
 					} else if (e.code === 'KeyR') {
@@ -409,14 +421,30 @@ import Layout from '../../layouts/Layout.astro';
 				this.planets.push(new Planet(x, y, 0, 0, 120, "#ff0000", "explosive"));
 			}
 
+			tryShoot() {
+				const currentTime = Date.now();
+				
+				// Check cooldown and ammo
+				if (currentTime - this.lastShotTime < this.shotCooldown) return;
+				if (this.currentAmmo <= 0) return;
+				
+				// Shoot if conditions are met
+				this.shoot();
+				this.lastShotTime = currentTime;
+				this.currentAmmo--;
+			}
+
 			shoot() {
-				if (!this.spaceship || this.gameOver || this.paused) return;
+				if (!this.spaceship || !this.spaceship.alive) return;
 				
+				const angle = this.spaceship.angle;
 				const bulletSpeed = 300;
-				const bulletVx = this.spaceship.vx + bulletSpeed * Math.cos(this.spaceship.angle);
-				const bulletVy = this.spaceship.vy + bulletSpeed * Math.sin(this.spaceship.angle);
+				const bulletX = this.spaceship.x + Math.cos(angle) * (this.spaceship.radius + 5);
+				const bulletY = this.spaceship.y + Math.sin(angle) * (this.spaceship.radius + 5);
+				const bulletVx = this.spaceship.vx + Math.cos(angle) * bulletSpeed;
+				const bulletVy = this.spaceship.vy + Math.sin(angle) * bulletSpeed;
 				
-				this.bullets.push(new Bullet(this.spaceship.x, this.spaceship.y, bulletVx, bulletVy));
+				this.bullets.push(new Bullet(bulletX, bulletY, bulletVx, bulletVy));
 			}
 
 			restartLevel() {
@@ -567,26 +595,33 @@ import Layout from '../../layouts/Layout.astro';
 
 			update(dt) {
 				if (this.gameOver || this.paused) return;
-				
+
+				// Handle ammo regeneration
+				const currentTime = Date.now();
+				if (this.currentAmmo < this.maxAmmo && currentTime - this.lastAmmoRegen >= this.ammoRegenRate) {
+					this.currentAmmo++;
+					this.lastAmmoRegen = currentTime;
+				}
+
 				// Handle mouse input
 				if (this.spaceship) {
 					// Calculate angle from spaceship to mouse
 					const dx = this.mouseX - this.spaceship.x;
 					const dy = this.mouseY - this.spaceship.y;
 					const targetAngle = Math.atan2(dy, dx);
-					
+
 					// Smoothly rotate towards mouse
 					this.spaceship.angle = targetAngle;
-					
+
 					// Apply thrust if mouse is held down
 					if (this.mouseDown) {
 						this.spaceship.applyThrust(dt);
 					}
 				}
-				
+
 				// Apply gravity
 				this.applyGravity(dt);
-				
+
 				// Update objects
 				if (this.spaceship) {
 					this.spaceship.update(dt);
@@ -682,18 +717,20 @@ import Layout from '../../layouts/Layout.astro';
 				}
 				
 				// Update UI
-				this.updateUI();
+				this.updateHUD();
 			}
 
-			updateUI() {
+			updateHUD() {
 				document.getElementById('levelDisplay').textContent = this.level;
 				document.getElementById('scoreDisplay').textContent = this.score;
 				document.getElementById('livesDisplay').textContent = this.lives;
 				
 				if (this.spaceship) {
-					const fuelPercent = Math.floor((this.spaceship.fuel / this.spaceship.maxFuel) * 100);
-					document.getElementById('fuelDisplay').textContent = `${fuelPercent}%`;
+					const fuelPercent = Math.round((this.spaceship.fuel / this.spaceship.maxFuel) * 100);
+					document.getElementById('fuelDisplay').textContent = fuelPercent + '%';
 				}
+				
+				document.getElementById('ammoDisplay').textContent = `${this.currentAmmo}/${this.maxAmmo}`;
 			}
 
 			gameLoop() {
