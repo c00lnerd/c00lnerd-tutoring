@@ -1,0 +1,221 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 9: Mathematical Art & Visualization - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/programming.html" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                            ← Back to Programming
+                        </a>
+                        <div class="text-gray-300">|</div>
+                        <h1 class="text-2xl font-bold text-gray-900">Python Course</h1>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        Lesson 9 of 9
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <!-- Lesson Header -->
+                <div class="mb-8">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-palette text-indigo-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">Mathematical Art & Visualization</h1>
+                            <p class="text-gray-600 mt-2">Create beautiful mathematical art using trigonometry and animation!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Learning Objectives -->
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-blue-900 mb-3">Learning Objectives</h2>
+                    <ul class="space-y-2 text-blue-800">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Use trigonometry to create beautiful patterns
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Build animated mathematical visualizations
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Combine math and art through programming
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create your own mathematical art masterpiece
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Content Sections -->
+                <div class="space-y-8">
+                    <!-- Spiral Art -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Animated Spiral Art</h2>
+                        <p class="text-gray-700 mb-4">
+                            Let's create beautiful animated spirals using trigonometry and time-based animation:
+                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto text-sm"><code>{`import math
+import tkinter as tk
+from tkinter import Canvas
+import time
+
+def create_spiral_art():
+    root = tk.Tk()
+    root.title("Mathematical Spiral Art")
+    root.geometry("800x600")
+    root.configure(bg='black')
+    
+    canvas = Canvas(root, width=800, height=600, bg='black')
+    canvas.pack()
+    
+    def draw_frame():
+        canvas.delete("all")
+        t = time.time()
+        center_x, center_y = 400, 300
+        
+        # Draw multiple spirals
+        for spiral in range(8):
+            points = []
+            for angle in range(0, 720, 2):
+                rad = math.radians(angle)
+                radius = angle / 10 + 20
+                x = center_x + radius * math.cos(rad + t + spiral * math.pi/4)
+                y = center_y + radius * math.sin(rad + t + spiral * math.pi/4)
+                points.extend([x, y])
+            
+            # Create gradient color
+            hue = (spiral * 45 + t * 50) % 360
+            r = int(127 * (1 + math.sin(math.radians(hue))))
+            g = int(127 * (1 + math.sin(math.radians(hue + 120))))
+            b = int(127 * (1 + math.sin(math.radians(hue + 240))))
+            color = f"#{r:02x}{g:02x}{b:02x}"
+            
+            if len(points) >= 4:
+                canvas.create_line(points, fill=color, width=2, smooth=True)
+        
+        # Add decorative elements
+        for i in range(12):
+            angle = i * 30 + t * 20
+            rad = math.radians(angle)
+            x = center_x + 150 * math.cos(rad)
+            y = center_y + 150 * math.sin(rad)
+            size = 10 + 5 * math.sin(t * 3 + i)
+            canvas.create_oval(x-size, y-size, x+size, y+size, 
+                             fill="white", outline="yellow", width=2)
+        
+        canvas.create_text(400, 50, text="Mathematical Spiral Art", 
+                          fill="white", font=("Arial", 20, "bold"))
+        root.after(16, draw_frame)
+    
+    def on_escape(event):
+        root.quit()
+    
+    root.bind('<Escape>', on_escape)
+    root.focus_set()
+    draw_frame()
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_spiral_art()`}</code></pre>
+                        </div>
+                    </section>
+
+                    <!-- Web Version -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Try the Interactive Web Version!</h2>
+                        <div class="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-6 mb-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-globe text-purple-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-purple-900">Interactive Lissajous Curve Explorer</h3>
+                                    <p class="text-purple-700">Experience the same mathematical beauty in your web browser!</p>
+                                </div>
+                            </div>
+                            <p class="text-purple-800 mb-4">
+                                We've created a web-based version of the Lissajous curve explorer that runs directly in your browser. 
+                                It includes all the same interactive features: sliders for frequency ratios, amplitude controls, 
+                                phase shifts, and preset patterns.
+                            </p>
+                            <div class="flex space-x-4">
+                                <a href="/simulations/lissajous-explorer.html" target="_blank" 
+                                   class="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-external-link-alt mr-2"></i>
+                                    Launch Web Explorer
+                                </a>
+                                <a href="/simulations.html" 
+                                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center">
+                                    <i class="fas fa-flask mr-2"></i>
+                                    Browse All Simulations
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Challenge Section -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Your Mathematical Art Challenge</h2>
+                        <div class="bg-indigo-50 border-l-4 border-indigo-400 p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-indigo-900 mb-3">Create Your Own Mathematical Masterpiece!</h3>
+                            <p class="text-indigo-800 mb-4">
+                                Now it's time to create your own mathematical art! Here are some ideas to explore:
+                            </p>
+                            <ul class="space-y-2 text-indigo-700">
+                                <li class="flex items-start">
+                                    <i class="fas fa-star text-indigo-500 mr-2 mt-1"></i>
+                                    <strong>Golden Ratio Art:</strong> Use the golden ratio (1.618...) to create naturally beautiful proportions
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-star text-indigo-500 mr-2 mt-1"></i>
+                                    <strong>Fibonacci Spirals:</strong> Create spirals based on the famous Fibonacci sequence
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-star text-indigo-500 mr-2 mt-1"></i>
+                                    <strong>Mandala Generator:</strong> Use symmetry and repetition to create mandala patterns
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-star text-indigo-500 mr-2 mt-1"></i>
+                                    <strong>Music Visualizer:</strong> Create patterns that change with mathematical "music" frequencies
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Navigation -->
+                    <div class="flex justify-between items-center pt-8 border-t">
+                        <a href="/programming/python/lesson8.html" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+                            ← Previous: Advanced Physics Games
+                        </a>
+                        <div class="text-center">
+                            <p class="text-gray-600 mb-2">Congratulations! You've mastered Python programming!</p>
+                            <p class="text-gray-500 text-sm mb-4">From basic variables to mathematical art - you've come so far!</p>
+                            <a href="/programming.html" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200">
+                                Back to Programming Hub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
