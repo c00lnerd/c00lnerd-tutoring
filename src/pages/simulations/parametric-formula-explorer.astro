@@ -1,0 +1,457 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Interactive Parametric Formula Explorer - C00lnerd Simulations">
+    <div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900">
+        <!-- Header -->
+        <div class="bg-black bg-opacity-50 backdrop-blur-sm border-b border-purple-500">
+            <div class="max-w-7xl mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <a href="/simulations.html" class="text-purple-300 hover:text-purple-100 font-medium">
+                            ← Back to Simulations
+                        </a>
+                        <div class="text-purple-500">|</div>
+                        <h1 class="text-2xl font-bold text-white">Interactive Parametric Formula Explorer</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 py-8">
+            <!-- Introduction -->
+            <div class="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 mb-8 border border-purple-500">
+                <h2 class="text-2xl font-bold text-white mb-4">Explore Complex Parametric Equations</h2>
+                <p class="text-purple-100 mb-4">
+                    This advanced mathematical visualization demonstrates how complex parametric equations create beautiful, 
+                    organic patterns. The formula combines trigonometric functions, harmonic oscillations, and time-based 
+                    animation to generate flowing mathematical art.
+                </p>
+                <div class="grid md:grid-cols-2 gap-4 text-sm text-purple-200">
+                    <div>
+                        <strong class="text-cyan-300">Core Formula:</strong><br>
+                        d = k(3+sin(t+τ))×sin(mag/(e/99+t/99+cos(mag)+200))<br>
+                        <strong class="text-yellow-300">Where:</strong><br>
+                        • k = amplitude × cos(t/8)<br>
+                        • e = t/8 - 12.5 + harmonic variations
+                    </div>
+                    <div>
+                        <strong class="text-lime-300">Mathematical Concepts:</strong><br>
+                        • Complex parametric equations<br>
+                        • Harmonic analysis and synthesis<br>
+                        • Time-based mathematical animation<br>
+                        • Multi-layered trigonometric functions
+                    </div>
+                </div>
+            </div>
+
+            <!-- Simulation Container -->
+            <div class="grid lg:grid-cols-4 gap-6">
+                <!-- Canvas Area -->
+                <div class="lg:col-span-3">
+                    <div class="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-6 border border-purple-500">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-bold text-white">Live Parametric Visualization</h3>
+                            <div class="space-x-2">
+                                <button id="pauseBtn" class="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    Pause
+                                </button>
+                                <button id="resetBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                        <canvas id="formulaCanvas" width="800" height="600" 
+                                class="border border-gray-600 rounded-lg bg-black w-full max-w-full h-auto">
+                        </canvas>
+                        <div id="infoDisplay" class="mt-4 text-center">
+                            <div class="text-cyan-300 font-mono text-sm" id="formulaInfo"></div>
+                            <div class="text-yellow-300 font-mono text-sm" id="patternInfo"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls Panel -->
+                <div class="lg:col-span-1">
+                    <div class="bg-black bg-opacity-50 backdrop-blur-sm rounded-xl p-6 border border-purple-500 space-y-6">
+                        <!-- Size & Scale -->
+                        <div>
+                            <h4 class="text-lg font-bold text-cyan-300 mb-3">Size & Scale</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Scale Factor</label>
+                                    <input type="range" id="scaleFactor" min="50" max="500" step="10" value="300" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="scaleFactorValue" class="text-purple-300 text-sm">300</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">K Multiplier</label>
+                                    <input type="range" id="kMultiplier" min="5" max="30" step="1" value="15" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="kMultiplierValue" class="text-purple-300 text-sm">15</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Amplitude Boost</label>
+                                    <input type="range" id="amplitudeBoost" min="1" max="20" step="0.5" value="5" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="amplitudeBoostValue" class="text-purple-300 text-sm">5.0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pattern Dynamics -->
+                        <div>
+                            <h4 class="text-lg font-bold text-yellow-300 mb-3">Pattern Dynamics</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Time Speed</label>
+                                    <input type="range" id="timeSpeed" min="0.1" max="3" step="0.1" value="1" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="timeSpeedValue" class="text-purple-300 text-sm">1.0</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Complexity</label>
+                                    <input type="range" id="complexity" min="0.5" max="3" step="0.1" value="1" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="complexityValue" class="text-purple-300 text-sm">1.0</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Harmonic Layers</label>
+                                    <input type="range" id="harmonicLayers" min="1" max="5" step="1" value="3" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="harmonicLayersValue" class="text-purple-300 text-sm">3</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Visual Effects -->
+                        <div>
+                            <h4 class="text-lg font-bold text-lime-300 mb-3">Visual Effects</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Line Width</label>
+                                    <input type="range" id="lineWidth" min="1" max="5" step="0.5" value="2" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="lineWidthValue" class="text-purple-300 text-sm">2.0</span>
+                                </div>
+                                <div>
+                                    <label class="block text-white text-sm font-medium mb-1">Color Speed</label>
+                                    <input type="range" id="colorSpeed" min="0.1" max="3" step="0.1" value="1" 
+                                           class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <span id="colorSpeedValue" class="text-purple-300 text-sm">1.0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Presets -->
+                        <div>
+                            <h4 class="text-lg font-bold text-orange-300 mb-3">Presets</h4>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button class="preset-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="default">Default Pattern</button>
+                                <button class="preset-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="large">Large & Bold</button>
+                                <button class="preset-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="complex">Complex Harmonics</button>
+                                <button class="preset-btn bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm font-medium transition-colors" 
+                                        data-preset="organic">Organic Flow</button>
+                            </div>
+                        </div>
+
+                        <!-- Instructions -->
+                        <div>
+                            <h4 class="text-lg font-bold text-pink-300 mb-3">Instructions</h4>
+                            <ul class="text-white text-sm space-y-1">
+                                <li>• Scale Factor controls overall pattern size</li>
+                                <li>• K Multiplier affects pattern shape</li>
+                                <li>• Amplitude Boost makes dramatic changes</li>
+                                <li>• Try presets for instant transformations</li>
+                                <li>• Adjust layers for complexity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Information -->
+            <div class="mt-8 grid md:grid-cols-2 gap-6">
+                <div class="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 border border-purple-500">
+                    <h3 class="text-xl font-bold text-cyan-300 mb-4">Parametric Mathematics</h3>
+                    <ul class="text-purple-100 space-y-2">
+                        <li><strong>Parametric Equations:</strong> Mathematical functions where coordinates are expressed as functions of a parameter</li>
+                        <li><strong>Harmonic Analysis:</strong> Decomposition of complex waveforms into simpler trigonometric components</li>
+                        <li><strong>Phase Relationships:</strong> How different oscillations interact and combine</li>
+                        <li><strong>Amplitude Modulation:</strong> Varying the strength of oscillations over time</li>
+                        <li><strong>Complex Variables:</strong> Mathematical expressions with multiple interdependent parameters</li>
+                    </ul>
+                </div>
+                <div class="bg-black bg-opacity-30 backdrop-blur-sm rounded-xl p-6 border border-purple-500">
+                    <h3 class="text-xl font-bold text-yellow-300 mb-4">Real-World Applications</h3>
+                    <ul class="text-purple-100 space-y-2">
+                        <li><strong>Signal Processing:</strong> Audio waveform analysis and synthesis</li>
+                        <li><strong>Computer Graphics:</strong> Procedural generation of organic shapes</li>
+                        <li><strong>Physics Simulation:</strong> Wave interference and oscillatory motion</li>
+                        <li><strong>Engineering:</strong> Vibration analysis and control systems</li>
+                        <li><strong>Art & Design:</strong> Generative art and mathematical visualization</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<style>
+    .slider::-webkit-slider-thumb {
+        appearance: none;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+    }
+
+    .slider::-moz-range-thumb {
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        background: #8b5cf6;
+        cursor: pointer;
+        border: 2px solid #ffffff;
+    }
+
+    canvas {
+        image-rendering: auto;
+    }
+</style>
+
+<script>
+class ParametricFormulaExplorer {
+    constructor() {
+        this.canvas = document.getElementById('formulaCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.startTime = Date.now();
+        this.animationId = null;
+        this.isPaused = false;
+        
+        // Parameters
+        this.params = {
+            scaleFactor: 300,
+            kMultiplier: 15,
+            amplitudeBoost: 5,
+            timeSpeed: 1,
+            complexity: 1,
+            harmonicLayers: 3,
+            lineWidth: 2,
+            colorSpeed: 1
+        };
+        
+        this.setupControls();
+        this.setupPresets();
+        this.setupButtons();
+        this.startAnimation();
+    }
+    
+    setupControls() {
+        const controls = ['scaleFactor', 'kMultiplier', 'amplitudeBoost', 'timeSpeed', 'complexity', 'harmonicLayers', 'lineWidth', 'colorSpeed'];
+        
+        controls.forEach(control => {
+            const slider = document.getElementById(control);
+            const valueDisplay = document.getElementById(control + 'Value');
+            
+            slider.addEventListener('input', (e) => {
+                const value = parseFloat(e.target.value);
+                this.params[control] = value;
+                
+                if (control.includes('Layers')) {
+                    valueDisplay.textContent = value.toString();
+                } else {
+                    valueDisplay.textContent = value.toFixed(1);
+                }
+                
+                this.updateInfo();
+            });
+        });
+    }
+    
+    setupPresets() {
+        const presets = {
+            default: { scaleFactor: 300, kMultiplier: 15, amplitudeBoost: 5, complexity: 1, harmonicLayers: 3, timeSpeed: 1 },
+            large: { scaleFactor: 400, kMultiplier: 25, amplitudeBoost: 10, complexity: 2, harmonicLayers: 4, timeSpeed: 1 },
+            complex: { scaleFactor: 350, kMultiplier: 20, amplitudeBoost: 8, complexity: 2.5, harmonicLayers: 5, timeSpeed: 0.5 },
+            organic: { scaleFactor: 320, kMultiplier: 18, amplitudeBoost: 6, complexity: 1.5, harmonicLayers: 3, timeSpeed: 1.5 }
+        };
+        
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = presets[btn.dataset.preset];
+                Object.keys(preset).forEach(key => {
+                    this.params[key] = preset[key];
+                    const slider = document.getElementById(key);
+                    const valueDisplay = document.getElementById(key + 'Value');
+                    slider.value = preset[key];
+                    if (key.includes('Layers')) {
+                        valueDisplay.textContent = preset[key].toString();
+                    } else {
+                        valueDisplay.textContent = preset[key].toFixed(1);
+                    }
+                });
+                this.updateInfo();
+            });
+        });
+    }
+    
+    setupButtons() {
+        document.getElementById('pauseBtn').addEventListener('click', (e) => {
+            this.isPaused = !this.isPaused;
+            e.target.textContent = this.isPaused ? 'Resume' : 'Pause';
+            if (!this.isPaused) {
+                this.startTime = Date.now() - this.pausedTime;
+                this.animate();
+            }
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            this.startTime = Date.now();
+            this.isPaused = false;
+            document.getElementById('pauseBtn').textContent = 'Pause';
+        });
+    }
+    
+    updateInfo() {
+        document.getElementById('formulaInfo').textContent = `Scale: ${this.params.scaleFactor} | K: ${this.params.kMultiplier} | Boost: ${this.params.amplitudeBoost}`;
+        document.getElementById('patternInfo').textContent = `Layers: ${this.params.harmonicLayers} | Complexity: ${this.params.complexity} | Speed: ${this.params.timeSpeed}`;
+    }
+    
+    animate() {
+        if (this.isPaused) {
+            this.pausedTime = Date.now() - this.startTime;
+            return;
+        }
+        
+        const currentTime = (Date.now() - this.startTime) * 0.001 * this.params.timeSpeed;
+        
+        // Clear canvas
+        this.ctx.fillStyle = '#000000';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        const centerX = 400;
+        const centerY = 300;
+        
+        // Draw multiple harmonic layers
+        for (let layer = 0; layer < this.params.harmonicLayers; layer++) {
+            const points = [];
+            const layerOffset = layer * 0.3;
+            const layerScale = this.params.scaleFactor * (1 - layer * 0.1);
+            
+            // Generate points for this layer
+            for (let t = 0; t < 3600; t += 2) {
+                const tRad = (t / 10) * Math.PI / 180;
+                
+                // Enhanced parametric formula
+                const k = this.params.kMultiplier * Math.cos(tRad / 8 + currentTime + layerOffset) * this.params.complexity;
+                const e = tRad / 8 - 12.5 + Math.sin(currentTime * 0.5) * 2;
+                
+                // Magnitude calculation with boost
+                const magComponent = (e * 3 / 1499 + 
+                                   Math.cos(e / 4 + currentTime * 2) / 5 + 
+                                   Math.sin(tRad * 0.1 + currentTime) * 0.3 + 1) * this.params.amplitudeBoost;
+                
+                // Distance calculation
+                const denominator = e / 99 + tRad / 99 + Math.cos(magComponent) + 200;
+                let d = 0;
+                if (Math.abs(denominator) > 0.001) {
+                    d = k * (3 + Math.sin(tRad + currentTime * 2)) * 
+                        Math.sin(magComponent / denominator) * this.params.amplitudeBoost;
+                }
+                
+                // Calculate final position
+                const x = centerX + layerScale * d * Math.cos(tRad);
+                const y = centerY + layerScale * d * Math.sin(tRad);
+                
+                // Keep reasonable bounds
+                if (Math.abs(x - centerX) <= 350 && Math.abs(y - centerY) <= 250) {
+                    points.push({ x, y });
+                }
+            }
+            
+            // Draw this layer
+            if (points.length > 1) {
+                for (let i = 1; i < points.length; i++) {
+                    const progress = i / points.length;
+                    
+                    // Layer-specific colors
+                    const hue = (progress * 360 + currentTime * 30 * this.params.colorSpeed + layer * 72) % 360;
+                    const r = Math.floor(127 * (1 + Math.sin(hue * Math.PI / 180)));
+                    const g = Math.floor(127 * (1 + Math.sin((hue + 120) * Math.PI / 180)));
+                    const b = Math.floor(127 * (1 + Math.sin((hue + 240) * Math.PI / 180)));
+                    
+                    this.ctx.strokeStyle = `rgb(${r}, ${g}, ${b})`;
+                    this.ctx.lineWidth = Math.max(1, this.params.lineWidth * (1 + Math.sin(progress * Math.PI * 4) * 0.5));
+                    this.ctx.lineCap = 'round';
+                    
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(points[i-1].x, points[i-1].y);
+                    this.ctx.lineTo(points[i].x, points[i].y);
+                    this.ctx.stroke();
+                }
+            }
+        }
+        
+        // Enhanced center point
+        const pulse = 8 + 5 * Math.sin(currentTime * 3);
+        const glowPulse = 15 + 8 * Math.sin(currentTime * 2);
+        
+        // Outer glow
+        this.ctx.strokeStyle = 'cyan';
+        this.ctx.lineWidth = 1;
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, glowPulse, 0, 2 * Math.PI);
+        this.ctx.stroke();
+        
+        // Inner core
+        this.ctx.fillStyle = 'white';
+        this.ctx.strokeStyle = 'gold';
+        this.ctx.lineWidth = 3;
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, pulse, 0, 2 * Math.PI);
+        this.ctx.fill();
+        this.ctx.stroke();
+        
+        // Title and info
+        this.ctx.fillStyle = 'white';
+        this.ctx.font = '16px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText('Interactive Parametric Formula Explorer', 400, 30);
+        
+        this.ctx.fillStyle = 'cyan';
+        this.ctx.font = '12px Arial';
+        this.ctx.fillText(`Scale: ${this.params.scaleFactor} | Layers: ${this.params.harmonicLayers} | Complexity: ${this.params.complexity}`, 400, 50);
+        
+        this.ctx.fillStyle = 'yellow';
+        this.ctx.font = '10px Arial';
+        this.ctx.fillText('d = k(3+sin(t+τ))×sin(mag/(e/99+t/99+cos(mag)+200)) × BOOST', 400, 580);
+        
+        this.updateInfo();
+        
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+    
+    startAnimation() {
+        this.animate();
+    }
+    
+    stop() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+    }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    new ParametricFormulaExplorer();
+});
+</script>

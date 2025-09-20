@@ -373,6 +373,233 @@ if __name__ == "__main__":
                         </div>
                     </section>
 
+                    <!-- Parametric Formula Art -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">6. Advanced Parametric Formula Art</h2>
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6 mb-6">
+                            <div class="flex items-center mb-4">
+                                <div class="bg-purple-100 p-3 rounded-lg mr-4">
+                                    <i class="fas fa-infinity text-purple-600 text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-purple-900">Complex Parametric Equations</h3>
+                                    <p class="text-purple-700">Create stunning organic patterns using advanced mathematical formulas!</p>
+                                </div>
+                            </div>
+                            <p class="text-purple-800 mb-4">
+                                This advanced visualization demonstrates how <strong>complex parametric equations</strong> can create 
+                                beautiful, organic patterns. The formula combines multiple trigonometric functions, harmonic 
+                                oscillations, and time-based animation to generate flowing mathematical art.
+                            </p>
+                            <div class="bg-purple-100 p-4 rounded-lg mb-4">
+                                <h4 class="font-semibold text-purple-900 mb-2">Advanced Mathematical Concepts:</h4>
+                                <ul class="text-purple-800 space-y-1">
+                                    <li><strong>Complex Parametric Equations:</strong> Multi-variable mathematical functions</li>
+                                    <li><strong>Harmonic Analysis:</strong> Combining multiple oscillating frequencies</li>
+                                    <li><strong>Amplitude Modulation:</strong> Varying the strength of oscillations over time</li>
+                                    <li><strong>Phase Relationships:</strong> How different waves interact and combine</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-3">Interactive Parametric Formula Code:</h3>
+                            <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto relative">
+                                <button class="copy-btn absolute top-2 right-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded text-xs" onclick="copyCode(this)">
+                                    📋 Copy
+                                </button>
+<pre>{`import math
+import tkinter as tk
+from tkinter import Canvas, Scale, Label, Frame
+import time
+
+def create_interactive_parametric_art():
+    """
+    Interactive parametric formula art with parameter controls
+    Formula: d = k(3+sin(t+τ))×sin(mag/(e/99+t/99+cos(mag)+200))
+    """
+    root = tk.Tk()
+    root.title("Interactive Parametric Formula Art")
+    root.geometry("1200x700")
+    root.configure(bg='black')
+    
+    # Create main frame
+    main_frame = Frame(root, bg='black')
+    main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    
+    # Canvas for drawing
+    canvas = Canvas(main_frame, width=800, height=600, bg='black')
+    canvas.pack(side=tk.LEFT, padx=(0, 20))
+    
+    # Control panel
+    control_frame = Frame(main_frame, bg='black', width=350)
+    control_frame.pack(side=tk.RIGHT, fill=tk.Y)
+    
+    # Parameters with interactive controls
+    scale_factor = tk.DoubleVar(value=300.0)
+    k_multiplier = tk.DoubleVar(value=15.0)
+    amplitude_boost = tk.DoubleVar(value=5.0)
+    time_speed = tk.DoubleVar(value=1.0)
+    pattern_complexity = tk.DoubleVar(value=1.0)
+    harmonic_layers = tk.IntVar(value=3)
+    
+    def create_slider(parent, label, variable, from_, to, resolution=0.1):
+        frame = Frame(parent, bg='black')
+        frame.pack(fill=tk.X, pady=3)
+        
+        Label(frame, text=label, fg="white", bg="black", 
+              font=("Arial", 9, "bold")).pack()
+        slider = Scale(frame, from_=from_, to=to, resolution=resolution, 
+                      orient=tk.HORIZONTAL, variable=variable, 
+                      bg="gray20", fg="white", highlightbackground="black")
+        slider.pack(fill=tk.X)
+        return slider
+    
+    # Create control sliders
+    Label(control_frame, text="Parametric Formula Controls", 
+          font=("Arial", 14, "bold"), fg="white", bg="black").pack(pady=10)
+    
+    create_slider(control_frame, "Scale Factor", scale_factor, 50, 500, 10)
+    create_slider(control_frame, "K Multiplier", k_multiplier, 5, 30, 1)
+    create_slider(control_frame, "Amplitude Boost", amplitude_boost, 1, 20, 0.5)
+    create_slider(control_frame, "Time Speed", time_speed, 0.1, 3.0, 0.1)
+    create_slider(control_frame, "Complexity", pattern_complexity, 0.5, 3.0, 0.1)
+    create_slider(control_frame, "Harmonic Layers", harmonic_layers, 1, 5, 1)
+    
+    def draw_frame():
+        canvas.delete("all")
+        
+        center_x, center_y = 400, 300
+        current_time = time.time() * time_speed.get()
+        
+        # Get current parameters
+        scale = scale_factor.get()
+        k_mult = k_multiplier.get()
+        complexity = pattern_complexity.get()
+        amp_boost = amplitude_boost.get()
+        layers = harmonic_layers.get()
+        
+        # Draw multiple harmonic layers
+        for layer in range(layers):
+            points = []
+            layer_offset = layer * 0.3
+            layer_scale = scale * (1 - layer * 0.1)
+            
+            # Generate points using the parametric formula
+            for t in range(0, 3600, 2):
+                t_rad = math.radians(t / 10)
+                
+                # Core parametric formula
+                k = k_mult * math.cos(t_rad / 8 + current_time + layer_offset) * complexity
+                e = t_rad / 8 - 12.5 + math.sin(current_time * 0.5) * 2
+                
+                # Magnitude calculation
+                mag_component = (e * 3 / 1499 + 
+                               math.cos(e / 4 + current_time * 2) / 5 + 
+                               math.sin(t_rad * 0.1 + current_time) * 0.3 + 1) * amp_boost
+                
+                # Distance calculation with formula
+                try:
+                    denominator = e / 99 + t_rad / 99 + math.cos(mag_component) + 200
+                    if abs(denominator) > 0.001:
+                        d = k * (3 + math.sin(t_rad + current_time * 2)) * \\
+                            math.sin(mag_component / denominator) * amp_boost
+                    else:
+                        d = 0
+                except:
+                    d = 0
+                
+                # Calculate final position
+                x = center_x + layer_scale * d * math.cos(t_rad)
+                y = center_y + layer_scale * d * math.sin(t_rad)
+                
+                if abs(x - center_x) <= 350 and abs(y - center_y) <= 250:
+                    points.append((x, y))
+            
+            # Draw this layer with rainbow colors
+            if len(points) > 1:
+                for i in range(1, len(points)):
+                    progress = i / len(points)
+                    
+                    # Rainbow gradient
+                    hue = (progress * 360 + current_time * 30 + layer * 72) % 360
+                    r = int(127 * (1 + math.sin(math.radians(hue))))
+                    g = int(127 * (1 + math.sin(math.radians(hue + 120))))
+                    b = int(127 * (1 + math.sin(math.radians(hue + 240))))
+                    
+                    color = f"#{r:02x}{g:02x}{b:02x}"
+                    width = max(1, int(2 * (1 + math.sin(progress * math.pi * 4) * 0.5)))
+                    
+                    x1, y1 = points[i-1]
+                    x2, y2 = points[i]
+                    canvas.create_line(x1, y1, x2, y2, fill=color, width=width, smooth=True)
+        
+        # Center point with pulse effect
+        pulse = 8 + 5 * math.sin(current_time * 3)
+        canvas.create_oval(center_x-pulse, center_y-pulse, center_x+pulse, center_y+pulse, 
+                          fill="white", outline="gold", width=3)
+        
+        # Display information
+        canvas.create_text(400, 25, text="Interactive Parametric Formula Art", 
+                          fill="white", font=("Arial", 16, "bold"))
+        canvas.create_text(400, 45, text=f"Scale: {scale:.0f} | Layers: {layers} | Complexity: {complexity:.1f}", 
+                          fill="cyan", font=("Arial", 12))
+        canvas.create_text(400, 575, text="d = k(3+sin(t+τ))×sin(mag/(e/99+t/99+cos(mag)+200)) × BOOST", 
+                          fill="yellow", font=("Arial", 10))
+        
+        root.after(30, draw_frame)
+    
+    # Preset buttons
+    def preset_large():
+        scale_factor.set(400.0)
+        k_multiplier.set(25.0)
+        amplitude_boost.set(10.0)
+        pattern_complexity.set(2.0)
+        harmonic_layers.set(4)
+    
+    def preset_complex():
+        scale_factor.set(350.0)
+        k_multiplier.set(20.0)
+        amplitude_boost.set(8.0)
+        pattern_complexity.set(2.5)
+        harmonic_layers.set(5)
+        time_speed.set(0.5)
+    
+    button_frame = Frame(control_frame, bg='black')
+    button_frame.pack(pady=20)
+    
+    tk.Button(button_frame, text="Large Pattern", command=preset_large,
+              bg="orange", fg="white", font=("Arial", 10, "bold")).pack(pady=2)
+    
+    tk.Button(button_frame, text="Complex Pattern", command=preset_complex,
+              bg="purple", fg="white", font=("Arial", 10, "bold")).pack(pady=2)
+    
+    # Instructions
+    instructions = [
+        "• Scale Factor controls overall size",
+        "• K Multiplier affects pattern shape", 
+        "• Amplitude Boost makes dramatic changes",
+        "• Try preset buttons for instant effects",
+        "• Adjust layers for visual complexity"
+    ]
+    
+    Label(control_frame, text="Instructions:", fg="yellow", bg="black", 
+          font=("Arial", 10, "bold")).pack(pady=(20, 5))
+    
+    for instruction in instructions:
+        Label(control_frame, text=instruction, fg="white", bg="black", 
+              font=("Arial", 8), anchor="w").pack(anchor="w", padx=10)
+    
+    # Start animation
+    draw_frame()
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_interactive_parametric_art()`}</pre>
+                            </div>
+                        </div>
+                    </section>
+
                     <!-- Web Version -->
                     <section>
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Try the Interactive Web Version!</h2>
@@ -388,23 +615,31 @@ if __name__ == "__main__":
                             </div>
                             <p class="text-purple-800 mb-4">
                                 We've created web-based versions of these mathematical art generators that run directly in your browser. 
-                                Both include interactive controls, real-time parameter adjustment, and beautiful visual effects.
+                                All include interactive controls, real-time parameter adjustment, and beautiful visual effects.
                             </p>
-                            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div class="grid md:grid-cols-3 gap-4 mb-4">
                                 <div class="bg-purple-100 p-4 rounded-lg">
                                     <h4 class="font-semibold text-purple-900 mb-2">🌀 Lissajous Curve Explorer</h4>
                                     <p class="text-purple-700 text-sm mb-3">Interactive parametric equations with frequency ratios, amplitudes, and phase controls.</p>
                                     <a href="/simulations/lissajous-explorer.html" target="_blank" 
-                                       class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded font-medium transition-colors duration-200 text-sm">
-                                        Launch Lissajous Explorer
+                                       class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded font-medium transition-colors duration-200 text-sm">
+                                        Launch Explorer
                                     </a>
                                 </div>
                                 <div class="bg-blue-100 p-4 rounded-lg">
                                     <h4 class="font-semibold text-blue-900 mb-2">💫 Particle Flow Simulator</h4>
                                     <p class="text-blue-700 text-sm mb-3">Interactive particle systems with flow fields, trails, and dynamic physics controls.</p>
                                     <a href="/simulations/particle-flow-explorer.html" target="_blank" 
-                                       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-medium transition-colors duration-200 text-sm">
-                                        Launch Particle Flow
+                                       class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded font-medium transition-colors duration-200 text-sm">
+                                        Launch Simulator
+                                    </a>
+                                </div>
+                                <div class="bg-pink-100 p-4 rounded-lg">
+                                    <h4 class="font-semibold text-pink-900 mb-2">∞ Parametric Formula Art</h4>
+                                    <p class="text-pink-700 text-sm mb-3">Complex mathematical formulas creating organic patterns with harmonic layers and controls.</p>
+                                    <a href="/simulations/parametric-formula-explorer.html" target="_blank" 
+                                       class="bg-pink-600 hover:bg-pink-700 text-white px-3 py-2 rounded font-medium transition-colors duration-200 text-sm">
+                                        Launch Formula Art
                                     </a>
                                 </div>
                             </div>

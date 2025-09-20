@@ -1,0 +1,578 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 10: N-Body Gravitational Simulation - C00lnerd Programming">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+        <!-- Header -->
+        <div class="bg-white shadow-sm border-b">
+            <div class="max-w-4xl mx-auto px-4 py-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-900">Python Lesson 10</h1>
+                        <p class="text-lg text-gray-600 mt-2">N-Body Gravitational Simulation</p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <a href="/programming/python/lesson9.html" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            ← Previous Lesson
+                        </a>
+                        <a href="/programming/python.html" 
+                           class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                            Course Overview
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Introduction -->
+            <section class="mb-12">
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-8">
+                    <div class="flex items-center mb-6">
+                        <div class="bg-indigo-100 p-4 rounded-lg mr-6">
+                            <i class="fas fa-globe text-indigo-600 text-3xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold text-indigo-900">Welcome to Advanced Physics Simulation!</h2>
+                            <p class="text-indigo-700 text-lg">Learn how gravity shapes the universe through code</p>
+                        </div>
+                    </div>
+                    <p class="text-indigo-800 text-lg leading-relaxed mb-6">
+                        In this advanced lesson, we'll create an <strong>N-Body gravitational simulation</strong> - 
+                        the same type of program NASA uses to calculate spacecraft trajectories! You'll learn how 
+                        <strong>Newton's laws of physics</strong> work in code and see how planets, stars, and 
+                        galaxies move through space.
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-indigo-100 p-4 rounded-lg">
+                            <h3 class="font-bold text-indigo-900 mb-2">🚀 What You'll Learn:</h3>
+                            <ul class="text-indigo-800 space-y-1">
+                                <li>• Newton's Law of Universal Gravitation</li>
+                                <li>• Object-oriented programming with physics</li>
+                                <li>• Vector mathematics and forces</li>
+                                <li>• Real-time simulation techniques</li>
+                            </ul>
+                        </div>
+                        <div class="bg-purple-100 p-4 rounded-lg">
+                            <h3 class="font-bold text-purple-900 mb-2">🌟 Cool Features:</h3>
+                            <ul class="text-purple-800 space-y-1">
+                                <li>• Interactive celestial body placement</li>
+                                <li>• Beautiful orbital trails</li>
+                                <li>• Adjustable physics parameters</li>
+                                <li>• Multiple preset configurations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Physics Theory -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Understanding Gravitational Physics</h2>
+                <div class="bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-lg p-6 mb-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-green-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-atom text-green-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-green-900">Newton's Law of Universal Gravitation</h3>
+                            <p class="text-green-700">The fundamental force that governs planetary motion</p>
+                        </div>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-green-900 mb-2">The Mathematical Formula:</h4>
+                        <div class="text-center text-2xl font-mono text-green-800 mb-2">
+                            F = G × (m₁ × m₂) / r²
+                        </div>
+                        <ul class="text-green-800 space-y-1">
+                            <li><strong>F</strong> = Gravitational force between two objects</li>
+                            <li><strong>G</strong> = Gravitational constant (we'll use a scaled version)</li>
+                            <li><strong>m₁, m₂</strong> = Masses of the two objects</li>
+                            <li><strong>r</strong> = Distance between the objects</li>
+                        </ul>
+                    </div>
+                    <p class="text-green-800">
+                        This means <strong>heavier objects pull harder</strong>, and objects <strong>farther apart pull weaker</strong>. 
+                        The force gets much weaker very quickly as distance increases (inverse square law)!
+                    </p>
+                </div>
+            </section>
+
+            <!-- N-Body Simulation Code -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Interactive N-Body Simulation</h2>
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">Complete N-Body Physics Simulation:</h3>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto relative">
+                        <button class="copy-btn absolute top-2 right-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded text-xs" onclick="copyCode(this)">
+                            📋 Copy
+                        </button>
+<pre>{`import math
+import tkinter as tk
+from tkinter import Canvas, Scale, Label, Frame, Button
+import time
+import random
+
+class CelestialBody:
+    """
+    A celestial body with mass, position, velocity, and gravitational effects
+    """
+    def __init__(self, x, y, vx, vy, mass, color, name="Body"):
+        self.x = x
+        self.y = y
+        self.vx = vx  # velocity in x direction
+        self.vy = vy  # velocity in y direction
+        self.mass = mass
+        self.radius = max(3, math.sqrt(mass) * 0.8)  # visual size based on mass
+        self.color = color
+        self.name = name
+        self.trail = []  # stores previous positions for drawing trails
+        self.ax = 0  # acceleration in x direction
+        self.ay = 0  # acceleration in y direction
+    
+    def update_position(self, dt):
+        """Update position based on current velocity"""
+        self.x += self.vx * dt
+        self.y += self.vy * dt
+        
+        # Add current position to trail
+        self.trail.append((self.x, self.y))
+        
+        # Limit trail length for performance
+        if len(self.trail) > 200:
+            self.trail.pop(0)
+    
+    def update_velocity(self, dt):
+        """Update velocity based on current acceleration"""
+        self.vx += self.ax * dt
+        self.vy += self.ay * dt
+    
+    def reset_acceleration(self):
+        """Reset acceleration to zero (called each frame)"""
+        self.ax = 0
+        self.ay = 0
+    
+    def add_gravitational_force(self, other_body, G):
+        """
+        Calculate and add gravitational force from another body
+        This is where Newton's law of gravitation is implemented!
+        """
+        # Calculate distance between bodies
+        dx = other_body.x - self.x
+        dy = other_body.y - self.y
+        distance_squared = dx*dx + dy*dy
+        distance = math.sqrt(distance_squared)
+        
+        # Avoid division by zero and excessive forces at very small distances
+        min_distance = self.radius + other_body.radius
+        if distance < min_distance:
+            return
+        
+        # Newton's Law: F = G * m1 * m2 / r^2
+        force_magnitude = G * self.mass * other_body.mass / distance_squared
+        
+        # Calculate force direction (unit vector)
+        force_x = force_magnitude * dx / distance
+        force_y = force_magnitude * dy / distance
+        
+        # F = ma, so a = F/m (acceleration = force / mass)
+        self.ax += force_x / self.mass
+        self.ay += force_y / self.mass
+    
+    def draw(self, canvas):
+        """Draw the celestial body and its trail"""
+        # Draw trail with fading effect
+        if len(self.trail) > 1:
+            for i in range(1, len(self.trail)):
+                # Calculate fade based on position in trail
+                fade = i / len(self.trail)
+                alpha = int(255 * fade)
+                
+                # Create fading color
+                if self.color.startswith('#'):
+                    r = int(self.color[1:3], 16)
+                    g = int(self.color[3:5], 16)
+                    b = int(self.color[5:7], 16)
+                    faded_color = f"#{int(r*fade):02x}{int(g*fade):02x}{int(b*fade):02x}"
+                else:
+                    faded_color = self.color
+                
+                x1, y1 = self.trail[i-1]
+                x2, y2 = self.trail[i]
+                canvas.create_line(x1, y1, x2, y2, fill=faded_color, width=2)
+        
+        # Draw the body itself
+        canvas.create_oval(
+            self.x - self.radius, self.y - self.radius,
+            self.x + self.radius, self.y + self.radius,
+            fill=self.color, outline="white", width=1
+        )
+        
+        # Draw name label
+        canvas.create_text(self.x, self.y - self.radius - 15, 
+                          text=self.name, fill="white", font=("Arial", 8))
+
+def create_nbody_simulation():
+    """
+    Create an interactive N-Body gravitational simulation
+    """
+    root = tk.Tk()
+    root.title("N-Body Gravitational Simulation")
+    root.geometry("1200x800")
+    root.configure(bg='black')
+    
+    # Create main frame
+    main_frame = Frame(root, bg='black')
+    main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+    
+    # Canvas for simulation
+    canvas = Canvas(main_frame, width=900, height=700, bg='#111111')
+    canvas.pack(side=tk.LEFT, padx=(0, 20))
+    
+    # Control panel
+    control_frame = Frame(main_frame, bg='black', width=250)
+    control_frame.pack(side=tk.RIGHT, fill=tk.Y)
+    control_frame.pack_propagate(False)
+    
+    # Simulation parameters
+    G = tk.DoubleVar(value=300.0)  # Gravitational constant
+    time_step = tk.DoubleVar(value=0.02)  # Time step for simulation
+    trail_length = tk.IntVar(value=150)  # Length of orbital trails
+    
+    # List to store all celestial bodies
+    bodies = []
+    colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#a3f7bf', '#7d53de', '#f7d6e0', '#f2f0d8']
+    next_color_index = 0
+    
+    def create_slider(parent, label, variable, from_, to, resolution=0.01):
+        frame = Frame(parent, bg='black')
+        frame.pack(fill=tk.X, pady=5)
+        
+        Label(frame, text=label, fg="white", bg="black", 
+              font=("Arial", 10, "bold")).pack()
+        slider = Scale(frame, from_=from_, to=to, resolution=resolution, 
+                      orient=tk.HORIZONTAL, variable=variable, 
+                      bg="gray20", fg="white", highlightbackground="black")
+        slider.pack(fill=tk.X)
+        return slider
+    
+    # Create control sliders
+    Label(control_frame, text="N-Body Simulation Controls", 
+          font=("Arial", 14, "bold"), fg="white", bg="black").pack(pady=10)
+    
+    create_slider(control_frame, "Gravitational Constant", G, 50, 500, 10)
+    create_slider(control_frame, "Time Step", time_step, 0.005, 0.05, 0.005)
+    create_slider(control_frame, "Trail Length", trail_length, 50, 300, 10)
+    
+    def binary_star_system():
+        """Create a binary star system"""
+        nonlocal bodies, next_color_index
+        bodies.clear()
+        center_x, center_y = 450, 350
+        
+        # Two stars orbiting each other
+        bodies.append(CelestialBody(center_x - 100, center_y, 0, -15, 120, colors[0], "Star A"))
+        bodies.append(CelestialBody(center_x + 100, center_y, 0, 15, 120, colors[1], "Star B"))
+        next_color_index = 2
+    
+    def solar_system():
+        """Create a simplified solar system"""
+        nonlocal bodies, next_color_index
+        bodies.clear()
+        center_x, center_y = 450, 350
+        
+        # Central star (sun)
+        bodies.append(CelestialBody(center_x, center_y, 0, 0, 200, '#ffbe0b', "Sun"))
+        
+        # Planets at different distances with orbital velocities
+        planets = [
+            (80, 25, '#ff6b6b', "Mercury"),
+            (120, 20, '#4ecdc4', "Venus"), 
+            (160, 17, '#a3f7bf', "Earth"),
+            (220, 14, '#f7d6e0', "Mars")
+        ]
+        
+        for distance, speed, color, name in planets:
+            bodies.append(CelestialBody(center_x + distance, center_y, 0, speed, 30, color, name))
+        
+        next_color_index = 0
+    
+    def three_body_system():
+        """Create an interesting three-body system"""
+        nonlocal bodies, next_color_index
+        bodies.clear()
+        center_x, center_y = 450, 350
+        
+        # Three bodies in a triangular configuration
+        angle_offset = 2 * math.pi / 3  # 120 degrees
+        distance = 120
+        speed = 12
+        
+        for i in range(3):
+            angle = i * angle_offset
+            x = center_x + distance * math.cos(angle)
+            y = center_y + distance * math.sin(angle)
+            
+            # Velocity perpendicular to radius for circular motion
+            vx = -speed * math.sin(angle)
+            vy = speed * math.cos(angle)
+            
+            bodies.append(CelestialBody(x, y, vx, vy, 100, colors[i], f"Body {i+1}"))
+        
+        next_color_index = 3
+    
+    def add_random_body():
+        """Add a random body to the simulation"""
+        nonlocal next_color_index
+        x = random.randint(50, 850)
+        y = random.randint(50, 650)
+        
+        # Calculate orbital velocity relative to center
+        center_x, center_y = 450, 350
+        dx = x - center_x
+        dy = y - center_y
+        distance = math.sqrt(dx*dx + dy*dy)
+        
+        if distance > 0:
+            orbital_speed = 10 + random.random() * 10
+            vx = -dy / distance * orbital_speed
+            vy = dx / distance * orbital_speed
+        else:
+            vx = vy = 0
+        
+        mass = 30 + random.random() * 80
+        color = colors[next_color_index % len(colors)]
+        name = f"Body {len(bodies) + 1}"
+        
+        bodies.append(CelestialBody(x, y, vx, vy, mass, color, name))
+        next_color_index = (next_color_index + 1) % len(colors)
+    
+    def clear_all():
+        """Clear all bodies"""
+        bodies.clear()
+    
+    def on_canvas_click(event):
+        """Add a new body where the user clicks"""
+        nonlocal next_color_index
+        x, y = event.x, event.y
+        
+        # Calculate orbital velocity
+        center_x, center_y = 450, 350
+        dx = x - center_x
+        dy = y - center_y
+        distance = math.sqrt(dx*dx + dy*dy)
+        
+        if distance > 0:
+            orbital_speed = 8 + random.random() * 8
+            vx = -dy / distance * orbital_speed
+            vy = dx / distance * orbital_speed
+        else:
+            vx = vy = 0
+        
+        mass = 40 + random.random() * 60
+        color = colors[next_color_index % len(colors)]
+        name = f"Body {len(bodies) + 1}"
+        
+        bodies.append(CelestialBody(x, y, vx, vy, mass, color, name))
+        next_color_index = (next_color_index + 1) % len(colors)
+    
+    # Bind mouse click to canvas
+    canvas.bind("<Button-1>", on_canvas_click)
+    
+    # Control buttons
+    button_frame = Frame(control_frame, bg='black')
+    button_frame.pack(pady=20)
+    
+    Button(button_frame, text="Binary Stars", command=binary_star_system,
+           bg="orange", fg="white", font=("Arial", 10, "bold"), width=15).pack(pady=2)
+    
+    Button(button_frame, text="Solar System", command=solar_system,
+           bg="yellow", fg="black", font=("Arial", 10, "bold"), width=15).pack(pady=2)
+    
+    Button(button_frame, text="Three-Body System", command=three_body_system,
+           bg="purple", fg="white", font=("Arial", 10, "bold"), width=15).pack(pady=2)
+    
+    Button(button_frame, text="Add Random Body", command=add_random_body,
+           bg="green", fg="white", font=("Arial", 10, "bold"), width=15).pack(pady=2)
+    
+    Button(button_frame, text="Clear All", command=clear_all,
+           bg="red", fg="white", font=("Arial", 10, "bold"), width=15).pack(pady=2)
+    
+    # Instructions
+    Label(control_frame, text="Instructions:", fg="yellow", bg="black", 
+          font=("Arial", 12, "bold")).pack(pady=(20, 5))
+    
+    instructions = [
+        "• Click on canvas to add bodies",
+        "• Try different preset systems",
+        "• Adjust gravity and time step",
+        "• Watch orbital mechanics in action!",
+        "• Experiment with different masses"
+    ]
+    
+    for instruction in instructions:
+        Label(control_frame, text=instruction, fg="white", bg="black", 
+              font=("Arial", 9), anchor="w").pack(anchor="w", padx=10)
+    
+    def simulate_physics():
+        """Main physics simulation loop"""
+        if len(bodies) < 2:
+            return  # Need at least 2 bodies for gravitational interaction
+        
+        dt = time_step.get()
+        gravity_constant = G.get()
+        
+        # Reset all accelerations
+        for body in bodies:
+            body.reset_acceleration()
+        
+        # Calculate gravitational forces between all pairs of bodies
+        for i in range(len(bodies)):
+            for j in range(i + 1, len(bodies)):
+                body1 = bodies[i]
+                body2 = bodies[j]
+                
+                # Apply Newton's law of gravitation
+                body1.add_gravitational_force(body2, gravity_constant)
+                body2.add_gravitational_force(body1, gravity_constant)
+        
+        # Update velocities and positions
+        for body in bodies:
+            body.update_velocity(dt)
+            body.update_position(dt)
+            
+            # Keep bodies within canvas bounds (soft bounce)
+            if body.x < 50:
+                body.x = 50
+                body.vx = abs(body.vx) * 0.8
+            elif body.x > 850:
+                body.x = 850
+                body.vx = -abs(body.vx) * 0.8
+            
+            if body.y < 50:
+                body.y = 50
+                body.vy = abs(body.vy) * 0.8
+            elif body.y > 650:
+                body.y = 650
+                body.vy = -abs(body.vy) * 0.8
+    
+    def draw_frame():
+        """Draw the current frame of the simulation"""
+        canvas.delete("all")
+        
+        # Draw grid for reference
+        for i in range(0, 901, 100):
+            canvas.create_line(i, 0, i, 700, fill="#333333", width=1)
+        for i in range(0, 701, 100):
+            canvas.create_line(0, i, 900, i, fill="#333333", width=1)
+        
+        # Draw all celestial bodies
+        for body in bodies:
+            body.draw(canvas)
+        
+        # Display information
+        canvas.create_text(450, 30, text="N-Body Gravitational Simulation", 
+                          fill="white", font=("Arial", 16, "bold"))
+        canvas.create_text(450, 50, text=f"Bodies: {len(bodies)} | G: {G.get():.0f} | dt: {time_step.get():.3f}", 
+                          fill="cyan", font=("Arial", 12))
+        
+        if len(bodies) == 0:
+            canvas.create_text(450, 350, text="Click to add celestial bodies or use preset buttons!", 
+                              fill="yellow", font=("Arial", 14))
+        
+        # Update physics and schedule next frame
+        simulate_physics()
+        root.after(30, draw_frame)
+    
+    # Start with binary star system
+    binary_star_system()
+    
+    # Start animation
+    draw_frame()
+    root.mainloop()
+
+if __name__ == "__main__":
+    create_nbody_simulation()`}</pre>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Web Version Link -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Try the Interactive Web Version!</h2>
+                <div class="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="bg-indigo-100 p-3 rounded-lg mr-4">
+                            <i class="fas fa-globe text-indigo-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-indigo-900">Interactive N-Body Simulation</h3>
+                            <p class="text-indigo-700">Experience gravitational physics in your web browser!</p>
+                        </div>
+                    </div>
+                    <p class="text-indigo-800 mb-4">
+                        We have a web-based version of the N-Body simulation that runs directly in your browser. 
+                        Click celestial bodies into existence and watch them orbit according to Newton's laws!
+                    </p>
+                    <div class="text-center">
+                        <a href="/simulations/interactive/N_Body_simulation.html" target="_blank" 
+                           class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 inline-flex items-center">
+                            <i class="fas fa-external-link-alt mr-2"></i>
+                            Launch N-Body Simulation
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Challenge Section -->
+            <section>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Your Physics Challenge</h2>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6">
+                    <h3 class="text-lg font-semibold text-yellow-900 mb-3">Explore Real Orbital Mechanics!</h3>
+                    <p class="text-yellow-800 mb-4">
+                        Now that you understand gravitational physics, try these advanced experiments:
+                    </p>
+                    <ul class="space-y-2 text-yellow-700">
+                        <li class="flex items-start">
+                            <i class="fas fa-rocket text-yellow-500 mr-2 mt-1"></i>
+                            <strong>Slingshot Effect:</strong> Use a large planet's gravity to accelerate a smaller body
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-satellite text-yellow-500 mr-2 mt-1"></i>
+                            <strong>Stable Orbits:</strong> Find the perfect velocity for circular orbits
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-meteor text-yellow-500 mr-2 mt-1"></i>
+                            <strong>Escape Velocity:</strong> How fast must an object go to escape gravity?
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-star text-yellow-500 mr-2 mt-1"></i>
+                            <strong>Lagrange Points:</strong> Find stable points in a three-body system
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.nextElementSibling;
+            const code = codeBlock.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                button.style.backgroundColor = '#10b981';
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.backgroundColor = '';
+                }, 2000);
+            });
+        }
+    </script>
+</Layout>
