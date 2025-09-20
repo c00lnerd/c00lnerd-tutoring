@@ -74,7 +74,11 @@ import Layout from '../../../layouts/Layout.astro';
 				<h2>💻 The Complete Game Code</h2>
 				<p>Here's the full implementation of Gravitational Destroyer:</p>
 
-				<pre><code class="language-python">import math
+				<div class="bg-gray-900 rounded-lg p-4 mb-4 relative">
+					<button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs font-medium transition-colors z-10">
+						📋 Copy
+					</button>
+					<pre class="text-green-400 text-sm overflow-x-auto"><code>import math
 import tkinter as tk
 from tkinter import Canvas, Label, Frame
 import time
@@ -286,6 +290,18 @@ class GravitationalDestroyer:
 if __name__ == "__main__":
     game = GravitationalDestroyer()
     game.run()</code></pre>
+				</div>
+				
+				<div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+					<h3 class="font-semibold text-blue-800 mb-2">📋 Copy this code into Spyder:</h3>
+					<ol class="text-sm text-blue-700 space-y-1">
+						<li>1. Open Spyder from Anaconda Navigator</li>
+						<li>2. Copy the code above into the editor</li>
+						<li>3. Save as <code>gravitational_destroyer.py</code></li>
+						<li>4. Press <kbd class="bg-blue-200 px-2 py-1 rounded">F5</kbd> to run the game</li>
+						<li>5. Use arrow keys to move, SPACE to shoot!</li>
+					</ol>
+				</div>
 			</div>
 
 			<div class="gameplay-section">
@@ -682,3 +698,27 @@ if __name__ == "__main__":
 		}
 	}
 </style>
+
+<script>
+	function copyCode(button) {
+		const codeBlock = button.nextElementSibling.querySelector('code');
+		const text = codeBlock.textContent;
+		
+		navigator.clipboard.writeText(text).then(() => {
+			const originalText = button.textContent;
+			button.textContent = '✅ Copied!';
+			button.style.backgroundColor = '#10b981';
+			
+			setTimeout(() => {
+				button.textContent = originalText;
+				button.style.backgroundColor = '#2563eb';
+			}, 2000);
+		}).catch(err => {
+			console.error('Failed to copy text: ', err);
+			button.textContent = '❌ Failed';
+			setTimeout(() => {
+				button.textContent = '📋 Copy';
+			}, 2000);
+		});
+	}
+</script>

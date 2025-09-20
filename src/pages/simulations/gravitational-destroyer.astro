@@ -41,7 +41,7 @@ import Layout from '../../layouts/Layout.astro';
 						<div class="control-list">
 							<div>🖱️ Mouse: Aim ship</div>
 							<div>🖱️ Hold: Thrust</div>
-							<div>🖱️ Click: Shoot</div>
+							<div>⇧ Shift: Shoot</div>
 							<div>P: Pause</div>
 							<div>R: Restart</div>
 						</div>
@@ -314,8 +314,7 @@ import Layout from '../../layouts/Layout.astro';
 				this.canvas.addEventListener('mousedown', (e) => {
 					e.preventDefault();
 					this.mouseDown = true;
-					// Shoot on mouse click
-					this.shoot();
+					// Mouse down only applies thrust, no shooting
 				});
 
 				this.canvas.addEventListener('mouseup', (e) => {
@@ -323,9 +322,12 @@ import Layout from '../../layouts/Layout.astro';
 					this.mouseDown = false;
 				});
 
-				// Keyboard controls for pause and restart
+				// Keyboard controls for shooting, pause and restart
 				document.addEventListener('keydown', (e) => {
-					if (e.code === 'KeyP') {
+					if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+						e.preventDefault();
+						this.shoot();
+					} else if (e.code === 'KeyP') {
 						this.paused = !this.paused;
 					} else if (e.code === 'KeyR') {
 						if (this.gameOver) {
