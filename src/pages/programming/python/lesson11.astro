@@ -130,7 +130,7 @@ class Planet(GameObject):
                 x1, y1 = self.trail[i-1]
                 x2, y2 = self.trail[i]
                 canvas.create_line(x1, y1, x2, y2, 
-                                 fill=f"#{alpha:02x}{alpha:02x}{alpha:02x}", width=1)
+                                 fill="#" + format(alpha, '02x') * 3, width=1)
         
         # Draw planet with special effects
         if self.planet_type == "fuel":
