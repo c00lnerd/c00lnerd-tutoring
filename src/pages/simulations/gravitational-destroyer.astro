@@ -1,0 +1,864 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Gravitational Destroyer - Interactive Physics Game">
+	<main>
+		<div class="game-container">
+			<div class="game-header">
+				<h1>🚀 Gravitational Destroyer</h1>
+				<p>Master the art of gravitational warfare! Destroy planets using realistic N-Body physics.</p>
+			</div>
+
+			<div class="game-area">
+				<canvas id="gameCanvas" width="800" height="600"></canvas>
+				
+				<div class="game-ui">
+					<div class="game-info">
+						<h3>GRAVITATIONAL<br>DESTROYER</h3>
+						<div class="stats">
+							<div class="stat">
+								<span class="label">Level:</span>
+								<span id="levelDisplay">1</span>
+							</div>
+							<div class="stat">
+								<span class="label">Score:</span>
+								<span id="scoreDisplay">0</span>
+							</div>
+							<div class="stat">
+								<span class="label">Lives:</span>
+								<span id="livesDisplay">3</span>
+							</div>
+							<div class="stat">
+								<span class="label">Fuel:</span>
+								<span id="fuelDisplay">100%</span>
+							</div>
+						</div>
+					</div>
+
+					<div class="controls-info">
+						<h4>CONTROLS</h4>
+						<div class="control-list">
+							<div>← → Rotate</div>
+							<div>↑ Thrust</div>
+							<div>SPACE Shoot</div>
+							<div>P Pause</div>
+							<div>R Restart</div>
+						</div>
+					</div>
+
+					<div class="objectives">
+						<h4>OBJECTIVES</h4>
+						<div class="objective-list">
+							<div>• Destroy all planets</div>
+							<div>• Avoid collisions</div>
+							<div>• Use gravity strategically</div>
+							<div>• Collect fuel (green)</div>
+						</div>
+					</div>
+
+					<div class="planet-types">
+						<h4>PLANET TYPES</h4>
+						<div class="type-list">
+							<div><span class="green-dot">●</span> Fuel Depot</div>
+							<div><span class="red-dot">●</span> Explosive</div>
+							<div><span class="white-dot">●</span> Normal</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="game-instructions">
+				<h2>🎮 How to Play</h2>
+				<div class="instruction-grid">
+					<div class="instruction">
+						<h3>🚀 Movement</h3>
+						<p>Use arrow keys to rotate your ship and apply thrust. Your ship follows realistic physics - momentum is conserved!</p>
+					</div>
+					<div class="instruction">
+						<h3>🎯 Shooting</h3>
+						<p>Press SPACE to fire bullets. Bullets are affected by gravity from all planets, allowing for curved shots!</p>
+					</div>
+					<div class="instruction">
+						<h3>⛽ Fuel Management</h3>
+						<p>Thrust consumes fuel. Destroy green fuel depot planets to refill. Use gravity to conserve fuel!</p>
+					</div>
+					<div class="instruction">
+						<h3>💥 Strategy</h3>
+						<p>Use gravitational slingshots, plan orbital trajectories, and trigger explosive chain reactions!</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+		class GameObject {
+			constructor(x, y, vx = 0, vy = 0, radius = 5, color = "white") {
+				this.x = x;
+				this.y = y;
+				this.vx = vx;
+				this.vy = vy;
+				this.radius = radius;
+				this.color = color;
+				this.alive = true;
+			}
+
+			update(dt) {
+				this.x += this.vx * dt;
+				this.y += this.vy * dt;
+			}
+
+			draw(ctx) {
+				ctx.beginPath();
+				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+				ctx.fillStyle = this.color;
+				ctx.fill();
+				ctx.strokeStyle = "white";
+				ctx.stroke();
+			}
+		}
+
+		class Planet extends GameObject {
+			constructor(x, y, vx, vy, mass, color, planetType = "normal") {
+				const radius = Math.max(8, Math.sqrt(mass) * 1.2);
+				super(x, y, vx, vy, radius, color);
+				this.mass = mass;
+				this.planetType = planetType;
+				this.trail = [];
+				this.points = Math.floor(mass / 10);
+			}
+
+			update(dt) {
+				super.update(dt);
+				this.trail.push({x: this.x, y: this.y});
+				if (this.trail.length > 30) {
+					this.trail.shift();
+				}
+			}
+
+			draw(ctx) {
+				// Draw trail
+				if (this.trail.length > 1) {
+					ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.moveTo(this.trail[0].x, this.trail[0].y);
+					for (let i = 1; i < this.trail.length; i++) {
+						const alpha = i / this.trail.length * 0.3;
+						ctx.globalAlpha = alpha;
+						ctx.lineTo(this.trail[i].x, this.trail[i].y);
+					}
+					ctx.stroke();
+					ctx.globalAlpha = 1;
+				}
+
+				// Draw planet with special effects
+				ctx.beginPath();
+				ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+				ctx.fillStyle = this.color;
+				ctx.fill();
+
+				if (this.planetType === "fuel") {
+					// Pulsing green outline
+					const pulse = 1 + 0.3 * Math.sin(Date.now() * 0.005);
+					ctx.strokeStyle = "lime";
+					ctx.lineWidth = 2;
+					ctx.beginPath();
+					ctx.arc(this.x, this.y, this.radius * pulse, 0, Math.PI * 2);
+					ctx.stroke();
+				} else if (this.planetType === "explosive") {
+					// Red outline
+					ctx.strokeStyle = "red";
+					ctx.lineWidth = 2;
+					ctx.stroke();
+				} else {
+					ctx.strokeStyle = "white";
+					ctx.lineWidth = 1;
+					ctx.stroke();
+				}
+			}
+		}
+
+		class Spaceship extends GameObject {
+			constructor(x, y) {
+				super(x, y, 0, 0, 8, "cyan");
+				this.angle = 0;
+				this.thrustPower = 200;
+				this.fuel = 100;
+				this.maxFuel = 100;
+				this.shield = false;
+				this.shieldTime = 0;
+				this.invulnerableTime = 0;
+			}
+
+			applyThrust(dt) {
+				if (this.fuel > 0) {
+					const thrustX = Math.cos(this.angle) * this.thrustPower * dt;
+					const thrustY = Math.sin(this.angle) * this.thrustPower * dt;
+					this.vx += thrustX;
+					this.vy += thrustY;
+					this.fuel -= 20 * dt;
+					this.fuel = Math.max(0, this.fuel);
+					return true;
+				}
+				return false;
+			}
+
+			rotate(direction, dt) {
+				this.angle += direction * 3 * dt;
+			}
+
+			update(dt) {
+				super.update(dt);
+				if (this.shieldTime > 0) {
+					this.shieldTime -= dt;
+					this.shield = this.shieldTime > 0;
+				}
+				if (this.invulnerableTime > 0) {
+					this.invulnerableTime -= dt;
+				}
+			}
+
+			draw(ctx) {
+				const size = this.radius;
+				
+				// Calculate triangle points
+				const tipX = this.x + size * Math.cos(this.angle);
+				const tipY = this.y + size * Math.sin(this.angle);
+				const leftX = this.x + size * 0.6 * Math.cos(this.angle + 2.5);
+				const leftY = this.y + size * 0.6 * Math.sin(this.angle + 2.5);
+				const rightX = this.x + size * 0.6 * Math.cos(this.angle - 2.5);
+				const rightY = this.y + size * 0.6 * Math.sin(this.angle - 2.5);
+
+				// Draw shield if active
+				if (this.shield) {
+					ctx.strokeStyle = "blue";
+					ctx.lineWidth = 2;
+					ctx.beginPath();
+					ctx.arc(this.x, this.y, size * 1.5, 0, Math.PI * 2);
+					ctx.stroke();
+				}
+
+				// Draw ship (flashing if invulnerable)
+				if (this.invulnerableTime <= 0 || Math.floor(Date.now() / 100) % 2) {
+					ctx.fillStyle = this.color;
+					ctx.strokeStyle = "white";
+					ctx.lineWidth = 1;
+					ctx.beginPath();
+					ctx.moveTo(tipX, tipY);
+					ctx.lineTo(leftX, leftY);
+					ctx.lineTo(rightX, rightY);
+					ctx.closePath();
+					ctx.fill();
+					ctx.stroke();
+				}
+			}
+		}
+
+		class Bullet extends GameObject {
+			constructor(x, y, vx, vy) {
+				super(x, y, vx, vy, 2, "yellow");
+				this.lifetime = 3.0;
+			}
+
+			update(dt) {
+				super.update(dt);
+				this.lifetime -= dt;
+				if (this.lifetime <= 0) {
+					this.alive = false;
+				}
+			}
+		}
+
+		class GravitationalDestroyer {
+			constructor() {
+				this.canvas = document.getElementById('gameCanvas');
+				this.ctx = this.canvas.getContext('2d');
+				
+				// Game state
+				this.level = 1;
+				this.score = 0;
+				this.lives = 3;
+				this.gameOver = false;
+				this.paused = false;
+				this.levelComplete = false;
+				
+				// Physics
+				this.G = 300;
+				
+				// Game objects
+				this.spaceship = null;
+				this.planets = [];
+				this.bullets = [];
+				
+				// Controls
+				this.keysPressed = new Set();
+				
+				this.setupControls();
+				this.startLevel();
+				this.gameLoop();
+			}
+
+			setupControls() {
+				document.addEventListener('keydown', (e) => {
+					this.keysPressed.add(e.code);
+					
+					if (e.code === 'Space') {
+						e.preventDefault();
+						this.shoot();
+					} else if (e.code === 'KeyP') {
+						this.paused = !this.paused;
+					} else if (e.code === 'KeyR') {
+						if (this.gameOver) {
+							this.restartGame();
+						} else {
+							this.restartLevel();
+						}
+					}
+				});
+
+				document.addEventListener('keyup', (e) => {
+					this.keysPressed.delete(e.code);
+				});
+			}
+
+			startLevel() {
+				this.levelComplete = false;
+				
+				// Create spaceship at center
+				this.spaceship = new Spaceship(this.canvas.width / 2, this.canvas.height / 2);
+				
+				// Clear objects
+				this.planets = [];
+				this.bullets = [];
+				
+				// Calculate number of planets
+				let numPlanets = 3 + (this.level - 1) * 2;
+				if (this.level > 5) {
+					numPlanets = 3 + (this.level - 1) * 5;
+				}
+				
+				// Create planets
+				for (let i = 0; i < numPlanets; i++) {
+					this.createRandomPlanet();
+				}
+				
+				// Add special planets
+				if (this.level >= 2) {
+					this.addFuelDepot();
+				}
+				if (this.level >= 3) {
+					this.addExplosivePlanet();
+				}
+			}
+
+			createRandomPlanet() {
+				let x, y;
+				do {
+					x = 50 + Math.random() * (this.canvas.width - 100);
+					y = 50 + Math.random() * (this.canvas.height - 100);
+				} while (this.spaceship && this.distance(x, y, this.spaceship.x, this.spaceship.y) < 100);
+				
+				// Orbital velocity
+				const centerX = this.canvas.width / 2;
+				const centerY = this.canvas.height / 2;
+				const dx = x - centerX;
+				const dy = y - centerY;
+				const distance = Math.sqrt(dx * dx + dy * dy);
+				
+				let vx = 0, vy = 0;
+				if (distance > 0) {
+					const orbitalSpeed = 20 + Math.random() * 30;
+					vx = -dy / distance * orbitalSpeed;
+					vy = dx / distance * orbitalSpeed;
+				}
+				
+				const mass = 50 + Math.random() * 100;
+				const colors = ['#ff6b6b', '#4ecdc4', '#ffbe0b', '#a3f7bf', '#7d53de', '#f7d6e0'];
+				const color = colors[Math.floor(Math.random() * colors.length)];
+				
+				this.planets.push(new Planet(x, y, vx, vy, mass, color));
+			}
+
+			addFuelDepot() {
+				const x = 100 + Math.random() * (this.canvas.width - 200);
+				const y = 100 + Math.random() * (this.canvas.height - 200);
+				this.planets.push(new Planet(x, y, 0, 0, 80, "#00ff00", "fuel"));
+			}
+
+			addExplosivePlanet() {
+				const x = 100 + Math.random() * (this.canvas.width - 200);
+				const y = 100 + Math.random() * (this.canvas.height - 200);
+				this.planets.push(new Planet(x, y, 0, 0, 120, "#ff0000", "explosive"));
+			}
+
+			shoot() {
+				if (!this.spaceship || this.gameOver || this.paused) return;
+				
+				const bulletSpeed = 300;
+				const bulletVx = this.spaceship.vx + bulletSpeed * Math.cos(this.spaceship.angle);
+				const bulletVy = this.spaceship.vy + bulletSpeed * Math.sin(this.spaceship.angle);
+				
+				this.bullets.push(new Bullet(this.spaceship.x, this.spaceship.y, bulletVx, bulletVy));
+			}
+
+			restartLevel() {
+				this.startLevel();
+			}
+
+			restartGame() {
+				this.level = 1;
+				this.score = 0;
+				this.lives = 3;
+				this.gameOver = false;
+				this.paused = false;
+				this.levelComplete = false;
+				this.startLevel();
+			}
+
+			nextLevel() {
+				this.level++;
+				this.startLevel();
+			}
+
+			applyGravity(dt) {
+				const allObjects = [this.spaceship, ...this.bullets];
+				
+				for (const obj of allObjects) {
+					if (!obj || !obj.alive) continue;
+					
+					let ax = 0, ay = 0;
+					
+					for (const planet of this.planets) {
+						if (!planet.alive) continue;
+						
+						const dx = planet.x - obj.x;
+						const dy = planet.y - obj.y;
+						const distanceSq = dx * dx + dy * dy;
+						const distance = Math.sqrt(distanceSq);
+						
+						if (distance > planet.radius + obj.radius) {
+							const force = this.G * planet.mass / distanceSq;
+							ax += force * dx / distance;
+							ay += force * dy / distance;
+						}
+					}
+					
+					obj.vx += ax * dt;
+					obj.vy += ay * dt;
+				}
+			}
+
+			checkCollisions() {
+				// Spaceship vs planets
+				if (this.spaceship && this.spaceship.alive && this.spaceship.invulnerableTime <= 0) {
+					for (const planet of this.planets) {
+						if (!planet.alive) continue;
+						
+						const dist = this.distance(this.spaceship.x, this.spaceship.y, planet.x, planet.y);
+						if (dist < this.spaceship.radius + planet.radius) {
+							if (!this.spaceship.shield) {
+								this.spaceshipHit();
+							}
+							break;
+						}
+					}
+				}
+				
+				// Bullets vs planets
+				for (const bullet of this.bullets) {
+					if (!bullet.alive) continue;
+					
+					for (const planet of this.planets) {
+						if (!planet.alive) continue;
+						
+						const dist = this.distance(bullet.x, bullet.y, planet.x, planet.y);
+						if (dist < bullet.radius + planet.radius) {
+							this.planetDestroyed(planet);
+							bullet.alive = false;
+							break;
+						}
+					}
+				}
+			}
+
+			spaceshipHit() {
+				this.lives--;
+				this.spaceship.invulnerableTime = 2.0;
+				
+				if (this.lives <= 0) {
+					this.gameOver = true;
+				} else {
+					// Respawn at center
+					this.spaceship.x = this.canvas.width / 2;
+					this.spaceship.y = this.canvas.height / 2;
+					this.spaceship.vx = this.spaceship.vy = 0;
+				}
+			}
+
+			planetDestroyed(planet) {
+				this.score += planet.points;
+				
+				if (planet.planetType === "fuel") {
+					this.spaceship.fuel = Math.min(this.spaceship.maxFuel, this.spaceship.fuel + 50);
+				} else if (planet.planetType === "explosive") {
+					// Chain reaction
+					for (const otherPlanet of this.planets) {
+						if (otherPlanet !== planet && otherPlanet.alive) {
+							const dist = this.distance(planet.x, planet.y, otherPlanet.x, otherPlanet.y);
+							if (dist < 100) {
+								this.planetDestroyed(otherPlanet);
+							}
+						}
+					}
+				}
+				
+				planet.alive = false;
+				
+				// Check level complete
+				if (this.planets.every(p => !p.alive)) {
+					this.levelComplete = true;
+				}
+			}
+
+			distance(x1, y1, x2, y2) {
+				return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+			}
+
+			wrapAroundScreen() {
+				const objects = [this.spaceship, ...this.bullets, ...this.planets];
+				
+				for (const obj of objects) {
+					if (!obj || !obj.alive) continue;
+					
+					if (obj.x < 0) obj.x = this.canvas.width;
+					else if (obj.x > this.canvas.width) obj.x = 0;
+					
+					if (obj.y < 0) obj.y = this.canvas.height;
+					else if (obj.y > this.canvas.height) obj.y = 0;
+				}
+			}
+
+			update(dt) {
+				if (this.gameOver || this.paused) return;
+				
+				// Handle input
+				if (this.keysPressed.has('ArrowLeft')) {
+					this.spaceship.rotate(-1, dt);
+				}
+				if (this.keysPressed.has('ArrowRight')) {
+					this.spaceship.rotate(1, dt);
+				}
+				if (this.keysPressed.has('ArrowUp')) {
+					this.spaceship.applyThrust(dt);
+				}
+				
+				// Apply gravity
+				this.applyGravity(dt);
+				
+				// Update objects
+				if (this.spaceship) {
+					this.spaceship.update(dt);
+				}
+				
+				for (const planet of this.planets) {
+					if (planet.alive) {
+						planet.update(dt);
+					}
+				}
+				
+				this.bullets = this.bullets.filter(bullet => {
+					bullet.update(dt);
+					return bullet.alive;
+				});
+				
+				// Wrap around screen
+				this.wrapAroundScreen();
+				
+				// Check collisions
+				this.checkCollisions();
+				
+				// Remove dead planets
+				this.planets = this.planets.filter(p => p.alive);
+				
+				// Check level completion
+				if (this.levelComplete) {
+					this.nextLevel();
+				}
+			}
+
+			draw() {
+				// Clear canvas
+				this.ctx.fillStyle = '#000011';
+				this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+				
+				// Draw grid
+				this.ctx.strokeStyle = '#222222';
+				this.ctx.lineWidth = 1;
+				for (let i = 0; i <= this.canvas.width; i += 50) {
+					this.ctx.beginPath();
+					this.ctx.moveTo(i, 0);
+					this.ctx.lineTo(i, this.canvas.height);
+					this.ctx.stroke();
+				}
+				for (let i = 0; i <= this.canvas.height; i += 50) {
+					this.ctx.beginPath();
+					this.ctx.moveTo(0, i);
+					this.ctx.lineTo(this.canvas.width, i);
+					this.ctx.stroke();
+				}
+				
+				// Draw objects
+				for (const planet of this.planets) {
+					if (planet.alive) {
+						planet.draw(this.ctx);
+					}
+				}
+				
+				for (const bullet of this.bullets) {
+					if (bullet.alive) {
+						bullet.draw(this.ctx);
+					}
+				}
+				
+				if (this.spaceship && this.spaceship.alive) {
+					this.spaceship.draw(this.ctx);
+				}
+				
+				// Draw UI overlays
+				if (this.paused) {
+					this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+					this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+					this.ctx.fillStyle = 'yellow';
+					this.ctx.font = '48px Arial';
+					this.ctx.textAlign = 'center';
+					this.ctx.fillText('PAUSED', this.canvas.width / 2, this.canvas.height / 2);
+				}
+				
+				if (this.gameOver) {
+					this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+					this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+					this.ctx.fillStyle = 'red';
+					this.ctx.font = '48px Arial';
+					this.ctx.textAlign = 'center';
+					this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
+					this.ctx.fillStyle = 'yellow';
+					this.ctx.font = '24px Arial';
+					this.ctx.fillText(`Final Score: ${this.score}`, this.canvas.width / 2, this.canvas.height / 2 + 50);
+					this.ctx.fillStyle = 'white';
+					this.ctx.font = '18px Arial';
+					this.ctx.fillText('Press R to restart game', this.canvas.width / 2, this.canvas.height / 2 + 90);
+				}
+				
+				// Update UI
+				this.updateUI();
+			}
+
+			updateUI() {
+				document.getElementById('levelDisplay').textContent = this.level;
+				document.getElementById('scoreDisplay').textContent = this.score;
+				document.getElementById('livesDisplay').textContent = this.lives;
+				
+				if (this.spaceship) {
+					const fuelPercent = Math.floor((this.spaceship.fuel / this.spaceship.maxFuel) * 100);
+					document.getElementById('fuelDisplay').textContent = `${fuelPercent}%`;
+				}
+			}
+
+			gameLoop() {
+				const currentTime = performance.now() / 1000;
+				const dt = this.lastTime ? currentTime - this.lastTime : 0.016;
+				this.lastTime = currentTime;
+				
+				this.update(dt);
+				this.draw();
+				
+				requestAnimationFrame(() => this.gameLoop());
+			}
+		}
+
+		// Start the game when page loads
+		window.addEventListener('load', () => {
+			new GravitationalDestroyer();
+		});
+	</script>
+</Layout>
+
+<style>
+	.game-container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	.game-header {
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.game-header h1 {
+		color: #00d4ff;
+		font-size: 3rem;
+		margin-bottom: 0.5rem;
+		text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+	}
+
+	.game-header p {
+		font-size: 1.2rem;
+		color: #e0e0e0;
+	}
+
+	.game-area {
+		display: flex;
+		gap: 2rem;
+		justify-content: center;
+		margin-bottom: 3rem;
+	}
+
+	#gameCanvas {
+		border: 2px solid #00d4ff;
+		border-radius: 10px;
+		background: #000011;
+		box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+	}
+
+	.game-ui {
+		width: 200px;
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	.game-info {
+		background: linear-gradient(135deg, #1a1a2e, #16213e);
+		padding: 1.5rem;
+		border-radius: 10px;
+		border: 1px solid #00d4ff;
+	}
+
+	.game-info h3 {
+		color: #00d4ff;
+		text-align: center;
+		margin-bottom: 1rem;
+		font-size: 0.9rem;
+		line-height: 1.2;
+	}
+
+	.stats {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.stat {
+		display: flex;
+		justify-content: space-between;
+		color: white;
+		font-size: 0.9rem;
+	}
+
+	.label {
+		color: #a0a0a0;
+	}
+
+	.controls-info, .objectives, .planet-types {
+		background: #2a2a3e;
+		padding: 1rem;
+		border-radius: 8px;
+		border: 1px solid #333;
+	}
+
+	.controls-info h4, .objectives h4, .planet-types h4 {
+		color: #ffbe0b;
+		margin-bottom: 0.8rem;
+		font-size: 0.9rem;
+	}
+
+	.control-list, .objective-list, .type-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: 0.8rem;
+		color: #e0e0e0;
+	}
+
+	.green-dot { color: #00ff00; }
+	.red-dot { color: #ff0000; }
+	.white-dot { color: #ffffff; }
+
+	.game-instructions {
+		background: linear-gradient(135deg, #1e1e3f, #2a2a4e);
+		padding: 2rem;
+		border-radius: 15px;
+		border: 2px solid #4ecdc4;
+	}
+
+	.game-instructions h2 {
+		color: #4ecdc4;
+		text-align: center;
+		margin-bottom: 2rem;
+	}
+
+	.instruction-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+		gap: 1.5rem;
+	}
+
+	.instruction {
+		background: #3a3a5e;
+		padding: 1.5rem;
+		border-radius: 10px;
+		border: 1px solid #555;
+	}
+
+	.instruction h3 {
+		color: #a3f7bf;
+		margin-bottom: 1rem;
+	}
+
+	.instruction p {
+		color: #e0e0e0;
+		line-height: 1.5;
+	}
+
+	@media (max-width: 1024px) {
+		.game-area {
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.game-ui {
+			width: 100%;
+			max-width: 800px;
+			flex-direction: row;
+			flex-wrap: wrap;
+		}
+
+		.game-ui > div {
+			flex: 1;
+			min-width: 180px;
+		}
+	}
+
+	@media (max-width: 768px) {
+		.game-container {
+			padding: 1rem;
+		}
+
+		#gameCanvas {
+			width: 100%;
+			height: auto;
+			max-width: 600px;
+		}
+
+		.game-header h1 {
+			font-size: 2rem;
+		}
+
+		.instruction-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
