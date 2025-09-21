@@ -702,46 +702,57 @@
 
         function displayResults(results) {
             const resultsDiv = document.getElementById('results');
+            
+            // Determine which values were given vs calculated based on the original inputs
+            const inputs = {
+                v0: parseFloat(document.getElementById('v0').value) || null,
+                theta: parseFloat(document.getElementById('theta').value) || null,
+                height: parseFloat(document.getElementById('height').value) || 0,
+                range: parseFloat(document.getElementById('range').value) || null,
+                maxHeight: parseFloat(document.getElementById('maxHeight').value) || null,
+                timeTotal: parseFloat(document.getElementById('timeTotal').value) || null
+            };
+            
             resultsDiv.innerHTML = `
                 <div class="result-item">
                     <div class="label">Initial Velocity (v₀)</div>
                     <div class="value">${results.v0.toFixed(2)} m/s</div>
-                    <div class="equation">${results.equations.v0 || 'Given value'}</div>
+                    <div class="equation">${inputs.v0 !== null ? 'Given value' : (results.equations.v0 || 'Calculated')}</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Launch Angle (θ)</div>
                     <div class="value">${results.theta.toFixed(1)}°</div>
-                    <div class="equation">Given value</div>
+                    <div class="equation">${inputs.theta !== null ? 'Given value' : (results.equations.theta || 'Calculated')}</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Horizontal Velocity Component (v₀ₓ)</div>
                     <div class="value">${results.v0x.toFixed(2)} m/s</div>
-                    <div class="equation">v₀ₓ = v₀ × cos(θ) = ${results.v0.toFixed(2)} × cos(${results.theta}°)</div>
+                    <div class="equation">v₀ₓ = v₀ × cos(θ) = ${results.v0.toFixed(2)} × cos(${results.theta.toFixed(1)}°)</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Vertical Velocity Component (v₀ᵧ)</div>
                     <div class="value">${results.v0y.toFixed(2)} m/s</div>
-                    <div class="equation">v₀ᵧ = v₀ × sin(θ) = ${results.v0.toFixed(2)} × sin(${results.theta}°)</div>
+                    <div class="equation">v₀ᵧ = v₀ × sin(θ) = ${results.v0.toFixed(2)} × sin(${results.theta.toFixed(1)}°)</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Maximum Height (H)</div>
                     <div class="value">${results.maxHeight.toFixed(2)} m</div>
-                    <div class="equation">${results.equations.maxHeight}</div>
+                    <div class="equation">${inputs.maxHeight !== null ? 'Given value' : (results.equations.maxHeight || 'H = h₀ + v₀y²/(2g)')}</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Time to Peak</div>
                     <div class="value">${results.timeToPeak.toFixed(2)} s</div>
-                    <div class="equation">${results.equations.timeToPeak}</div>
+                    <div class="equation">${results.equations.timeToPeak || 't_peak = v₀y/g'}</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Total Flight Time</div>
                     <div class="value">${results.timeTotal.toFixed(2)} s</div>
-                    <div class="equation">${results.equations.timeTotal}</div>
+                    <div class="equation">${inputs.timeTotal !== null ? 'Given value' : (results.equations.timeTotal || 'Calculated')}</div>
                 </div>
                 <div class="result-item">
                     <div class="label">Horizontal Range (R)</div>
                     <div class="value">${results.range.toFixed(2)} m</div>
-                    <div class="equation">${results.equations.range}</div>
+                    <div class="equation">${inputs.range !== null ? 'Given value' : (results.equations.range || 'R = v₀x × t_total')}</div>
                 </div>
             `;
         }
