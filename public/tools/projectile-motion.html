@@ -526,6 +526,109 @@
                 };
             }
 
+            // Case 5: Initial velocity and range known
+            if (v0 !== null && range !== null) {
+                // For projectile motion with initial height h0, we need to solve:
+                // R = v₀x × t_total where t_total = (v₀y + √(v₀y² + 2gh₀))/g
+                // This gives us a quadratic equation in terms of launch angle
+                
+                // For h0 = 0, we can use: R = v₀²sin(2θ)/g
+                // For h0 ≠ 0, we need to solve iteratively or use the quadratic formula
+                
+                if (h0 === 0) {
+                    // Simple case: R = v₀²sin(2θ)/g
+                    const sin2theta = range * g / (v0 * v0);
+                    if (sin2theta > 1) {
+                        throw new Error('Invalid combination: Range too large for given initial velocity.');
+                    }
+                    
+                    // There are two possible angles (high and low trajectory)
+                    // We'll use the lower angle (more common)
+                    const angle2theta = Math.asin(sin2theta) * 180 / Math.PI;
+                    theta = angle2theta / 2;
+                    const thetaRadCalc = theta * Math.PI / 180;
+                    
+                    v0x = v0 * Math.cos(thetaRadCalc);
+                    v0y = v0 * Math.sin(thetaRadCalc);
+                    
+                    const timeToPeak = v0y / g;
+                    const totalTime = 2 * timeToPeak; // For h0 = 0
+                    const maxH = (v0y * v0y) / (2 * g);
+                    
+                    return {
+                        v0: v0,
+                        theta: theta,
+                        v0x: v0x,
+                        v0y: v0y,
+                        h0: h0,
+                        maxHeight: maxH,
+                        timeToPeak: timeToPeak,
+                        timeTotal: totalTime,
+                        range: range,
+                        equations: {
+                            theta: `sin(2θ) = Rg/v₀² = ${range}×${g}/${v0}² = ${sin2theta.toFixed(3)} → θ = ${theta.toFixed(1)}°`,
+                            v0x: `v₀x = v₀ × cos(θ) = ${v0} × cos(${theta.toFixed(1)}°) = ${v0x.toFixed(2)} m/s`,
+                            v0y: `v₀y = v₀ × sin(θ) = ${v0} × sin(${theta.toFixed(1)}°) = ${v0y.toFixed(2)} m/s`,
+                            maxHeight: `H = v₀y²/(2g) = ${v0y.toFixed(2)}²/(2×${g}) = ${maxH.toFixed(2)} m`,
+                            timeToPeak: `t_peak = v₀y/g = ${v0y.toFixed(2)}/${g} = ${timeToPeak.toFixed(2)} s`,
+                            timeTotal: `t_total = 2×t_peak = 2×${timeToPeak.toFixed(2)} = ${totalTime.toFixed(2)} s`
+                        }
+                    };
+                } else {
+                    // More complex case with initial height
+                    // We'll solve iteratively by testing angles
+                    let bestTheta = null;
+                    let bestError = Infinity;
+                    
+                    for (let testAngle = 1; testAngle <= 89; testAngle += 0.1) {
+                        const testThetaRad = testAngle * Math.PI / 180;
+                        const testV0x = v0 * Math.cos(testThetaRad);
+                        const testV0y = v0 * Math.sin(testThetaRad);
+                        const testTotalTime = (testV0y + Math.sqrt(testV0y * testV0y + 2 * g * h0)) / g;
+                        const testRange = testV0x * testTotalTime;
+                        const error = Math.abs(testRange - range);
+                        
+                        if (error < bestError) {
+                            bestError = error;
+                            bestTheta = testAngle;
+                        }
+                    }
+                    
+                    if (bestTheta === null || bestError > 0.1) {
+                        throw new Error('Cannot find valid launch angle for given range and initial velocity.');
+                    }
+                    
+                    theta = bestTheta;
+                    const thetaRadCalc = theta * Math.PI / 180;
+                    v0x = v0 * Math.cos(thetaRadCalc);
+                    v0y = v0 * Math.sin(thetaRadCalc);
+                    
+                    const timeToPeak = v0y / g;
+                    const totalTime = (v0y + Math.sqrt(v0y * v0y + 2 * g * h0)) / g;
+                    const maxH = h0 + (v0y * v0y) / (2 * g);
+                    
+                    return {
+                        v0: v0,
+                        theta: theta,
+                        v0x: v0x,
+                        v0y: v0y,
+                        h0: h0,
+                        maxHeight: maxH,
+                        timeToPeak: timeToPeak,
+                        timeTotal: totalTime,
+                        range: range,
+                        equations: {
+                            theta: `θ solved iteratively for R = ${range} m → θ = ${theta.toFixed(1)}°`,
+                            v0x: `v₀x = v₀ × cos(θ) = ${v0} × cos(${theta.toFixed(1)}°) = ${v0x.toFixed(2)} m/s`,
+                            v0y: `v₀y = v₀ × sin(θ) = ${v0} × sin(${theta.toFixed(1)}°) = ${v0y.toFixed(2)} m/s`,
+                            maxHeight: `H = h₀ + v₀y²/(2g) = ${h0} + ${v0y.toFixed(2)}²/(2×${g}) = ${maxH.toFixed(2)} m`,
+                            timeToPeak: `t_peak = v₀y/g = ${v0y.toFixed(2)}/${g} = ${timeToPeak.toFixed(2)} s`,
+                            timeTotal: `t_total = (v₀y + √(v₀y² + 2gh₀))/g = ${totalTime.toFixed(2)} s`
+                        }
+                    };
+                }
+            }
+
             // Add more cases as needed...
             throw new Error('Cannot solve with the given combination of variables. Try different inputs.');
         }
