@@ -485,6 +485,47 @@
                 };
             }
 
+            // Case 4: Initial velocity and max height known
+            if (v0 !== null && maxHeight !== null) {
+                // From H = h₀ + v₀y²/(2g), solve for v₀y
+                v0y = Math.sqrt(2 * g * (maxHeight - h0));
+                
+                // From v₀y = v₀ × sin(θ), solve for θ
+                const sinTheta = v0y / v0;
+                if (sinTheta > 1) {
+                    throw new Error('Invalid combination: Maximum height too high for given initial velocity.');
+                }
+                theta = Math.asin(sinTheta) * 180 / Math.PI;
+                const thetaRadCalc = theta * Math.PI / 180;
+                
+                // Calculate v₀x
+                v0x = v0 * Math.cos(thetaRadCalc);
+                
+                const timeToPeak = v0y / g;
+                const totalTime = (v0y + Math.sqrt(v0y * v0y + 2 * g * h0)) / g;
+                const rangeCalc = v0x * totalTime;
+
+                return {
+                    v0: v0,
+                    theta: theta,
+                    v0x: v0x,
+                    v0y: v0y,
+                    h0: h0,
+                    maxHeight: maxHeight,
+                    timeToPeak: timeToPeak,
+                    timeTotal: totalTime,
+                    range: rangeCalc,
+                    equations: {
+                        v0y: `v₀y = √(2g(H-h₀)) = √(2×${g}×(${maxHeight}-${h0})) = ${v0y.toFixed(2)} m/s`,
+                        theta: `θ = arcsin(v₀y/v₀) = arcsin(${v0y.toFixed(2)}/${v0}) = ${theta.toFixed(1)}°`,
+                        v0x: `v₀x = v₀ × cos(θ) = ${v0} × cos(${theta.toFixed(1)}°) = ${v0x.toFixed(2)} m/s`,
+                        timeToPeak: `t_peak = v₀y/g = ${v0y.toFixed(2)}/${g} = ${timeToPeak.toFixed(2)} s`,
+                        timeTotal: `t_total = (v₀y + √(v₀y² + 2gh₀))/g = ${totalTime.toFixed(2)} s`,
+                        range: `R = v₀x × t_total = ${v0x.toFixed(2)} × ${totalTime.toFixed(2)} = ${rangeCalc.toFixed(2)} m`
+                    }
+                };
+            }
+
             // Add more cases as needed...
             throw new Error('Cannot solve with the given combination of variables. Try different inputs.');
         }
