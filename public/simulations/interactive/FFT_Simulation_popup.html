@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>FFT Visualizer with Sample Rate Selection, Max Hold, and Waterfall</title>
+  <title>FFT Visualizer - Pop-out Window</title>
   <style>
     body {
       background-color: #222;
@@ -10,11 +10,11 @@
       font-family: sans-serif;
       text-align: center;
       margin: 0;
-      padding: 0;
+      padding: 10px;
     }
     canvas {
       display: block;
-      margin: 20px auto;
+      margin: 10px auto;
       background-color: #000;
       border: 1px solid #444;
     }
@@ -22,19 +22,23 @@
       margin-top: 10px;
     }
     button, select {
-      margin: 5px;
-      padding: 10px 15px;
-      font-size: 1rem;
+      margin: 3px;
+      padding: 8px 12px;
+      font-size: 0.9rem;
       cursor: pointer;
     }
-    /* Waterfall canvas is a bit shorter */
+    h1 {
+      font-size: 1.2rem;
+      margin: 10px 0;
+    }
+    /* Smaller waterfall canvas for popup */
     #waterfallCanvas {
-      height: 200px;
+      height: 150px;
     }
   </style>
 </head>
 <body>
-  <h1>FFT Visualizer with Sample Rate, Max Hold, and Waterfall</h1>
+  <h1>FFT Visualizer - Pop-out Window</h1>
   <!-- Sampling Frequency Drop-down -->
   <div id="samplerate">
     <label for="sampleRateSelect">Sampling Frequency:</label>
@@ -48,12 +52,10 @@
   </div>
   <!-- Start Audio Button -->
   <button id="startAudio">Start Audio</button>
-  <!-- Pop-out Window Button -->
-  <button id="popoutWindow">Open in New Window</button>
-  <!-- Main FFT Canvas -->
-  <canvas id="fftCanvas" width="800" height="400"></canvas>
+  <!-- Main FFT Canvas (smaller for popup) -->
+  <canvas id="fftCanvas" width="700" height="300"></canvas>
   <!-- Waterfall Canvas Beneath the Main Graph -->
-  <canvas id="waterfallCanvas" width="800" height="200"></canvas>
+  <canvas id="waterfallCanvas" width="700" height="150"></canvas>
   <!-- Simulation Controls -->
   <div id="controls" style="display:none;">
     <button id="toggleAmp">Linear Amp Scale</button>
@@ -169,12 +171,6 @@
       }
     });
 
-    // ============== Pop-out Window Handler ==============
-    document.getElementById("popoutWindow").addEventListener("click", () => {
-      // Open the popup version in a new smaller window
-      window.open("FFT_Simulation_popup.html", "FFT_Popup", "width=900,height=700,scrollbars=yes,resizable=yes");
-    });
-
     // ============== Drawing / Visualization ==============
     function draw() {
       requestAnimationFrame(draw);
@@ -267,7 +263,7 @@
         const noteName = frequencyToNoteName(frequency);
 
         ctx.fillStyle = "white";
-        ctx.font = "14px sans-serif";
+        ctx.font = "12px sans-serif";
         const infoText = `Max: ${Math.round(currentFrameMaxValue)} @ bin ${currentFrameMaxIndex} (${frequency.toFixed(1)} Hz, ${noteName})`;
         ctx.fillText(infoText, x + 2, fftCanvas.height - marginBottom - barHeight - 10);
       }
