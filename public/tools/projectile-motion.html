@@ -356,13 +356,17 @@
 
             // Count non-null inputs (excluding height which has default value)
             const nonNullInputs = Object.entries(inputs).filter(([key, value]) => 
-                key !== 'height' && value !== null
+                key !== 'height' && value !== null && value !== ''
             ).length;
 
             if (nonNullInputs < 2) {
                 showError('Please enter at least 2 known variables (excluding initial height).');
                 return;
             }
+
+            // Debug: Log what inputs we have
+            console.log('Inputs received:', inputs);
+            console.log('Non-null input count:', nonNullInputs);
 
             try {
                 const results = solveProjectileMotion(inputs, thetaRad);
@@ -381,6 +385,9 @@
             let maxHeight = inputs.maxHeight;
             let timeTotal = inputs.timeTotal;
 
+            // Debug: Log what we're working with
+            console.log('Solver inputs:', { v0, theta, h0, range, maxHeight, timeTotal });
+
             // Calculate components if we have v0 and theta
             let v0x = null, v0y = null;
             if (v0 !== null && thetaRad !== null) {
@@ -390,6 +397,7 @@
 
             // Solve based on available inputs
             if (v0 !== null && theta !== null) {
+                console.log('Using Case 1: v0 and theta known');
                 // Case 1: v0 and theta known
                 v0x = v0 * Math.cos(thetaRad);
                 v0y = v0 * Math.sin(thetaRad);
@@ -420,6 +428,7 @@
 
             // Case 2: Range and angle known
             if (range !== null && theta !== null) {
+                console.log('Using Case 2: range and theta known');
                 // R = v0²sin(2θ)/g for h0 = 0, more complex for h0 ≠ 0
                 if (h0 === 0) {
                     v0 = Math.sqrt(range * g / Math.sin(2 * thetaRad));
@@ -528,6 +537,7 @@
 
             // Case 5: Initial velocity and range known
             if (v0 !== null && range !== null) {
+                console.log('Using Case 5: v0 and range known');
                 // For projectile motion with initial height h0, we need to solve:
                 // R = v₀x × t_total where t_total = (v₀y + √(v₀y² + 2gh₀))/g
                 // This gives us a quadratic equation in terms of launch angle
@@ -627,6 +637,63 @@
                         }
                     };
                 }
+            }
+
+            // Case 6: Initial velocity and total time known
+            if (v0 !== null && timeTotal !== null) {
+                console.log('Using Case 6: v0 and total time known');
+                // We need to solve for the launch angle using the time equation
+                // t_total = (v₀y + √(v₀y² + 2gh₀))/g
+                // where v₀y = v₀ × sin(θ)
+                
+                // This requires solving iteratively for the angle
+                let bestTheta = null;
+                let bestError = Infinity;
+                
+                for (let testAngle = 1; testAngle <= 89; testAngle += 0.1) {
+                    const testThetaRad = testAngle * Math.PI / 180;
+                    const testV0y = v0 * Math.sin(testThetaRad);
+                    const testTotalTime = (testV0y + Math.sqrt(testV0y * testV0y + 2 * g * h0)) / g;
+                    const error = Math.abs(testTotalTime - timeTotal);
+                    
+                    if (error < bestError) {
+                        bestError = error;
+                        bestTheta = testAngle;
+                    }
+                }
+                
+                if (bestTheta === null || bestError > 0.01) {
+                    throw new Error('Cannot find valid launch angle for given time and initial velocity.');
+                }
+                
+                theta = bestTheta;
+                const thetaRadCalc = theta * Math.PI / 180;
+                v0x = v0 * Math.cos(thetaRadCalc);
+                v0y = v0 * Math.sin(thetaRadCalc);
+                
+                const timeToPeak = v0y / g;
+                const maxH = h0 + (v0y * v0y) / (2 * g);
+                const rangeCalc = v0x * timeTotal;
+                
+                return {
+                    v0: v0,
+                    theta: theta,
+                    v0x: v0x,
+                    v0y: v0y,
+                    h0: h0,
+                    maxHeight: maxH,
+                    timeToPeak: timeToPeak,
+                    timeTotal: timeTotal,
+                    range: rangeCalc,
+                    equations: {
+                        theta: `θ solved iteratively for t = ${timeTotal} s → θ = ${theta.toFixed(1)}°`,
+                        v0x: `v₀x = v₀ × cos(θ) = ${v0} × cos(${theta.toFixed(1)}°) = ${v0x.toFixed(2)} m/s`,
+                        v0y: `v₀y = v₀ × sin(θ) = ${v0} × sin(${theta.toFixed(1)}°) = ${v0y.toFixed(2)} m/s`,
+                        maxHeight: `H = h₀ + v₀y²/(2g) = ${h0} + ${v0y.toFixed(2)}²/(2×${g}) = ${maxH.toFixed(2)} m`,
+                        timeToPeak: `t_peak = v₀y/g = ${v0y.toFixed(2)}/${g} = ${timeToPeak.toFixed(2)} s`,
+                        range: `R = v₀x × t_total = ${v0x.toFixed(2)} × ${timeTotal} = ${rangeCalc.toFixed(2)} m`
+                    }
+                };
             }
 
             // Add more cases as needed...
