@@ -1,0 +1,551 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 12: Fractals and Recursion - Nature's Mathematical Patterns">
+  <main class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-green-600 to-emerald-700 text-white p-8 rounded-lg mb-8">
+      <h1 class="text-4xl font-bold mb-4">🌳 Lesson 12: Fractals and Recursion</h1>
+      <p class="text-xl">Discover how simple mathematical rules create the complex patterns we see in nature</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bg-blue-50 p-4 rounded-lg mb-8">
+      <div class="flex flex-wrap gap-2 text-sm">
+        <a href="/programming" class="text-blue-600 hover:underline">← Back to Programming</a>
+        <span class="text-gray-500">|</span>
+        <a href="/programming/lesson11" class="text-blue-600 hover:underline">← Lesson 11: Gravitational Destroyer</a>
+        <span class="text-gray-500">|</span>
+        <span class="text-gray-700 font-semibold">Lesson 12: Fractals and Recursion</span>
+      </div>
+    </div>
+
+    <!-- Learning Objectives -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8">
+      <h2 class="text-2xl font-bold text-yellow-800 mb-4">🎯 What You'll Learn</h2>
+      <ul class="space-y-2 text-yellow-700">
+        <li><strong>Recursion:</strong> Functions that call themselves to solve complex problems</li>
+        <li><strong>Fractals:</strong> Self-similar patterns that repeat at different scales</li>
+        <li><strong>Natural Mathematics:</strong> How mathematical rules create organic shapes</li>
+        <li><strong>Turtle Graphics:</strong> Advanced drawing techniques with Python's turtle module</li>
+        <li><strong>Parameter Control:</strong> How small changes create dramatically different results</li>
+      </ul>
+    </div>
+
+    <!-- Introduction to Fractals -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🔍 What Are Fractals?</h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-green-600">Fractals in Nature</h3>
+          <ul class="space-y-3 text-gray-700">
+            <li><strong>Trees:</strong> Branches split into smaller branches</li>
+            <li><strong>Lightning:</strong> Electrical paths branch and split</li>
+            <li><strong>Coastlines:</strong> Jagged edges repeat at all scales</li>
+            <li><strong>Snowflakes:</strong> Six-fold symmetry with infinite detail</li>
+            <li><strong>Ferns:</strong> Each leaf looks like a tiny version of the whole plant</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Mathematical Properties</h3>
+          <ul class="space-y-3 text-gray-700">
+            <li><strong>Self-Similarity:</strong> Parts look like the whole</li>
+            <li><strong>Infinite Detail:</strong> Zoom in and find more complexity</li>
+            <li><strong>Simple Rules:</strong> Complex patterns from basic instructions</li>
+            <li><strong>Recursive Structure:</strong> Patterns within patterns</li>
+            <li><strong>Fractional Dimensions:</strong> Between 1D lines and 2D areas</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Understanding Recursion -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🔄 Understanding Recursion</h2>
+      
+      <div class="bg-gray-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4">What is Recursion?</h3>
+        <p class="text-gray-700 mb-4">
+          Recursion is when a function calls itself to solve a smaller version of the same problem. 
+          It's like looking into two mirrors facing each other - you see infinite reflections!
+        </p>
+        
+        <div class="bg-white p-4 rounded border-l-4 border-blue-400">
+          <h4 class="font-bold mb-2">Key Components of Recursion:</h4>
+          <ul class="space-y-2 text-gray-700">
+            <li><strong>Base Case:</strong> When to stop recursing (prevents infinite loops)</li>
+            <li><strong>Recursive Case:</strong> The function calling itself with modified parameters</li>
+            <li><strong>Progress:</strong> Each call should get closer to the base case</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Simple Recursion Example -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-purple-600">Simple Recursion Example: Countdown</h3>
+        <div class="relative">
+          <pre class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"><code>def countdown(n):
+    if n <= 0:          # Base case - stop here
+        print("Blast off!")
+    else:               # Recursive case
+        print(n)
+        countdown(n - 1)  # Call itself with smaller number
+
+countdown(5)
+# Output: 5, 4, 3, 2, 1, Blast off!</code></pre>
+          <button class="copy-btn absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition-colors" onclick="copyCode(this)">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Fractal Tree -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🌳 Building Our Fractal Tree</h2>
+      
+      <!-- Interactive Demo Link -->
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg mb-6 border-l-4 border-blue-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold mb-2 text-blue-700">🎮 Try It First!</h3>
+            <p class="text-gray-700">
+              Before diving into the code, experiment with our interactive fractal tree simulator. 
+              Adjust parameters in real-time and watch how recursion creates beautiful patterns!
+            </p>
+          </div>
+          <a href="/simulations/interactive/fractal-tree.html" target="_blank" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors font-semibold whitespace-nowrap ml-4">
+            🌐 Launch Interactive Demo
+          </a>
+        </div>
+      </div>
+      
+      <div class="bg-green-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-green-700">Tree Growing Algorithm</h3>
+        <ol class="space-y-2 text-gray-700">
+          <li><strong>1.</strong> Draw a trunk (main branch)</li>
+          <li><strong>2.</strong> At the end of the trunk, split into two smaller branches</li>
+          <li><strong>3.</strong> For each smaller branch, repeat the process</li>
+          <li><strong>4.</strong> Stop when branches become too small</li>
+          <li><strong>5.</strong> Watch as a beautiful tree emerges!</li>
+        </ol>
+      </div>
+
+      <!-- Complete Fractal Tree Code -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-green-600">Complete Fractal Tree Code</h3>
+          <a href="/simulations/interactive/fractal-tree.html" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-semibold">
+            🌐 Try Interactive JS Version
+          </a>
+        </div>
+        <div class="relative">
+          <pre class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"><code>import turtle
+import math
+
+def draw_tree(t, branch_length, angle, depth):
+    """
+    Draw a fractal tree using recursion
+    
+    Parameters:
+    t - turtle object
+    branch_length - length of current branch
+    angle - angle between branches
+    depth - how many levels deep to go
+    """
+    
+    # Base case - stop if branch is too small or depth is 0
+    if branch_length < 5 or depth == 0:
+        return
+    
+    # Draw the current branch
+    t.forward(branch_length)
+    
+    # Save current position and heading
+    current_pos = t.position()
+    current_heading = t.heading()
+    
+    # Draw left branch (recursive call)
+    t.left(angle)
+    draw_tree(t, branch_length * 0.7, angle, depth - 1)
+    
+    # Return to trunk and draw right branch
+    t.goto(current_pos)
+    t.setheading(current_heading)
+    t.right(angle)
+    draw_tree(t, branch_length * 0.7, angle, depth - 1)
+    
+    # Return to original position and heading
+    t.goto(current_pos)
+    t.setheading(current_heading)
+
+# Set up the drawing
+def create_fractal_tree():
+    # Create screen and turtle
+    screen = turtle.Screen()
+    screen.bgcolor("black")
+    screen.title("Fractal Tree - Nature's Mathematics")
+    screen.setup(800, 600)
+    
+    # Create turtle
+    tree_turtle = turtle.Turtle()
+    tree_turtle.speed(0)  # Fastest drawing
+    tree_turtle.color("green")
+    tree_turtle.pensize(2)
+    
+    # Position turtle at bottom center, pointing up
+    tree_turtle.goto(0, -250)
+    tree_turtle.setheading(90)  # Point straight up
+    
+    # Draw the fractal tree
+    draw_tree(tree_turtle, 100, 30, 8)
+    
+    # Keep window open
+    screen.exitonclick()
+
+# Run the program
+if __name__ == "__main__":
+    create_fractal_tree()</code></pre>
+          <button class="copy-btn absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded text-xs hover:bg-blue-600 transition-colors" onclick="copyCode(this)">
+            📋 Copy
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Understanding the Code -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🔬 Code Analysis</h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Parameters Explanation -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-blue-600">Key Parameters</h3>
+          <ul class="space-y-3 text-gray-700">
+            <li><strong>branch_length:</strong> How long each branch is</li>
+            <li><strong>angle:</strong> Angle between left and right branches</li>
+            <li><strong>depth:</strong> How many levels of branching</li>
+            <li><strong>0.7 factor:</strong> Each branch is 70% of parent length</li>
+          </ul>
+        </div>
+        
+        <!-- Recursion Flow -->
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-purple-600">Recursion Flow</h3>
+          <ol class="space-y-2 text-gray-700">
+            <li>Draw current branch forward</li>
+            <li>Turn left, draw smaller left subtree</li>
+            <li>Return to junction</li>
+            <li>Turn right, draw smaller right subtree</li>
+            <li>Return to starting position</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experiments and Variations -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🧪 Experiments to Try</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Experiment 1 -->
+        <div class="bg-blue-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-blue-700">🔄 Change the Angle</h3>
+          <p class="text-gray-700 mb-3">Try different angles to see how the tree shape changes:</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• <code>angle = 15</code> - Narrow, tall tree</li>
+            <li>• <code>angle = 45</code> - Wide, spreading tree</li>
+            <li>• <code>angle = 60</code> - Very wide tree</li>
+          </ul>
+        </div>
+        
+        <!-- Experiment 2 -->
+        <div class="bg-green-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-green-700">📏 Adjust Branch Length</h3>
+          <p class="text-gray-700 mb-3">Change how much smaller each branch gets:</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• <code>* 0.8</code> - Gradual size reduction</li>
+            <li>• <code>* 0.6</code> - Rapid size reduction</li>
+            <li>• <code>* 0.9</code> - Very gradual reduction</li>
+          </ul>
+        </div>
+        
+        <!-- Experiment 3 -->
+        <div class="bg-purple-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-purple-700">🎨 Add Colors</h3>
+          <p class="text-gray-700 mb-3">Make branches change color by depth:</p>
+          <div class="relative">
+            <pre class="text-xs bg-white p-2 rounded"><code>colors = ["brown", "green", "lightgreen", "yellow"]
+t.color(colors[depth % len(colors)])</code></pre>
+            <button class="copy-btn absolute top-1 right-1 bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600 transition-colors" onclick="copyCode(this)">
+              📋
+            </button>
+          </div>
+        </div>
+        
+        <!-- Experiment 4 -->
+        <div class="bg-orange-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-orange-700">🌿 Three-Branch Tree</h3>
+          <p class="text-gray-700 mb-3">Add a third branch going straight up:</p>
+          <div class="relative">
+            <pre class="text-xs bg-white p-2 rounded"><code># Add after right branch:
+t.goto(current_pos)
+t.setheading(current_heading)
+draw_tree(t, branch_length * 0.8, angle, depth - 1)</code></pre>
+            <button class="copy-btn absolute top-1 right-1 bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600 transition-colors" onclick="copyCode(this)">
+              📋
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced Concepts -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🚀 Advanced Concepts</h2>
+      
+      <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-indigo-700">Mathematical Connections</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-bold mb-2">Fibonacci Trees</h4>
+            <p class="text-gray-700 text-sm">Use Fibonacci numbers for branch lengths to create more natural-looking trees.</p>
+          </div>
+          <div>
+            <h4 class="font-bold mb-2">Golden Ratio</h4>
+            <p class="text-gray-700 text-sm">Use φ ≈ 1.618 as the angle (about 137.5°) for optimal leaf arrangement.</p>
+          </div>
+          <div>
+            <h4 class="font-bold mb-2">Trigonometry</h4>
+            <p class="text-gray-700 text-sm">Branch positions use sine and cosine functions for precise placement.</p>
+          </div>
+          <div>
+            <h4 class="font-bold mb-2">Exponential Growth</h4>
+            <p class="text-gray-700 text-sm">Each level doubles the number of branches: 1, 2, 4, 8, 16...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Challenge Projects -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🏆 Challenge Projects</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-red-400">
+          <h3 class="text-lg font-bold mb-3 text-red-600">🌨️ Fractal Snowflake</h3>
+          <p class="text-gray-700 mb-3">Create a six-sided snowflake using recursion:</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Start with a triangle</li>
+            <li>• Add smaller triangles to each side</li>
+            <li>• Repeat recursively</li>
+            <li>• Create the famous Koch snowflake</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-green-400">
+          <h3 class="text-lg font-bold mb-3 text-green-600">🌿 Fern Fractal</h3>
+          <p class="text-gray-700 mb-3">Draw a realistic fern using mathematical rules:</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Use probability to choose transformations</li>
+            <li>• Apply linear transformations</li>
+            <li>• Create the Barnsley fern</li>
+            <li>• 99.3% realistic appearance!</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-blue-400">
+          <h3 class="text-lg font-bold mb-3 text-blue-600">⚡ Lightning Fractal</h3>
+          <p class="text-gray-700 mb-3">Simulate lightning using random branching:</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Add randomness to angles</li>
+            <li>• Vary branch lengths randomly</li>
+            <li>• Use probability for branching</li>
+            <li>• Create realistic lightning bolts</li>
+          </ul>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-purple-400">
+          <h3 class="text-lg font-bold mb-3 text-purple-600">🌀 Spiral Fractals</h3>
+          <p class="text-gray-700 mb-3">Combine spirals with recursive branching:</p>
+          <ul class="text-sm text-gray-600 space-y-1">
+            <li>• Use logarithmic spirals</li>
+            <li>• Add branches at spiral points</li>
+            <li>• Create nautilus shell patterns</li>
+            <li>• Explore golden spiral mathematics</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Real-World Applications -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🌍 Real-World Applications</h2>
+      
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="text-3xl mb-2">🏥</div>
+            <h4 class="font-bold mb-2">Medical Imaging</h4>
+            <p class="text-sm text-gray-600">Fractal analysis helps detect cancer in medical scans by analyzing tissue patterns.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-3xl mb-2">📡</div>
+            <h4 class="font-bold mb-2">Antenna Design</h4>
+            <p class="text-sm text-gray-600">Fractal antennas are more compact and efficient than traditional designs.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-3xl mb-2">🎬</div>
+            <h4 class="font-bold mb-2">Computer Graphics</h4>
+            <p class="text-sm text-gray-600">Movies use fractals to create realistic landscapes, clouds, and natural textures.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-3xl mb-2">📈</div>
+            <h4 class="font-bold mb-2">Financial Markets</h4>
+            <p class="text-sm text-gray-600">Stock market patterns show fractal behavior across different time scales.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-3xl mb-2">🌐</div>
+            <h4 class="font-bold mb-2">Network Design</h4>
+            <p class="text-sm text-gray-600">Internet routing and social networks exhibit fractal properties.</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-3xl mb-2">🔬</div>
+            <h4 class="font-bold mb-2">Scientific Research</h4>
+            <p class="text-sm text-gray-600">From galaxy formation to protein folding, fractals appear throughout science.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary and Next Steps -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🎓 What You've Accomplished</h2>
+      
+      <div class="bg-green-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-green-700">Skills Mastered</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <ul class="space-y-2 text-gray-700">
+            <li>✅ <strong>Recursive Programming:</strong> Functions calling themselves</li>
+            <li>✅ <strong>Fractal Mathematics:</strong> Self-similar patterns</li>
+            <li>✅ <strong>Advanced Turtle Graphics:</strong> Complex drawing techniques</li>
+            <li>✅ <strong>Parameter Control:</strong> How variables affect output</li>
+          </ul>
+          <ul class="space-y-2 text-gray-700">
+            <li>✅ <strong>Mathematical Modeling:</strong> Code representing nature</li>
+            <li>✅ <strong>Algorithm Design:</strong> Step-by-step problem solving</li>
+            <li>✅ <strong>Visual Programming:</strong> Code creating art</li>
+            <li>✅ <strong>Scientific Thinking:</strong> Patterns in nature</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="bg-blue-50 p-6 rounded-lg">
+        <h3 class="text-xl font-bold mb-4 text-blue-700">Your Programming Journey</h3>
+        <p class="text-gray-700 mb-4">
+          Congratulations! You've completed an incredible journey from basic Python concepts to advanced 
+          mathematical programming. You've learned to create games, simulations, mathematical art, and 
+          now fractals - the same patterns that govern everything from trees to galaxies.
+        </p>
+        <p class="text-gray-700">
+          You now have the tools to explore any area of programming that interests you. Whether it's 
+          game development, scientific computing, web development, or artificial intelligence, you have 
+          a solid foundation in programming logic, mathematics, and problem-solving.
+        </p>
+      </div>
+    </section>
+
+    <!-- Navigation Footer -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <div class="flex justify-between items-center">
+        <a href="/programming/lesson11" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+          ← Previous: Lesson 11
+        </a>
+        <div class="text-center">
+          <p class="text-gray-600">Lesson 12 of 12</p>
+          <p class="text-sm text-gray-500">Course Complete! 🎉</p>
+        </div>
+        <a href="/programming" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+          Course Overview →
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  pre {
+    font-family: 'Courier New', monospace;
+    line-height: 1.4;
+  }
+  
+  code {
+    font-family: 'Courier New', monospace;
+  }
+  
+  .container {
+    max-width: 1200px;
+  }
+
+  .copy-btn {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .copy-btn:hover {
+    opacity: 1;
+  }
+
+  .relative:hover .copy-btn {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  function copyCode(button) {
+    // Find the code element within the same container
+    const codeElement = button.parentElement.querySelector('code');
+    const text = codeElement.textContent;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(text).then(() => {
+      // Show feedback
+      const originalText = button.textContent;
+      button.textContent = '✅ Copied!';
+      button.style.backgroundColor = '#10B981';
+      
+      // Reset after 2 seconds
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = '#3B82F6';
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      
+      // Show feedback
+      const originalText = button.textContent;
+      button.textContent = '✅ Copied!';
+      button.style.backgroundColor = '#10B981';
+      
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = '#3B82F6';
+      }, 2000);
+    });
+  }
+</script>

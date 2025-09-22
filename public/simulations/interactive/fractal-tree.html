@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Fractal Tree - Recursion in Action</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .canvas-container {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #fractalCanvas {
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            background: #000;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .controls-container {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 350px;
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .control-item {
+            margin-bottom: 15px;
+        }
+
+        .control-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #e0e0e0;
+        }
+
+        .control-item input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #333;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .control-item input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .control-item input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4CAF50;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .value-display {
+            display: inline-block;
+            background: rgba(76, 175, 80, 0.2);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #4CAF50;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .preset-btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.4);
+        }
+
+        .action-btn.animate {
+            background: linear-gradient(45deg, #FF9800, #F57C00);
+        }
+
+        .action-btn.animate:hover {
+            box-shadow: 0 5px 15px rgba(255, 152, 0, 0.4);
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .info-panel h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+
+        .info-panel p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+            }
+            
+            .controls-container {
+                max-width: none;
+            }
+            
+            #fractalCanvas {
+                width: 100%;
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🌳 Interactive Fractal Tree</h1>
+        <p>Explore the beauty of recursion and mathematical patterns in nature</p>
+    </div>
+
+    <div class="main-container">
+        <div class="canvas-container">
+            <canvas id="fractalCanvas" width="700" height="500"></canvas>
+            <div class="action-buttons">
+                <button class="action-btn" onclick="drawTree()">🌳 Redraw Tree</button>
+                <button class="action-btn animate" onclick="toggleAnimation()">🎬 Animate Growth</button>
+            </div>
+        </div>
+
+        <div class="controls-container">
+            <div class="control-group">
+                <h3>🎛️ Tree Parameters</h3>
+                
+                <div class="control-item">
+                    <label for="branchLength">Initial Branch Length: <span class="value-display" id="branchLengthValue">80</span></label>
+                    <input type="range" id="branchLength" min="40" max="120" value="80" oninput="updateValue('branchLength')">
+                </div>
+
+                <div class="control-item">
+                    <label for="branchAngle">Branch Angle: <span class="value-display" id="branchAngleValue">25°</span></label>
+                    <input type="range" id="branchAngle" min="10" max="60" value="25" oninput="updateValue('branchAngle')">
+                </div>
+
+                <div class="control-item">
+                    <label for="recursionDepth">Recursion Depth: <span class="value-display" id="recursionDepthValue">8</span></label>
+                    <input type="range" id="recursionDepth" min="3" max="12" value="8" oninput="updateValue('recursionDepth')">
+                </div>
+
+                <div class="control-item">
+                    <label for="lengthFactor">Length Reduction: <span class="value-display" id="lengthFactorValue">0.75</span></label>
+                    <input type="range" id="lengthFactor" min="0.5" max="0.9" step="0.05" value="0.75" oninput="updateValue('lengthFactor')">
+                </div>
+            </div>
+
+            <div class="control-group">
+                <h3>🎨 Visual Settings</h3>
+                
+                <div class="control-item">
+                    <label for="lineWidth">Line Thickness: <span class="value-display" id="lineWidthValue">2</span></label>
+                    <input type="range" id="lineWidth" min="1" max="5" value="2" oninput="updateValue('lineWidth')">
+                </div>
+
+                <div class="control-item">
+                    <label>
+                        <input type="checkbox" id="colorGradient" checked onchange="drawTree()"> 
+                        Color Gradient by Depth
+                    </label>
+                </div>
+
+                <div class="preset-buttons">
+                    <button class="preset-btn" onclick="loadPreset('classic')">🌲 Classic</button>
+                    <button class="preset-btn" onclick="loadPreset('wide')">🌳 Wide Tree</button>
+                    <button class="preset-btn" onclick="loadPreset('narrow')">🌿 Narrow</button>
+                    <button class="preset-btn" onclick="loadPreset('bushy')">🌴 Bushy</button>
+                </div>
+            </div>
+
+            <div class="info-panel">
+                <h4>📊 Tree Statistics</h4>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="branchCount">0</div>
+                        <div class="stat-label">Total Branches</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="drawTime">0ms</div>
+                        <div class="stat-label">Draw Time</div>
+                    </div>
+                </div>
+                <p style="margin-top: 15px;">
+                    <strong>Recursion:</strong> Each branch calls the same function to create smaller branches, 
+                    demonstrating the power of recursive algorithms in creating complex natural patterns.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas and context
+        const canvas = document.getElementById('fractalCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Animation variables
+        let isAnimating = false;
+        let animationId = null;
+        let branchCount = 0;
+        let currentAnimationBranches = [];
+        let animationIndex = 0;
+
+        // Initialize the tree
+        window.onload = function() {
+            drawTree();
+        };
+
+        // Update slider value displays
+        function updateValue(sliderId) {
+            const slider = document.getElementById(sliderId);
+            const valueDisplay = document.getElementById(sliderId + 'Value');
+            let value = slider.value;
+            
+            if (sliderId === 'branchAngle') {
+                value += '°';
+            } else if (sliderId === 'lengthFactor') {
+                value = parseFloat(value).toFixed(2);
+            }
+            
+            valueDisplay.textContent = value;
+            
+            // Auto-redraw if not animating
+            if (!isAnimating) {
+                drawTree();
+            }
+        }
+
+        // Load preset configurations
+        function loadPreset(presetName) {
+            const presets = {
+                classic: { branchLength: 80, branchAngle: 25, recursionDepth: 8, lengthFactor: 0.75, lineWidth: 2 },
+                wide: { branchLength: 90, branchAngle: 45, recursionDepth: 7, lengthFactor: 0.7, lineWidth: 3 },
+                narrow: { branchLength: 100, branchAngle: 15, recursionDepth: 9, lengthFactor: 0.8, lineWidth: 1 },
+                bushy: { branchLength: 70, branchAngle: 35, recursionDepth: 10, lengthFactor: 0.65, lineWidth: 2 }
+            };
+            
+            const preset = presets[presetName];
+            if (preset) {
+                Object.keys(preset).forEach(key => {
+                    document.getElementById(key).value = preset[key];
+                    updateValue(key);
+                });
+                drawTree();
+            }
+        }
+
+        // Get current parameter values
+        function getParameters() {
+            return {
+                branchLength: parseFloat(document.getElementById('branchLength').value),
+                branchAngle: parseFloat(document.getElementById('branchAngle').value) * Math.PI / 180,
+                recursionDepth: parseInt(document.getElementById('recursionDepth').value),
+                lengthFactor: parseFloat(document.getElementById('lengthFactor').value),
+                lineWidth: parseFloat(document.getElementById('lineWidth').value),
+                colorGradient: document.getElementById('colorGradient').checked
+            };
+        }
+
+        // Main drawing function
+        function drawTree() {
+            const startTime = performance.now();
+            branchCount = 0;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Get parameters
+            const params = getParameters();
+            
+            // Set up drawing context
+            ctx.lineWidth = params.lineWidth;
+            ctx.lineCap = 'round';
+            
+            // Start position (bottom center)
+            const startX = canvas.width / 2;
+            const startY = canvas.height - 50;
+            
+            // Draw the tree
+            drawBranch(startX, startY, params.branchLength, -Math.PI / 2, params.recursionDepth, 0, params);
+            
+            // Update statistics
+            const endTime = performance.now();
+            document.getElementById('branchCount').textContent = branchCount;
+            document.getElementById('drawTime').textContent = Math.round(endTime - startTime) + 'ms';
+        }
+
+        // Recursive function to draw a branch
+        function drawBranch(x, y, length, angle, depth, currentDepth, params) {
+            if (length < 2 || depth <= 0) {
+                return;
+            }
+            
+            branchCount++;
+            
+            // Calculate end position
+            const endX = x + length * Math.cos(angle);
+            const endY = y + length * Math.sin(angle);
+            
+            // Set color based on depth if gradient is enabled
+            if (params.colorGradient) {
+                const hue = 120 - (currentDepth * 15); // Green to yellow/brown
+                const saturation = 70 + (currentDepth * 5);
+                const lightness = 40 + (currentDepth * 3);
+                ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+            } else {
+                ctx.strokeStyle = '#4CAF50';
+            }
+            
+            // Draw the branch
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            
+            // Recursively draw child branches
+            const newLength = length * params.lengthFactor;
+            const newDepth = depth - 1;
+            const newCurrentDepth = currentDepth + 1;
+            
+            // Left branch
+            drawBranch(endX, endY, newLength, angle - params.branchAngle, newDepth, newCurrentDepth, params);
+            
+            // Right branch
+            drawBranch(endX, endY, newLength, angle + params.branchAngle, newDepth, newCurrentDepth, params);
+        }
+
+        // Animation functions
+        function toggleAnimation() {
+            if (isAnimating) {
+                stopAnimation();
+            } else {
+                startAnimation();
+            }
+        }
+
+        function startAnimation() {
+            isAnimating = true;
+            document.querySelector('.action-btn.animate').textContent = '⏹️ Stop Animation';
+            
+            // Collect all branches for animation
+            currentAnimationBranches = [];
+            animationIndex = 0;
+            collectBranches();
+            
+            // Start the animation loop
+            animateNextBranch();
+        }
+
+        function stopAnimation() {
+            isAnimating = false;
+            document.querySelector('.action-btn.animate').textContent = '🎬 Animate Growth';
+            
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            // Redraw the complete tree
+            drawTree();
+        }
+
+        function collectBranches() {
+            const params = getParameters();
+            const startX = canvas.width / 2;
+            const startY = canvas.height - 50;
+            
+            collectBranchData(startX, startY, params.branchLength, -Math.PI / 2, params.recursionDepth, 0, params);
+        }
+
+        function collectBranchData(x, y, length, angle, depth, currentDepth, params) {
+            if (length < 2 || depth <= 0) {
+                return;
+            }
+            
+            const endX = x + length * Math.cos(angle);
+            const endY = y + length * Math.sin(angle);
+            
+            // Store branch data
+            currentAnimationBranches.push({
+                startX: x,
+                startY: y,
+                endX: endX,
+                endY: endY,
+                depth: currentDepth,
+                lineWidth: params.lineWidth
+            });
+            
+            // Recursively collect child branches
+            const newLength = length * params.lengthFactor;
+            const newDepth = depth - 1;
+            const newCurrentDepth = currentDepth + 1;
+            
+            collectBranchData(endX, endY, newLength, angle - params.branchAngle, newDepth, newCurrentDepth, params);
+            collectBranchData(endX, endY, newLength, angle + params.branchAngle, newDepth, newCurrentDepth, params);
+        }
+
+        function animateNextBranch() {
+            if (!isAnimating || animationIndex >= currentAnimationBranches.length) {
+                if (isAnimating) {
+                    stopAnimation();
+                }
+                return;
+            }
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const params = getParameters();
+            
+            // Draw all branches up to current index
+            for (let i = 0; i <= animationIndex; i++) {
+                const branch = currentAnimationBranches[i];
+                
+                // Set color and style
+                if (params.colorGradient) {
+                    const hue = 120 - (branch.depth * 15);
+                    const saturation = 70 + (branch.depth * 5);
+                    const lightness = 40 + (branch.depth * 3);
+                    ctx.strokeStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                } else {
+                    ctx.strokeStyle = '#4CAF50';
+                }
+                
+                ctx.lineWidth = branch.lineWidth;
+                ctx.lineCap = 'round';
+                
+                // Draw the branch
+                ctx.beginPath();
+                ctx.moveTo(branch.startX, branch.startY);
+                ctx.lineTo(branch.endX, branch.endY);
+                ctx.stroke();
+            }
+            
+            animationIndex++;
+            
+            // Schedule next frame
+            animationId = requestAnimationFrame(() => {
+                setTimeout(animateNextBranch, 50); // 50ms delay between branches
+            });
+        }
+    </script>
+</body>
+</html>
