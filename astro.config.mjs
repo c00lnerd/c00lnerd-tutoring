@@ -9,5 +9,8 @@ export default defineConfig({
   build: {
     format: 'file',
     inlineStylesheets: 'always'
-  }
+  },
+  // Enable relative paths for offline use
+  base: './',
+  trailingSlash: 'never'
 });
