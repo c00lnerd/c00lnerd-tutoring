@@ -372,13 +372,13 @@
             }
         }
 
-        // Animated drawing
+        // Animation variables
+        let animationPath = [];
+        let maxPathLength = 1000;
+
+        // Animated drawing with path
         function animate() {
             const params = getParams();
-            
-            // Clear with fade effect
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             const t = animationTime * 0.01 * params.speed;
             
@@ -401,20 +401,69 @@
             const canvasX = centerX + x;
             const canvasY = centerY + y;
             
-            // Draw point with glow effect
-            const colorIndex = Math.floor((animationTime * 0.01) % colors.length);
-            const color = colors[colorIndex];
+            // Add point to path
+            animationPath.push({
+                x: canvasX,
+                y: canvasY,
+                time: animationTime,
+                color: colors[Math.floor((animationTime * 0.01) % colors.length)]
+            });
             
-            // Glow effect
-            ctx.shadowColor = color;
-            ctx.shadowBlur = 15;
-            ctx.fillStyle = color;
-            ctx.beginPath();
-            ctx.arc(canvasX, canvasY, 3, 0, Math.PI * 2);
-            ctx.fill();
+            // Limit path length based on trail parameter
+            maxPathLength = params.trail;
+            if (animationPath.length > maxPathLength) {
+                animationPath.shift();
+            }
             
-            // Reset shadow
-            ctx.shadowBlur = 0;
+            // Clear canvas
+            ctx.fillStyle = 'black';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw the path
+            if (animationPath.length > 1) {
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                for (let i = 1; i < animationPath.length; i++) {
+                    const prevPoint = animationPath[i - 1];
+                    const currentPoint = animationPath[i];
+                    
+                    // Calculate opacity based on age (newer points are brighter)
+                    const age = animationPath.length - i;
+                    const opacity = Math.max(0.1, 1 - (age / animationPath.length));
+                    
+                    // Set color with opacity
+                    const color = currentPoint.color;
+                    ctx.strokeStyle = color + Math.floor(opacity * 255).toString(16).padStart(2, '0');
+                    
+                    // Draw line segment
+                    ctx.beginPath();
+                    ctx.moveTo(prevPoint.x, prevPoint.y);
+                    ctx.lineTo(currentPoint.x, currentPoint.y);
+                    ctx.stroke();
+                }
+            }
+            
+            // Draw current point with glow effect
+            if (animationPath.length > 0) {
+                const currentPoint = animationPath[animationPath.length - 1];
+                
+                // Glow effect
+                ctx.shadowColor = currentPoint.color;
+                ctx.shadowBlur = 20;
+                ctx.fillStyle = currentPoint.color;
+                ctx.beginPath();
+                ctx.arc(currentPoint.x, currentPoint.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Inner bright point
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(currentPoint.x, currentPoint.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
             
             animationTime++;
             animationId = requestAnimationFrame(animate);
@@ -424,6 +473,8 @@
         function startAnimation() {
             if (!animationId) {
                 clearCanvas();
+                animationPath = []; // Reset the path
+                animationTime = 0;  // Reset animation time
                 animate();
             }
         }
