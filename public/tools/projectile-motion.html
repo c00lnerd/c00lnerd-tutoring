@@ -354,13 +354,16 @@
             // Convert angle to radians if provided
             const thetaRad = inputs.theta !== null ? inputs.theta * Math.PI / 180 : null;
 
-            // Count non-null inputs (excluding height which has default value)
-            const nonNullInputs = Object.entries(inputs).filter(([key, value]) => 
-                key !== 'height' && value !== null && value !== ''
-            ).length;
+            // Count non-null inputs (height counts if it's not zero)
+            const nonNullInputs = Object.entries(inputs).filter(([key, value]) => {
+                if (key === 'height') {
+                    return value !== null && value !== 0; // Height counts only if non-zero
+                }
+                return value !== null && value !== '';
+            }).length;
 
             if (nonNullInputs < 2) {
-                showError('Please enter at least 2 known variables (excluding initial height).');
+                showError('Please enter at least 2 known variables. Initial height counts as a known variable when non-zero.');
                 return;
             }
 
