@@ -1,0 +1,383 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Lesson 13: Advanced Mathematical Art">
+  <main class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-600 to-pink-700 text-white p-8 rounded-lg mb-8">
+      <h1 class="text-4xl font-bold mb-4">🎨 Lesson 13: Advanced Mathematical Art</h1>
+      <p class="text-xl">Discover how parametric equations create stunning mathematical masterpieces</p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bg-blue-50 p-4 rounded-lg mb-8">
+      <div class="flex flex-wrap gap-2 text-sm">
+        <a href="./programming.html" class="text-blue-600 hover:underline">← Back to Programming</a>
+        <span class="text-gray-500">|</span>
+        <a href="./programming/lesson12.html" class="text-blue-600 hover:underline">← Lesson 12: Fractals and Recursion</a>
+        <span class="text-gray-500">|</span>
+        <span class="text-gray-700 font-semibold">Lesson 13: Advanced Mathematical Art</span>
+      </div>
+    </div>
+
+    <!-- Learning Objectives -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8">
+      <h2 class="text-2xl font-bold text-yellow-800 mb-4">🎯 What You'll Learn</h2>
+      <ul class="space-y-2 text-yellow-700">
+        <li><strong>Parametric Equations:</strong> Mathematical formulas that create curves using parameters</li>
+        <li><strong>Advanced Trigonometry:</strong> Complex sine and cosine relationships</li>
+        <li><strong>Mathematical Art:</strong> How equations become beautiful visual patterns</li>
+        <li><strong>Real-time Visualization:</strong> Interactive parameter manipulation</li>
+        <li><strong>Creative Coding:</strong> Combining mathematics with artistic expression</li>
+      </ul>
+    </div>
+
+    <!-- Interactive Demo Link -->
+    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-6 border-l-4 border-purple-500">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-xl font-bold mb-2 text-purple-700">🎮 Try It First!</h3>
+          <p class="text-gray-700">
+            Experiment with our interactive parametric art generator. Adjust parameters in real-time 
+            and watch how mathematical equations create stunning visual patterns!
+          </p>
+        </div>
+        <a href="#" onclick="openParametricDemo(); return false;" class="bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors font-semibold whitespace-nowrap ml-4">
+          🌐 Launch Interactive Demo
+        </a>
+      </div>
+    </div>
+
+    <!-- Theory Section -->
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-6 text-purple-700">🧮 Understanding Parametric Equations</h2>
+      
+      <div class="bg-blue-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-blue-700">What Are Parametric Equations?</h3>
+        <p class="text-gray-700 mb-4">
+          Unlike regular equations that relate x and y directly, parametric equations use a third variable 
+          (usually called 't' for time or parameter) to define both x and y coordinates:
+        </p>
+        <div class="bg-white p-4 rounded border-l-4 border-blue-500">
+          <p class="font-mono text-lg">
+            x = f(t)<br>
+            y = g(t)
+          </p>
+        </div>
+        <p class="text-gray-700 mt-4">
+          As 't' changes, we get different (x, y) points that trace out beautiful curves!
+        </p>
+      </div>
+
+      <div class="bg-green-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-green-700">Simple Example: Circle</h3>
+        <p class="text-gray-700 mb-4">A circle can be drawn using these parametric equations:</p>
+        <div class="bg-white p-4 rounded border-l-4 border-green-500">
+          <p class="font-mono text-lg">
+            x = radius * cos(t)<br>
+            y = radius * sin(t)
+          </p>
+        </div>
+        <p class="text-gray-700 mt-4">
+          As 't' goes from 0 to 2π, we trace out a complete circle!
+        </p>
+      </div>
+    </section>
+
+    <!-- Building Our Mathematical Art -->
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-6 text-purple-700">🌸 Building Our Mathematical Art</h2>
+      
+      <!-- Interactive Demo Link -->
+      <div class="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg mb-6 border-l-4 border-pink-500">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xl font-bold mb-2 text-pink-700">🎨 See It In Action!</h3>
+            <p class="text-gray-700">
+              Before diving into the code, watch how changing parameters creates different artistic patterns.
+            </p>
+          </div>
+          <a href="#" onclick="openParametricDemo(); return false;" class="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600 transition-colors font-semibold whitespace-nowrap ml-4">
+            🌐 Interactive Art Generator
+          </a>
+        </div>
+      </div>
+
+      <!-- Complete Mathematical Art Code -->
+      <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-bold text-purple-600">Complete Mathematical Art Code</h3>
+          <a href="#" onclick="openParametricDemo(); return false;" class="bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition-colors text-sm font-semibold">
+            🌐 Try Interactive JS Version
+          </a>
+        </div>
+        <div class="relative">
+          <button onclick="copyCode(this)" class="copy-btn absolute top-2 right-2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600 transition-colors">
+            📋 Copy
+          </button>
+          <pre class="bg-gray-100 p-4 rounded text-sm overflow-x-auto"><code>import turtle
+import math
+
+def create_mathematical_art():
+    """
+    Create stunning mathematical art using parametric equations
+    """
+    # Set up the canvas
+    screen = turtle.Screen()
+    screen.bgcolor("black")
+    screen.setup(800, 800)
+    screen.title("Mathematical Art Generator")
+    
+    # Create our artist turtle
+    artist = turtle.Turtle()
+    artist.speed(0)  # Fastest drawing
+    artist.pensize(1)
+    
+    # Parameters for our art (experiment with these!)
+    scale = 200      # Size of the pattern
+    frequency1 = 7   # First frequency component
+    frequency2 = 3   # Second frequency component
+    phase_shift = 0  # Phase relationship
+    
+    # Color palette
+    colors = ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD"]
+    
+    # Draw the mathematical art
+    artist.penup()
+    
+    for t in range(0, 3600, 1):  # 0 to 360 degrees, step by 0.1
+        # Convert to radians
+        angle = math.radians(t / 10)
+        
+        # Parametric equations for beautiful curves
+        x = scale * math.cos(frequency1 * angle) * math.cos(angle)
+        y = scale * math.sin(frequency2 * angle) * math.sin(angle + phase_shift)
+        
+        # Add some artistic flair with additional components
+        x += 50 * math.cos(angle * 2)
+        y += 50 * math.sin(angle * 3)
+        
+        # Move to position
+        artist.goto(x, y)
+        
+        # Change colors periodically
+        if t % 600 == 0:
+            artist.color(colors[t // 600 % len(colors)])
+        
+        # Start drawing after first point
+        if t == 0:
+            artist.pendown()
+    
+    # Keep the window open
+    screen.exitonclick()
+
+# Run the art generator
+if __name__ == "__main__":
+    create_mathematical_art()</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experiments Section -->
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-6 text-purple-700">🔬 Mathematical Experiments</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Experiment 1 -->
+        <div class="bg-blue-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-blue-700">🌟 Experiment 1: Frequency Changes</h3>
+          <p class="text-gray-700 mb-4">Try changing the frequency values:</p>
+          <div class="relative">
+            <button onclick="copyCode(this)" class="copy-btn absolute top-1 right-1 bg-blue-500 text-white px-2 py-1 rounded text-xs hover:bg-blue-600">
+              📋
+            </button>
+            <pre class="bg-white p-3 rounded text-xs"><code># Try different frequency combinations
+frequency1 = 5   # Try 3, 5, 7, 11
+frequency2 = 8   # Try 2, 4, 6, 9</code></pre>
+          </div>
+        </div>
+
+        <!-- Experiment 2 -->
+        <div class="bg-green-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-green-700">🎨 Experiment 2: Phase Shifts</h3>
+          <p class="text-gray-700 mb-4">Add phase shifts for different patterns:</p>
+          <div class="relative">
+            <button onclick="copyCode(this)" class="copy-btn absolute top-1 right-1 bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600">
+              📋
+            </button>
+            <pre class="bg-white p-3 rounded text-xs"><code># Try different phase shifts
+phase_shift = math.pi / 4  # Try π/2, π, 3π/2
+y = scale * math.sin(frequency2 * angle + phase_shift)</code></pre>
+          </div>
+        </div>
+
+        <!-- Experiment 3 -->
+        <div class="bg-purple-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-purple-700">🌀 Experiment 3: Spiral Effects</h3>
+          <p class="text-gray-700 mb-4">Add spiral components:</p>
+          <div class="relative">
+            <button onclick="copyCode(this)" class="copy-btn absolute top-1 right-1 bg-purple-500 text-white px-2 py-1 rounded text-xs hover:bg-purple-600">
+              📋
+            </button>
+            <pre class="bg-white p-3 rounded text-xs"><code># Add spiral effect
+spiral_factor = angle * 0.1
+x = (scale + spiral_factor) * math.cos(frequency1 * angle)
+y = (scale + spiral_factor) * math.sin(frequency2 * angle)</code></pre>
+          </div>
+        </div>
+
+        <!-- Experiment 4 -->
+        <div class="bg-pink-50 p-6 rounded-lg">
+          <h3 class="text-lg font-bold mb-3 text-pink-700">✨ Experiment 4: Multiple Layers</h3>
+          <p class="text-gray-700 mb-4">Draw multiple patterns:</p>
+          <div class="relative">
+            <button onclick="copyCode(this)" class="copy-btn absolute top-1 right-1 bg-pink-500 text-white px-2 py-1 rounded text-xs hover:bg-pink-600">
+              📋
+            </button>
+            <pre class="bg-white p-3 rounded text-xs"><code># Draw multiple layers with different parameters
+for layer in range(3):
+    freq1 = 3 + layer * 2
+    freq2 = 2 + layer
+    # Draw each layer with different frequencies</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mathematical Concepts -->
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-6 text-purple-700">📐 Mathematical Concepts</h2>
+      
+      <div class="bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg mb-6">
+        <h3 class="text-xl font-bold mb-4 text-purple-700">🔢 Key Mathematical Ideas</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="font-bold text-blue-700 mb-2">Trigonometric Functions</h4>
+            <ul class="text-gray-700 space-y-1">
+              <li>• sin() and cos() create periodic motion</li>
+              <li>• Different frequencies create complex patterns</li>
+              <li>• Phase shifts rotate the patterns</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-bold text-green-700 mb-2">Parametric Relationships</h4>
+            <ul class="text-gray-700 space-y-1">
+              <li>• Parameter 't' controls the drawing process</li>
+              <li>• Independent x and y equations</li>
+              <li>• Time-based animation possibilities</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold mb-6 text-purple-700">🎓 Congratulations!</h2>
+      <div class="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg">
+        <p class="text-lg text-gray-700 mb-4">
+          You've now mastered advanced mathematical art creation! You've learned how:
+        </p>
+        <ul class="space-y-2 text-gray-700 mb-6">
+          <li><strong>✅ Parametric equations</strong> can create complex curves from simple formulas</li>
+          <li><strong>✅ Trigonometric functions</strong> generate beautiful periodic patterns</li>
+          <li><strong>✅ Mathematical parameters</strong> control artistic expression</li>
+          <li><strong>✅ Code and mathematics</strong> combine to create visual beauty</li>
+        </ul>
+        <p class="text-lg text-gray-700">
+          This represents the pinnacle of combining mathematical understanding with creative programming. 
+          You now have the tools to create infinite varieties of mathematical art!
+        </p>
+      </div>
+    </section>
+
+    <!-- Navigation Footer -->
+    <div class="bg-gray-50 p-6 rounded-lg">
+      <div class="flex justify-between items-center">
+        <a href="./programming/lesson12.html" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+          ← Previous: Lesson 12
+        </a>
+        <div class="text-center">
+          <p class="text-gray-600">Lesson 13 of 13</p>
+          <p class="text-sm text-gray-500">Advanced Course Complete! 🎉</p>
+        </div>
+        <a href="./programming.html" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+          Course Overview →
+        </a>
+      </div>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .copy-btn {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+
+  .copy-btn:hover {
+    opacity: 1;
+  }
+
+  .relative:hover .copy-btn {
+    opacity: 1;
+  }
+</style>
+
+<script is:inline>
+  function copyCode(button) {
+    const codeBlock = button.parentElement.querySelector('code');
+    const text = codeBlock.textContent;
+    
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).then(() => {
+        showCopyFeedback(button);
+      }).catch(() => {
+        fallbackCopyTextToClipboard(text, button);
+      });
+    } else {
+      fallbackCopyTextToClipboard(text, button);
+    }
+  }
+
+  function fallbackCopyTextToClipboard(text, button) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+      showCopyFeedback(button);
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+
+    document.body.removeChild(textArea);
+  }
+
+  function showCopyFeedback(button) {
+    const originalText = button.innerHTML;
+    button.innerHTML = '✅ Copied!';
+    button.style.backgroundColor = '#10b981';
+    
+    setTimeout(() => {
+      button.innerHTML = originalText;
+      button.style.backgroundColor = '';
+    }, 2000);
+  }
+
+  function openParametricDemo() {
+    const baseUrl = window.location.origin;
+    const demoUrl = baseUrl + '/simulations/interactive/parametric-art.html';
+    
+    console.log('Opening parametric art demo at:', demoUrl);
+    window.open(demoUrl, '_blank');
+  }
+</script>
