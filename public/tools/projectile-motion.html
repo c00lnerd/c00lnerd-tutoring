@@ -341,23 +341,26 @@
             // Clear previous error messages
             document.getElementById('errorMessage').style.display = 'none';
             
-            // Get input values
+            // Get input values (handle 0 values properly)
             const inputs = {
-                v0: parseFloat(document.getElementById('v0').value) || null,
-                theta: parseFloat(document.getElementById('theta').value) || null,
-                height: parseFloat(document.getElementById('height').value) || 0,
-                range: parseFloat(document.getElementById('range').value) || null,
-                maxHeight: parseFloat(document.getElementById('maxHeight').value) || null,
-                timeTotal: parseFloat(document.getElementById('timeTotal').value) || null
+                v0: document.getElementById('v0').value !== '' ? parseFloat(document.getElementById('v0').value) : null,
+                theta: document.getElementById('theta').value !== '' ? parseFloat(document.getElementById('theta').value) : null,
+                height: document.getElementById('height').value !== '' ? parseFloat(document.getElementById('height').value) : 0,
+                range: document.getElementById('range').value !== '' ? parseFloat(document.getElementById('range').value) : null,
+                maxHeight: document.getElementById('maxHeight').value !== '' ? parseFloat(document.getElementById('maxHeight').value) : null,
+                timeTotal: document.getElementById('timeTotal').value !== '' ? parseFloat(document.getElementById('timeTotal').value) : null
             };
 
             // Convert angle to radians if provided
             const thetaRad = inputs.theta !== null ? inputs.theta * Math.PI / 180 : null;
 
-            // Count non-null inputs (height counts if it's not zero)
+            // Count non-null inputs (height counts if it's not zero, theta counts even if zero)
             const nonNullInputs = Object.entries(inputs).filter(([key, value]) => {
                 if (key === 'height') {
                     return value !== null && value !== 0; // Height counts only if non-zero
+                }
+                if (key === 'theta') {
+                    return value !== null; // Theta counts even if it's 0 degrees
                 }
                 return value !== null && value !== '';
             }).length;
@@ -370,6 +373,9 @@
             // Debug: Log what inputs we have
             console.log('Inputs received:', inputs);
             console.log('Non-null input count:', nonNullInputs);
+            console.log('v0 type:', typeof inputs.v0, 'value:', inputs.v0);
+            console.log('theta type:', typeof inputs.theta, 'value:', inputs.theta);
+            console.log('height type:', typeof inputs.height, 'value:', inputs.height);
 
             try {
                 const results = solveProjectileMotion(inputs, thetaRad);
