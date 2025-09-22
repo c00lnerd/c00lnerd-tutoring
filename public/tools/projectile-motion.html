@@ -402,9 +402,19 @@
                 v0x = v0 * Math.cos(thetaRad);
                 v0y = v0 * Math.sin(thetaRad);
                 
-                const timeToPeak = v0y / g;
-                const totalTime = (v0y + Math.sqrt(v0y * v0y + 2 * g * h0)) / g;
-                const maxH = h0 + (v0y * v0y) / (2 * g);
+                // Handle special case of horizontal launch (theta = 0)
+                let timeToPeak, totalTime, maxH;
+                if (Math.abs(theta) < 0.001) {
+                    // Horizontal launch: no vertical component initially
+                    timeToPeak = 0;
+                    // Time to fall from height h0: t = sqrt(2*h0/g)
+                    totalTime = Math.sqrt(2 * h0 / g);
+                    maxH = h0; // Maximum height is just the initial height
+                } else {
+                    timeToPeak = v0y / g;
+                    totalTime = (v0y + Math.sqrt(v0y * v0y + 2 * g * h0)) / g;
+                    maxH = h0 + (v0y * v0y) / (2 * g);
+                }
                 const rangeCalc = v0x * totalTime;
 
                 return {
@@ -417,7 +427,14 @@
                     timeToPeak: timeToPeak,
                     timeTotal: totalTime,
                     range: rangeCalc,
-                    equations: {
+                    equations: Math.abs(theta) < 0.001 ? {
+                        // Horizontal launch equations
+                        timeToPeak: `t_peak = 0 s (horizontal launch)`,
+                        maxHeight: `H = h₀ = ${h0} m (no vertical velocity component)`,
+                        timeTotal: `t_total = √(2h₀/g) = √(2×${h0}/${g}) = ${totalTime.toFixed(2)} s`,
+                        range: `R = v₀x × t_total = ${v0x.toFixed(2)} × ${totalTime.toFixed(2)} = ${rangeCalc.toFixed(2)} m`
+                    } : {
+                        // Regular projectile motion equations
                         timeToPeak: `t_peak = v₀y/g = ${v0y.toFixed(2)}/${g} = ${timeToPeak.toFixed(2)} s`,
                         maxHeight: `H = h₀ + v₀y²/(2g) = ${h0} + ${v0y.toFixed(2)}²/(2×${g}) = ${maxH.toFixed(2)} m`,
                         timeTotal: `t_total = (v₀y + √(v₀y² + 2gh₀))/g = ${totalTime.toFixed(2)} s`,
