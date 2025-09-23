@@ -145,8 +145,11 @@ import Layout from '../../../layouts/Layout.astro';
                             <li>• Test each component before final assembly</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
-                        <pre class="text-green-400 whitespace-pre-wrap">{`// Initial system test code
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"><code>{`// Initial system test code
 #include "miniAuto.h"  // miniAuto library
 
 void setup() {
@@ -183,7 +186,7 @@ void loop() {
     Serial.print(miniAuto.getBatteryVoltage());
     Serial.println("V");
     delay(5000);
-}`}</pre>
+}`}</code></pre>
                     </div>
                 </div>
 
@@ -203,8 +206,11 @@ void loop() {
                             <li>• <strong>Dance Mode:</strong> Choreographed movement patterns</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
-                        <pre class="text-green-400 whitespace-pre-wrap">{`// Loading and testing default programs
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"><code>{`// Loading and testing default programs
 void demonstrateFeatures() {
     Serial.println("🎮 Starting feature demonstration");
     // 1. Basic movement test
@@ -234,7 +240,7 @@ void demonstrateFeatures() {
     delay(500);
     miniAuto.setLED(OFF);
     Serial.println("✅ Demonstration complete!");
-}`}</pre>
+}`}</code></pre>
                     </div>
                 </div>
 
@@ -353,3 +359,69 @@ void demonstrateFeatures() {
         </div>
     </main>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-999999px';
+        textarea.style.top = '-999999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#059669';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg;
+    }, 2000);
+}
+</script>

@@ -383,24 +383,57 @@
                 // Don't collide if balls are moving apart
                 if (velocityAlongNormal > 0) return;
 
-                // Collision impulse
-                const restitution = elasticity;
-                const j = -(1 + restitution) * velocityAlongNormal / (1/b1.mass + 1/b2.mass);
+                if (elasticity === 0) {
+                    // Perfectly inelastic collision - balls stick together
+                    // Calculate combined velocity using conservation of momentum
+                    const totalMass = b1.mass + b2.mass;
+                    const combinedVx = (b1.mass * b1.vx + b2.mass * b2.vx) / totalMass;
+                    const combinedVy = (b1.mass * b1.vy + b2.mass * b2.vy) / totalMass;
+                    
+                    // Set both balls to the combined velocity
+                    b1.vx = combinedVx;
+                    b1.vy = combinedVy;
+                    b2.vx = combinedVx;
+                    b2.vy = combinedVy;
+                    
+                    // Move balls to touching position (minimal separation to prevent overlap)
+                    const totalRadius = b1.radius + b2.radius;
+                    const separationDistance = totalRadius + 0.1; // Small buffer to prevent overlap
+                    const separationRatio = separationDistance / distance;
+                    
+                    const centerX = (b1.x * b2.mass + b2.x * b1.mass) / totalMass;
+                    const centerY = (b1.y * b2.mass + b2.y * b1.mass) / totalMass;
+                    
+                    b1.x = centerX - (separationDistance / 2) * nx;
+                    b1.y = centerY - (separationDistance / 2) * ny;
+                    b2.x = centerX + (separationDistance / 2) * nx;
+                    b2.y = centerY + (separationDistance / 2) * ny;
+                } else {
+                    // Elastic or partially elastic collision
+                    const restitution = elasticity;
+                    const j = -(1 + restitution) * velocityAlongNormal / (1/b1.mass + 1/b2.mass);
 
-                // Apply impulse
-                b1.vx -= j * nx / b1.mass;
-                b1.vy -= j * ny / b1.mass;
-                b2.vx += j * nx / b2.mass;
-                b2.vy += j * ny / b2.mass;
+                    // Apply impulse
+                    b1.vx -= j * nx / b1.mass;
+                    b1.vy -= j * ny / b1.mass;
+                    b2.vx += j * nx / b2.mass;
+                    b2.vy += j * ny / b2.mass;
 
-                // Separate balls to prevent sticking
-                const overlap = (b1.radius + b2.radius - distance) / 2;
-                b1.x -= overlap * nx;
-                b1.y -= overlap * ny;
-                b2.x += overlap * nx;
-                b2.y += overlap * ny;
+                    // Separate balls to prevent sticking
+                    const overlap = (b1.radius + b2.radius - distance) / 2;
+                    b1.x -= overlap * nx;
+                    b1.y -= overlap * ny;
+                    b2.x += overlap * nx;
+                    b2.y += overlap * ny;
+                }
             }
         }
+
+        // Elasticity slider event listener
+        elasticitySlider.addEventListener('input', (e) => {
+            elasticity = parseFloat(e.target.value) / 100;
+            elasticityValue.textContent = elasticity.toFixed(2);
+        });
 
         // Reset button
         resetButton.addEventListener('click', () => {
