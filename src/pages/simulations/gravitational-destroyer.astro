@@ -45,7 +45,7 @@ import Layout from '../../layouts/Layout.astro';
 						<div class="control-list">
 							<div>🖱️ Mouse: Aim ship</div>
 							<div>🖱️ Hold: Thrust</div>
-							<div>⇧ Shift: Shoot</div>
+							<div>⎵ Space: Shoot</div>
 							<div>P: Pause</div>
 							<div>R: Restart</div>
 						</div>
@@ -81,7 +81,7 @@ import Layout from '../../layouts/Layout.astro';
 					</div>
 					<div class="instruction">
 						<h3>🎯 Shooting</h3>
-						<p>Click the mouse to fire bullets. Bullets are affected by gravity from all planets, allowing for curved shots!</p>
+						<p>Press SPACE to fire bullets. Bullets are affected by gravity from all planets, allowing for curved shots!</p>
 					</div>
 					<div class="instruction">
 						<h3>⛽ Fuel Management</h3>
@@ -336,12 +336,14 @@ import Layout from '../../layouts/Layout.astro';
 
 				// Keyboard controls for shooting, pause and restart
 				document.addEventListener('keydown', (e) => {
-					if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
-						e.preventDefault();
+					if (e.code === 'Space') {
+						e.preventDefault(); // Prevent page scrolling
 						this.tryShoot();
 					} else if (e.code === 'KeyP') {
+						e.preventDefault();
 						this.paused = !this.paused;
 					} else if (e.code === 'KeyR') {
+						e.preventDefault();
 						if (this.gameOver) {
 							this.restartGame();
 						} else {
@@ -579,17 +581,52 @@ import Layout from '../../layouts/Layout.astro';
 				return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 			}
 
-			wrapAroundScreen() {
-				const objects = [this.spaceship, ...this.bullets, ...this.planets];
+			handleScreenBoundaries() {
+				// Handle spaceship boundaries - keep it on screen with gentle wrapping
+				if (this.spaceship && this.spaceship.alive) {
+					const margin = this.spaceship.radius;
+					
+					// Gentle wrapping for spaceship to avoid physics glitches
+					if (this.spaceship.x < -margin) {
+						this.spaceship.x = this.canvas.width + margin;
+					} else if (this.spaceship.x > this.canvas.width + margin) {
+						this.spaceship.x = -margin;
+					}
+					
+					if (this.spaceship.y < -margin) {
+						this.spaceship.y = this.canvas.height + margin;
+					} else if (this.spaceship.y > this.canvas.height + margin) {
+						this.spaceship.y = -margin;
+					}
+				}
 				
-				for (const obj of objects) {
-					if (!obj || !obj.alive) continue;
+				// Handle bullets - remove them when they go too far off screen
+				this.bullets = this.bullets.filter(bullet => {
+					if (!bullet.alive) return false;
 					
-					if (obj.x < 0) obj.x = this.canvas.width;
-					else if (obj.x > this.canvas.width) obj.x = 0;
+					const margin = 100; // Allow bullets to go a bit off screen
+					return (bullet.x > -margin && bullet.x < this.canvas.width + margin &&
+					        bullet.y > -margin && bullet.y < this.canvas.height + margin);
+				});
+				
+				// Handle planets - gentle wrapping to maintain orbital mechanics
+				for (const planet of this.planets) {
+					if (!planet || !planet.alive) continue;
 					
-					if (obj.y < 0) obj.y = this.canvas.height;
-					else if (obj.y > this.canvas.height) obj.y = 0;
+					const margin = planet.radius;
+					
+					// Only wrap if significantly off screen to avoid physics glitches
+					if (planet.x < -margin * 2) {
+						planet.x = this.canvas.width + margin * 2;
+					} else if (planet.x > this.canvas.width + margin * 2) {
+						planet.x = -margin * 2;
+					}
+					
+					if (planet.y < -margin * 2) {
+						planet.y = this.canvas.height + margin * 2;
+					} else if (planet.y > this.canvas.height + margin * 2) {
+						planet.y = -margin * 2;
+					}
 				}
 			}
 
@@ -638,8 +675,8 @@ import Layout from '../../layouts/Layout.astro';
 					return bullet.alive;
 				});
 				
-				// Wrap around screen
-				this.wrapAroundScreen();
+				// Handle screen boundaries
+				this.handleScreenBoundaries();
 				
 				// Check collisions
 				this.checkCollisions();
