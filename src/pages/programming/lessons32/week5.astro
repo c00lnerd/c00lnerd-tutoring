@@ -211,6 +211,60 @@ void loop() {
                 </div>
             </div>
 
+            <!-- Wiring Diagram Section -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔌 LED Wiring Diagram</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Proper LED Connection with Current-Limiting Resistor</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        When connecting an LED to an Arduino PWM pin, you must <strong>always include a current-limiting resistor</strong> to protect both the LED and the Arduino pin from damage.
+                    </p>
+                    
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">⚠️ Why Resistors Are Essential:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #742a2a; line-height: 1.8;">
+                            <li>• <strong>Current Protection:</strong> Arduino pins can only safely source ~20mA</li>
+                            <li>• <strong>LED Protection:</strong> LEDs have very low internal resistance</li>
+                            <li>• <strong>Without resistor:</strong> Excessive current can damage components</li>
+                            <li>• <strong>Recommended value:</strong> 220Ω resistor for most 5mm LEDs</li>
+                        </ul>
+                    </div>
+
+                    <div style="text-align: center; margin: 2rem 0;">
+                        <img src="/src/assets/previews/week5-led-wiring-diagram.png" alt="LED wiring diagram showing proper connection with current-limiting resistor" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
+                        <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem; font-style: italic;">
+                            Proper LED wiring: Arduino PWM pin → Resistor → LED → Ground
+                        </p>
+                    </div>
+
+                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <h4 style="color: #1e40af; font-weight: bold; margin-bottom: 1rem;">🧮 Resistor Value Calculation:</h4>
+                        <div style="background: white; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #e5e7eb;">
+                            <p style="color: #374151; margin-bottom: 0.5rem;"><strong>Formula:</strong> R = (Supply Voltage - LED Forward Voltage) / Desired Current</p>
+                            <p style="color: #374151; margin-bottom: 0.5rem;"><strong>For Red LED:</strong> R = (5V - 2V) / 0.015A = 200Ω</p>
+                            <p style="color: #374151; margin: 0;"><strong>Safe Choice:</strong> 220Ω resistor (standard value, good brightness)</p>
+                        </div>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #1e40af; line-height: 1.8;">
+                            <li>• <strong>220Ω:</strong> Most common choice, good brightness</li>
+                            <li>• <strong>330Ω:</strong> Dimmer but very safe for all LED types</li>
+                            <li>• <strong>470Ω:</strong> Very conservative, works with any LED</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px;">
+                        <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">✅ Wiring Checklist:</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #065f46; line-height: 1.8;">
+                            <li>• ✓ Resistor connected in series with LED</li>
+                            <li>• ✓ LED polarity correct (long leg = positive/anode)</li>
+                            <li>• ✓ Ground connection completed</li>
+                            <li>• ✓ Clean breadboard connections</li>
+                            <li>• ✓ Appropriate wire colors used</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <!-- Section 3: Light Sensors and Environmental Sensing -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
                 <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">☀️ Section 3: Light Sensors and Environmental Sensing</h2>
