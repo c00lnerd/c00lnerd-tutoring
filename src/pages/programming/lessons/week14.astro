@@ -96,46 +96,172 @@ import Layout from '../../../layouts/Layout.astro';
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm">
-                        <pre class="text-green-400 whitespace-pre-wrap">{`// Basic miniAuto program structure
-#include "miniAuto.h"
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"><code>{`/**
+ * @file miniAuto_obstacle_avoidance.ino
+ * @brief Basic Obstacle Avoidance Program using Standard Arduino Libraries
+ * @author miniAuto Team / Hiwonder
+ * @version V1.0
+ * @date 2024-04-22
+ */
+
+#include <Arduino.h>
+
+// Motor control pins
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};        // Motor speed control pins
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};  // Motor direction control pins
+
+// Sensor pins
+const int trigPin = 2;
+const int echoPin = 3;
+const int ledPin = 13;
+
+// Function declarations
+void Motor_Init(void);
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
+float getUltrasonicDistance();
+void setStatusLED(bool state);
 
 void setup() {
-    Serial.begin(115200);
-    miniAuto.init();  // Initialize robot systems
-    Serial.println("🤖 miniAuto Ready!");
+    Serial.begin(9600);
+    Serial.println("🤖 miniAuto Obstacle Avoidance Program");
+    
+    // Initialize motors
+    Motor_Init();
+    
+    // Initialize ultrasonic sensor
+    pinMode(trigPin, OUTPUT);
+    pinMode(echoPin, INPUT);
+    
+    // Initialize LED
+    pinMode(ledPin, OUTPUT);
+    
     // Startup sequence
-    miniAuto.setLED(BLUE);
-    miniAuto.playTone(440, 200);
+    Serial.println("System initialized - Starting obstacle avoidance...");
+    setStatusLED(true);
     delay(1000);
-    miniAuto.setLED(GREEN);
+    setStatusLED(false);
 }
 
 void loop() {
-    // Main robot behavior
-    float distance = miniAuto.getDistance();
-    float battery = miniAuto.getBatteryVoltage();
+    // Get distance reading
+    float distance = getUltrasonicDistance();
+    
     // Display status
     Serial.print("Distance: ");
     Serial.print(distance);
-    Serial.print("cm, Battery: ");
-    Serial.print(battery);
-    Serial.println("V");
-    // Simple obstacle avoidance
+    Serial.println(" cm");
+    
+    // Simple obstacle avoidance behavior
     if (distance > 30) {
-        miniAuto.moveForward(150);
-        miniAuto.setLED(GREEN);
-    } else if (distance > 10) {
-        miniAuto.moveForward(80);  // Slow down
-        miniAuto.setLED(YELLOW);
+        // Clear path - move forward
+        Serial.println("→ Moving forward");
+        Velocity_Controller(0, 60, 0, 0);  // Move forward at 60% speed
+        setStatusLED(false);  // LED off = good
+    } else if (distance > 15) {
+        // Obstacle detected - slow down
+        Serial.println("⚠️ Slowing down");
+        Velocity_Controller(0, 30, 0, 0);  // Move forward at 30% speed
+        setStatusLED(true);   // LED on = caution
     } else {
-        miniAuto.stop();
-        miniAuto.setLED(RED);
-        miniAuto.turnRight(150);
-        delay(500);
+        // Obstacle too close - stop and turn
+        Serial.println("🚫 Obstacle! Turning right");
+        Velocity_Controller(0, 0, 0, 0);   // Stop
+        delay(200);
+        Velocity_Controller(0, 0, -50, 0); // Turn right in place
+        delay(800);
+        setStatusLED(false);
     }
-    delay(100);
-}`}</pre>
+    
+    delay(100);  // Small delay for stability
+}
+
+// Motor initialization function
+void Motor_Init(void) {
+    for(uint8_t i = 0; i < 4; i++) {
+        pinMode(motordirectionPin[i], OUTPUT);
+    }
+    Velocity_Controller(0, 0, 0, 0);  // Start with motors stopped
+}
+
+/**
+ * @brief Speed control function for omnidirectional movement
+ * @param angle     Controls robot motion direction (0-359°, front=0°, counterclockwise positive)
+ * @param velocity  Controls robot speed (0-100)
+ * @param rot       Controls rotation speed (-100 to 100, positive=counterclockwise)
+ * @param drift     Enables drift mode (0=normal, 1=drift)
+ */
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
+    int8_t velocity_0, velocity_1, velocity_2, velocity_3;
+    float speed = 1;
+    angle += 90;
+    float rad = angle * PI / 180;
+    
+    if (rot == 0) speed = 1;
+    else speed = 0.5; 
+    
+    velocity /= sqrt(2);
+    
+    if (drift) {
+        velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
+        velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
+        velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
+        velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
+    } else {
+        velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
+        velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
+        velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
+        velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
+    }
+    Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
+}
+
+/**
+ * @brief PWM and motor direction setting function
+ */
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
+    int8_t pwm_set[4];
+    int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
+    bool direction[4] = {1, 0, 0, 1};
+    
+    for(uint8_t i = 0; i < 4; ++i) {
+        if(motors[i] < 0) direction[i] = !direction[i];
+        else direction[i] = direction[i];
+
+        if(motors[i] == 0) pwm_set[i] = 0;
+        else pwm_set[i] = map(abs(motors[i]), 0, 100, 2, 255);
+
+        digitalWrite(motordirectionPin[i], direction[i]); 
+        analogWrite(motorpwmPin[i], pwm_set[i]); 
+    }
+}
+
+/**
+ * @brief Get distance reading from ultrasonic sensor
+ */
+float getUltrasonicDistance() {
+    digitalWrite(trigPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(trigPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(trigPin, LOW);
+    
+    long duration = pulseIn(echoPin, HIGH);
+    float distance = duration * 0.034 / 2;  // Convert to centimeters
+    
+    return distance;
+}
+
+/**
+ * @brief Control status LED
+ */
+void setStatusLED(bool state) {
+    digitalWrite(ledPin, state);
+}`}</code></pre>
                     </div>
                 </div>
 
@@ -446,3 +572,69 @@ void intelligentBehavior() {
         </div>
     </main>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-999999px';
+        textarea.style.top = '-999999px';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#059669';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg;
+    }, 2000);
+}
+</script>
