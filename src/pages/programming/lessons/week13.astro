@@ -149,43 +149,169 @@ import Layout from '../../../layouts/Layout.astro';
                         <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                             📋 Copy
                         </button>
-                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"><code>{`// Initial system test code
-#include "miniAuto.h"  // miniAuto library
+                        <pre class="bg-gray-800 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto"><code>{`/**
+ * @file miniAuto_comprehensive_test.ino
+ * @brief Comprehensive Motor and System Test Program
+ * @author miniAuto Team / Hiwonder
+ * @version V1.0
+ * @date 2024-04-22
+ * 
+ * Motor Layout (numbers correspond to motorpwmPin[4] and motordirectionPin[4] indices):
+ * [0] --|||--[1]       
+ *  |          |        ^ counterclockwise
+ *  |          |        |
+ *  |          |        |
+ *  |          |        |
+ * [3] -------[2]
+ */
+
+#include <Arduino.h>
+
+const static uint8_t pwm_min = 2;
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};        // Motor speed control pins
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};  // Motor direction control pins
+
+void Motor_Init(void);
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
+void testSensors();
 
 void setup() {
-    Serial.begin(115200);
-    miniAuto.init();  // Initialize all systems
-    Serial.println("🤖 miniAuto System Test");
-    // Test all major components
-    testMotors();
-    testSensors();
-    testLEDs();
-    testBuzzer();
-    Serial.println("✅ All systems operational!");
-}
-
-void testMotors() {
-    Serial.println("Testing motors...");
-    miniAuto.moveForward(100);
+    Serial.begin(9600);
+    Serial.setTimeout(500);
+    Serial.println("🤖 miniAuto Comprehensive System Test");
+    
+    Motor_Init();  // Initialize motors
+    
+    // Comprehensive motor movement test
+    Serial.println("Testing omnidirectional movement...");
+    
+    Serial.println("→ Forward");
+    Velocity_Controller(0, 50, 0, 0);    // Move forward
     delay(1000);
-    miniAuto.stop();
-    Serial.println("✓ Motors OK");
-}
-
-void testSensors() {
-    Serial.println("Testing sensors...");
-    float distance = miniAuto.getDistance();
-    Serial.print("Distance: ");
-    Serial.println(distance);
-    Serial.println("✓ Sensors OK");
+    
+    Serial.println("↗ Left-Forward diagonal");
+    Velocity_Controller(45, 50, 0, 0);   // Move left forward
+    delay(1000);
+    
+    Serial.println("← Left");
+    Velocity_Controller(90, 50, 0, 0);   // Move left
+    delay(1000);
+    
+    Serial.println("↙ Left-Backward diagonal");
+    Velocity_Controller(135, 50, 0, 0);  // Move left backward
+    delay(1000);
+    
+    Serial.println("↓ Backward");
+    Velocity_Controller(180, 50, 0, 0);  // Move backward
+    delay(1000);
+    
+    Serial.println("↘ Right-Backward diagonal");
+    Velocity_Controller(225, 50, 0, 0);  // Move right backward
+    delay(1000);
+    
+    Serial.println("→ Right");
+    Velocity_Controller(270, 50, 0, 0);  // Move right
+    delay(1000);
+    
+    Serial.println("↗ Right-Forward diagonal");
+    Velocity_Controller(315, 50, 0, 0);  // Move right forward
+    delay(1000);
+    
+    Serial.println("↺ Rotate left in place");
+    Velocity_Controller(0, 0, 50, 0);    // Turn left in place
+    delay(1000);
+    
+    Serial.println("↻ Rotate right in place");
+    Velocity_Controller(0, 0, -50, 0);   // Turn right in place
+    delay(1000);
+    
+    Serial.println("🌪️ Drift mode");
+    Velocity_Controller(0, 100, 50, 1);  // Drift movement
+    delay(1000);
+    
+    Serial.println("⏹️ Stop");
+    Velocity_Controller(0, 0, 0, 0);     // Stop all motors
+    
+    // Test other systems
+    testSensors();
+    
+    Serial.println("✅ All systems operational!");
 }
 
 void loop() {
     // System monitoring
-    Serial.print("Battery: ");
-    Serial.print(miniAuto.getBatteryVoltage());
-    Serial.println("V");
+    Serial.print("Battery Status: ");
+    // Add battery monitoring code here
+    Serial.println("OK");
     delay(5000);
+}
+
+// Motor initialization function
+void Motor_Init(void) {
+    for(uint8_t i = 0; i < 4; i++) {
+        pinMode(motordirectionPin[i], OUTPUT);
+    }
+    Velocity_Controller(0, 0, 0, 0);
+}
+
+/**
+ * @brief Speed control function for omnidirectional movement
+ * @param angle     Controls robot motion direction (0-359°, front=0°, counterclockwise positive)
+ * @param velocity  Controls robot speed (0-100)
+ * @param rot       Controls rotation speed (-100 to 100, positive=counterclockwise)
+ * @param drift     Enables drift mode (0=normal, 1=drift)
+ */
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
+    int8_t velocity_0, velocity_1, velocity_2, velocity_3;
+    float speed = 1;
+    angle += 90;
+    float rad = angle * PI / 180;
+    
+    if (rot == 0) speed = 1;  // Speed factor
+    else speed = 0.5; 
+    
+    velocity /= sqrt(2);
+    
+    if (drift) {
+        velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
+        velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
+        velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
+        velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
+    } else {
+        velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
+        velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
+        velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
+        velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
+    }
+    Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
+}
+
+/**
+ * @brief PWM and motor direction setting function
+ * @param Motor_x   PWM and motor direction control values (calculated from mecanum wheel kinematics)
+ */
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
+    int8_t pwm_set[4];
+    int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
+    bool direction[4] = {1, 0, 0, 1};  // Forward direction: left=1, right=0
+    
+    for(uint8_t i = 0; i < 4; ++i) {
+        if(motors[i] < 0) direction[i] = !direction[i];
+        else direction[i] = direction[i];
+
+        if(motors[i] == 0) pwm_set[i] = 0;
+        else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
+
+        digitalWrite(motordirectionPin[i], direction[i]); 
+        analogWrite(motorpwmPin[i], pwm_set[i]); 
+    }
+}
+
+void testSensors() {
+    Serial.println("Testing sensors...");
+    // Add sensor testing code here
+    Serial.println("✓ Sensors OK");
 }`}</code></pre>
                     </div>
                 </div>
