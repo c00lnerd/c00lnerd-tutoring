@@ -16,6 +16,24 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             </div>
 
+            <!-- Important Note -->
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-yellow-800">Important: Code Compatibility Notice</h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <p class="mb-2">Some code examples in this lesson reference <code class="bg-yellow-100 px-1 rounded">#include "miniAuto.h"</code> and <code class="bg-yellow-100 px-1 rounded">miniAuto.*</code> functions. This is a custom library that may not be available.</p>
+                            <p><strong>✅ Use the working code from Section 1</strong> - it uses standard Arduino libraries and will compile successfully. The other examples are for conceptual understanding only.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Learning Objectives -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
@@ -25,7 +43,7 @@ import Layout from '../../../layouts/Layout.astro';
                         <ul class="space-y-2 text-gray-600">
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Use miniAuto library functions effectively
+                                Use Arduino functions for robot control effectively
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
@@ -574,53 +592,152 @@ void intelligentBehavior() {
 </Layout>
 
 <script>
+// Enhanced copy functionality for Chromebook compatibility
 window.copyCode = function(button) {
     try {
         const codeElement = button.parentElement.querySelector('code');
         if (!codeElement) {
-            showCopyFeedback(button, false);
+            showCopyFeedback(button, false, 'Code not found');
             return;
         }
         
         const codeText = codeElement.textContent || codeElement.innerText;
         
+        // Try modern clipboard API first (works best on HTTPS and newer browsers)
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(codeText).then(() => {
-                showCopyFeedback(button, true);
-            }).catch(() => {
-                fallbackCopy(codeText, button);
-            });
+            // Add a small delay to ensure user interaction is registered (helps with Chromebooks)
+            setTimeout(() => {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    showCopyFeedback(button, true);
+                }).catch((err) => {
+                    console.log('Clipboard API failed, trying fallback:', err);
+                    chromebookFallbackCopy(codeText, button);
+                });
+            }, 10);
         } else {
-            fallbackCopy(codeText, button);
+            // Use enhanced fallback for older browsers and restricted environments
+            chromebookFallbackCopy(codeText, button);
         }
     } catch (err) {
-        showCopyFeedback(button, false);
+        console.error('Copy function error:', err);
+        showCopyFeedback(button, false, 'Copy failed');
     }
 };
 
-function fallbackCopy(text, button) {
+function chromebookFallbackCopy(text, button) {
     try {
+        // Enhanced textarea approach (better for Chromebooks)
         const textarea = document.createElement('textarea');
         textarea.value = text;
+        
+        // Make textarea visible but small (helps with focus on Chromebooks)
         textarea.style.position = 'fixed';
-        textarea.style.left = '-999999px';
-        textarea.style.top = '-999999px';
-        textarea.setAttribute('readonly', '');
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.width = '1px';
+        textarea.style.height = '1px';
+        textarea.style.padding = '0';
+        textarea.style.border = 'none';
+        textarea.style.outline = 'none';
+        textarea.style.boxShadow = 'none';
+        textarea.style.background = 'transparent';
+        textarea.style.zIndex = '-1';
+        
+        // Add to body and focus
         document.body.appendChild(textarea);
-        
+        textarea.focus();
         textarea.select();
-        textarea.setSelectionRange(0, 99999);
         
-        const successful = document.execCommand('copy');
+        // Try to select all text (important for Chromebooks)
+        if (textarea.setSelectionRange) {
+            textarea.setSelectionRange(0, text.length);
+        }
+        
+        // Attempt copy
+        let successful = false;
+        try {
+            successful = document.execCommand('copy');
+        } catch (copyErr) {
+            console.log('execCommand failed:', copyErr);
+        }
+        
+        // Clean up
         document.body.removeChild(textarea);
         
-        showCopyFeedback(button, successful);
+        if (successful) {
+            showCopyFeedback(button, true);
+        } else {
+            // Final fallback: Show manual copy instructions
+            showManualCopyInstructions(text, button);
+        }
+        
     } catch (err) {
-        showCopyFeedback(button, false);
+        console.error('Chromebook fallback failed:', err);
+        showManualCopyInstructions(text, button);
     }
 }
 
-function showCopyFeedback(button, success) {
+function showManualCopyInstructions(text, button) {
+    // Create a modal-like overlay with the code for manual copying
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    overlay.style.zIndex = '10000';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.padding = '20px';
+    
+    const modal = document.createElement('div');
+    modal.style.backgroundColor = 'white';
+    modal.style.padding = '20px';
+    modal.style.borderRadius = '8px';
+    modal.style.maxWidth = '80%';
+    modal.style.maxHeight = '80%';
+    modal.style.overflow = 'auto';
+    modal.style.position = 'relative';
+    
+    modal.innerHTML = `
+        <h3 style="margin-top: 0; color: #333;">📋 Manual Copy Required</h3>
+        <p style="color: #666; margin-bottom: 15px;">Automatic copying isn't working on your device. Please select all the code below and copy it manually:</p>
+        <div style="background: #f5f5f5; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+            <strong>Instructions:</strong><br>
+            • Click in the text area below<br>
+            • Press Ctrl+A (or Cmd+A on Mac) to select all<br>
+            • Press Ctrl+C (or Cmd+C on Mac) to copy
+        </div>
+        <textarea readonly style="width: 100%; height: 200px; font-family: monospace; font-size: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">${text}</textarea>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="this.closest('.copy-overlay').remove()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close</button>
+        </div>
+    `;
+    
+    overlay.className = 'copy-overlay';
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Auto-select the text in the textarea
+    const textarea = modal.querySelector('textarea');
+    setTimeout(() => {
+        textarea.focus();
+        textarea.select();
+    }, 100);
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    showCopyFeedback(button, false, '📋 Manual copy');
+}
+
+function showCopyFeedback(button, success, customMessage) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
     
@@ -628,13 +745,13 @@ function showCopyFeedback(button, success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#059669';
     } else {
-        button.textContent = '❌ Failed';
+        button.textContent = customMessage || '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
     
     setTimeout(() => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg;
-    }, 2000);
+    }, 3000); // Longer timeout for better user feedback
 }
 </script>

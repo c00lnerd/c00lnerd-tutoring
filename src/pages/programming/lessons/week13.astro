@@ -460,49 +460,189 @@ window.copyCode = function(button) {
     try {
         const codeElement = button.parentElement.querySelector('code');
         if (!codeElement) {
-            showCopyFeedback(button, false);
+            showCopyFeedback(button, false, 'Code not found');
             return;
         }
         
         const codeText = codeElement.textContent || codeElement.innerText;
         
+        // Try modern clipboard API first (works best on HTTPS and newer browsers)
         if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(codeText).then(() => {
-                showCopyFeedback(button, true);
-            }).catch(() => {
-                fallbackCopy(codeText, button);
-            });
+            // Add a small delay to ensure user interaction is registered (helps with Chromebooks)
+            setTimeout(() => {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    showCopyFeedback(button, true);
+                }).catch((err) => {
+                    console.log('Clipboard API failed, trying fallback:', err);
+                    chromebookFallbackCopy(codeText, button);
+                });
+            }, 10);
         } else {
-            fallbackCopy(codeText, button);
+            // Use enhanced fallback for older browsers and restricted environments
+            chromebookFallbackCopy(codeText, button);
         }
     } catch (err) {
-        showCopyFeedback(button, false);
+        console.error('Copy function error:', err);
+        showCopyFeedback(button, false, 'Copy failed');
     }
 };
 
-function fallbackCopy(text, button) {
+function chromebookFallbackCopy(text, button) {
     try {
+        // Method 1: Enhanced textarea approach (better for Chromebooks)
         const textarea = document.createElement('textarea');
         textarea.value = text;
+        
+        // Make textarea visible but small (helps with focus on Chromebooks)
         textarea.style.position = 'fixed';
-        textarea.style.left = '-999999px';
-        textarea.style.top = '-999999px';
-        textarea.setAttribute('readonly', '');
+        textarea.style.top = '0';
+        textarea.style.left = '0';
+        textarea.style.width = '1px';
+        textarea.style.height = '1px';
+        textarea.style.padding = '0';
+        textarea.style.border = 'none';
+        textarea.style.outline = 'none';
+        textarea.style.boxShadow = 'none';
+        textarea.style.background = 'transparent';
+        textarea.style.zIndex = '-1';
+        
+        // Add to body and focus
         document.body.appendChild(textarea);
-        
+        textarea.focus();
         textarea.select();
-        textarea.setSelectionRange(0, 99999);
         
-        const successful = document.execCommand('copy');
+        // Try to select all text (important for Chromebooks)
+        if (textarea.setSelectionRange) {
+            textarea.setSelectionRange(0, text.length);
+        }
+        
+        // Attempt copy
+        let successful = false;
+        try {
+            successful = document.execCommand('copy');
+        } catch (copyErr) {
+            console.log('execCommand failed:', copyErr);
+        }
+        
+        // Clean up
         document.body.removeChild(textarea);
         
-        showCopyFeedback(button, successful);
+        if (successful) {
+            showCopyFeedback(button, true);
+        } else {
+            // Method 2: Try alternative approach for stubborn browsers
+            alternativeCopyMethod(text, button);
+        }
+        
     } catch (err) {
-        showCopyFeedback(button, false);
+        console.error('Chromebook fallback failed:', err);
+        alternativeCopyMethod(text, button);
     }
 }
 
-function showCopyFeedback(button, success) {
+function alternativeCopyMethod(text, button) {
+    try {
+        // Method 3: Create a contenteditable div (sometimes works when textarea doesn't)
+        const div = document.createElement('div');
+        div.contentEditable = true;
+        div.innerHTML = text.replace(/\n/g, '<br>');
+        
+        div.style.position = 'fixed';
+        div.style.top = '0';
+        div.style.left = '0';
+        div.style.width = '1px';
+        div.style.height = '1px';
+        div.style.opacity = '0';
+        div.style.overflow = 'hidden';
+        
+        document.body.appendChild(div);
+        
+        // Select the content
+        const range = document.createRange();
+        range.selectNodeContents(div);
+        const selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        
+        let successful = false;
+        try {
+            successful = document.execCommand('copy');
+        } catch (copyErr) {
+            console.log('Alternative method failed:', copyErr);
+        }
+        
+        // Clean up
+        selection.removeAllRanges();
+        document.body.removeChild(div);
+        
+        if (successful) {
+            showCopyFeedback(button, true);
+        } else {
+            // Final fallback: Show manual copy instructions
+            showManualCopyInstructions(text, button);
+        }
+        
+    } catch (err) {
+        console.error('Alternative copy method failed:', err);
+        showManualCopyInstructions(text, button);
+    }
+}
+
+function showManualCopyInstructions(text, button) {
+    // Create a modal-like overlay with the code for manual copying
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    overlay.style.zIndex = '10000';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.padding = '20px';
+    
+    const modal = document.createElement('div');
+    modal.style.backgroundColor = 'white';
+    modal.style.padding = '20px';
+    modal.style.borderRadius = '8px';
+    modal.style.maxWidth = '80%';
+    modal.style.maxHeight = '80%';
+    modal.style.overflow = 'auto';
+    modal.style.position = 'relative';
+    
+    modal.innerHTML = `
+        <h3 style="margin-top: 0; color: #333;">Manual Copy Required</h3>
+        <p style="color: #666; margin-bottom: 15px;">Automatic copying isn't working. Please select all the code below and copy it manually (Ctrl+C or Cmd+C):</p>
+        <textarea readonly style="width: 100%; height: 200px; font-family: monospace; font-size: 12px; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">${text}</textarea>
+        <div style="margin-top: 15px; text-align: right;">
+            <button onclick="this.closest('.copy-overlay').remove()" style="background-color: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">Close</button>
+        </div>
+    `;
+    
+    overlay.className = 'copy-overlay';
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Auto-select the text in the textarea
+    const textarea = modal.querySelector('textarea');
+    setTimeout(() => {
+        textarea.focus();
+        textarea.select();
+    }, 100);
+    
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            overlay.remove();
+        }
+    });
+    
+    showCopyFeedback(button, false, 'Manual copy required');
+}
+
+function showCopyFeedback(button, success, customMessage) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
     
@@ -510,13 +650,13 @@ function showCopyFeedback(button, success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#059669';
     } else {
-        button.textContent = '❌ Failed';
+        button.textContent = customMessage || '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
     
     setTimeout(() => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg;
-    }, 2000);
+    }, 3000); // Longer timeout for better user feedback
 }
 </script>
