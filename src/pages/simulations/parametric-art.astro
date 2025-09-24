@@ -1,0 +1,368 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Advanced Parametric Mathematical Art - Interactive Simulation">
+    <main class="container mx-auto px-4 py-8">
+        <div class="experiment-header mb-8">
+            <h1 class="text-4xl font-bold text-center text-purple-700 mb-2">🎨 ADVANCED PARAMETRIC MATHEMATICAL ART</h1>
+            <h2 class="text-xl text-center text-gray-600 mb-4">Interactive Mathematical Visualization</h2>
+            <p class="text-center text-gray-700 max-w-3xl mx-auto">
+                Explore the beauty of mathematics through complex parametric equations. Watch as trigonometric functions 
+                create stunning visual patterns that change and evolve in real-time.
+            </p>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-xl font-bold text-purple-700 mb-4">🎛️ Mathematical Controls</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label for="frequency" class="block text-sm font-medium text-gray-700 mb-1">Frequency</label>
+                    <input type="range" id="frequency" min="0.1" max="5" step="0.1" value="1" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="frequencyValue" class="text-xs text-gray-600">1.0</span>
+                </div>
+                
+                <div>
+                    <label for="amplitude" class="block text-sm font-medium text-gray-700 mb-1">Amplitude</label>
+                    <input type="range" id="amplitude" min="10" max="200" step="5" value="50" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="amplitudeValue" class="text-xs text-gray-600">50</span>
+                </div>
+                
+                <div>
+                    <label for="speed" class="block text-sm font-medium text-gray-700 mb-1">Animation Speed</label>
+                    <input type="range" id="speed" min="0.01" max="0.2" step="0.01" value="0.05" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="speedValue" class="text-xs text-gray-600">0.05</span>
+                </div>
+                
+                <div>
+                    <label for="curves" class="block text-sm font-medium text-gray-700 mb-1">Number of Curves</label>
+                    <input type="range" id="curves" min="1" max="12" step="1" value="6" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="curvesValue" class="text-xs text-gray-600">6</span>
+                </div>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap gap-2">
+                <button id="playPause" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    ⏸️ Pause
+                </button>
+                <button id="reset" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🔄 Reset
+                </button>
+                <button id="randomize" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🎲 Randomize
+                </button>
+                <button id="saveImage" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    💾 Save Image
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="bg-black rounded-lg shadow-lg p-4 mb-8">
+            <canvas id="artCanvas" width="800" height="600" class="w-full max-w-4xl mx-auto block rounded"></canvas>
+            <div class="text-center mt-4">
+                <p class="text-white text-sm">
+                    <span id="mathInfo">Parametric Equations: x = A·cos(ωt + φ), y = B·sin(ωt + ψ)</span>
+                </p>
+                <p class="text-cyan-400 text-xs mt-1">
+                    Move your mouse over the canvas to influence the mathematical parameters!
+                </p>
+            </div>
+        </div>
+
+        <!-- Mathematical Information -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-purple-700 mb-4">📐 The Mathematics</h3>
+                <div class="space-y-3 text-gray-700">
+                    <p><strong>Parametric Equations:</strong> These use a parameter (usually time 't') to define both x and y coordinates:</p>
+                    <div class="bg-gray-100 p-3 rounded font-mono text-sm">
+                        x(t) = A₁·cos(ω₁t + φ₁) + A₂·cos(ω₂t + φ₂)<br>
+                        y(t) = B₁·sin(ω₁t + ψ₁) + B₂·sin(ω₂t + ψ₂)
+                    </div>
+                    <p><strong>Where:</strong></p>
+                    <ul class="list-disc ml-6 space-y-1 text-sm">
+                        <li>A, B = Amplitudes (control size)</li>
+                        <li>ω = Frequencies (control speed of oscillation)</li>
+                        <li>φ, ψ = Phase shifts (control starting positions)</li>
+                        <li>t = Time parameter (creates animation)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-pink-700 mb-4">🌟 Real-World Applications</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li><strong>🌍 Planetary Motion:</strong> Orbits follow parametric elliptical paths</li>
+                    <li><strong>🎵 Sound Waves:</strong> Audio signals are parametric sine/cosine waves</li>
+                    <li><strong>🌸 Flower Patterns:</strong> Petals grow following parametric spirals</li>
+                    <li><strong>🧬 DNA Structure:</strong> Double helix is a parametric curve</li>
+                    <li><strong>🌊 Ocean Waves:</strong> Wave motion follows trigonometric patterns</li>
+                    <li><strong>🎨 Computer Graphics:</strong> Animation paths use parametric equations</li>
+                    <li><strong>🚀 Rocket Trajectories:</strong> Flight paths calculated parametrically</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Back Navigation -->
+        <div class="text-center">
+            <a href="/simulations" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                ← Back to Simulations
+            </a>
+        </div>
+    </main>
+
+    <script>
+        class ParametricArtGenerator {
+            constructor() {
+                this.canvas = document.getElementById('artCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                this.centerX = this.width / 2;
+                this.centerY = this.height / 2;
+                
+                // Animation variables
+                this.t = 0;
+                this.isPlaying = true;
+                this.mouseX = this.centerX;
+                this.mouseY = this.centerY;
+                
+                // Parameters
+                this.frequency = 1.0;
+                this.amplitude = 50;
+                this.speed = 0.05;
+                this.numCurves = 6;
+                
+                this.setupEventListeners();
+                this.animate();
+            }
+            
+            setupEventListeners() {
+                // Control sliders
+                const controls = ['frequency', 'amplitude', 'speed', 'curves'];
+                controls.forEach(control => {
+                    const slider = document.getElementById(control);
+                    const valueSpan = document.getElementById(control + 'Value');
+                    
+                    slider.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        this[control === 'curves' ? 'numCurves' : control] = value;
+                        valueSpan.textContent = value;
+                    });
+                });
+                
+                // Buttons
+                document.getElementById('playPause').addEventListener('click', () => {
+                    this.isPlaying = !this.isPlaying;
+                    document.getElementById('playPause').textContent = this.isPlaying ? '⏸️ Pause' : '▶️ Play';
+                });
+                
+                document.getElementById('reset').addEventListener('click', () => {
+                    this.t = 0;
+                });
+                
+                document.getElementById('randomize').addEventListener('click', () => {
+                    this.randomizeParameters();
+                });
+                
+                document.getElementById('saveImage').addEventListener('click', () => {
+                    this.saveImage();
+                });
+                
+                // Mouse tracking
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mouseX = (e.clientX - rect.left) * (this.width / rect.width);
+                    this.mouseY = (e.clientY - rect.top) * (this.height / rect.height);
+                });
+            }
+            
+            randomizeParameters() {
+                document.getElementById('frequency').value = (Math.random() * 4.9 + 0.1).toFixed(1);
+                document.getElementById('amplitude').value = Math.floor(Math.random() * 190 + 10);
+                document.getElementById('speed').value = (Math.random() * 0.19 + 0.01).toFixed(2);
+                document.getElementById('curves').value = Math.floor(Math.random() * 11 + 1);
+                
+                // Trigger change events
+                ['frequency', 'amplitude', 'speed', 'curves'].forEach(control => {
+                    const event = new Event('input');
+                    document.getElementById(control).dispatchEvent(event);
+                });
+            }
+            
+            mag(x, y) {
+                return Math.sqrt(x * x + y * y);
+            }
+            
+            createParametricPoint(k, t, curveIndex) {
+                // Complex parametric equations inspired by the original code
+                const mouseInfluence = 0.1;
+                const mouseFreqX = (this.mouseX / this.width - 0.5) * mouseInfluence;
+                const mouseFreqY = (this.mouseY / this.height - 0.5) * mouseInfluence;
+                
+                // Multiple layers of trigonometric complexity
+                const freq1 = this.frequency + mouseFreqX;
+                const freq2 = this.frequency * 0.7 + mouseFreqY;
+                
+                // First parametric layer
+                const r1 = this.amplitude * (1 + 0.5 * Math.sin(k * freq1 + t));
+                const r2 = this.amplitude * 0.8 * (1 + 0.3 * Math.cos(k * freq2 + t * 0.7));
+                
+                // Second parametric layer with curve offset
+                const curveOffset = curveIndex * Math.PI * 2 / this.numCurves;
+                const x1 = r1 * Math.cos(k * 0.1 + t + curveOffset);
+                const y1 = r1 * Math.sin(k * 0.1 + t * 0.8 + curveOffset);
+                
+                // Third parametric layer
+                const x2 = r2 * Math.cos(k * 0.15 + t * 1.2 + curveOffset + Math.PI/4);
+                const y2 = r2 * Math.sin(k * 0.15 + t * 0.9 + curveOffset + Math.PI/4);
+                
+                // Combine layers
+                const x = this.centerX + x1 + x2 * 0.5;
+                const y = this.centerY + y1 + y2 * 0.5;
+                
+                return { x, y };
+            }
+            
+            drawFrame() {
+                // Clear canvas with fade effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                // Draw parametric curves
+                for (let curve = 0; curve < this.numCurves; curve++) {
+                    this.ctx.beginPath();
+                    
+                    let firstPoint = true;
+                    const points = [];
+                    
+                    // Generate points for this curve
+                    for (let i = 0; i < 200; i++) {
+                        const k = i * 0.1;
+                        const point = this.createParametricPoint(k, this.t, curve);
+                        
+                        // Keep points on screen
+                        if (point.x >= 0 && point.x <= this.width && 
+                            point.y >= 0 && point.y <= this.height) {
+                            points.push(point);
+                        }
+                    }
+                    
+                    // Draw the curve
+                    if (points.length > 1) {
+                        // Create rainbow colors that change over time
+                        const hue = (this.t * 0.01 + curve / this.numCurves) % 1;
+                        const saturation = 0.8 + 0.2 * Math.sin(this.t * 0.02);
+                        const lightness = 0.5 + 0.3 * Math.cos(this.t * 0.03 + curve);
+                        
+                        this.ctx.strokeStyle = this.hslToRgb(hue, saturation, lightness);
+                        this.ctx.lineWidth = 2;
+                        this.ctx.lineCap = 'round';
+                        this.ctx.lineJoin = 'round';
+                        
+                        this.ctx.beginPath();
+                        this.ctx.moveTo(points[0].x, points[0].y);
+                        
+                        for (let i = 1; i < points.length; i++) {
+                            this.ctx.lineTo(points[i].x, points[i].y);
+                        }
+                        
+                        this.ctx.stroke();
+                    }
+                }
+                
+                // Update mathematical info
+                document.getElementById('mathInfo').textContent = 
+                    `t = ${this.t.toFixed(2)} | ω = ${this.frequency} | A = ${this.amplitude} | Curves = ${this.numCurves}`;
+            }
+            
+            hslToRgb(h, s, l) {
+                const c = (1 - Math.abs(2 * l - 1)) * s;
+                const x = c * (1 - Math.abs((h * 6) % 2 - 1));
+                const m = l - c / 2;
+                
+                let r, g, b;
+                
+                if (h < 1/6) {
+                    r = c; g = x; b = 0;
+                } else if (h < 2/6) {
+                    r = x; g = c; b = 0;
+                } else if (h < 3/6) {
+                    r = 0; g = c; b = x;
+                } else if (h < 4/6) {
+                    r = 0; g = x; b = c;
+                } else if (h < 5/6) {
+                    r = x; g = 0; b = c;
+                } else {
+                    r = c; g = 0; b = x;
+                }
+                
+                r = Math.round((r + m) * 255);
+                g = Math.round((g + m) * 255);
+                b = Math.round((b + m) * 255);
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            saveImage() {
+                const link = document.createElement('a');
+                link.download = `parametric-art-${Date.now()}.png`;
+                link.href = this.canvas.toDataURL();
+                link.click();
+            }
+            
+            animate() {
+                this.drawFrame();
+                
+                if (this.isPlaying) {
+                    this.t += this.speed;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize the parametric art generator when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new ParametricArtGenerator();
+        });
+    </script>
+
+    <style>
+        #artCanvas {
+            border: 2px solid #4c1d95;
+            box-shadow: 0 0 20px rgba(76, 29, 149, 0.3);
+        }
+        
+        input[type="range"] {
+            background: linear-gradient(to right, #8b5cf6, #ec4899);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</Layout>

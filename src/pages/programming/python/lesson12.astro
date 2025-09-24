@@ -1,0 +1,527 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 12: Advanced Parametric Mathematical Art - C00lnerd Programming">
+  <main class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-8 rounded-lg mb-8">
+      <h1 class="text-4xl font-bold mb-4">🎨 Lesson 12: Advanced Parametric Mathematical Art</h1>
+      <p class="text-xl">Create stunning mathematical visualizations using complex parametric equations</p>
+      <div class="mt-4 bg-white bg-opacity-20 rounded-lg p-4">
+        <p class="text-lg font-semibold">🧠 Advanced Challenge Level</p>
+        <p class="text-sm">This lesson introduces college-level mathematical concepts through beautiful visual programming</p>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="bg-blue-50 p-4 rounded-lg mb-8">
+      <div class="flex flex-wrap gap-2 text-sm">
+        <a href="../index.html" class="text-blue-600 hover:underline">← Back to Programming</a>
+        <span class="text-gray-500">|</span>
+        <a href="./lesson11.html" class="text-blue-600 hover:underline">← Lesson 11: Gravitational Destroyer</a>
+        <span class="text-gray-500">|</span>
+        <span class="text-gray-700 font-semibold">Lesson 12: Advanced Parametric Art</span>
+      </div>
+    </div>
+
+    <!-- Learning Objectives -->
+    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 mb-8">
+      <h2 class="text-2xl font-bold text-yellow-800 mb-4">🎯 What You'll Learn</h2>
+      <ul class="space-y-2 text-yellow-700">
+        <li><strong>Parametric Equations:</strong> Mathematical functions that create complex curves and patterns</li>
+        <li><strong>Advanced Trigonometry:</strong> Using sin, cos, and complex mathematical relationships</li>
+        <li><strong>Real-time Animation:</strong> Creating smooth, flowing mathematical art that changes over time</li>
+        <li><strong>Canvas Graphics:</strong> Advanced drawing techniques for mathematical visualization</li>
+        <li><strong>Mathematical Beauty:</strong> How equations can create stunning visual art</li>
+      </ul>
+    </div>
+
+    <!-- Mathematical Background -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">📐 Understanding Parametric Equations</h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-purple-600">What Are Parametric Equations?</h3>
+          <div class="space-y-3 text-gray-700">
+            <p>Unlike regular equations like y = x², parametric equations use a <strong>parameter</strong> (usually t for time) to define both x and y coordinates:</p>
+            <div class="bg-gray-100 p-3 rounded font-mono text-sm">
+              x = function(t)<br>
+              y = function(t)
+            </div>
+            <p>As t changes, the point (x,y) traces out a beautiful curve!</p>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-pink-600">Examples in Nature</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li><strong>Planetary Orbits:</strong> Elliptical paths around the sun</li>
+            <li><strong>Sound Waves:</strong> Sine and cosine patterns in music</li>
+            <li><strong>Flower Petals:</strong> Spiral patterns following mathematical rules</li>
+            <li><strong>DNA Helix:</strong> Double spiral parametric curves</li>
+            <li><strong>Galaxy Arms:</strong> Logarithmic spiral patterns</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Simple Parametric Art -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🌟 Project 1: Simple Parametric Curves</h2>
+      
+      <div class="bg-green-50 border-l-4 border-green-400 p-6 mb-6">
+        <h3 class="text-xl font-bold text-green-800 mb-3">Let's start with a beautiful circle that grows over time!</h3>
+        <p class="text-green-700">This code creates a circle using parametric equations, but with a twist - the radius grows with time!</p>
+      </div>
+
+      <div class="relative">
+        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+          📋 Copy
+        </button>
+        <pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import tkinter as tk
+import math
+import time
+
+# Create the main window
+root = tk.Tk()
+root.title("Parametric Mathematical Art")
+root.geometry("800x600")
+
+# Create canvas
+canvas = tk.Canvas(root, width=800, height=600, bg='black')
+canvas.pack()
+
+# Animation variables
+t = 0
+center_x, center_y = 400, 300
+
+def draw_parametric_circle():
+    global t
+    
+    # Clear the canvas
+    canvas.delete("all")
+    
+    # Draw parametric circle with growing radius
+    points = []
+    for i in range(360):  # 360 degrees
+        angle = math.radians(i)
+        
+        # Parametric equations for a circle with growing radius
+        radius = 50 + 30 * math.sin(t * 0.1)  # Radius changes with time
+        x = center_x + radius * math.cos(angle)
+        y = center_y + radius * math.sin(angle)
+        
+        points.extend([x, y])
+    
+    # Draw the curve
+    if len(points) > 4:
+        canvas.create_line(points, fill='cyan', width=2, smooth=True)
+    
+    # Add some decorative text
+    canvas.create_text(400, 50, text=f"Parametric Circle - Time: {t:.1f}", 
+                      fill='white', font=('Arial', 16))
+    
+    # Update time
+    t += 0.2
+    
+    # Schedule next frame
+    root.after(50, draw_parametric_circle)
+
+# Start the animation
+draw_parametric_circle()
+
+# Start the main loop
+root.mainloop()</code></pre>
+      </div>
+    </section>
+
+    <!-- Advanced Parametric Art -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🚀 Project 2: Complex Parametric Patterns</h2>
+      
+      <div class="bg-red-50 border-l-4 border-red-400 p-6 mb-6">
+        <h3 class="text-xl font-bold text-red-800 mb-3">⚡ Advanced Challenge!</h3>
+        <p class="text-red-700">This code creates the same type of complex mathematical art shown in the image. It uses advanced trigonometry and parametric equations!</p>
+      </div>
+
+      <div class="relative">
+        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+          📋 Copy
+        </button>
+        <pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import tkinter as tk
+import math
+import colorsys
+
+class ParametricArtGenerator:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Advanced Parametric Mathematical Art")
+        self.root.geometry("800x600")
+        self.root.configure(bg='black')
+        
+        self.canvas = tk.Canvas(self.root, width=800, height=600, bg='black')
+        self.canvas.pack()
+        
+        # Animation variables
+        self.t = 0
+        self.center_x, self.center_y = 400, 300
+        
+        # Start animation
+        self.animate()
+    
+    def mag(self, x, y):
+        """Calculate magnitude (distance from origin)"""
+        return math.sqrt(x*x + y*y)
+    
+    def create_parametric_point(self, k, t):
+        """Create a single point using complex parametric equations"""
+        # This is based on the mathematical art formula from the image
+        # Complex parametric equations with multiple trigonometric functions
+        
+        # First layer of complexity
+        inner_calc = k * (4 + math.sin(k * 2 - t)) * 3
+        x_component = inner_calc * math.cos(k / 29)
+        
+        # Second layer - more trigonometric relationships
+        y_base = 8 - 13
+        magnitude_factor = 3 * math.sin(k * 2) + 3 / (k + math.sin(k / 25))
+        
+        # Third layer - even more complex relationships
+        k_factor = k * (9 + 4 * math.sin(8 * k - 9))
+        d_factor = 3 + k + 2
+        
+        # Final parametric equations (simplified version of the complex formula)
+        x = self.center_x + x_component + 30 * math.cos(k + t)
+        y = self.center_y + magnitude_factor * 20 + 30 * math.sin(k + t * 0.7)
+        
+        return x, y
+    
+    def draw_frame(self):
+        """Draw one frame of the animation"""
+        self.canvas.delete("all")
+        
+        # Draw multiple parametric curves
+        for curve in range(5):  # 5 different curves
+            points = []
+            curve_offset = curve * math.pi / 3
+            
+            # Generate points for this curve
+            for i in range(200):  # 200 points per curve
+                k = i * 0.1 + curve_offset
+                x, y = self.create_parametric_point(k, self.t + curve_offset)
+                
+                # Keep points on screen
+                if 0 <= x <= 800 and 0 <= y <= 600:
+                    points.extend([x, y])
+            
+            # Draw the curve with color based on time and curve number
+            if len(points) > 4:
+                # Create rainbow colors that change over time
+                hue = (self.t * 0.01 + curve * 0.2) % 1.0
+                rgb = colorsys.hsv_to_rgb(hue, 1.0, 1.0)
+                color = '#%02x%02x%02x' % (int(rgb[0]*255), int(rgb[1]*255), int(rgb[2]*255))
+                
+                self.canvas.create_line(points, fill=color, width=2, smooth=True)
+        
+        # Add mathematical info
+        self.canvas.create_text(400, 30, 
+                               text=f"Parametric Mathematical Art - t = {self.t:.1f}", 
+                               fill='white', font=('Arial', 14, 'bold'))
+        
+        self.canvas.create_text(400, 50, 
+                               text="Using complex trigonometric parametric equations", 
+                               fill='cyan', font=('Arial', 10))
+    
+    def animate(self):
+        """Main animation loop"""
+        self.draw_frame()
+        self.t += 0.1  # Increment time
+        
+        # Schedule next frame (60 FPS)
+        self.root.after(16, self.animate)
+    
+    def run(self):
+        """Start the application"""
+        self.root.mainloop()
+
+# Create and run the parametric art generator
+if __name__ == "__main__":
+    art_generator = ParametricArtGenerator()
+    art_generator.run()</code></pre>
+      </div>
+    </section>
+
+    <!-- Interactive Parametric Art -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🎮 Project 3: Interactive Mathematical Art</h2>
+      
+      <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-6">
+        <h3 class="text-xl font-bold text-blue-800 mb-3">🖱️ Mouse-Controlled Mathematics!</h3>
+        <p class="text-blue-700">Move your mouse to change the mathematical parameters in real-time!</p>
+      </div>
+
+      <div class="relative">
+        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-purple-600 hover:bg-purple-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+          📋 Copy
+        </button>
+        <pre class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import tkinter as tk
+import math
+import colorsys
+
+class InteractiveParametricArt:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Interactive Parametric Mathematical Art")
+        self.root.geometry("800x600")
+        
+        self.canvas = tk.Canvas(self.root, width=800, height=600, bg='black')
+        self.canvas.pack()
+        
+        # Mouse tracking
+        self.mouse_x = 400
+        self.mouse_y = 300
+        self.canvas.bind('<Motion>', self.mouse_move)
+        
+        # Animation variables
+        self.t = 0
+        
+        # Start animation
+        self.animate()
+    
+    def mouse_move(self, event):
+        """Track mouse movement"""
+        self.mouse_x = event.x
+        self.mouse_y = event.y
+    
+    def create_interactive_pattern(self):
+        """Create pattern that responds to mouse position"""
+        self.canvas.delete("all")
+        
+        # Use mouse position to control mathematical parameters
+        frequency = self.mouse_x / 100.0  # Mouse X controls frequency
+        amplitude = self.mouse_y / 10.0   # Mouse Y controls amplitude
+        
+        # Create multiple spiraling curves
+        for spiral in range(8):
+            points = []
+            spiral_offset = spiral * math.pi / 4
+            
+            for i in range(300):
+                t_local = i * 0.02 + self.t
+                
+                # Parametric equations influenced by mouse position
+                radius = amplitude + 50 * math.sin(frequency * t_local + spiral_offset)
+                angle = t_local + spiral_offset
+                
+                x = 400 + radius * math.cos(angle)
+                y = 300 + radius * math.sin(angle) + 30 * math.sin(frequency * t_local)
+                
+                if 0 <= x <= 800 and 0 <= y <= 600:
+                    points.extend([x, y])
+            
+            # Draw with colors based on spiral number and time
+            if len(points) > 4:
+                hue = (self.t * 0.02 + spiral * 0.125) % 1.0
+                rgb = colorsys.hsv_to_rgb(hue, 1.0, 0.8)
+                color = '#%02x%02x%02x' % (int(rgb[0]*255), int(rgb[1]*255), int(rgb[2]*255))
+                
+                self.canvas.create_line(points, fill=color, width=2, smooth=True)
+        
+        # Show mathematical parameters
+        self.canvas.create_text(400, 30, 
+                               text=f"Interactive Parametric Art", 
+                               fill='white', font=('Arial', 16, 'bold'))
+        
+        self.canvas.create_text(400, 50, 
+                               text=f"Frequency: {frequency:.2f} | Amplitude: {amplitude:.1f}", 
+                               fill='yellow', font=('Arial', 12))
+        
+        self.canvas.create_text(400, 570, 
+                               text="Move your mouse to control the mathematical parameters!", 
+                               fill='cyan', font=('Arial', 12))
+    
+    def animate(self):
+        """Main animation loop"""
+        self.create_interactive_pattern()
+        self.t += 0.05
+        
+        # Schedule next frame
+        self.root.after(30, self.animate)
+    
+    def run(self):
+        """Start the application"""
+        self.root.mainloop()
+
+# Create and run the interactive art
+if __name__ == "__main__":
+    interactive_art = InteractiveParametricArt()
+    interactive_art.run()</code></pre>
+      </div>
+    </section>
+
+    <!-- Mathematical Exploration -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🔬 Mathematical Exploration</h2>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-purple-600">🧮 The Mathematics Behind the Art</h3>
+          <div class="space-y-3 text-gray-700">
+            <p><strong>Trigonometric Functions:</strong></p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>sin(x) and cos(x) create circular motion</li>
+              <li>Multiple frequencies create complex patterns</li>
+              <li>Phase shifts create spiral effects</li>
+            </ul>
+            
+            <p><strong>Parametric Relationships:</strong></p>
+            <ul class="list-disc ml-6 space-y-1">
+              <li>x = f(t) and y = g(t) define the curve</li>
+              <li>Time parameter creates animation</li>
+              <li>Multiple parameters create complexity</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+          <h3 class="text-xl font-bold mb-4 text-pink-600">🎨 Experiment Ideas</h3>
+          <ul class="space-y-2 text-gray-700">
+            <li><strong>Change the frequencies:</strong> Try different numbers in the sin() and cos() functions</li>
+            <li><strong>Add more curves:</strong> Increase the number of parametric curves drawn</li>
+            <li><strong>Modify colors:</strong> Change the color calculation formulas</li>
+            <li><strong>Different patterns:</strong> Try adding multiplication or division to the equations</li>
+            <li><strong>Speed control:</strong> Change how fast time (t) increases</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Challenge Section -->
+    <section class="mb-12">
+      <h2 class="text-3xl font-bold mb-6 text-gray-800">🏆 Advanced Challenges</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-gradient-to-br from-orange-100 to-red-100 p-6 rounded-lg">
+          <h3 class="text-xl font-bold mb-3 text-orange-800">🌟 Challenge 1: Lissajous Curves</h3>
+          <p class="text-orange-700 mb-3">Create Lissajous curves using:</p>
+          <div class="bg-white p-3 rounded font-mono text-sm">
+            x = A * sin(a*t + δ)<br>
+            y = B * sin(b*t)
+          </div>
+          <p class="text-orange-700 text-sm mt-2">Try different values for a, b, A, B, and δ!</p>
+        </div>
+
+        <div class="bg-gradient-to-br from-green-100 to-blue-100 p-6 rounded-lg">
+          <h3 class="text-xl font-bold mb-3 text-green-800">🌟 Challenge 2: 3D Projection</h3>
+          <p class="text-green-700 mb-3">Project 3D parametric curves onto 2D:</p>
+          <div class="bg-white p-3 rounded font-mono text-sm">
+            x3d = sin(t)<br>
+            y3d = cos(t)<br>
+            z3d = t<br>
+            x2d = x3d<br>
+            y2d = y3d + z3d*0.5
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section class="mb-12">
+      <div class="bg-gradient-to-r from-purple-600 to-pink-600 text-white p-8 rounded-lg">
+        <h2 class="text-3xl font-bold mb-4">🎉 Congratulations!</h2>
+        <p class="text-xl mb-4">You've just created advanced mathematical art using parametric equations!</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-lg font-bold mb-2">🧠 What You've Learned:</h3>
+            <ul class="space-y-1 text-sm">
+              <li>• Advanced trigonometric functions</li>
+              <li>• Parametric equation concepts</li>
+              <li>• Real-time mathematical visualization</li>
+              <li>• Interactive programming techniques</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-lg font-bold mb-2">🚀 Next Steps:</h3>
+            <ul class="space-y-1 text-sm">
+              <li>• Experiment with different mathematical formulas</li>
+              <li>• Research famous parametric curves online</li>
+              <li>• Try creating 3D parametric visualizations</li>
+              <li>• Share your mathematical art creations!</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation -->
+    <div class="flex justify-between items-center">
+      <a href="./lesson11.html" class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-lg transition-colors">
+        ← Lesson 11: Gravitational Destroyer
+      </a>
+      <a href="../index.html" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors">
+        Back to Programming
+      </a>
+    </div>
+  </main>
+
+  <!-- Copy Code Functionality -->
+  <script>
+    function copyCode(button) {
+      try {
+        const codeElement = button.parentElement.querySelector('code');
+        const textToCopy = codeElement.textContent;
+        
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            button.textContent = '✅ Copied!';
+            button.style.backgroundColor = '#10b981';
+            setTimeout(() => {
+              button.textContent = '📋 Copy';
+              button.style.backgroundColor = '#7c3aed';
+            }, 2000);
+          }).catch(() => {
+            fallbackCopy(textToCopy, button);
+          });
+        } else {
+          fallbackCopy(textToCopy, button);
+        }
+      } catch (error) {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#ef4444';
+        setTimeout(() => {
+          button.textContent = '📋 Copy';
+          button.style.backgroundColor = '#7c3aed';
+        }, 2000);
+      }
+    }
+
+    function fallbackCopy(text, button) {
+      try {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.opacity = '0';
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textArea);
+        
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+        setTimeout(() => {
+          button.textContent = '📋 Copy';
+          button.style.backgroundColor = '#7c3aed';
+        }, 2000);
+      } catch (error) {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#ef4444';
+        setTimeout(() => {
+          button.textContent = '📋 Copy';
+          button.style.backgroundColor = '#7c3aed';
+        }, 2000);
+      }
+    }
+  </script>
+</Layout>
