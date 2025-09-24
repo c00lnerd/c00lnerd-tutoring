@@ -262,6 +262,19 @@ import Layout from '../../layouts/Layout.astro';
                         sphere.currentY = sphere.baseY + yMovement;
                     }
                     
+                    // Calculate depth (forward/backward movement)
+                    if (i === 0) {
+                        // Lead ball depth oscillates dramatically
+                        sphere.depth = 0.5 + 0.5 * Math.sin(this.t * 0.02 * this.flowSpeed + Math.PI/6);
+                    } else {
+                        // Following balls inherit lead ball's depth with delay and damping
+                        const leadDepth = this.spheres[0].depth || 1.0;
+                        const depthDelay = i * 0.3;
+                        const depthDamping = 0.7 + (i * 0.05); // Later balls have less depth variation
+                        sphere.depth = 0.5 + (leadDepth - 0.5) * depthDamping * Math.sin(this.t * 0.02 * this.flowSpeed - depthDelay);
+                        sphere.depth = Math.max(0.3, Math.min(1.0, sphere.depth)); // Clamp depth
+                    }
+                    
                     // Breathing effect - use current sphereSize setting for dynamic updates
                     // Use sphere's original random offset to maintain consistency
                     const randomOffset = (sphere.hueOffset - 0.5) * 20; // Convert hueOffset to consistent random
@@ -270,20 +283,26 @@ import Layout from '../../layouts/Layout.astro';
                 });
             }
             
-            createGradientSphere(x, y, radius, hue) {
+            createGradientSphere(x, y, radius, hue, depth = 1.0) {
                 const layers = 12;
+                // Adjust opacity and size based on depth (0.3 = far back, 1.0 = front)
+                const depthOpacity = 0.3 + (depth * 0.7);
+                const depthRadius = radius * (0.6 + depth * 0.4);
+                
                 for (let layer = layers; layer > 0; layer--) {
-                    const r = radius * (layer / layers);
-                    const sat = 0.7 + 0.3 * (layer / layers);
-                    const light = 0.3 + 0.7 * (layer / layers);
+                    const r = depthRadius * (layer / layers);
+                    const sat = (0.7 + 0.3 * (layer / layers)) * depth;
+                    const light = (0.3 + 0.7 * (layer / layers)) * depthOpacity;
                     
                     const color = this.hslToRgb(hue, sat, light);
                     
+                    this.ctx.globalAlpha = depthOpacity;
                     this.ctx.beginPath();
                     this.ctx.arc(x, y, r, 0, Math.PI * 2);
                     this.ctx.fillStyle = color;
                     this.ctx.fill();
                 }
+                this.ctx.globalAlpha = 1.0; // Reset alpha
             }
             
             drawConnection(sphere1, sphere2) {
@@ -373,10 +392,13 @@ import Layout from '../../layouts/Layout.astro';
                     }
                 }
                 
-                // Draw spheres
-                this.spheres.forEach((sphere, i) => {
+                // Sort spheres by depth (back to front) for proper layering
+                const sortedSpheres = [...this.spheres].sort((a, b) => (a.depth || 1.0) - (b.depth || 1.0));
+                
+                // Draw spheres from back to front
+                sortedSpheres.forEach((sphere, i) => {
                     const hue = (sphere.hueOffset + this.t * 0.01) % 1.0;
-                    this.createGradientSphere(sphere.currentX, sphere.currentY, sphere.currentRadius, hue);
+                    this.createGradientSphere(sphere.currentX, sphere.currentY, sphere.currentRadius, hue, sphere.depth || 1.0);
                 });
                 
                 // Update info
