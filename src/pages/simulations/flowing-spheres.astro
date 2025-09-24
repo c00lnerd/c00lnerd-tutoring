@@ -172,11 +172,6 @@ import Layout from '../../layouts/Layout.astro';
                         
                         if (control === 'sphereCount') {
                             this.initializeSpheres();
-                        } else if (control === 'sphereSize') {
-                            // Update existing spheres' base radius dynamically
-                            this.spheres.forEach((sphere, i) => {
-                                sphere.radius = this.sphereSize + (Math.random() - 0.5) * 20;
-                            });
                         }
                     });
                 });
@@ -232,8 +227,11 @@ import Layout from '../../layouts/Layout.astro';
                     sphere.currentX = sphere.baseX + xMovement;
                     sphere.currentY = sphere.baseY + yMovement;
                     
-                    // Breathing effect
-                    sphere.currentRadius = sphere.radius + 8 * Math.sin(this.t * 0.04 * this.flowSpeed + i * 0.6);
+                    // Breathing effect - use current sphereSize setting for dynamic updates
+                    // Use sphere's original random offset to maintain consistency
+                    const randomOffset = (sphere.hueOffset - 0.5) * 20; // Convert hueOffset to consistent random
+                    const baseRadius = this.sphereSize + randomOffset;
+                    sphere.currentRadius = baseRadius + 8 * Math.sin(this.t * 0.04 * this.flowSpeed + i * 0.6);
                 });
             }
             
