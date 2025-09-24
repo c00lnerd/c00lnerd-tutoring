@@ -172,6 +172,11 @@ import Layout from '../../layouts/Layout.astro';
                         
                         if (control === 'sphereCount') {
                             this.initializeSpheres();
+                        } else if (control === 'sphereSize') {
+                            // Update existing spheres' base radius dynamically
+                            this.spheres.forEach((sphere, i) => {
+                                sphere.radius = this.sphereSize + (Math.random() - 0.5) * 20;
+                            });
                         }
                     });
                 });
