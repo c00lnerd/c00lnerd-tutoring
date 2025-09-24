@@ -338,14 +338,17 @@ Carbon-14:
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- EmailJS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
     <script>
-        // Initialize EmailJS with error checking
-        if (typeof emailjs !== 'undefined') {
-            emailjs.init("ct_s19oZHppLy9BlW");
-        }
-
-        document.getElementById('experimentForm').addEventListener('submit', function(e) {
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize EmailJS
+            emailjs.init('ct_s19oZHppLy9BlW');
+            
+            // Form submission
+            document.getElementById('experimentForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             // Get form data
@@ -357,15 +360,8 @@ Carbon-14:
                 conclusion: document.getElementById('conclusion').value
             };
             
-            // Send email using EmailJS
-            if (typeof emailjs !== 'undefined') {
-                emailjs.send('service_ot1jg6s', 'template_y556rhr', {
-                    student_name: formData.studentName || formData.studentEmail?.split('@')[0] || 'Student',
-                    student_email: formData.studentEmail,
-                    experiment_title: 'Experiment 3.1: Constructing 3-D Atomic Models',
-                    hypothesis: 'Exploring atomic structure through 3D model construction',
-                    missing_elements: `Student Info: ${formData.studentName ? '✓' : '✗'}, Email: ${formData.studentEmail ? '✓' : '✗'}, Element: ${formData.elementChosen ? '✓' : '✗'}, Conclusion: ${formData.conclusion ? '✓' : '✗'}`,
-                    conclusion: `EXPERIMENT 3.1: CONSTRUCTING 3-D ATOMIC MODELS - STUDENT RESULTS
+            // Prepare experiment data for email
+            const experimentData = `EXPERIMENT 3.1: CONSTRUCTING 3-D ATOMIC MODELS - STUDENT RESULTS
 
 Student Information:
 • Name: ${formData.studentName || formData.studentEmail?.split('@')[0] || 'Student'}
@@ -380,19 +376,28 @@ Conclusion:
 ${formData.conclusion || 'No conclusion provided'}
 
 ---
-This is an automated submission from the C00lnerd Experiment System.`,
-                    subject: `Physical Science Experiment 3.1 Results - ${formData.studentName || formData.studentEmail?.split('@')[0] || 'Student'}`
-                })
-                .then(function(response) {
-                    console.log('SUCCESS!', response.status, response.text);
-                    alert('Your experiment has been submitted successfully!');
-                }, function(error) {
-                    console.log('FAILED...', error);
-                    alert('Failed to submit. Please try again.');
-                });
-            } else {
-                alert('Email service not available. Please try again later.');
-            }
+This is an automated submission from the C00lnerd Experiment System.
+Experiment completed: ${new Date().toLocaleString()}`;
+            
+            // Send email using EmailJS
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', {
+                student_name: formData.studentName || formData.studentEmail?.split('@')[0] || 'Student',
+                student_email: formData.studentEmail,
+                experiment_title: 'Experiment 3.1: Constructing 3-D Atomic Models',
+                hypothesis: 'Exploring atomic structure through 3D model construction',
+                missing_elements: `Student Info: ${formData.studentName ? '✓' : '✗'}, Email: ${formData.studentEmail ? '✓' : '✗'}, Element: ${formData.elementChosen ? '✓' : '✗'}, Conclusion: ${formData.conclusion ? '✓' : '✗'}`,
+                conclusion: experimentData,
+                subject: `Experiment 3.1 - ${formData.studentName || formData.studentEmail?.split('@')[0] || 'Student'}`
+            }).then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+                alert('Your experiment has been submitted successfully! Your teacher will be notified.');
+                document.getElementById('experimentForm').reset();
+            }, function(error) {
+                console.log('FAILED...', error);
+                alert('Failed to submit. Please try again.');
+            });
         });
+        
+        }); // Close DOMContentLoaded
     </script>
 </Layout>
