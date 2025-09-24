@@ -120,7 +120,7 @@ def draw_parametric_circle():
         canvas.create_line(points, fill='cyan', width=2, smooth=True)
     
     # Add some decorative text
-    canvas.create_text(400, 50, text=f"Parametric Circle - Time: {t:.1f}", 
+    canvas.create_text(400, 50, text=f"Parametric Circle - Time: " + str(round(t, 1)), 
                       fill='white', font=('Arial', 16))
     
     # Update time
@@ -227,7 +227,7 @@ class ParametricArtGenerator:
         
         # Add mathematical info
         self.canvas.create_text(400, 30, 
-                               text=f"Parametric Mathematical Art - t = {self.t:.1f}", 
+                               text="Parametric Mathematical Art - t = " + str(round(self.t, 1)), 
                                fill='white', font=('Arial', 14, 'bold'))
         
         self.canvas.create_text(400, 50, 
@@ -331,11 +331,11 @@ class InteractiveParametricArt:
         
         # Show mathematical parameters
         self.canvas.create_text(400, 30, 
-                               text=f"Interactive Parametric Art", 
+                               text="Interactive Parametric Art", 
                                fill='white', font=('Arial', 16, 'bold'))
         
         self.canvas.create_text(400, 50, 
-                               text=f"Frequency: {frequency:.2f} | Amplitude: {amplitude:.1f}", 
+                               text="Frequency: " + str(round(frequency, 2)) + " | Amplitude: " + str(round(amplitude, 1)), 
                                fill='yellow', font=('Arial', 12))
         
         self.canvas.create_text(400, 570, 
