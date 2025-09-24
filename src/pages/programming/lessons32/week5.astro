@@ -143,7 +143,11 @@ void loop() {
                         </ul>
                     </div>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Potentiometer Control LED Brightness
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Potentiometer Control LED Brightness
 const int potPin = A0;
 const int ledPin = 9;  // PWM pin for analogWrite
 
@@ -183,7 +187,11 @@ void loop() {
                         <p class="text-gray-600 mt-2">Maps a value from one range to another proportionally</p>
                     </div>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Multiple Mapping Examples
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Multiple Mapping Examples
 const int potPin = A0;
 
 void setup() {
@@ -211,6 +219,7 @@ void loop() {
   
   delay(200);
 }`}</code></pre>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -305,7 +314,11 @@ void loop() {
                         </div>
                     </div>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Light Sensor with Automatic LED Control
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Light Sensor with Automatic LED Control
 const int ldrPin = A0;
 const int ledPin = 13;
 const int threshold = 500;  // Adjust based on your environment
@@ -340,6 +353,55 @@ void loop() {
   delay(200);
 }`}</code></pre>
                     </div>
+                    </div>
+                </div>
+
+                <!-- Troubleshooting Section -->
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 2rem;">
+                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 1rem;">🔧 Troubleshooting: Light Sensor Not Responding</h4>
+                    
+                    <div style="background: #fffbeb; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <h5 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">Step 1: Check Raw Values</h5>
+                        <p style="color: #92400e; margin-bottom: 0.5rem;">Upload this simple test code to see what values you're getting:</p>
+                        
+                        <div class="relative">
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0.5rem 0;"><code>{`// Light Sensor Debug Code
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Light Sensor Debug - Cover/uncover sensor");
+}
+
+void loop() {
+  int lightValue = analogRead(A0);
+  Serial.print("A0 Raw Value: ");
+  Serial.println(lightValue);
+  delay(500);
+}`}</code></pre>
+                        </div>
+                    </div>
+
+                    <div style="background: #fffbeb; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                        <h5 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">Step 2: Common Issues & Solutions</h5>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #92400e; line-height: 1.8;">
+                            <li>• <strong>Wrong Pin:</strong> Try A1, A2, or A3 if A0 doesn't work</li>
+                            <li>• <strong>Threshold Too High/Low:</strong> Adjust threshold based on your readings</li>
+                            <li>• <strong>Sensor Location:</strong> Make sure you're covering the actual photoresistor</li>
+                            <li>• <strong>Inverted Logic:</strong> Some sensors give higher values in darkness</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: #fffbeb; padding: 1rem; border-radius: 6px;">
+                        <h5 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">Step 3: Expected Results</h5>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #92400e; line-height: 1.8;">
+                            <li>• <strong>Bright light:</strong> Values typically 800-1023</li>
+                            <li>• <strong>Room light:</strong> Values typically 300-700</li>
+                            <li>• <strong>Covered/dark:</strong> Values typically 0-200</li>
+                            <li>• <strong>If no change:</strong> Try different analog pins or check connections</li>
+                        </ul>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
@@ -348,7 +410,11 @@ void loop() {
                         The TMP36 is an analog temperature sensor that outputs a voltage proportional to temperature.
                     </p>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">{`// Temperature Sensor Reading
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Temperature Sensor Reading
 const int tempPin = A1;
 
 void setup() {
@@ -379,6 +445,7 @@ void loop() {
   delay(1000);
 }`}</code></pre>
                     </div>
+                    </div>
                 </div>
             </div>
 
@@ -401,7 +468,11 @@ void loop() {
                         </ul>
                     </div>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Moving Average Filter
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Moving Average Filter
 const int sensorPin = A0;
 const int numReadings = 10;
 
@@ -448,6 +519,7 @@ void loop() {
   delay(100);
 }`}</code></pre>
                     </div>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
@@ -456,7 +528,11 @@ void loop() {
                         A simpler alternative that gives more weight to recent readings while still smoothing out noise.
                     </p>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Exponential Smoothing Filter
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Exponential Smoothing Filter
 const int sensorPin = A0;
 float smoothedValue = 0;
 const float alpha = 0.1;  // Smoothing factor (0-1)
@@ -480,6 +556,7 @@ void loop() {
   
   delay(100);
 }`}</code></pre>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -517,7 +594,11 @@ void loop() {
                         </ol>
                     </div>
 
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Environmental Monitor Solution
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Environmental Monitor Solution
 const int ldrPin = A0;
 const int tempPin = A1;
 const int lightLED = 12;
@@ -595,6 +676,7 @@ void loop() {
   
   delay(1000);
 }`}</code></pre>
+                    </div>
                     </div>
                 </div>
             </div>
