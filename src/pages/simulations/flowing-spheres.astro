@@ -1,0 +1,404 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Flowing Connected Spheres - Interactive Simulation">
+    <main class="container mx-auto px-4 py-8">
+        <div class="experiment-header mb-8">
+            <h1 class="text-4xl font-bold text-center text-purple-700 mb-2">🌊 FLOWING CONNECTED SPHERES</h1>
+            <h2 class="text-xl text-center text-gray-600 mb-4">Organic Movement & Gradient Visualization</h2>
+            <p class="text-center text-gray-700 max-w-3xl mx-auto">
+                Watch as colorful spheres flow and connect in organic patterns. This simulation demonstrates 
+                fluid dynamics, particle systems, and mathematical beauty through connected gradient spheres.
+            </p>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
+            <h3 class="text-xl font-bold text-purple-700 mb-4">🎛️ Flow Controls</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label for="sphereCount" class="block text-sm font-medium text-gray-700 mb-1">Number of Spheres</label>
+                    <input type="range" id="sphereCount" min="3" max="12" step="1" value="8" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="sphereCountValue" class="text-xs text-gray-600">8</span>
+                </div>
+                
+                <div>
+                    <label for="flowSpeed" class="block text-sm font-medium text-gray-700 mb-1">Flow Speed</label>
+                    <input type="range" id="flowSpeed" min="0.5" max="3" step="0.1" value="1" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="flowSpeedValue" class="text-xs text-gray-600">1.0</span>
+                </div>
+                
+                <div>
+                    <label for="connectionDistance" class="block text-sm font-medium text-gray-700 mb-1">Connection Distance</label>
+                    <input type="range" id="connectionDistance" min="50" max="200" step="10" value="120" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="connectionDistanceValue" class="text-xs text-gray-600">120</span>
+                </div>
+                
+                <div>
+                    <label for="sphereSize" class="block text-sm font-medium text-gray-700 mb-1">Sphere Size</label>
+                    <input type="range" id="sphereSize" min="20" max="60" step="5" value="40" 
+                           class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                    <span id="sphereSizeValue" class="text-xs text-gray-600">40</span>
+                </div>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap gap-2">
+                <button id="playPause" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    ⏸️ Pause
+                </button>
+                <button id="reset" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🔄 Reset
+                </button>
+                <button id="randomize" class="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    🎲 Randomize Flow
+                </button>
+                <button id="saveImage" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    💾 Save Image
+                </button>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="bg-black rounded-lg shadow-lg p-4 mb-8">
+            <canvas id="flowCanvas" width="800" height="600" class="w-full max-w-4xl mx-auto block rounded"></canvas>
+            <div class="text-center mt-4">
+                <p class="text-white text-sm">
+                    <span id="flowInfo">Organic Flow Simulation - Connected Gradient Spheres</span>
+                </p>
+                <p class="text-cyan-400 text-xs mt-1">
+                    Move your mouse over the canvas to influence the flow patterns!
+                </p>
+            </div>
+        </div>
+
+        <!-- Information Panels -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-purple-700 mb-4">🌊 The Physics</h3>
+                <div class="space-y-3 text-gray-700">
+                    <p><strong>Organic Movement:</strong> Each sphere follows complex sine and cosine wave patterns that create natural, flowing motion.</p>
+                    <p><strong>Connection Dynamics:</strong> Spheres connect when within a certain distance, creating flowing lines that pulse and wave.</p>
+                    <p><strong>Gradient Rendering:</strong> Multiple layered circles create smooth radial gradients for each sphere.</p>
+                    <p><strong>Color Flow:</strong> HSV color space creates smooth rainbow transitions that shift over time.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h3 class="text-xl font-bold text-pink-700 mb-4">🎨 Applications</h3>
+                <ul class="space-y-2 text-gray-700">
+                    <li><strong>🎮 Game Development:</strong> Particle systems and fluid effects</li>
+                    <li><strong>🎬 Animation:</strong> Organic motion and flowing transitions</li>
+                    <li><strong>🧬 Biology Visualization:</strong> Cell movement and molecular dynamics</li>
+                    <li><strong>🌊 Fluid Dynamics:</strong> Liquid flow and wave patterns</li>
+                    <li><strong>🎵 Audio Visualization:</strong> Music-reactive graphics</li>
+                    <li><strong>🖥️ User Interfaces:</strong> Dynamic backgrounds and transitions</li>
+                    <li><strong>🎨 Digital Art:</strong> Generative and procedural art</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Back Navigation -->
+        <div class="text-center">
+            <a href="/simulations" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                ← Back to Simulations
+            </a>
+        </div>
+    </main>
+
+    <script>
+        class FlowingSpheres {
+            constructor() {
+                this.canvas = document.getElementById('flowCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.width = this.canvas.width;
+                this.height = this.canvas.height;
+                
+                // Animation variables
+                this.t = 0;
+                this.isPlaying = true;
+                this.mouseX = this.width / 2;
+                this.mouseY = this.height / 2;
+                
+                // Parameters
+                this.sphereCount = 8;
+                this.flowSpeed = 1.0;
+                this.connectionDistance = 120;
+                this.sphereSize = 40;
+                
+                // Spheres array
+                this.spheres = [];
+                
+                this.initializeSpheres();
+                this.setupEventListeners();
+                this.animate();
+            }
+            
+            initializeSpheres() {
+                this.spheres = [];
+                for (let i = 0; i < this.sphereCount; i++) {
+                    this.spheres.push({
+                        baseX: this.width / 2 + (i - this.sphereCount / 2) * 80,
+                        baseY: this.height / 2,
+                        offsetX: (Math.random() - 0.5) * 100,
+                        offsetY: (Math.random() - 0.5) * 100,
+                        phaseX: Math.random() * Math.PI * 2,
+                        phaseY: Math.random() * Math.PI * 2,
+                        freqX: 0.5 + Math.random() * 1.5,
+                        freqY: 0.5 + Math.random() * 1.5,
+                        radius: this.sphereSize + (Math.random() - 0.5) * 20,
+                        hueOffset: i / this.sphereCount,
+                        currentX: 0,
+                        currentY: 0,
+                        currentRadius: 0
+                    });
+                }
+            }
+            
+            setupEventListeners() {
+                // Control sliders
+                const controls = ['sphereCount', 'flowSpeed', 'connectionDistance', 'sphereSize'];
+                controls.forEach(control => {
+                    const slider = document.getElementById(control);
+                    const valueSpan = document.getElementById(control + 'Value');
+                    
+                    slider.addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        this[control] = value;
+                        valueSpan.textContent = value;
+                        
+                        if (control === 'sphereCount') {
+                            this.initializeSpheres();
+                        }
+                    });
+                });
+                
+                // Buttons
+                document.getElementById('playPause').addEventListener('click', () => {
+                    this.isPlaying = !this.isPlaying;
+                    document.getElementById('playPause').textContent = this.isPlaying ? '⏸️ Pause' : '▶️ Play';
+                });
+                
+                document.getElementById('reset').addEventListener('click', () => {
+                    this.t = 0;
+                    this.initializeSpheres();
+                });
+                
+                document.getElementById('randomize').addEventListener('click', () => {
+                    this.initializeSpheres();
+                });
+                
+                document.getElementById('saveImage').addEventListener('click', () => {
+                    this.saveImage();
+                });
+                
+                // Mouse tracking
+                this.canvas.addEventListener('mousemove', (e) => {
+                    const rect = this.canvas.getBoundingClientRect();
+                    this.mouseX = (e.clientX - rect.left) * (this.width / rect.width);
+                    this.mouseY = (e.clientY - rect.top) * (this.height / rect.height);
+                });
+            }
+            
+            updatePositions() {
+                const mouseInfluence = 0.3;
+                const mouseForceX = (this.mouseX / this.width - 0.5) * mouseInfluence;
+                const mouseForceY = (this.mouseY / this.height - 0.5) * mouseInfluence;
+                
+                this.spheres.forEach((sphere, i) => {
+                    // Complex organic movement
+                    const xMovement = (
+                        sphere.offsetX * Math.sin(this.t * 0.02 * sphere.freqX * this.flowSpeed + sphere.phaseX) +
+                        30 * Math.sin(this.t * 0.03 * this.flowSpeed + i * 0.5) +
+                        15 * Math.cos(this.t * 0.025 * this.flowSpeed + i * 0.3) +
+                        mouseForceX * 50
+                    );
+                    
+                    const yMovement = (
+                        sphere.offsetY * Math.cos(this.t * 0.02 * sphere.freqY * this.flowSpeed + sphere.phaseY) +
+                        20 * Math.cos(this.t * 0.035 * this.flowSpeed + i * 0.7) +
+                        12 * Math.sin(this.t * 0.028 * this.flowSpeed + i * 0.4) +
+                        mouseForceY * 50
+                    );
+                    
+                    sphere.currentX = sphere.baseX + xMovement;
+                    sphere.currentY = sphere.baseY + yMovement;
+                    
+                    // Breathing effect
+                    sphere.currentRadius = sphere.radius + 8 * Math.sin(this.t * 0.04 * this.flowSpeed + i * 0.6);
+                });
+            }
+            
+            createGradientSphere(x, y, radius, hue) {
+                const layers = 12;
+                for (let layer = layers; layer > 0; layer--) {
+                    const r = radius * (layer / layers);
+                    const sat = 0.7 + 0.3 * (layer / layers);
+                    const light = 0.3 + 0.7 * (layer / layers);
+                    
+                    const color = this.hslToRgb(hue, sat, light);
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, r, 0, Math.PI * 2);
+                    this.ctx.fillStyle = color;
+                    this.ctx.fill();
+                }
+            }
+            
+            drawConnection(sphere1, sphere2) {
+                const dx = sphere2.currentX - sphere1.currentX;
+                const dy = sphere2.currentY - sphere1.currentY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < this.connectionDistance) {
+                    // Calculate connection color
+                    const hue1 = (sphere1.hueOffset + this.t * 0.01) % 1.0;
+                    const hue2 = (sphere2.hueOffset + this.t * 0.01) % 1.0;
+                    const avgHue = (hue1 + hue2) / 2;
+                    
+                    const alpha = 1 - (distance / this.connectionDistance);
+                    const color = this.hslToRgb(avgHue, 0.8, 0.6);
+                    
+                    // Create flowing connection
+                    const segments = 20;
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = color;
+                    this.ctx.lineWidth = 3 * alpha;
+                    this.ctx.lineCap = 'round';
+                    
+                    for (let i = 0; i <= segments; i++) {
+                        const t = i / segments;
+                        let x = sphere1.currentX + dx * t;
+                        let y = sphere1.currentY + dy * t;
+                        
+                        // Add wave effect
+                        const perpX = -dy / distance;
+                        const perpY = dx / distance;
+                        const wave = 8 * Math.sin(this.t * 0.1 * this.flowSpeed + t * Math.PI * 3) * alpha;
+                        
+                        x += perpX * wave;
+                        y += perpY * wave;
+                        
+                        if (i === 0) {
+                            this.ctx.moveTo(x, y);
+                        } else {
+                            this.ctx.lineTo(x, y);
+                        }
+                    }
+                    
+                    this.ctx.stroke();
+                }
+            }
+            
+            hslToRgb(h, s, l) {
+                const c = (1 - Math.abs(2 * l - 1)) * s;
+                const x = c * (1 - Math.abs((h * 6) % 2 - 1));
+                const m = l - c / 2;
+                
+                let r, g, b;
+                
+                if (h < 1/6) {
+                    r = c; g = x; b = 0;
+                } else if (h < 2/6) {
+                    r = x; g = c; b = 0;
+                } else if (h < 3/6) {
+                    r = 0; g = c; b = x;
+                } else if (h < 4/6) {
+                    r = 0; g = x; b = c;
+                } else if (h < 5/6) {
+                    r = x; g = 0; b = c;
+                } else {
+                    r = c; g = 0; b = x;
+                }
+                
+                r = Math.round((r + m) * 255);
+                g = Math.round((g + m) * 255);
+                b = Math.round((b + m) * 255);
+                
+                return `rgb(${r}, ${g}, ${b})`;
+            }
+            
+            drawFrame() {
+                // Clear with fade effect
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                this.updatePositions();
+                
+                // Draw connections first
+                for (let i = 0; i < this.spheres.length; i++) {
+                    for (let j = i + 1; j < this.spheres.length; j++) {
+                        this.drawConnection(this.spheres[i], this.spheres[j]);
+                    }
+                }
+                
+                // Draw spheres
+                this.spheres.forEach((sphere, i) => {
+                    const hue = (sphere.hueOffset + this.t * 0.01) % 1.0;
+                    this.createGradientSphere(sphere.currentX, sphere.currentY, sphere.currentRadius, hue);
+                });
+                
+                // Update info
+                document.getElementById('flowInfo').textContent = 
+                    `Spheres: ${this.sphereCount} | Speed: ${this.flowSpeed} | Connections: ${this.connectionDistance}px`;
+            }
+            
+            saveImage() {
+                const link = document.createElement('a');
+                link.download = `flowing-spheres-${Date.now()}.png`;
+                link.href = this.canvas.toDataURL();
+                link.click();
+            }
+            
+            animate() {
+                this.drawFrame();
+                
+                if (this.isPlaying) {
+                    this.t += 1;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new FlowingSpheres();
+        });
+    </script>
+
+    <style>
+        #flowCanvas {
+            border: 2px solid #4c1d95;
+            box-shadow: 0 0 20px rgba(76, 29, 149, 0.3);
+        }
+        
+        input[type="range"] {
+            background: linear-gradient(to right, #8b5cf6, #ec4899);
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+    </style>
+</Layout>
