@@ -209,23 +209,58 @@ import Layout from '../../layouts/Layout.astro';
                 const mouseForceY = (this.mouseY / this.height - 0.5) * mouseInfluence;
                 
                 this.spheres.forEach((sphere, i) => {
-                    // Complex organic movement
-                    const xMovement = (
-                        sphere.offsetX * Math.sin(this.t * 0.02 * sphere.freqX * this.flowSpeed + sphere.phaseX) +
-                        30 * Math.sin(this.t * 0.03 * this.flowSpeed + i * 0.5) +
-                        15 * Math.cos(this.t * 0.025 * this.flowSpeed + i * 0.3) +
-                        mouseForceX * 50
-                    );
-                    
-                    const yMovement = (
-                        sphere.offsetY * Math.cos(this.t * 0.02 * sphere.freqY * this.flowSpeed + sphere.phaseY) +
-                        20 * Math.cos(this.t * 0.035 * this.flowSpeed + i * 0.7) +
-                        12 * Math.sin(this.t * 0.028 * this.flowSpeed + i * 0.4) +
-                        mouseForceY * 50
-                    );
-                    
-                    sphere.currentX = sphere.baseX + xMovement;
-                    sphere.currentY = sphere.baseY + yMovement;
+                    if (i === 0) {
+                        // Lead ball - dramatic movement across the entire screen
+                        const leadXMovement = (
+                            200 * Math.sin(this.t * 0.01 * this.flowSpeed) +
+                            150 * Math.cos(this.t * 0.007 * this.flowSpeed) +
+                            100 * Math.sin(this.t * 0.015 * this.flowSpeed + Math.PI/3) +
+                            mouseForceX * 100
+                        );
+                        
+                        const leadYMovement = (
+                            150 * Math.cos(this.t * 0.012 * this.flowSpeed) +
+                            120 * Math.sin(this.t * 0.008 * this.flowSpeed) +
+                            80 * Math.cos(this.t * 0.018 * this.flowSpeed + Math.PI/4) +
+                            mouseForceY * 100
+                        );
+                        
+                        sphere.currentX = this.width/2 + leadXMovement;
+                        sphere.currentY = this.height/2 + leadYMovement;
+                        
+                        // Keep lead ball on screen
+                        sphere.currentX = Math.max(50, Math.min(this.width - 50, sphere.currentX));
+                        sphere.currentY = Math.max(50, Math.min(this.height - 50, sphere.currentY));
+                    } else {
+                        // Following balls - influenced by lead ball position
+                        const leadBall = this.spheres[0];
+                        const followStrength = 0.3 + (i * 0.1); // Stronger following for closer balls
+                        const delay = i * 0.2; // Delayed response creates trailing effect
+                        
+                        // Calculate attraction to lead ball
+                        const attractionX = (leadBall.currentX - sphere.baseX) * followStrength;
+                        const attractionY = (leadBall.currentY - sphere.baseY) * followStrength;
+                        
+                        // Original organic movement (reduced)
+                        const xMovement = (
+                            sphere.offsetX * 0.5 * Math.sin(this.t * 0.02 * sphere.freqX * this.flowSpeed + sphere.phaseX - delay) +
+                            20 * Math.sin(this.t * 0.03 * this.flowSpeed + i * 0.5 - delay) +
+                            10 * Math.cos(this.t * 0.025 * this.flowSpeed + i * 0.3 - delay) +
+                            attractionX +
+                            mouseForceX * 30
+                        );
+                        
+                        const yMovement = (
+                            sphere.offsetY * 0.5 * Math.cos(this.t * 0.02 * sphere.freqY * this.flowSpeed + sphere.phaseY - delay) +
+                            15 * Math.cos(this.t * 0.035 * this.flowSpeed + i * 0.7 - delay) +
+                            8 * Math.sin(this.t * 0.028 * this.flowSpeed + i * 0.4 - delay) +
+                            attractionY +
+                            mouseForceY * 30
+                        );
+                        
+                        sphere.currentX = sphere.baseX + xMovement;
+                        sphere.currentY = sphere.baseY + yMovement;
+                    }
                     
                     // Breathing effect - use current sphereSize setting for dynamic updates
                     // Use sphere's original random offset to maintain consistency
