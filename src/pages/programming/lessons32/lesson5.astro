@@ -288,6 +288,25 @@ void loop() {
                         Raw sensor readings often contain noise and fluctuations. Filtering helps create stable, reliable readings for better control and decision-making.
                     </p>
                     
+                    <div style="background: #e0f2fe; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #0288d1;">
+                        <h4 style="color: #01579b; font-weight: bold; margin-bottom: 1rem;">📊 Visualizing Filter Effects with Serial Plotter</h4>
+                        <p style="color: #0277bd; margin-bottom: 1rem;">
+                            <strong>Important:</strong> Use Arduino IDE's <strong>Serial Plotter</strong> (Tools → Serial Plotter) instead of Serial Monitor to see the filtering effects visually. The plotter shows both raw and filtered data as real-time graphs, making it easy to see how filtering smooths out noise and fluctuations.
+                        </p>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #0277bd; line-height: 1.8;">
+                            <li>• <strong>Raw data:</strong> Shows as a jagged, noisy line</li>
+                            <li>• <strong>Filtered data:</strong> Shows as a smooth, stable line</li>
+                            <li>• <strong>Real-time comparison:</strong> See both lines updating simultaneously</li>
+                        </ul>
+                        
+                        <div style="text-align: center; margin: 1.5rem 0;">
+                            <img src="/images/previews/Lesson5_filtered_data_example.png" alt="Arduino Serial Plotter showing raw sensor data (jagged blue line) vs filtered data (smooth red line) demonstrating the smoothing effect of data filtering" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: 2px solid #e3f2fd;" />
+                            <p style="color: #0277bd; font-size: 0.9rem; margin-top: 1rem; font-style: italic;">
+                                <strong>Serial Plotter Example:</strong> Notice how the raw sensor data (jagged line) becomes smooth and stable after filtering (smooth line)
+                            </p>
+                        </div>
+                    </div>
+                    
                     <div style="background: #faf5ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                         <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Common Filtering Techniques:</h4>
                         <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
@@ -404,7 +423,7 @@ void loop() {
                         <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Required Components:</h4>
                         <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                             <li>• Arduino Uno</li>
-                            <li>• Photoresistor (LDR)</li>
+                            <li>• Photoresistor (LDR) - <em style="color: #f59e0b;">Optional for challenge project</em></li>
                             <li>• TMP36 temperature sensor (or potentiometer for simulation)</li>
                             <li>• 2 LEDs (different colors)</li>
                             <li>• 10kΩ resistor, 2 × 220Ω resistors</li>
@@ -413,7 +432,7 @@ void loop() {
                     </div>
 
                     <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge Tasks:</h4>
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔧 Optional Challenge Tasks <span style="color: #f59e0b; font-size: 0.9rem;">(Requires LDR)</span>:</h4>
                         <ol class="text-blue-700 space-y-1 list-decimal list-inside">
                             <li>Read both light and temperature sensors</li>
                             <li>Implement moving average filtering</li>
@@ -571,7 +590,7 @@ void loop() {
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">💡 Pro Tips for Success:</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                         <li>• Always check sensor datasheets for proper connections</li>
-                        <li>• Use the Serial Plotter to visualize sensor data</li>
+                        <li>• <strong>Use the Serial Plotter</strong> to visualize raw vs filtered data - you'll clearly see the smoothing effect!</li>
                         <li>• Calibrate sensors in your specific environment</li>
                         <li>• Consider power supply stability for accurate readings</li>
                     </ul>
