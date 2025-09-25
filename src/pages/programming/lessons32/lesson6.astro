@@ -116,22 +116,20 @@ import Layout from '../../../layouts/Layout.astro';
                         the pin number and the PWM value (0-255).
                     </p>
                     
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Basic analogWrite() syntax
-analogWrite(pin, value);
-
-// Examples
-analogWrite(9, 0);     // LED off (0% brightness)
-analogWrite(9, 64);    // LED dim (25% brightness)
-analogWrite(9, 128);   // LED medium (50% brightness)
-analogWrite(9, 255);   // LED full brightness (100%)
-
-// Variable control
-int brightness = 100;
-analogWrite(11, 128);  // 50% brightness on pin 11`}</code></pre>
+                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">analogWrite() Syntax:</h4>
+                        <code style="color: #4a5568; font-family: 'Courier New', monospace;">analogWrite(pinNumber, pwmValue)</code>
+                        <p class="text-gray-600 mt-2">Generates PWM signal on specified pin (0-255 range)</p>
+                        
+                        <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #6b7280;">
+                            <h5 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">PWM Value Examples:</h5>
+                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.6; font-family: 'Courier New', monospace; font-size: 0.9rem;">
+                                <li>• <strong>0</strong> = LED off (0% brightness)</li>
+                                <li>• <strong>64</strong> = LED dim (25% brightness)</li>
+                                <li>• <strong>128</strong> = LED medium (50% brightness)</li>
+                                <li>• <strong>255</strong> = LED full brightness (100%)</li>
+                            </ul>
+                        </div>
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
