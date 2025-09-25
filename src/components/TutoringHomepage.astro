@@ -673,19 +673,29 @@
   </div>
 </footer>
 
-<!-- Offline Contact Form Script -->
-<script is:inline>
-  // Offline contact form handler - no EmailJS dependency
+<!-- EmailJS Contact Form Script -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+<script type="text/javascript" is:inline>
+  // Initialize EmailJS
+  window.onload = function() {
+    try {
+      emailjs.init("ct_s19oZHppLy9BlW");
+      console.log('EmailJS initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize EmailJS:', error);
+    }
+  }
+
   function setupContactForm() {
-    console.log('Setting up offline contact form...');
+    console.log('Setting up EmailJS contact form...');
     const contactForm = document.getElementById('contactForm');
     const submitBtn = document.getElementById('submitBtn');
     const emailDirectBtn = document.getElementById('emailDirectBtn');
     const formMessage = document.getElementById('formMessage');
 
-    console.log('Contact form found, adding event listener...');
+    // EmailJS form submission
     contactForm.addEventListener('submit', function(e) {
-      console.log('Form submitted!');
+      console.log('Form submitted via EmailJS!');
       e.preventDefault();
       
       // Get form data
@@ -700,15 +710,50 @@
         return;
       }
 
-      // For offline mode, just open email client
+      // Disable submit button and show loading
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending...';
+      
+      // EmailJS template parameters
+      const templateParams = {
+        from_name: name,
+        from_email: email,
+        subject: subject,
+        message: message,
+        reply_to: email,
+        to_email: 'chuck@c00lnerd.com'
+      };
+
+      // Send email via EmailJS
+      emailjs.send('service_ot1jg6s', 'template_0nxqbk8', templateParams).then(
+        function(response) {
+          console.log('EmailJS SUCCESS!', response.status, response.text);
+          showMessage('✅ Message sent successfully! Chuck will respond within 24 hours.', 'success');
+          contactForm.reset();
+        },
+        function(error) {
+          console.error('EmailJS FAILED...', error);
+          showMessage('❌ Failed to send message. Please try the "Email Me Directly" button or contact chuck@c00lnerd.com', 'error');
+        }
+      ).finally(function() {
+        // Re-enable submit button
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+      });
+    });
+
+    // Direct email button (fallback)
+    emailDirectBtn.addEventListener('click', function() {
+      const name = document.getElementById('contactName').value;
+      const email = document.getElementById('contactEmail').value;
+      const subject = document.getElementById('contactSubject').value;
+      const message = document.getElementById('contactMessage').value;
+
       const mailtoSubject = encodeURIComponent(`Contact Form: ${subject}`);
       const mailtoBody = encodeURIComponent(`Name: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`);
       const mailtoLink = `mailto:chuck@c00lnerd.com?subject=${mailtoSubject}&body=${mailtoBody}`;
       
       window.location.href = mailtoLink;
-      
-      showMessage('Opening your email client to send the message...', 'success');
-      contactForm.reset();
     });
   }
 
@@ -730,9 +775,9 @@
 
   // Initialize when DOM is loaded
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded, initializing offline contact form...');
+    console.log('DOM loaded, initializing EmailJS contact form...');
     setupContactForm();
   });
   
-  console.log('Contact form script loaded');
+  console.log('EmailJS contact form script loaded');
 </script>
