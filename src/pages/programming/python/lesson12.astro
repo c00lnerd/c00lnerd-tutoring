@@ -465,40 +465,40 @@ if __name__ == "__main__":
       </a>
     </div>
   </main>
+</Layout>
 
-  <!-- Copy Code Functionality -->
-  <script>
-    function copyCode(button) {
-      try {
+<script>
+window.copyCode = function(button) {
+    try {
         const codeElement = button.parentElement.querySelector('code');
         const textToCopy = codeElement.textContent;
         
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(textToCopy).then(() => {
-            button.textContent = '✅ Copied!';
-            button.style.backgroundColor = '#10b981';
-            setTimeout(() => {
-              button.textContent = '📋 Copy';
-              button.style.backgroundColor = '#7c3aed';
-            }, 2000);
-          }).catch(() => {
-            fallbackCopy(textToCopy, button);
-          });
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                button.textContent = '✅ Copied!';
+                button.style.backgroundColor = '#10b981';
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                    button.style.backgroundColor = '#7c3aed';
+                }, 2000);
+            }).catch(() => {
+                fallbackCopy(textToCopy, button);
+            });
         } else {
-          fallbackCopy(textToCopy, button);
+            fallbackCopy(textToCopy, button);
         }
-      } catch (error) {
+    } catch (error) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#ef4444';
         setTimeout(() => {
-          button.textContent = '📋 Copy';
-          button.style.backgroundColor = '#7c3aed';
+            button.textContent = '📋 Copy';
+            button.style.backgroundColor = '#7c3aed';
         }, 2000);
-      }
     }
+};
 
-    function fallbackCopy(text, button) {
-      try {
+function fallbackCopy(text, button) {
+    try {
         const textArea = document.createElement('textarea');
         textArea.value = text;
         textArea.style.position = 'fixed';
@@ -511,17 +511,16 @@ if __name__ == "__main__":
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#10b981';
         setTimeout(() => {
-          button.textContent = '📋 Copy';
-          button.style.backgroundColor = '#7c3aed';
+            button.textContent = '📋 Copy';
+            button.style.backgroundColor = '#7c3aed';
         }, 2000);
-      } catch (error) {
+    } catch (error) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#ef4444';
         setTimeout(() => {
-          button.textContent = '📋 Copy';
-          button.style.backgroundColor = '#7c3aed';
+            button.textContent = '📋 Copy';
+            button.style.backgroundColor = '#7c3aed';
         }, 2000);
-      }
     }
-  </script>
-</Layout>
+}
+</script>
