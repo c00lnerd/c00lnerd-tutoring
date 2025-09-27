@@ -186,7 +186,7 @@ class ParametricArtGenerator:
         
         # Second layer - more trigonometric relationships
         y_base = 8 - 13
-        magnitude_factor = 3 * math.sin(k * 2) + 3 / (k + math.sin(k / 25))
+        magnitude_factor = 3 * math.sin(k * 2) + 3 / (abs(k + math.sin(k / 25)) + 0.1)
         
         # Third layer - even more complex relationships
         k_factor = k * (9 + 4 * math.sin(8 * k - 9))
