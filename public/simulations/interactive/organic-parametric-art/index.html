@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organic Parametric Art - C00lnerd Simulations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00ff88, #88ff00, #ffff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #b0b0b0;
+        }
+
+        .simulation-area {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .canvas-container {
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #artCanvas {
+            width: 100%;
+            height: 600px;
+            border-radius: 10px;
+            background: #000;
+            cursor: crosshair;
+        }
+
+        .controls {
+            background: rgba(0, 40, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .control-group {
+            margin-bottom: 25px;
+        }
+
+        .control-group h3 {
+            color: #00ff88;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .slider-container {
+            margin-bottom: 15px;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #e0e0e0;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00ff88;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00ff88;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .value-display {
+            font-size: 0.8em;
+            color: #88ff00;
+            font-weight: bold;
+        }
+
+        .button {
+            background: linear-gradient(45deg, #00ff88, #88ff00);
+            border: none;
+            color: #000;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0;
+            transition: transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .preset-btn {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            padding: 8px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .preset-btn:hover {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .info-section {
+            background: rgba(0, 40, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid rgba(0, 255, 136, 0.2);
+        }
+
+        .info-section h2 {
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+
+        .equation-display {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            border-left: 4px solid #88ff00;
+            color: #88ff00;
+        }
+
+        @media (max-width: 768px) {
+            .simulation-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .preset-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌿 Organic Parametric Art</h1>
+            <p>Complex mathematical patterns inspired by natural forms</p>
+        </div>
+
+        <div class="simulation-area">
+            <div class="canvas-container">
+                <canvas id="artCanvas" width="800" height="600"></canvas>
+            </div>
+
+            <div class="controls">
+                <div class="control-group">
+                    <h3>🎛️ Mathematical Parameters</h3>
+                    
+                    <div class="slider-container">
+                        <label for="aSlider">Amplitude (a): <span class="value-display" id="aValue">1.0</span></label>
+                        <input type="range" id="aSlider" class="slider" min="0.1" max="3" step="0.1" value="1">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="kSlider">Frequency (k): <span class="value-display" id="kValue">4.0</span></label>
+                        <input type="range" id="kSlider" class="slider" min="1" max="10" step="0.5" value="4">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="phaseSlider">Phase: <span class="value-display" id="phaseValue">0.0</span></label>
+                        <input type="range" id="phaseSlider" class="slider" min="0" max="6.28" step="0.1" value="0">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="complexitySlider">Complexity: <span class="value-display" id="complexityValue">3.0</span></label>
+                        <input type="range" id="complexitySlider" class="slider" min="1" max="8" step="0.5" value="3">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🌈 Visual Settings</h3>
+                    
+                    <div class="slider-container">
+                        <label for="speedSlider">Animation Speed: <span class="value-display" id="speedValue">1.0</span></label>
+                        <input type="range" id="speedSlider" class="slider" min="0.1" max="3" step="0.1" value="1">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="scaleSlider">Scale: <span class="value-display" id="scaleValue">200</span></label>
+                        <input type="range" id="scaleSlider" class="slider" min="100" max="300" step="10" value="200">
+                    </div>
+                    
+                    <div class="slider-container">
+                        <label for="branchesSlider">Branches: <span class="value-display" id="branchesValue">6</span></label>
+                        <input type="range" id="branchesSlider" class="slider" min="1" max="12" step="1" value="6">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎮 Actions</h3>
+                    <button class="button" onclick="clearCanvas()">🗑️ Clear Canvas</button>
+                    <button class="button" onclick="toggleAnimation()">⏯️ Play/Pause</button>
+                    <button class="button" onclick="saveImage()">💾 Save Image</button>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎯 Organic Presets</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-btn" onclick="loadPreset('fern')">🌿 Fern</button>
+                        <button class="preset-btn" onclick="loadPreset('feather')">🪶 Feather</button>
+                        <button class="preset-btn" onclick="loadPreset('coral')">🪸 Coral</button>
+                        <button class="preset-btn" onclick="loadPreset('lightning')">⚡ Lightning</button>
+                        <button class="preset-btn" onclick="loadPreset('tree')">🌳 Tree</button>
+                        <button class="preset-btn" onclick="loadPreset('random')">🎲 Random</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>📚 Complex Parametric Mathematics</h2>
+            
+            <div class="equation-display">
+                <strong>Organic Pattern Equations:</strong><br>
+                x(t) = a × (sin(k×t + phase) + sin(complexity×t)) × cos(t/29)<br>
+                y(t) = a × (cos(k×t + phase) + cos(complexity×t)) × sin(t/29)<br>
+                <em>Multiple branches with phase offsets create organic complexity</em>
+            </div>
+
+            <p style="color: #b0b0b0; line-height: 1.6;">
+                This simulation creates organic, plant-like patterns using complex parametric equations with multiple frequency components. 
+                The mathematical relationships between sine and cosine functions at different frequencies produce natural-looking forms 
+                that resemble ferns, feathers, coral, and other organic structures found in nature.
+            </p>
+        </div>
+    </div>
+
+    <script src="organic-parametric-art.js"></script>
+</body>
+</html>
