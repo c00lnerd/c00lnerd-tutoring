@@ -58,6 +58,10 @@ import Layout from '../../../layouts/Layout.astro';
                             <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
                             Build a simple bouncing ball animation
                         </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-600 mr-2 mt-1"></i>
+                            Create a 3D bouncing ball in a cube (advanced)
+                        </li>
                     </ul>
                 </div>
 
@@ -362,9 +366,476 @@ while running:
     clock.tick(60)  # 60 FPS
 
 pygame.quit()
-sys.exit()
-</code></pre>
+sys.exit()</code></pre>
                             </div>
+                        </div>
+                    </section>
+
+                    <!-- 3D Bouncing Ball -->
+                    <section>
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">Advanced: 3D Bouncing Ball in a Cube!</h2>
+                        <p class="text-gray-700 mb-4">
+                            Ready for something amazing? Let's create a ball that bounces around inside a 3D cube! This uses pure Python with tkinter (no extra installations needed).
+                        </p>
+                        
+                        <div class="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-lg p-6 mb-4">
+                            <h3 class="font-bold text-purple-800 mb-3">
+                                <i class="fas fa-cube mr-2"></i>3D Physics Concepts
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-purple-700">
+                                <div>
+                                    <h4 class="font-semibold mb-2">🎯 Position in 3D Space</h4>
+                                    <p class="text-sm">Ball has (x, y, z) coordinates - width, height, and depth!</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">🏃 Velocity Vectors</h4>
+                                    <p class="text-sm">Ball moves with (vx, vy, vz) speeds in each direction</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">👁️ Perspective Projection</h4>
+                                    <p class="text-sm">3D coordinates get "flattened" to 2D screen using math!</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-2">🎨 Depth Shading</h4>
+                                    <p class="text-sm">Objects farther away appear smaller and darker</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 p-4 rounded-lg mb-4 relative">
+                            <h3 class="font-semibold text-gray-900 mb-2">Complete 3D Bouncing Ball Program:</h3>
+                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                📋 Copy
+                            </button>
+                            <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code>import tkinter as tk
+import math
+import time
+
+class Ball3D:
+    def __init__(self):
+        # 3D position and velocity
+        self.x, self.y, self.z = 0.0, 0.0, 0.0
+        self.vx, self.vy, self.vz = 3.2, 2.8, 2.1
+        
+        # Cube boundaries (-L to +L in each direction)
+        self.L = 4.0
+        self.radius = 0.3
+        
+        # Display settings
+        self.focal_length = 8.0  # Controls perspective
+        self.camera_distance = 12.0
+        
+        # Splash effects for wall hits
+        self.splash_effects = []  # List of active splash effects
+        self.last_hit_wall = None  # Track which wall was hit
+        
+        # Trail system for ball path
+        self.trail_points = []  # List of (x, y, z, timestamp) points
+        self.max_trail_length = 50  # Maximum number of trail points
+        
+        # 3D rotation for mouse control
+        self.rotation_x = 0.0  # Rotation around X axis (up/down)
+        self.rotation_y = 0.0  # Rotation around Y axis (left/right)
+        
+    def update(self, dt):
+        """Update ball position and handle wall bounces"""
+        # Move the ball
+        self.x += self.vx * dt
+        self.y += self.vy * dt
+        self.z += self.vz * dt
+        
+        # Bounce off walls (with slight energy loss for realism)
+        bounce_damping = 0.98
+        
+        # Check X walls (left/right - red/orange)
+        if self.x <= -self.L + self.radius or self.x >= self.L - self.radius:
+            self.vx = -self.vx * bounce_damping
+            self.x = max(-self.L + self.radius, min(self.L - self.radius, self.x))
+            # Add splash effect
+            wall_type = "left" if self.x <= 0 else "right"
+            self.add_splash_effect(self.x, self.y, self.z, wall_type)
+            
+        # Check Y walls (bottom/top - blue/green)  
+        if self.y <= -self.L + self.radius or self.y >= self.L - self.radius:
+            self.vy = -self.vy * bounce_damping
+            self.y = max(-self.L + self.radius, min(self.L - self.radius, self.y))
+            # Add splash effect
+            wall_type = "bottom" if self.y <= 0 else "top"
+            self.add_splash_effect(self.x, self.y, self.z, wall_type)
+            
+        # Check Z walls (back/front - purple/yellow)
+        if self.z <= -self.L + self.radius or self.z >= self.L - self.radius:
+            self.vz = -self.vz * bounce_damping
+            self.z = max(-self.L + self.radius, min(self.L - self.radius, self.z))
+            # Add splash effect
+            wall_type = "back" if self.z <= 0 else "front"
+            self.add_splash_effect(self.x, self.y, self.z, wall_type)
+        
+        # Update splash effects (fade them out over time)
+        self.splash_effects = [(x, y, z, wall, age + dt) for x, y, z, wall, age in self.splash_effects if age + dt < 0.5]
+        
+        # Add current position to trail
+        import time
+        current_time = time.time()
+        self.trail_points.append((self.x, self.y, self.z, current_time))
+        
+        # Limit trail length
+        if len(self.trail_points) > self.max_trail_length:
+            self.trail_points.pop(0)
+    
+    def add_splash_effect(self, x, y, z, wall_type):
+        """Add a splash effect at the collision point"""
+        self.splash_effects.append((x, y, z, wall_type, 0.0))  # (x, y, z, wall_type, age)
+    
+    def project_to_2d(self, x3d, y3d, z3d, canvas_width, canvas_height):
+        """Convert 3D coordinates to 2D screen coordinates with rotation"""
+        import math
+        
+        # Apply 3D rotations
+        # Rotate around Y axis (left/right rotation)
+        cos_y = math.cos(self.rotation_y)
+        sin_y = math.sin(self.rotation_y)
+        x_rot = x3d * cos_y - z3d * sin_y
+        z_rot = x3d * sin_y + z3d * cos_y
+        y_rot = y3d
+        
+        # Rotate around X axis (up/down rotation)
+        cos_x = math.cos(self.rotation_x)
+        sin_x = math.sin(self.rotation_x)
+        x_final = x_rot
+        y_final = y_rot * cos_x - z_rot * sin_x
+        z_final = y_rot * sin_x + z_rot * cos_x
+        
+        # Perspective projection formula
+        screen_x = canvas_width/2 + self.focal_length * x_final / (z_final + self.camera_distance) * 50
+        screen_y = canvas_height/2 - self.focal_length * y_final / (z_final + self.camera_distance) * 50
+        
+        # Calculate apparent size based on distance
+        apparent_radius = self.radius * self.focal_length / (z_final + self.camera_distance) * 50
+        
+        return screen_x, screen_y, apparent_radius
+
+class Cube3DVisualizer:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("3D Bouncing Ball in a Cube!")
+        self.root.geometry("800x600")
+        
+        # Create canvas
+        self.canvas = tk.Canvas(self.root, width=800, height=600, bg='black')
+        self.canvas.pack()
+        
+        # Create ball
+        self.ball = Ball3D()
+        
+        # Control buttons
+        button_frame = tk.Frame(self.root)
+        button_frame.pack(pady=10)
+        
+        self.paused = False
+        self.pause_btn = tk.Button(button_frame, text="Pause", command=self.toggle_pause)
+        self.pause_btn.pack(side=tk.LEFT, padx=5)
+        
+        reset_btn = tk.Button(button_frame, text="Reset", command=self.reset_ball)
+        reset_btn.pack(side=tk.LEFT, padx=5)
+        
+        # Trail toggle
+        self.show_trail = tk.BooleanVar(value=True)
+        trail_btn = tk.Checkbutton(button_frame, text="Show Trail", variable=self.show_trail)
+        trail_btn.pack(side=tk.LEFT, padx=5)
+        
+        # Speed control
+        tk.Label(button_frame, text="Speed:").pack(side=tk.LEFT, padx=5)
+        self.speed_scale = tk.Scale(button_frame, from_=0.1, to=3.0, resolution=0.1, 
+                                   orient=tk.HORIZONTAL, length=150)
+        self.speed_scale.set(1.0)
+        self.speed_scale.pack(side=tk.LEFT, padx=5)
+        
+        # Mouse control variables
+        self.mouse_down = False
+        self.last_mouse_x = 0
+        self.last_mouse_y = 0
+        
+        # Bind mouse events for 3D rotation
+        self.canvas.bind("&lt;Button-1&gt;", self.mouse_down_event)
+        self.canvas.bind("&lt;B1-Motion&gt;", self.mouse_drag_event)
+        self.canvas.bind("&lt;ButtonRelease-1&gt;", self.mouse_up_event)
+        
+        # Bind keyboard shortcuts
+        self.root.bind("&lt;KeyPress-r&gt;", self.keyboard_reset)
+        self.root.bind("&lt;KeyPress-R&gt;", self.keyboard_reset)
+        self.root.bind("&lt;KeyPress-p&gt;", self.keyboard_pause)
+        self.root.bind("&lt;KeyPress-P&gt;", self.keyboard_pause)
+        
+        # Make sure window can receive keyboard focus
+        self.root.focus_set()
+        
+        # Start animation
+        self.last_time = time.time()
+        self.animate()
+        
+    def toggle_pause(self):
+        self.paused = not self.paused
+        self.pause_btn.config(text="Resume" if self.paused else "Pause")
+        
+    def reset_ball(self):
+        self.ball.x, self.ball.y, self.ball.z = 0.0, 0.0, 0.0
+        self.ball.vx, self.ball.vy, self.ball.vz = 3.2, 2.8, 2.1
+        self.ball.splash_effects = []  # Clear splash effects
+        self.ball.trail_points = []   # Clear trail
+        
+    def mouse_down_event(self, event):
+        """Handle mouse button press for rotation"""
+        self.mouse_down = True
+        self.last_mouse_x = event.x
+        self.last_mouse_y = event.y
+        
+    def mouse_drag_event(self, event):
+        """Handle mouse drag for 3D rotation"""
+        if self.mouse_down:
+            # Calculate mouse movement
+            dx = event.x - self.last_mouse_x
+            dy = event.y - self.last_mouse_y
+            
+            # Update rotation (sensitivity factor of 0.01)
+            self.ball.rotation_y += dx * 0.01  # Horizontal movement rotates around Y axis
+            self.ball.rotation_x += dy * 0.01  # Vertical movement rotates around X axis
+            
+            # Update last mouse position
+            self.last_mouse_x = event.x
+            self.last_mouse_y = event.y
+            
+    def mouse_up_event(self, event):
+        """Handle mouse button release"""
+        self.mouse_down = False
+        
+    def keyboard_reset(self, event):
+        """Handle R key press for reset"""
+        self.reset_ball()
+        
+    def keyboard_pause(self, event):
+        """Handle P key press for pause/resume"""
+        self.toggle_pause()
+        
+    def draw_cube_edges(self):
+        """Draw the colorful wireframe cube with different colored walls"""
+        L = self.ball.L
+        
+        # Define the 8 corners of the cube
+        corners = [
+            (-L, -L, -L), (L, -L, -L), (L, L, -L), (-L, L, -L),  # Back face
+            (-L, -L, L), (L, -L, L), (L, L, L), (-L, L, L)       # Front face
+        ]
+        
+        # Project corners to 2D
+        projected = []
+        for corner in corners:
+            x2d, y2d, _ = self.ball.project_to_2d(corner[0], corner[1], corner[2], 
+                                                 self.canvas.winfo_width(), 
+                                                 self.canvas.winfo_height())
+            projected.append((x2d, y2d))
+        
+        # Draw cube edges with different colors for each wall
+        # Wall colors: left=red, right=orange, bottom=blue, top=green, back=purple, front=yellow
+        edge_colors = [
+            # Back face (purple)
+            ((0,1), 'purple'), ((1,2), 'purple'), ((2,3), 'purple'), ((3,0), 'purple'),
+            # Front face (yellow) 
+            ((4,5), 'yellow'), ((5,6), 'yellow'), ((6,7), 'yellow'), ((7,4), 'yellow'),
+            # Connecting edges - colored by which walls they connect
+            ((0,4), 'red'),    # Left wall
+            ((1,5), 'orange'), # Right wall  
+            ((2,6), 'green'),  # Top wall
+            ((3,7), 'blue')    # Bottom wall
+        ]
+        
+        for (edge, color) in edge_colors:
+            x1, y1 = projected[edge[0]]
+            x2, y2 = projected[edge[1]]
+            self.canvas.create_line(x1, y1, x2, y2, fill=color, width=3)
+    
+    def animate(self):
+        if not self.paused:
+            # Calculate time step
+            current_time = time.time()
+            dt = (current_time - self.last_time) * self.speed_scale.get()
+            self.last_time = current_time
+            
+            # Update ball physics
+            self.ball.update(dt)
+        
+        # Clear canvas
+        self.canvas.delete("all")
+        
+        # Draw cube wireframe
+        self.draw_cube_edges()
+        
+        # Project ball to 2D and draw it
+        ball_x2d, ball_y2d, ball_radius2d = self.ball.project_to_2d(
+            self.ball.x, self.ball.y, self.ball.z,
+            self.canvas.winfo_width(), self.canvas.winfo_height()
+        )
+        
+        # Color based on depth (farther = darker)
+        depth_factor = (self.ball.z + self.ball.camera_distance) / (2 * self.ball.camera_distance)
+        depth_factor = max(0.3, min(1.0, depth_factor))  # Keep it visible
+        
+        red_value = int(255 * depth_factor)
+        color = f"#{'{'}red_value:02x{'}'}4040"
+        
+        # Draw the ball
+        self.canvas.create_oval(
+            ball_x2d - ball_radius2d, ball_y2d - ball_radius2d,
+            ball_x2d + ball_radius2d, ball_y2d + ball_radius2d,
+            fill=color, outline='white', width=2
+        )
+        
+        # Draw splash effects at wall collision points
+        self.draw_splash_effects()
+        
+        # Draw ball trail if enabled
+        if self.show_trail.get():
+            self.draw_trail()
+        
+        # Add position info
+        info_text = f"Position: ({'{'}self.ball.x:.1f{'}'}, {'{'}self.ball.y:.1f{'}'}, {'{'}self.ball.z:.1f{'}'})"
+        self.canvas.create_text(10, 10, text=info_text, fill='white', anchor='nw', font=('Arial', 12))
+        
+        # Continue animation
+        self.root.after(16, self.animate)  # ~60 FPS
+    
+    def draw_splash_effects(self):
+        """Draw colorful splash effects where ball hits walls"""
+        # Wall colors match the cube edges
+        wall_colors = {'{'}
+            'left': '#FF4444',    # Red
+            'right': '#FF8844',   # Orange  
+            'bottom': '#4444FF',  # Blue
+            'top': '#44FF44',     # Green
+            'back': '#8844FF',    # Purple
+            'front': '#FFFF44'    # Yellow
+        {'}'}
+        
+        for splash_x, splash_y, splash_z, wall_type, age in self.ball.splash_effects:
+            # Project splash position to 2D
+            splash_x2d, splash_y2d, splash_size = self.ball.project_to_2d(
+                splash_x, splash_y, splash_z,
+                self.canvas.winfo_width(), self.canvas.winfo_height()
+            )
+            
+            # Calculate fade effect (newer = brighter, older = more transparent)
+            fade_factor = 1.0 - (age / 0.5)  # Fade over 0.5 seconds
+            fade_factor = max(0.0, min(1.0, fade_factor))
+            
+            # Get wall color and make it fade
+            base_color = wall_colors.get(wall_type, '#FFFFFF')
+            
+            # Draw multiple circles for splash effect (ripples)
+            for i in range(3):
+                ripple_size = splash_size * (1 + i * 0.5) * (1 + age * 2)  # Expand over time
+                alpha_effect = fade_factor * (1 - i * 0.3)  # Inner ripples brighter
+                
+                if alpha_effect > 0.1:  # Only draw if visible enough
+                    # Create fading color effect
+                    color_intensity = int(255 * alpha_effect)
+                    if wall_type in ['left', 'right']:  # Red/Orange walls
+                        color = f"#{'{'}color_intensity:02x}4444"
+                    elif wall_type in ['bottom', 'top']:  # Blue/Green walls  
+                        color = f"#44{'{'}color_intensity:02x}44" if wall_type == 'top' else f"#4444{'{'}color_intensity:02x}"
+                    else:  # Purple/Yellow walls
+                        if wall_type == 'back':  # Purple
+                            color = f"#{'{'}color_intensity//2:02x}44{'{'}color_intensity:02x}"
+                        else:  # Yellow
+                            color = f"#{'{'}color_intensity:02x}{'{'}color_intensity:02x}44"
+                    
+                    # Draw the ripple circle
+                    self.canvas.create_oval(
+                        splash_x2d - ripple_size, splash_y2d - ripple_size,
+                        splash_x2d + ripple_size, splash_y2d + ripple_size,
+                        outline=color, width=2, fill=''
+                    )
+    
+    def draw_trail(self):
+        """Draw the ball's path trail"""
+        if len(self.ball.trail_points) < 2:
+            return
+            
+        # Draw lines connecting trail points
+        for i in range(1, len(self.ball.trail_points)):
+            # Get current and previous trail points
+            prev_x, prev_y, prev_z, prev_time = self.ball.trail_points[i-1]
+            curr_x, curr_y, curr_z, curr_time = self.ball.trail_points[i]
+            
+            # Project both points to 2D
+            prev_x2d, prev_y2d, _ = self.ball.project_to_2d(
+                prev_x, prev_y, prev_z,
+                self.canvas.winfo_width(), self.canvas.winfo_height()
+            )
+            curr_x2d, curr_y2d, _ = self.ball.project_to_2d(
+                curr_x, curr_y, curr_z,
+                self.canvas.winfo_width(), self.canvas.winfo_height()
+            )
+            
+            # Calculate fade factor based on position in trail (newer = brighter)
+            fade_factor = i / len(self.ball.trail_points)
+            alpha = int(255 * fade_factor)
+            
+            # Create fading white trail
+            trail_color = f"#{'{'}alpha:02x}{'{'}alpha:02x}{'{'}alpha:02x}"
+            
+            # Draw trail segment
+            self.canvas.create_line(
+                prev_x2d, prev_y2d, curr_x2d, curr_y2d,
+                fill=trail_color, width=2
+            )
+    
+    def run(self):
+        self.root.mainloop()
+
+# Run the 3D bouncing ball simulation
+if __name__ == "__main__":
+    print("🎮 Starting 3D Bouncing Ball Simulation!")
+    print("📐 Watch how 3D coordinates get projected to 2D!")
+    print("🎯 Notice how the ball gets smaller/larger as it moves away/closer!")
+    print("🖱️  Drag mouse to rotate view, check 'Show Trail' to see path")
+    print("⌨️  Press 'R' to reset, 'P' to pause/resume")
+    
+    visualizer = Cube3DVisualizer()
+    visualizer.run()</code></pre>
+                        </div>
+                        
+                        <div class="bg-blue-50 border-l-4 border-blue-400 p-6 mb-4">
+                            <h4 class="font-bold text-blue-800 mb-2">🧠 What's Happening Here?</h4>
+                            <div class="space-y-2 text-blue-700">
+                                <p><strong>3D Position:</strong> The ball has (x, y, z) coordinates in 3D space</p>
+                                <p><strong>Perspective Math:</strong> We use <code>screen_x = focal_length * x / (z + distance)</code> to flatten 3D to 2D</p>
+                                <p><strong>Depth Effects:</strong> Objects farther away appear smaller and darker</p>
+                                <p><strong>Vector Bouncing:</strong> Each wall bounce flips one velocity component (vx, vy, or vz)</p>
+                                <p><strong>Colorful Walls:</strong> Each wall has a unique color - Red/Orange (left/right), Blue/Green (bottom/top), Purple/Yellow (back/front)</p>
+                                <p><strong>Splash Effects:</strong> Rippling circles appear where the ball hits walls, matching the wall colors and fading over time</p>
+                                <p><strong>Ball Trail:</strong> A fading white line shows the ball's path through 3D space (can be toggled on/off)</p>
+                                <p><strong>Mouse Rotation:</strong> Click and drag to rotate the 3D view - horizontal movement spins left/right, vertical movement tilts up/down</p>
+                                <p><strong>Keyboard Shortcuts:</strong> Press 'R' to reset the simulation, 'P' to pause/resume - just like professional software!</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-6">
+                            <h4 class="font-bold text-green-800 mb-3">
+                                <i class="fas fa-rocket mr-2"></i>Try These Experiments!
+                            </h4>
+                            <ul class="list-disc list-inside space-y-2 text-green-700">
+                                <li>Change the initial velocity values (vx, vy, vz) for different bounce patterns</li>
+                                <li>Modify the cube size by changing <code>self.L = 4.0</code></li>
+                                <li>Adjust <code>focal_length</code> to change the perspective effect</li>
+                                <li>Add gravity by putting <code>self.vy -= 9.8 * dt</code> in the update function</li>
+                                <li>Create multiple balls by making a list of Ball3D objects!</li>
+                                <li>Experiment with splash effect duration by changing the 0.5 seconds fade time</li>
+                                <li>Try different wall colors by modifying the wall_colors dictionary</li>
+                                <li>Adjust trail length by changing <code>self.max_trail_length = 50</code></li>
+                                <li>Change trail color from white to rainbow by modifying the trail_color calculation</li>
+                                <li>Experiment with mouse rotation sensitivity by adjusting the 0.01 factor</li>
+                                <li>Add more keyboard shortcuts (like 'S' for speed control or 'T' for trail toggle)</li>
+                            </ul>
                         </div>
                     </section>
 
@@ -376,14 +847,30 @@ sys.exit()
                                 <i class="fas fa-code mr-2"></i>Create Your Own Art
                             </h3>
                             <p class="text-yellow-700 mb-4">
-                                Modify the shape drawing program to create your own masterpiece:
+                                Choose your challenge level and create something amazing:
                             </p>
-                            <ul class="list-disc list-inside space-y-2 text-yellow-700 mb-4">
-                                <li>Add more shapes in different positions</li>
-                                <li>Try new colors (mix different RGB values)</li>
-                                <li>Draw a simple house, car, or robot</li>
-                                <li>Make overlapping shapes for cool effects</li>
-                            </ul>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-yellow-900 mb-2">🎨 2D Art Challenge</h4>
+                                    <ul class="list-disc list-inside space-y-1 text-yellow-700 text-sm">
+                                        <li>Add more shapes in different positions</li>
+                                        <li>Try new colors (mix different RGB values)</li>
+                                        <li>Draw a simple house, car, or robot</li>
+                                        <li>Make overlapping shapes for cool effects</li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-yellow-900 mb-2">🚀 3D Physics Challenge</h4>
+                                    <ul class="list-disc list-inside space-y-1 text-yellow-700 text-sm">
+                                        <li>Add gravity to the 3D ball simulation</li>
+                                        <li>Create multiple balls with different colors</li>
+                                        <li>Change the cube size or ball speed</li>
+                                        <li>Add trails that show the ball's path</li>
+                                    </ul>
+                                </div>
+                            </div>
                             <div class="bg-yellow-100 p-3 rounded">
                                 <p class="text-yellow-800 text-sm">
                                     <i class="fas fa-lightbulb mr-2"></i>
@@ -398,26 +885,51 @@ sys.exit()
                         <h2 class="text-2xl font-bold text-gray-900 mb-4">Fun Challenge</h2>
                         <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
                             <h3 class="font-bold text-purple-800 mb-3">
-                                <i class="fas fa-star mr-2"></i>Rainbow Bouncing Balls
+                                <i class="fas fa-star mr-2"></i>Ultimate Physics Challenges
                             </h3>
-                            <p class="text-purple-700 mb-4">
-                                Can you create multiple bouncing balls with different colors?
-                            </p>
-                            <div class="relative">
-                                <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                                    📋 Copy
-                                </button>
-                                <pre class="bg-gray-800 text-green-400 p-4 rounded-lg overflow-x-auto"><code># Challenge: Add a second ball with different color and speed
-# Hint: You'll need ball2_x, ball2_y, ball2_speed_x, ball2_speed_y
-# And draw both balls in the main loop!
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-purple-900 mb-2">🌈 2D Rainbow Balls</h4>
+                                    <p class="text-purple-700 text-sm mb-2">Create multiple bouncing balls with different colors:</p>
+                                    <div class="relative">
+                                        <button onclick="copyCode(this)" class="absolute top-1 right-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                            📋 Copy
+                                        </button>
+                                        <pre class="bg-gray-800 text-green-400 p-2 rounded text-xs"><code># Add a second ball
+ball2_x, ball2_y = 200, 150
+ball2_speed_x, ball2_speed_y = -3, 4
+BLUE = (0, 100, 255)
 
-# Try making one ball red and one ball blue
-# Make them bounce at different speeds</code></pre>
+# In main loop, draw both:
+pygame.draw.circle(screen, RED, (int(ball_x), int(ball_y)), ball_radius)
+pygame.draw.circle(screen, BLUE, (int(ball2_x), int(ball2_y)), ball_radius)</code></pre>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white p-4 rounded border">
+                                    <h4 class="font-semibold text-purple-900 mb-2">🚀 3D Multi-Ball System</h4>
+                                    <p class="text-purple-700 text-sm mb-2">Add multiple balls to the 3D cube:</p>
+                                    <div class="relative">
+                                        <button onclick="copyCode(this)" class="absolute top-1 right-1 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                                            📋 Copy
+                                        </button>
+                                        <pre class="bg-gray-800 text-green-400 p-2 rounded text-xs"><code># In Cube3DVisualizer.__init__():
+self.balls = [Ball3D() for _ in range(3)]
+self.balls[1].x, self.balls[1].vx = 2.0, -2.5
+self.balls[2].z, self.balls[2].vz = -2.0, 3.0
+
+# In animate(), loop through all balls:
+for ball in self.balls:
+    ball.update(dt)</code></pre>
+                                    </div>
+                                </div>
                             </div>
+                            
                             <div class="mt-3 p-3 bg-purple-100 rounded">
                                 <p class="text-purple-800 text-sm">
                                     <i class="fas fa-trophy mr-2"></i>
-                                    <strong>Super Challenge:</strong> Make the balls change color when they bounce off walls!
+                                    <strong>Super Challenges:</strong> Add gravity, ball collisions, or trails that fade over time!
                                 </p>
                             </div>
                         </div>
