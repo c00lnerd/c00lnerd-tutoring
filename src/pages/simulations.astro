@@ -190,6 +190,40 @@ const categories: Category[] = [
 				previewAlt: "Preview of analog clock with degree markings"
 			}
 		]
+	},
+	{
+		name: "Astrophotography Gallery",
+		description: "Explore the cosmos through real astrophotography! These images demonstrate the practical application of physics, optics, and mathematics in capturing celestial objects.",
+		simulations: [
+			{
+				title: "Andromeda Galaxy (M31)",
+				url: "/images/astrophotography/andromeda-galaxy.png",
+				description: "Our nearest major galactic neighbor, 2.5 million light-years away. Demonstrates deep-sky imaging techniques, long exposure photography, and galactic structure.",
+				preview: "/images/previews/andromeda-preview.png",
+				previewAlt: "Astrophotography of the Andromeda Galaxy showing spiral structure"
+			},
+			{
+				title: "Orion Nebula (M42)",
+				url: "/images/astrophotography/orion-nebula.png",
+				description: "A stellar nursery where new stars are born. Shows emission nebula physics, hydrogen-alpha wavelengths, and stellar formation processes.",
+				preview: "/images/previews/orion-preview.png",
+				previewAlt: "Astrophotography of the Orion Nebula showing star formation region"
+			},
+			{
+				title: "Solar Eclipse",
+				url: "/images/astrophotography/solar-eclipse.png",
+				description: "Rare celestial alignment demonstrating orbital mechanics, shadow physics, and the Sun's corona. Perfect example of predictable astronomical events.",
+				preview: "/images/previews/solar-eclipse-preview.png",
+				previewAlt: "Solar eclipse photography showing corona and diamond ring effect"
+			},
+			{
+				title: "Comet C/2025 A6 Lemmon",
+				url: "/images/astrophotography/comet-A6-Lemmon.png",
+				description: "Comet C/2025 A6 Lemmon - a visitor from the outer solar system. Demonstrates orbital mechanics, sublimation physics, and the solar wind's effect on comet tails.",
+				preview: "/images/previews/comet-A6-Lemmon-preview.png",
+				previewAlt: "Astrophotography of Comet C/2025 A6 Lemmon showing nucleus, coma, and tail structure"
+			}
+		]
 	}
 ];
 ---
@@ -222,7 +256,11 @@ const categories: Category[] = [
 						<div class="card-content">
 							<h3>{simulation.title}</h3>
 							<p>{simulation.description}</p>
-							<a href={simulation.url} target="_blank" class="launch-btn">Launch {category.name === "Physical Science Class Resources" ? "Quiz" : "Simulation"}</a>
+							<a href={simulation.url} target="_blank" class="launch-btn">
+								{category.name === "Physical Science Class Resources" ? "Launch Quiz" : 
+								 category.name === "Astrophotography Gallery" ? "View Full Image" : 
+								 "Launch Simulation"}
+							</a>
 						</div>
 					</div>
 					))}
