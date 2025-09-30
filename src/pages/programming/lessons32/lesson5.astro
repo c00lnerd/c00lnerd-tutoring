@@ -293,6 +293,10 @@ void loop() {
                         <p style="color: #0277bd; margin-bottom: 1rem;">
                             <strong>Important:</strong> Use Arduino IDE's <strong>Serial Plotter</strong> (Tools → Serial Plotter) instead of Serial Monitor to see the filtering effects visually. The plotter shows both raw and filtered data as real-time graphs, making it easy to see how filtering smooths out noise and fluctuations.
                         </p>
+                        <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #ffeaa7;">
+                            <p style="color: #856404; margin-bottom: 0.5rem;"><strong>⚠️ Arduino IDE 2.x Serial Plotter Format:</strong></p>
+                            <p style="color: #856404; margin: 0; font-size: 0.9rem;">Newer Arduino IDE versions require <strong>tab-separated or comma-separated values without text labels</strong> for proper plotting. Use format: <code>rawValue\tfiltered</code> or <code>rawValue,filtered</code></p>
+                        </div>
                         <ul style="list-style: none; padding: 0; margin: 0; color: #0277bd; line-height: 1.8;">
                             <li>• <strong>Raw data:</strong> Shows as a jagged, noisy line</li>
                             <li>• <strong>Filtered data:</strong> Shows as a smooth, stable line</li>
@@ -359,10 +363,16 @@ void loop() {
   // Calculate average
   average = total / numReadings;
   
+  // For Serial Monitor (with labels)
   Serial.print("Raw: ");
   Serial.print(readings[readIndex == 0 ? numReadings-1 : readIndex-1]);
   Serial.print(" | Filtered: ");
   Serial.println(average);
+  
+  // For Serial Plotter (Arduino IDE 2.x format - uncomment these lines)
+  // Serial.print(readings[readIndex == 0 ? numReadings-1 : readIndex-1]);
+  // Serial.print("\t");  // Tab separator
+  // Serial.println(average);
   
   delay(100);
 }`}</code></pre>
@@ -397,10 +407,16 @@ void loop() {
   // Apply exponential smoothing
   smoothedValue = (alpha * rawValue) + ((1 - alpha) * smoothedValue);
   
+  // For Serial Monitor (with labels)
   Serial.print("Raw: ");
   Serial.print(rawValue);
   Serial.print(" | Smoothed: ");
   Serial.println(smoothedValue);
+  
+  // For Serial Plotter (Arduino IDE 2.x format - uncomment these lines)
+  // Serial.print(rawValue);
+  // Serial.print("\t");  // Tab separator
+  // Serial.println(smoothedValue);
   
   delay(100);
 }`}</code></pre>
