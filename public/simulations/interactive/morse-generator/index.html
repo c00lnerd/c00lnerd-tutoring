@@ -375,7 +375,7 @@
                 <li><strong>Random Letters:</strong> Generates random letter groups for basic practice</li>
                 <li><strong>Random Words:</strong> Creates pronounceable random words for advanced training</li>
                 <li><strong>Custom Text:</strong> Send any text you type - perfect for specific practice</li>
-                <li><strong>Backwards Text:</strong> Reverses word order like reading a book backwards - excellent for speed building!</li>
+                <li><strong>Backwards Text:</strong> Reverses both word order AND letters within each word - prevents anticipation and forces true character-by-character copying for maximum speed building!</li>
                 <li><strong>1000 Hz Tone:</strong> Standard ham radio CW frequency with precise timing</li>
                 <li><strong>Adjustable Speed:</strong> 5-40 WPM with standard PARIS timing</li>
                 <li><strong>Visual Feedback:</strong> See current character and progress through transmission</li>
@@ -563,7 +563,9 @@
             generateBackwardsText() {
                 const text = this.elements.customText.value || 'THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG';
                 const words = text.toUpperCase().split(' ').filter(word => word.length > 0);
-                return words.reverse().join(' ');
+                // Reverse both word order AND letters within each word
+                const reversedWords = words.reverse().map(word => word.split('').reverse().join(''));
+                return reversedWords.join(' ');
             }
             
             async start() {
