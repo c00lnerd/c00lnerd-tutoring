@@ -488,6 +488,13 @@
                     });
                 });
                 
+                // Auto-regenerate when custom text changes
+                this.elements.customText.addEventListener('input', () => {
+                    if (this.currentMode === 'custom-text' || this.currentMode === 'backwards-text') {
+                        this.generateNewText();
+                    }
+                });
+                
                 // Generate initial text
                 this.generateNewText();
             }
