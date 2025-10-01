@@ -157,23 +157,23 @@ game_over = False</code></pre>
             self.x -= self.speed
     
     def move_right(self):
-        if self.x &lt; SCREEN_WIDTH - self.width:
+        if self.x < SCREEN_WIDTH - self.width:
             self.x += self.speed
     
     def shoot(self):
-        bullet = &#123;
+        bullet = {
             'x': self.x + self.width // 2 - 2,
             'y': self.y,
             'width': 4,
             'height': 10,
             'speed': 7
-        &#125;
+        }
         self.bullets.append(bullet)
     
     def update_bullets(self):
         for bullet in self.bullets[:]:  # Copy list to avoid issues
             bullet['y'] -= bullet['speed']
-            if bullet['y'] &lt; 0:
+            if bullet['y'] < 0:
                 self.bullets.remove(bullet)
     
     def draw(self, screen):
@@ -251,10 +251,10 @@ def create_alien_army():
     # Check bullet-alien collisions
     for bullet in player.bullets[:]:
         for alien in aliens[:]:
-            if (bullet['x'] &lt; alien.x + alien.width and
-                bullet['x'] + bullet['width'] &gt; alien.x and
-                bullet['y'] &lt; alien.y + alien.height and
-                bullet['y'] + bullet['height'] &gt; alien.y):
+            if (bullet['x'] < alien.x + alien.width and
+                bullet['x'] + bullet['width'] > alien.x and
+                bullet['y'] < alien.y + alien.height and
+                bullet['y'] + bullet['height'] > alien.y):
                 
                 player.bullets.remove(bullet)
                 aliens.remove(alien)
@@ -267,7 +267,7 @@ def move_aliens(aliens):
     # Check if aliens need to change direction
     change_direction = False
     for alien in aliens:
-        if alien.x &lt;= 0 or alien.x &gt;= SCREEN_WIDTH - alien.width:
+        if alien.x <= 0 or alien.x >= SCREEN_WIDTH - alien.width:
             change_direction = True
             break
     
@@ -276,18 +276,18 @@ def move_aliens(aliens):
             alien.drop_down()
             alien.speed = -alien.speed
             # Check if aliens reached the bottom
-            if alien.y + alien.height &gt;= SCREEN_HEIGHT - 100:
+            if alien.y + alien.height >= SCREEN_HEIGHT - 100:
                 lives -= 1
-                if lives &lt;= 0:
+                if lives <= 0:
                     game_over = True
     else:
         for alien in aliens:
-            alien.move(1 if alien.speed &gt; 0 else -1)
+            alien.move(1 if alien.speed > 0 else -1)
 
 def draw_ui(screen):
     font = pygame.font.Font(None, 36)
-    score_text = font.render(f"Score: &#123;score&#125;", True, WHITE)
-    lives_text = font.render(f"Lives: &#123;lives&#125;", True, WHITE)
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    lives_text = font.render(f"Lives: {lives}", True, WHITE)
     screen.blit(score_text, (10, 10))
     screen.blit(lives_text, (10, 50))</code></pre>
                         </div>
@@ -348,23 +348,23 @@ class Player:
             self.x -= self.speed
     
     def move_right(self):
-        if self.x &lt; SCREEN_WIDTH - self.width:
+        if self.x < SCREEN_WIDTH - self.width:
             self.x += self.speed
     
     def shoot(self):
-        bullet = &#123;
+        bullet = {
             'x': self.x + self.width // 2 - 2,
             'y': self.y,
             'width': 4,
             'height': 10,
             'speed': 7
-        &#125;
+        }
         self.bullets.append(bullet)
     
     def update_bullets(self):
         for bullet in self.bullets[:]:
             bullet['y'] -= bullet['speed']
-            if bullet['y'] &lt; 0:
+            if bullet['y'] < 0:
                 self.bullets.remove(bullet)
     
     def draw(self, screen):
@@ -412,10 +412,10 @@ def check_collisions(player, aliens):
     global score
     for bullet in player.bullets[:]:
         for alien in aliens[:]:
-            if (bullet['x'] &lt; alien.x + alien.width and
-                bullet['x'] + bullet['width'] &gt; alien.x and
-                bullet['y'] &lt; alien.y + alien.height and
-                bullet['y'] + bullet['height'] &gt; alien.y):
+            if (bullet['x'] < alien.x + alien.width and
+                bullet['x'] + bullet['width'] > alien.x and
+                bullet['y'] < alien.y + alien.height and
+                bullet['y'] + bullet['height'] > alien.y):
                 player.bullets.remove(bullet)
                 aliens.remove(alien)
                 score += 10
@@ -449,8 +449,8 @@ def move_aliens(aliens):
 
 def draw_ui(screen):
     font = pygame.font.Font(None, 36)
-    score_text = font.render(f"Score: &#123;score&#125;", True, WHITE)
-    lives_text = font.render(f"Lives: &#123;lives&#125;", True, WHITE)
+    score_text = font.render(f"Score: {score}", True, WHITE)
+    lives_text = font.render(f"Lives: {lives}", True, WHITE)
     screen.blit(score_text, (10, 10))
     screen.blit(lives_text, (10, 50))
 
@@ -496,7 +496,7 @@ while running:
     else:
         font = pygame.font.Font(None, 74)
         game_over_text = font.render("GAME OVER", True, RED)
-        final_score_text = font.render(f"Final Score: &#123;score&#125;", True, WHITE)
+        final_score_text = font.render(f"Final Score: {score}", True, WHITE)
         screen.blit(game_over_text, (SCREEN_WIDTH//2 - 150, SCREEN_HEIGHT//2 - 50))
         screen.blit(final_score_text, (SCREEN_WIDTH//2 - 120, SCREEN_HEIGHT//2 + 20))
     
