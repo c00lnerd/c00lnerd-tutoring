@@ -574,7 +574,13 @@
                 }
                 
                 try {
+                    // Create audio context with better error handling
                     this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Resume audio context if it's suspended (required by some browsers)
+                    if (this.audioContext.state === 'suspended') {
+                        await this.audioContext.resume();
+                    }
                     
                     this.isTransmitting = true;
                     this.isPaused = false;
@@ -587,6 +593,7 @@
                     
                 } catch (error) {
                     console.error('Error starting transmission:', error);
+                    alert('Audio error: ' + error.message + '\nTry running from a web server (http://) instead of opening the file directly.');
                     this.stop();
                 }
             }
@@ -667,25 +674,38 @@
             }
             
             async playTone(duration) {
-                return new Promise((resolve) => {
-                    this.oscillator = this.audioContext.createOscillator();
-                    this.gainNode = this.audioContext.createGain();
-                    
-                    this.oscillator.connect(this.gainNode);
-                    this.gainNode.connect(this.audioContext.destination);
-                    
-                    this.oscillator.frequency.value = this.frequency;
-                    this.gainNode.gain.value = parseFloat(this.elements.volume.value);
-                    
-                    this.elements.toneLed.classList.add('active');
-                    
-                    this.oscillator.start();
-                    this.oscillator.stop(this.audioContext.currentTime + duration / 1000);
-                    
-                    this.oscillator.onended = () => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        this.oscillator = this.audioContext.createOscillator();
+                        this.gainNode = this.audioContext.createGain();
+                        
+                        this.oscillator.connect(this.gainNode);
+                        this.gainNode.connect(this.audioContext.destination);
+                        
+                        this.oscillator.frequency.value = this.frequency;
+                        this.gainNode.gain.value = parseFloat(this.elements.volume.value);
+                        
+                        this.elements.toneLed.classList.add('active');
+                        
+                        this.oscillator.start();
+                        this.oscillator.stop(this.audioContext.currentTime + duration / 1000);
+                        
+                        this.oscillator.onended = () => {
+                            this.elements.toneLed.classList.remove('active');
+                            resolve();
+                        };
+                        
+                        // Fallback timeout in case onended doesn't fire
+                        setTimeout(() => {
+                            this.elements.toneLed.classList.remove('active');
+                            resolve();
+                        }, duration + 50);
+                        
+                    } catch (error) {
+                        console.error('Error playing tone:', error);
                         this.elements.toneLed.classList.remove('active');
-                        resolve();
-                    };
+                        reject(error);
+                    }
                 });
             }
             
