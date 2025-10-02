@@ -264,6 +264,7 @@ class GravitationalDestroyer:
     
     def apply_gravity(self, dt):
         """Apply gravitational forces to all objects"""
+        # Standard mode: only spaceship and bullets affected by planets
         all_objects = [self.spaceship] + self.bullets
         
         for obj in all_objects:
@@ -290,6 +291,32 @@ class GravitationalDestroyer:
             # Apply acceleration to velocity
             obj.vx += ax * dt
             obj.vy += ay * dt
+        
+        # Realistic mode: planets also attract each other (N-body physics)
+        if self.realistic_mode:
+            for i, planet1 in enumerate(self.planets):
+                if not planet1.alive:
+                    continue
+                    
+                ax = ay = 0
+                for j, planet2 in enumerate(self.planets):
+                    if i == j or not planet2.alive:
+                        continue
+                        
+                    dx = planet2.x - planet1.x
+                    dy = planet2.y - planet1.y
+                    distance_sq = dx*dx + dy*dy
+                    distance = math.sqrt(distance_sq)
+                    
+                    if distance > planet1.radius + planet2.radius:
+                        # Gravitational force between planets
+                        force = self.G * planet2.mass / distance_sq
+                        ax += force * dx / distance
+                        ay += force * dy / distance
+                
+                # Apply acceleration to planet velocity
+                planet1.vx += ax * dt
+                planet1.vy += ay * dt
     
     def game_loop(self):
         """Main game loop running at ~60 FPS"""
@@ -346,6 +373,7 @@ class GravitationalDestroyer:
         # Game status
         self.paused = False
         self.keys_pressed = set()
+        self.realistic_mode = False  # Toggle for N-body physics
     
     def start_level(self):
         """Initialize a new level"""
@@ -406,6 +434,8 @@ class GravitationalDestroyer:
                 self.restart_game()
             else:
                 self.start_level()
+        elif event.keysym.lower() == 'n':
+            self.realistic_mode = not self.realistic_mode
     
     def key_release(self, event):
         """Handle key release events"""
@@ -578,6 +608,12 @@ class GravitationalDestroyer:
         if self.spaceship:
             fuel_percent = int(self.spaceship.fuel)
             self.fuel_label.config(text=f"Fuel: {fuel_percent}%")
+        
+        # Show physics mode indicator
+        mode_text = "N-BODY PHYSICS" if self.realistic_mode else "GAME MODE"
+        mode_color = "yellow" if self.realistic_mode else "cyan"
+        self.canvas.create_text(500, 30, text=mode_text, 
+                              fill=mode_color, font=('Arial', 12, 'bold'))
     
     def restart_game(self):
         """Restart the entire game"""
@@ -620,6 +656,7 @@ if __name__ == "__main__":
 						<li><strong>SPACE:</strong> Fire bullets</li>
 						<li><strong>P:</strong> Pause/unpause game</li>
 						<li><strong>R:</strong> Restart level (or game if game over)</li>
+						<li><strong>N:</strong> Toggle N-Body Physics Mode (planets attract each other)</li>
 					</ul>
 				</div>
 
@@ -631,6 +668,30 @@ if __name__ == "__main__":
 						<li><strong>Orbital Mechanics:</strong> Planets move in realistic orbits, creating dynamic challenges</li>
 						<li><strong>Chain Reactions:</strong> Explosive planets can trigger cascading destructions</li>
 					</ul>
+				</div>
+
+				<div class="physics-modes">
+					<h3>⚗️ Physics Modes</h3>
+					<div class="mode-comparison">
+						<div class="game-mode">
+							<h4>🎮 Game Mode (Default)</h4>
+							<ul>
+								<li>Planets affect spaceship and bullets only</li>
+								<li>Predictable, stable planetary orbits</li>
+								<li>Balanced gameplay experience</li>
+								<li>Easier to complete levels</li>
+							</ul>
+						</div>
+						<div class="realistic-mode">
+							<h4>🌌 N-Body Physics Mode (Press N)</h4>
+							<ul>
+								<li>Planets gravitationally attract each other</li>
+								<li>True N-body orbital dynamics</li>
+								<li>Chaotic, evolving planetary systems</li>
+								<li>Scientifically accurate but challenging</li>
+							</ul>
+						</div>
+					</div>
 				</div>
 			</div>
 
@@ -856,6 +917,41 @@ if __name__ == "__main__":
 	.controls h3, .strategy h3 {
 		color: #ffbe0b;
 		margin-bottom: 1rem;
+	}
+
+	.physics-modes {
+		background: #1a2e3e;
+		padding: 1.5rem;
+		border-radius: 10px;
+		margin-top: 1rem;
+		border: 2px solid #4ecdc4;
+	}
+
+	.physics-modes h3 {
+		color: #4ecdc4;
+		margin-bottom: 1rem;
+	}
+
+	.mode-comparison {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1rem;
+	}
+
+	.game-mode, .realistic-mode {
+		background: #2a3e4e;
+		padding: 1rem;
+		border-radius: 8px;
+	}
+
+	.game-mode h4 {
+		color: #00ff88;
+		margin-bottom: 0.5rem;
+	}
+
+	.realistic-mode h4 {
+		color: #ffbe0b;
+		margin-bottom: 0.5rem;
 	}
 
 	.educational-value {
