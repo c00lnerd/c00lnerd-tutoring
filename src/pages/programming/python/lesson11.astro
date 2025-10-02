@@ -285,6 +285,287 @@ class GravitationalDestroyer:
         
         # Schedule next frame
         self.root.after(16, self.game_loop)
+    
+    def setup_ui(self):
+        """Create the game UI elements"""
+        # Create main frame
+        self.main_frame = Frame(self.root, bg='black')
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Create info panel
+        self.info_frame = Frame(self.main_frame, bg='black', height=60)
+        self.info_frame.pack(fill=tk.X, side=tk.TOP)
+        self.info_frame.pack_propagate(False)
+        
+        # Game info labels
+        self.score_label = Label(self.info_frame, text="Score: 0", 
+                                fg='white', bg='black', font=('Arial', 14))
+        self.score_label.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        self.level_label = Label(self.info_frame, text="Level: 1", 
+                                fg='white', bg='black', font=('Arial', 14))
+        self.level_label.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        self.lives_label = Label(self.info_frame, text="Lives: 3", 
+                                fg='white', bg='black', font=('Arial', 14))
+        self.lives_label.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        self.fuel_label = Label(self.info_frame, text="Fuel: 100%", 
+                               fg='white', bg='black', font=('Arial', 14))
+        self.fuel_label.pack(side=tk.LEFT, padx=10, pady=10)
+        
+        # Create game canvas
+        self.canvas = Canvas(self.main_frame, bg='black', width=1000, height=640)
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+        
+        # Game status
+        self.paused = False
+        self.keys_pressed = set()
+    
+    def start_level(self):
+        """Initialize a new level"""
+        # Create spaceship at center
+        self.spaceship = Spaceship(500, 320)
+        
+        # Clear existing objects
+        self.planets = []
+        self.bullets = []
+        
+        # Generate planets for this level
+        num_planets = min(3 + self.level * 2, 20)
+        
+        for i in range(num_planets):
+            # Random position (not too close to center)
+            angle = random.uniform(0, 2 * math.pi)
+            distance = random.uniform(150, 300)
+            x = 500 + distance * math.cos(angle)
+            y = 320 + distance * math.sin(angle)
+            
+            # Random orbital velocity
+            orbital_speed = random.uniform(20, 60)
+            vx = -orbital_speed * math.sin(angle)
+            vy = orbital_speed * math.cos(angle)
+            
+            # Random mass and color
+            mass = random.uniform(50, 200)
+            colors = ['orange', 'yellow', 'red', 'purple', 'blue']
+            color = random.choice(colors)
+            
+            # Special planet types
+            planet_type = "normal"
+            if random.random() < 0.1:  # 10% chance for fuel depot
+                planet_type = "fuel"
+                color = "green"
+            elif random.random() < 0.05:  # 5% chance for explosive
+                planet_type = "explosive"
+                color = "red"
+                mass *= 1.5
+            
+            planet = Planet(x, y, vx, vy, mass, color, planet_type)
+            self.planets.append(planet)
+    
+    def bind_controls(self):
+        """Set up keyboard controls"""
+        self.root.focus_set()
+        self.root.bind('<KeyPress>', self.key_press)
+        self.root.bind('<KeyRelease>', self.key_release)
+    
+    def key_press(self, event):
+        """Handle key press events"""
+        self.keys_pressed.add(event.keysym.lower())
+        
+        if event.keysym.lower() == 'p':
+            self.paused = not self.paused
+        elif event.keysym.lower() == 'r':
+            if self.game_over:
+                self.restart_game()
+            else:
+                self.start_level()
+    
+    def key_release(self, event):
+        """Handle key release events"""
+        self.keys_pressed.discard(event.keysym.lower())
+    
+    def handle_input(self, dt):
+        """Process continuous input"""
+        if self.paused or self.game_over or not self.spaceship:
+            return
+        
+        # Rotation
+        if 'left' in self.keys_pressed:
+            self.spaceship.rotate(-1, dt)
+        if 'right' in self.keys_pressed:
+            self.spaceship.rotate(1, dt)
+        
+        # Thrust
+        if 'up' in self.keys_pressed:
+            self.spaceship.apply_thrust(dt)
+        
+        # Shooting
+        if 'space' in self.keys_pressed:
+            self.shoot_bullet()
+    
+    def shoot_bullet(self):
+        """Create a new bullet"""
+        if not self.spaceship or len(self.bullets) >= 5:
+            return
+        
+        # Create bullet at ship position with ship velocity + bullet speed
+        bullet_speed = 300
+        bullet_vx = self.spaceship.vx + bullet_speed * math.cos(self.spaceship.angle)
+        bullet_vy = self.spaceship.vy + bullet_speed * math.sin(self.spaceship.angle)
+        
+        bullet = GameObject(self.spaceship.x, self.spaceship.y, bullet_vx, bullet_vy, 3, "yellow")
+        self.bullets.append(bullet)
+    
+    def update_objects(self, dt):
+        """Update all game objects"""
+        if self.paused:
+            return
+        
+        # Update spaceship
+        if self.spaceship:
+            self.spaceship.update(dt)
+            if self.spaceship.invulnerable_time > 0:
+                self.spaceship.invulnerable_time -= dt
+        
+        # Update planets
+        for planet in self.planets[:]:
+            planet.update(dt)
+        
+        # Update bullets
+        for bullet in self.bullets[:]:
+            bullet.update(dt)
+            # Remove bullets that go off screen
+            if (bullet.x < -50 or bullet.x > 1050 or 
+                bullet.y < -50 or bullet.y > 690):
+                self.bullets.remove(bullet)
+    
+    def check_collisions(self):
+        """Check for collisions between objects"""
+        if not self.spaceship or self.spaceship.invulnerable_time > 0:
+            return
+        
+        # Check spaceship-planet collisions
+        for planet in self.planets[:]:
+            if not planet.alive:
+                continue
+            dx = self.spaceship.x - planet.x
+            dy = self.spaceship.y - planet.y
+            distance = math.sqrt(dx*dx + dy*dy)
+            
+            if distance < self.spaceship.radius + planet.radius:
+                if planet.planet_type == "fuel":
+                    # Fuel depot - refuel ship
+                    self.spaceship.fuel = min(100, self.spaceship.fuel + 50)
+                    planet.alive = False
+                    self.planets.remove(planet)
+                    self.score += 50
+                else:
+                    # Collision with planet - lose life
+                    self.lives -= 1
+                    self.spaceship.invulnerable_time = 2.0
+                    if self.lives <= 0:
+                        self.game_over = True
+        
+        # Check bullet-planet collisions
+        for bullet in self.bullets[:]:
+            for planet in self.planets[:]:
+                if not planet.alive:
+                    continue
+                dx = bullet.x - planet.x
+                dy = bullet.y - planet.y
+                distance = math.sqrt(dx*dx + dy*dy)
+                
+                if distance < bullet.radius + planet.radius:
+                    # Hit!
+                    self.score += planet.points
+                    self.bullets.remove(bullet)
+                    
+                    if planet.planet_type == "explosive":
+                        # Chain reaction - destroy nearby planets
+                        self.explode_planet(planet)
+                    else:
+                        planet.alive = False
+                        self.planets.remove(planet)
+                    break
+        
+        # Check if level complete
+        if len(self.planets) == 0:
+            self.level += 1
+            self.start_level()
+    
+    def explode_planet(self, explosive_planet):
+        """Handle explosive planet chain reaction"""
+        explosion_radius = explosive_planet.radius * 3
+        planets_to_remove = [explosive_planet]
+        
+        for planet in self.planets:
+            if planet == explosive_planet:
+                continue
+            dx = planet.x - explosive_planet.x
+            dy = planet.y - explosive_planet.y
+            distance = math.sqrt(dx*dx + dy*dy)
+            
+            if distance < explosion_radius:
+                planets_to_remove.append(planet)
+                self.score += planet.points * 2  # Bonus for chain reaction
+        
+        for planet in planets_to_remove:
+            if planet in self.planets:
+                self.planets.remove(planet)
+    
+    def draw_game(self):
+        """Draw all game objects"""
+        self.canvas.delete("all")
+        
+        if self.paused:
+            self.canvas.create_text(500, 320, text="PAUSED", 
+                                  fill="white", font=('Arial', 48))
+            return
+        
+        if self.game_over:
+            self.canvas.create_text(500, 280, text="GAME OVER", 
+                                  fill="red", font=('Arial', 48))
+            self.canvas.create_text(500, 340, text=f"Final Score: {self.score}", 
+                                  fill="white", font=('Arial', 24))
+            self.canvas.create_text(500, 380, text="Press R to restart", 
+                                  fill="white", font=('Arial', 18))
+            return
+        
+        # Draw planets
+        for planet in self.planets:
+            if planet.alive:
+                planet.draw(self.canvas)
+        
+        # Draw spaceship
+        if self.spaceship:
+            self.spaceship.draw(self.canvas)
+        
+        # Draw bullets
+        for bullet in self.bullets:
+            bullet.draw(self.canvas)
+        
+        # Update UI labels
+        self.score_label.config(text=f"Score: {self.score}")
+        self.level_label.config(text=f"Level: {self.level}")
+        self.lives_label.config(text=f"Lives: {self.lives}")
+        if self.spaceship:
+            fuel_percent = int(self.spaceship.fuel)
+            self.fuel_label.config(text=f"Fuel: {fuel_percent}%")
+    
+    def restart_game(self):
+        """Restart the entire game"""
+        self.level = 1
+        self.score = 0
+        self.lives = 3
+        self.game_over = False
+        self.start_level()
+    
+    def run(self):
+        """Start the game"""
+        self.game_loop()
+        self.root.mainloop()
 
 # Run the game
 if __name__ == "__main__":
