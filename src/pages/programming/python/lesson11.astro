@@ -120,6 +120,17 @@ class Planet(GameObject):
     
     def update(self, dt):
         super().update(dt)
+        
+        # Screen wrapping - planets reappear on opposite side
+        if self.x < -50:
+            self.x = 1050
+        elif self.x > 1050:
+            self.x = -50
+        if self.y < -50:
+            self.y = 690
+        elif self.y > 690:
+            self.y = -50
+        
         # Add to trail for visual effect
         self.trail.append((self.x, self.y))
         if len(self.trail) > 30:
@@ -183,6 +194,20 @@ class Spaceship(GameObject):
     def rotate(self, direction, dt):
         """Rotate the ship"""
         self.angle += direction * 3 * dt
+    
+    def update(self, dt):
+        """Update spaceship with screen wrapping"""
+        super().update(dt)
+        
+        # Screen wrapping - spaceship reappears on opposite side
+        if self.x < -50:
+            self.x = 1050
+        elif self.x > 1050:
+            self.x = -50
+        if self.y < -50:
+            self.y = 690
+        elif self.y > 690:
+            self.y = -50
     
     def draw(self, canvas):
         # Draw ship as a triangle pointing in movement direction
