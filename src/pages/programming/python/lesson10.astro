@@ -279,24 +279,37 @@ def create_nbody_simulation():
         next_color_index = 2
     
     def solar_system():
-        """Create a simplified solar system"""
+        """Create a simplified solar system with realistic orbital mechanics"""
         nonlocal bodies, next_color_index
         bodies.clear()
         center_x, center_y = 450, 350
         
-        # Central star (sun)
-        bodies.append(CelestialBody(center_x, center_y, 0, 0, 200, '#ffbe0b', "Sun"))
+        # Central star (sun) - slightly smaller mass for better orbital dynamics
+        sun_mass = 300
+        bodies.append(CelestialBody(center_x, center_y, 0, 0, sun_mass, '#ffbe0b', "Sun"))
         
-        # Planets at different distances with orbital velocities
+        # Planets with realistic orbital velocities calculated from circular orbit formula
+        # v = sqrt(G * M / r) where G*M is scaled for our simulation
+        G_scaled = 300  # Default gravitational constant
+        
         planets = [
-            (80, 25, '#ff6b6b', "Mercury"),
-            (120, 20, '#4ecdc4', "Venus"), 
-            (160, 17, '#a3f7bf', "Earth"),
-            (220, 14, '#f7d6e0', "Mars")
+            (100, 25, '#ff6b6b', "Mercury"),   # distance, planet_mass, color, name
+            (140, 28, '#4ecdc4', "Venus"), 
+            (180, 30, '#a3f7bf', "Earth"),
+            (240, 22, '#f7d6e0', "Mars")
         ]
         
-        for distance, speed, color, name in planets:
-            bodies.append(CelestialBody(center_x + distance, center_y, 0, speed, 30, color, name))
+        for distance, planet_mass, color, name in planets:
+            # Calculate orbital velocity for stable circular orbit
+            # v = sqrt(G * M_sun / distance)
+            orbital_velocity = math.sqrt(G_scaled * sun_mass / distance)
+            
+            # Place planet at distance from sun
+            planet_x = center_x + distance
+            planet_y = center_y
+            
+            # Velocity perpendicular to radius for circular motion
+            bodies.append(CelestialBody(planet_x, planet_y, 0, orbital_velocity, planet_mass, color, name))
         
         next_color_index = 0
     
