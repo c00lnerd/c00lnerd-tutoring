@@ -1,0 +1,483 @@
+---
+title: "Earth-Moon-Sun Orbital Mechanics"
+description: "Interactive simulation showing how Earth and Moon orbit the Sun together using accurate astronomical periods"
+---
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earth-Moon-Sun Orbital Mechanics</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: Arial, sans-serif;
+            overflow-x: auto;
+        }
+        
+        .container {
+            display: flex;
+            gap: 20px;
+            min-height: 100vh;
+        }
+        
+        .simulation-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #canvas {
+            border: 2px solid #333;
+            background: #000;
+        }
+        
+        .controls {
+            width: 300px;
+            background: #111;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+        
+        .control-group {
+            margin-bottom: 20px;
+        }
+        
+        .control-group h3 {
+            color: #ffff00;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .slider-container {
+            margin-bottom: 15px;
+        }
+        
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #ccc;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+        }
+        
+        .value-display {
+            font-size: 11px;
+            color: #888;
+        }
+        
+        .button-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .control-button {
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        .control-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .earth-btn { background: #4169e1; color: white; }
+        .moon-btn { background: #c0c0c0; color: black; }
+        .earth-trail-btn { background: #1e90ff; color: white; }
+        .moon-trail-btn { background: #ffffff; color: black; }
+        .reset-btn { background: #ff6600; color: white; }
+        .pause-btn { background: #ff0000; color: white; }
+        
+        .button-grid .control-button {
+            grid-column: span 1;
+        }
+        
+        .full-width {
+            grid-column: span 2;
+        }
+        
+        .info-panel {
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+        
+        .info-label {
+            color: #00ffff;
+            font-weight: bold;
+        }
+        
+        .info-value {
+            color: #fff;
+        }
+        
+        .description {
+            font-size: 11px;
+            line-height: 1.4;
+            color: #ccc;
+            background: #222;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .description ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .description li {
+            margin-bottom: 5px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #ffff00;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🌍 Earth-Moon-Sun Orbital Mechanics</h1>
+    
+    <div class="container">
+        <div class="simulation-area">
+            <canvas id="canvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="controls">
+            <div class="control-group">
+                <h3>⏱️ Simulation Controls</h3>
+                
+                <div class="slider-container">
+                    <label>Time Speed (days/frame)</label>
+                    <input type="range" id="timeSpeed" min="0.1" max="10" step="0.1" value="2">
+                    <div class="value-display" id="timeSpeedValue">2.0</div>
+                </div>
+                
+                <div class="slider-container">
+                    <label>Zoom Level</label>
+                    <input type="range" id="zoom" min="0.3" max="3" step="0.1" value="1">
+                    <div class="value-display" id="zoomValue">1.0</div>
+                </div>
+                
+                <div class="slider-container">
+                    <label>Trail Length</label>
+                    <input type="range" id="trailLength" min="50" max="1000" step="50" value="500">
+                    <div class="value-display" id="trailLengthValue">500</div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>👁️ Visibility Controls</h3>
+                <div class="button-grid">
+                    <button class="control-button earth-btn" id="earthBtn">Earth: ON</button>
+                    <button class="control-button moon-btn" id="moonBtn">Moon: ON</button>
+                    <button class="control-button earth-trail-btn" id="earthTrailBtn">Earth Trail: ON</button>
+                    <button class="control-button moon-trail-btn" id="moonTrailBtn">Moon Trail: ON</button>
+                    <button class="control-button reset-btn full-width" id="resetBtn">Reset Simulation</button>
+                    <button class="control-button pause-btn full-width" id="pauseBtn">Pause</button>
+                </div>
+            </div>
+            
+            <div class="info-panel">
+                <h3 style="color: #00ffff; margin-bottom: 10px;">📊 Simulation Data</h3>
+                <div class="info-item">
+                    <span class="info-label">Day:</span>
+                    <span class="info-value" id="dayValue">0.0</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Year:</span>
+                    <span class="info-value" id="yearValue">0.000</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Moon Orbits:</span>
+                    <span class="info-value" id="moonOrbitsValue">0.0</span>
+                </div>
+            </div>
+            
+            <div class="description">
+                <h3 style="color: #ffff00; margin-bottom: 10px;">🔬 Orbital Mechanics</h3>
+                <ul>
+                    <li><strong>Earth:</strong> Orbits Sun in 365.25 days</li>
+                    <li><strong>Moon:</strong> Orbits Earth in 27.3 days</li>
+                    <li><strong>Ratio:</strong> ~13.4 lunar months per Earth year</li>
+                    <li><strong>Pattern:</strong> Moon creates beautiful epicycloid trail</li>
+                    <li><strong>Math:</strong> Pure trigonometric calculations</li>
+                    <li><strong>Accuracy:</strong> Astronomically correct periods</li>
+                </ul>
+                
+                <p><strong>Educational Focus:</strong> Use visibility controls to isolate different orbital components and understand how the Earth-Moon system travels through space together!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Canvas and context
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Constants
+        const AU = 200; // Earth-Sun distance in pixels
+        const earthOrbitalPeriod = 365.25; // days
+        const moonOrbitalPeriod = 27.3; // days
+        const moonOrbitRadius = AU * 0.08; // Moon-Earth distance
+        
+        // Simulation state
+        let currentDay = 0;
+        let paused = false;
+        let animationId;
+        
+        // Trails
+        let earthTrail = [];
+        let moonTrail = [];
+        
+        // Visibility toggles
+        let showEarth = true;
+        let showMoon = true;
+        let showEarthTrail = true;
+        let showMoonTrail = true;
+        
+        // Control elements
+        const timeSpeedSlider = document.getElementById('timeSpeed');
+        const zoomSlider = document.getElementById('zoom');
+        const trailLengthSlider = document.getElementById('trailLength');
+        
+        const earthBtn = document.getElementById('earthBtn');
+        const moonBtn = document.getElementById('moonBtn');
+        const earthTrailBtn = document.getElementById('earthTrailBtn');
+        const moonTrailBtn = document.getElementById('moonTrailBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        
+        // Value displays
+        const timeSpeedValue = document.getElementById('timeSpeedValue');
+        const zoomValue = document.getElementById('zoomValue');
+        const trailLengthValue = document.getElementById('trailLengthValue');
+        const dayValue = document.getElementById('dayValue');
+        const yearValue = document.getElementById('yearValue');
+        const moonOrbitsValue = document.getElementById('moonOrbitsValue');
+        
+        // Update slider value displays
+        timeSpeedSlider.addEventListener('input', () => {
+            timeSpeedValue.textContent = parseFloat(timeSpeedSlider.value).toFixed(1);
+        });
+        
+        zoomSlider.addEventListener('input', () => {
+            zoomValue.textContent = parseFloat(zoomSlider.value).toFixed(1);
+        });
+        
+        trailLengthSlider.addEventListener('input', () => {
+            trailLengthValue.textContent = trailLengthSlider.value;
+        });
+        
+        // Calculate positions using trigonometry
+        function calculatePositions(day) {
+            // Earth position around Sun
+            const earthAngle = 2 * Math.PI * day / earthOrbitalPeriod;
+            const earthX = AU * Math.cos(earthAngle);
+            const earthY = AU * Math.sin(earthAngle);
+            
+            // Moon position relative to Earth
+            const moonAngle = 2 * Math.PI * day / moonOrbitalPeriod;
+            const moonXRel = moonOrbitRadius * Math.cos(moonAngle);
+            const moonYRel = moonOrbitRadius * Math.sin(moonAngle);
+            
+            // Moon absolute position
+            const moonX = earthX + moonXRel;
+            const moonY = earthY + moonYRel;
+            
+            return { earthX, earthY, moonX, moonY };
+        }
+        
+        // Draw trail with fading effect
+        function drawTrail(trail, color, width) {
+            if (trail.length < 2) return;
+            
+            for (let i = 1; i < trail.length; i++) {
+                const fade = i / trail.length;
+                if (fade > 0.3) {
+                    ctx.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${fade})`;
+                    ctx.lineWidth = width;
+                    ctx.beginPath();
+                    ctx.moveTo(trail[i-1].x, trail[i-1].y);
+                    ctx.lineTo(trail[i].x, trail[i].y);
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        // Main animation loop
+        function animate() {
+            if (!paused) {
+                currentDay += parseFloat(timeSpeedSlider.value);
+            }
+            
+            // Clear canvas
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Get current positions
+            const positions = calculatePositions(currentDay);
+            const zoom = parseFloat(zoomSlider.value);
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Add to trails
+            earthTrail.push({
+                x: centerX + positions.earthX * zoom,
+                y: centerY + positions.earthY * zoom
+            });
+            moonTrail.push({
+                x: centerX + positions.moonX * zoom,
+                y: centerY + positions.moonY * zoom
+            });
+            
+            // Limit trail lengths
+            const maxTrail = parseInt(trailLengthSlider.value);
+            if (earthTrail.length > maxTrail) earthTrail.shift();
+            if (moonTrail.length > maxTrail) moonTrail.shift();
+            
+            // Draw trails
+            if (showEarthTrail) {
+                drawTrail(earthTrail, {r: 65, g: 105, b: 225}, 2);
+            }
+            if (showMoonTrail) {
+                drawTrail(moonTrail, {r: 192, g: 192, b: 192}, 1);
+            }
+            
+            // Draw Sun
+            ctx.fillStyle = '#ffff00';
+            ctx.strokeStyle = '#ffaa00';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
+            
+            ctx.fillStyle = '#ffff00';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('Sun', centerX, centerY - 25);
+            
+            // Draw Earth
+            if (showEarth) {
+                const earthScreenX = centerX + positions.earthX * zoom;
+                const earthScreenY = centerY + positions.earthY * zoom;
+                
+                ctx.fillStyle = '#4169e1';
+                ctx.strokeStyle = '#1e90ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(earthScreenX, earthScreenY, 8, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#87ceeb';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Earth', earthScreenX, earthScreenY - 18);
+            }
+            
+            // Draw Moon
+            if (showMoon) {
+                const moonScreenX = centerX + positions.moonX * zoom;
+                const moonScreenY = centerY + positions.moonY * zoom;
+                
+                ctx.fillStyle = '#c0c0c0';
+                ctx.strokeStyle = '#ffffff';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(moonScreenX, moonScreenY, 4, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '9px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Moon', moonScreenX, moonScreenY - 12);
+            }
+            
+            // Update information display
+            const years = currentDay / earthOrbitalPeriod;
+            const moonOrbits = currentDay / moonOrbitalPeriod;
+            
+            dayValue.textContent = currentDay.toFixed(1);
+            yearValue.textContent = years.toFixed(3);
+            moonOrbitsValue.textContent = moonOrbits.toFixed(1);
+            
+            animationId = requestAnimationFrame(animate);
+        }
+        
+        // Toggle functions
+        function toggleEarth() {
+            showEarth = !showEarth;
+            earthBtn.textContent = `Earth: ${showEarth ? 'ON' : 'OFF'}`;
+            earthBtn.style.background = showEarth ? '#4169e1' : 'gray';
+        }
+        
+        function toggleMoon() {
+            showMoon = !showMoon;
+            moonBtn.textContent = `Moon: ${showMoon ? 'ON' : 'OFF'}`;
+            moonBtn.style.background = showMoon ? '#c0c0c0' : 'gray';
+        }
+        
+        function toggleEarthTrail() {
+            showEarthTrail = !showEarthTrail;
+            earthTrailBtn.textContent = `Earth Trail: ${showEarthTrail ? 'ON' : 'OFF'}`;
+            earthTrailBtn.style.background = showEarthTrail ? '#1e90ff' : 'gray';
+        }
+        
+        function toggleMoonTrail() {
+            showMoonTrail = !showMoonTrail;
+            moonTrailBtn.textContent = `Moon Trail: ${showMoonTrail ? 'ON' : 'OFF'}`;
+            moonTrailBtn.style.background = showMoonTrail ? '#ffffff' : 'gray';
+        }
+        
+        function resetSimulation() {
+            currentDay = 0;
+            earthTrail = [];
+            moonTrail = [];
+        }
+        
+        function togglePause() {
+            paused = !paused;
+            pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+        }
+        
+        // Event listeners
+        earthBtn.addEventListener('click', toggleEarth);
+        moonBtn.addEventListener('click', toggleMoon);
+        earthTrailBtn.addEventListener('click', toggleEarthTrail);
+        moonTrailBtn.addEventListener('click', toggleMoonTrail);
+        resetBtn.addEventListener('click', resetSimulation);
+        pauseBtn.addEventListener('click', togglePause);
+        
+        // Start animation
+        animate();
+    </script>
+</body>
+</html>
