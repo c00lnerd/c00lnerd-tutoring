@@ -286,7 +286,7 @@ import Layout from '../../layouts/Layout.astro';
             
             <div class="bg-blue-50 p-6 rounded-lg">
                 <div class="flex flex-wrap mb-4">
-                    <button id="demo1Btn" class="bg-blue-600 text-white px-4 py-2 rounded mr-2 mb-2">Capillary Action Video</button>
+                    <button id="demo1Btn" class="bg-blue-600 text-white px-4 py-2 rounded mr-2 mb-2">Capillary Action Demo</button>
                     <button id="demo2Btn" class="bg-blue-600 text-white px-4 py-2 rounded mr-2 mb-2">Water Droplet Demo</button>
                     <button id="demo3Btn" class="bg-blue-600 text-white px-4 py-2 rounded mr-2 mb-2">Floating Paper Clip Demo</button>
                     <button id="resetBtn" class="bg-gray-600 text-white px-4 py-2 rounded mb-2">Reset</button>
@@ -297,17 +297,39 @@ import Layout from '../../layouts/Layout.astro';
                     <div id="demo1" class="hidden">
                         <div class="flex flex-col items-center justify-center h-full">
                             <div class="mb-4 text-center">
-                                <h4 class="font-bold mb-2">Capillary Action Video</h4>
+                                <h4 class="font-bold mb-2">Capillary Action Demonstration</h4>
                             </div>
-                            <video 
-                                id="capillaryVideo" 
-                                controls 
-                                class="max-w-full rounded-lg shadow-lg" 
-                                style="max-height: 250px;"
-                            >
-                                <source src="/videos/capillary-action.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
+                            <div class="relative" style="width: 300px; height: 200px;">
+                                <!-- Two beakers -->
+                                <div class="absolute bottom-0 left-0 w-20 h-24 border-2 border-gray-400 rounded-b-lg bg-red-200" style="opacity: 0.7;">
+                                    <div class="absolute bottom-0 left-0 right-0 h-16 bg-red-300 rounded-b-lg"></div>
+                                    <div class="text-xs text-center mt-1">Hot Water</div>
+                                </div>
+                                <div class="absolute bottom-0 left-24 w-20 h-24 border-2 border-gray-400 rounded-b-lg bg-gray-100">
+                                    <div class="text-xs text-center mt-1">Empty</div>
+                                </div>
+                                
+                                <!-- Paper towel bridge -->
+                                <div class="absolute bottom-16 left-4 w-32 h-2 bg-white border border-gray-300 rounded" style="transform: rotate(-10deg);"></div>
+                                
+                                <!-- Arrow showing water movement -->
+                                <div class="absolute bottom-12 left-16 text-blue-600 text-2xl" id="waterFlow">→</div>
+                                
+                                <!-- Second set -->
+                                <div class="absolute bottom-0 right-44 w-20 h-24 border-2 border-gray-400 rounded-b-lg bg-blue-200" style="opacity: 0.7;">
+                                    <div class="absolute bottom-0 left-0 right-0 h-16 bg-blue-300 rounded-b-lg"></div>
+                                    <div class="text-xs text-center mt-1">Cold Water</div>
+                                </div>
+                                <div class="absolute bottom-0 right-20 w-20 h-24 border-2 border-gray-400 rounded-b-lg bg-gray-100">
+                                    <div class="text-xs text-center mt-1">Empty</div>
+                                </div>
+                                
+                                <!-- Paper towel bridge -->
+                                <div class="absolute bottom-16 right-36 w-32 h-2 bg-white border border-gray-300 rounded" style="transform: rotate(-10deg);"></div>
+                                
+                                <!-- Arrow showing water movement -->
+                                <div class="absolute bottom-12 right-28 text-blue-600 text-2xl" id="waterFlow2">→</div>
+                            </div>
                         </div>
                     </div>
                     
@@ -391,6 +413,7 @@ import Layout from '../../layouts/Layout.astro';
     </main>
 </Layout>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script is:inline>
     // Load EmailJS
     (function() {
@@ -441,7 +464,6 @@ import Layout from '../../layouts/Layout.astro';
         const explanationText = document.getElementById('explanationText');
         const addSoapBtn = document.getElementById('addSoapBtn');
         const paperClip = document.getElementById('paperClip');
-        const capillaryVideo = document.getElementById('capillaryVideo');
         
         // Hide all demos initially
         demo1.classList.add('hidden');
@@ -455,22 +477,16 @@ import Layout from '../../layouts/Layout.astro';
             demo3.classList.add('hidden');
         }
         
-        // Demo 1: Capillary Action Video
+        // Demo 1: Capillary Action Demonstration
         demo1Btn.addEventListener('click', function() {
             hideAllDemos();
             demo1.classList.remove('hidden');
-            const capillaryVideo = document.getElementById('capillaryVideo');
-            
-            // Reset video to beginning
-            if (capillaryVideo) {
-                capillaryVideo.currentTime = 0;
-            }
             
             explanationText.innerHTML = 
-                "This video demonstrates <strong>capillary action</strong>, which occurs due to adhesion and cohesion. " +
+                "This demonstration shows <strong>capillary action</strong>, which occurs due to adhesion and cohesion. " +
                 "Water molecules are attracted to the paper towel fibers (adhesion) and to each other (cohesion). " +
                 "This allows water to climb up the paper towel against gravity. The water will eventually transfer " +
-                "from one container to another until the levels equalize.";
+                "from one container to another until the levels equalize. Hot water moves faster than cold water due to increased molecular motion.";
         });
         
         // Demo 2: Water Droplet
