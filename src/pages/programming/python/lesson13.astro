@@ -1,0 +1,257 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 13: Earth-Moon-Sun Orbital Mechanics">
+    <main class="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">🌍 Lesson 13: Earth-Moon-Sun Orbital Mechanics</h1>
+                <p class="text-xl text-gray-600 mb-2">Learn how celestial bodies move through space using pure mathematics</p>
+                <p class="text-gray-500">Trigonometry • Orbital periods • Interactive visualization</p>
+            </div>
+
+            <!-- Learning Objectives -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-indigo-200 mb-8">
+                <div class="bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">🎯 What You'll Learn</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Mathematical Concepts:</h3>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Trigonometric functions (sin, cos)
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Circular motion equations
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Periodic functions and cycles
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-indigo-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Coordinate transformations
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Programming Skills:</h3>
+                            <ul class="space-y-2 text-gray-600">
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Tkinter GUI programming
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Animation and real-time graphics
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Interactive controls and sliders
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Mathematical modeling
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Astronomical Facts -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-blue-200 mb-8">
+                <div class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">🌌 Amazing Astronomical Facts</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-blue-800 mb-2">🌍 Earth's Orbit</h4>
+                                <p class="text-sm text-gray-700">Earth takes exactly <strong>365.25 days</strong> to orbit the Sun at an average speed of 67,000 mph!</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-gray-800 mb-2">🌙 Moon's Orbit</h4>
+                                <p class="text-sm text-gray-700">The Moon orbits Earth every <strong>27.3 days</strong>, creating the beautiful wavy pattern you'll see in the simulation.</p>
+                            </div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-purple-800 mb-2">🔢 The Math</h4>
+                                <p class="text-sm text-gray-700">In one Earth year, the Moon completes <strong>13.4 orbits</strong> around Earth (365.25 ÷ 27.3 = 13.4).</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg">
+                                <h4 class="font-semibold text-green-800 mb-2">🎨 Epicycloid Pattern</h4>
+                                <p class="text-sm text-gray-700">The Moon's path creates a mathematical curve called an <strong>epicycloid</strong> - loops within loops!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Demo -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-green-200 mb-8">
+                <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">🚀 Try the Interactive Simulation</h2>
+                </div>
+                <div class="p-6 text-center">
+                    <p class="text-gray-600 mb-6">Experience the Earth-Moon-Sun system in action with our web-based simulation!</p>
+                    <a href="/simulations/earth-moon-sun-orbital" target="_blank" 
+                       class="inline-block bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg transition-colors duration-200 font-medium text-lg">
+                        🌍 Launch Orbital Simulation
+                    </a>
+                    <p class="text-sm text-gray-500 mt-4">Use the show/hide controls to focus on different orbital components!</p>
+                </div>
+            </div>
+
+            <!-- Code Example -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-orange-200 mb-8">
+                <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">💻 The Mathematics Behind the Magic</h2>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-600 mb-4">Here's how we calculate the positions using trigonometry:</p>
+                    <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
+<pre><code># Earth's position around the Sun (circular orbit)
+earth_angle = 2 * math.pi * day / 365.25  # Complete circle in 365.25 days
+earth_x = AU * math.cos(earth_angle)      # X coordinate
+earth_y = AU * math.sin(earth_angle)      # Y coordinate
+
+# Moon's position relative to Earth
+moon_angle = 2 * math.pi * day / 27.3     # Complete circle in 27.3 days
+moon_x_rel = moon_radius * math.cos(moon_angle)
+moon_y_rel = moon_radius * math.sin(moon_angle)
+
+# Moon's absolute position (Earth + relative motion)
+moon_x = earth_x + moon_x_rel
+moon_y = earth_y + moon_y_rel</code></pre>
+                    </div>
+                    <div class="mt-4 bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">🧮 Key Mathematical Concepts:</h4>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li><strong>2π radians = 360°</strong> - A complete circle</li>
+                            <li><strong>cos() and sin()</strong> - Convert angles to X,Y coordinates</li>
+                            <li><strong>Periodic motion</strong> - Repeating patterns over time</li>
+                            <li><strong>Coordinate addition</strong> - Combining Earth's motion + Moon's relative motion</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Download Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-purple-200 mb-8">
+                <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">📥 Download & Code</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Complete Python Program:</h3>
+                            <p class="text-gray-600 mb-4">Download the full source code to run on your computer with Spyder!</p>
+                            <a href="/downloads/earth_moon_sun_simple.py" download 
+                               class="inline-block bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium">
+                                📁 Download Python File
+                            </a>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Requirements:</h3>
+                            <ul class="space-y-2 text-gray-600 text-sm">
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Python 3.7+ with tkinter
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Anaconda/Spyder (recommended)
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    No additional libraries needed!
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Works offline completely
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Challenges -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-yellow-200 mb-8">
+                <div class="bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">🏆 Programming Challenges</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Beginner Challenges:</h3>
+                            <ul class="space-y-2 text-gray-600 text-sm">
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Change the colors of Earth and Moon
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Adjust the orbital speeds
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Make the Sun bigger or smaller
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-yellow-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Add a pause/play button
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">Advanced Challenges:</h3>
+                            <ul class="space-y-2 text-gray-600 text-sm">
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Add Mars with its own orbital period
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Create elliptical orbits instead of circles
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Add Jupiter's moons (Io, Europa, etc.)
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
+                                    Create a "view from Moon" perspective
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-between items-center">
+                <a href="/programming/python/lesson12.html" 
+                   class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium">
+                    ← Previous: Lesson 12
+                </a>
+                <a href="/programming/python-fundamentals.html" 
+                   class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-lg transition-colors duration-200 font-medium">
+                    📚 Course Overview
+                </a>
+                <div class="bg-gray-200 text-gray-500 px-6 py-3 rounded-lg font-medium">
+                    🎉 Course Complete!
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
