@@ -83,7 +83,7 @@ def create_earth_moon_sun_simulation():
     Label(control_frame, text="Solar System Simulation", 
           font=("Arial", 16, "bold"), fg="yellow", bg="black").pack(pady=10)
     
-    create_slider(control_frame, "Time Speed (days/frame)", time_speed, 0.1, 10.0, 0.1)
+    create_slider(control_frame, "Time Speed (days/frame)", time_speed, 0.01, 10.0, 0.01)
     create_slider(control_frame, "Zoom Level", zoom, 0.3, 3.0, 0.1)
     create_slider(control_frame, "Trail Length", trail_length, 50, 1000, 50)
     
