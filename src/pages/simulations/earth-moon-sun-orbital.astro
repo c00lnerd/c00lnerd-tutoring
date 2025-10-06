@@ -1,6 +1,6 @@
 ---
-title: "Earth-Moon-Sun Orbital Mechanics"
-description: "Interactive simulation showing how Earth and Moon orbit the Sun together using accurate astronomical periods"
+title: "Solar System Orbital Mechanics - Earth, Moon, Mars & Moons"
+description: "Interactive simulation showing Earth-Moon and Mars-moons systems orbiting the Sun with accurate astronomical periods"
 ---
 
 <html lang="en">
@@ -328,6 +328,8 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
         const dayValue = document.getElementById('dayValue');
         const yearValue = document.getElementById('yearValue');
         const moonOrbitsValue = document.getElementById('moonOrbitsValue');
+        const marsYearValue = document.getElementById('marsYearValue');
+        const phobosOrbitsValue = document.getElementById('phobosOrbitsValue');
         
         // Update slider value displays
         timeSpeedSlider.addEventListener('input', () => {
@@ -426,11 +428,26 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
                 x: centerX + positions.moonX * zoom,
                 y: centerY + positions.moonY * zoom
             });
+            marsTrail.push({
+                x: centerX + positions.marsX * zoom,
+                y: centerY + positions.marsY * zoom
+            });
+            phobosTrail.push({
+                x: centerX + positions.phobosX * zoom,
+                y: centerY + positions.phobosY * zoom
+            });
+            deimosTrail.push({
+                x: centerX + positions.deimosX * zoom,
+                y: centerY + positions.deimosY * zoom
+            });
             
             // Limit trail lengths
             const maxTrail = parseInt(trailLengthSlider.value);
             if (earthTrail.length > maxTrail) earthTrail.shift();
             if (moonTrail.length > maxTrail) moonTrail.shift();
+            if (marsTrail.length > maxTrail) marsTrail.shift();
+            if (phobosTrail.length > maxTrail) phobosTrail.shift();
+            if (deimosTrail.length > maxTrail) deimosTrail.shift();
             
             // Draw trails
             if (showEarthTrail) {
@@ -438,6 +455,15 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
             }
             if (showMoonTrail) {
                 drawTrail(moonTrail, {r: 192, g: 192, b: 192}, 1);
+            }
+            if (showMarsTrail) {
+                drawTrail(marsTrail, {r: 205, g: 92, b: 92}, 2);
+            }
+            if (showPhobosTrail) {
+                drawTrail(phobosTrail, {r: 218, g: 165, b: 32}, 1);
+            }
+            if (showDeimosTrail) {
+                drawTrail(deimosTrail, {r: 169, g: 169, b: 169}, 1);
             }
             
             // Draw Sun
@@ -492,13 +518,72 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
                 ctx.fillText('Moon', moonScreenX, moonScreenY - 12);
             }
             
+            // Draw Mars system
+            if (showMars) {
+                const marsScreenX = centerX + positions.marsX * zoom;
+                const marsScreenY = centerY + positions.marsY * zoom;
+                
+                ctx.fillStyle = '#cd5c5c';
+                ctx.strokeStyle = '#ff6347';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(marsScreenX, marsScreenY, 6, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#ff6600';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Mars', marsScreenX, marsScreenY - 16);
+            }
+            
+            if (showPhobos) {
+                const phobosScreenX = centerX + positions.phobosX * zoom;
+                const phobosScreenY = centerY + positions.phobosY * zoom;
+                
+                ctx.fillStyle = '#8b7355';
+                ctx.strokeStyle = '#daa520';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(phobosScreenX, phobosScreenY, 2, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#daa520';
+                ctx.font = '8px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Phobos', phobosScreenX, phobosScreenY - 10);
+            }
+            
+            if (showDeimos) {
+                const deimosScreenX = centerX + positions.deimosX * zoom;
+                const deimosScreenY = centerY + positions.deimosY * zoom;
+                
+                ctx.fillStyle = '#696969';
+                ctx.strokeStyle = '#a9a9a9';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.arc(deimosScreenX, deimosScreenY, 2, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+                
+                ctx.fillStyle = '#a9a9a9';
+                ctx.font = '8px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Deimos', deimosScreenX, deimosScreenY - 10);
+            }
+            
             // Update information display
             const years = currentDay / earthOrbitalPeriod;
             const moonOrbits = currentDay / moonOrbitalPeriod;
+            const marsYears = currentDay / marsOrbitalPeriod;
+            const phobosOrbits = currentDay / phobosOrbitalPeriod;
             
             dayValue.textContent = currentDay.toFixed(1);
             yearValue.textContent = years.toFixed(3);
             moonOrbitsValue.textContent = moonOrbits.toFixed(1);
+            marsYearValue.textContent = marsYears.toFixed(3);
+            phobosOrbitsValue.textContent = phobosOrbits.toFixed(0);
             
             animationId = requestAnimationFrame(animate);
         }
@@ -528,10 +613,49 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
             moonTrailBtn.style.background = showMoonTrail ? '#ffffff' : 'gray';
         }
         
+        function toggleMars() {
+            showMars = !showMars;
+            marsBtn.textContent = `Mars: ${showMars ? 'ON' : 'OFF'}`;
+            marsBtn.style.background = showMars ? '#cd5c5c' : 'gray';
+        }
+        
+        function togglePhobos() {
+            showPhobos = !showPhobos;
+            phobosBtn.textContent = `Phobos: ${showPhobos ? 'ON' : 'OFF'}`;
+            phobosBtn.style.background = showPhobos ? '#8b7355' : 'gray';
+        }
+        
+        function toggleDeimos() {
+            showDeimos = !showDeimos;
+            deimosBtn.textContent = `Deimos: ${showDeimos ? 'ON' : 'OFF'}`;
+            deimosBtn.style.background = showDeimos ? '#696969' : 'gray';
+        }
+        
+        function toggleMarsTrail() {
+            showMarsTrail = !showMarsTrail;
+            marsTrailBtn.textContent = `Mars Trail: ${showMarsTrail ? 'ON' : 'OFF'}`;
+            marsTrailBtn.style.background = showMarsTrail ? '#ff6347' : 'gray';
+        }
+        
+        function togglePhobosTrail() {
+            showPhobosTrail = !showPhobosTrail;
+            phobosTrailBtn.textContent = `Phobos Trail: ${showPhobosTrail ? 'ON' : 'OFF'}`;
+            phobosTrailBtn.style.background = showPhobosTrail ? '#daa520' : 'gray';
+        }
+        
+        function toggleDeimosTrail() {
+            showDeimosTrail = !showDeimosTrail;
+            deimosTrailBtn.textContent = `Deimos Trail: ${showDeimosTrail ? 'ON' : 'OFF'}`;
+            deimosTrailBtn.style.background = showDeimosTrail ? '#a9a9a9' : 'gray';
+        }
+        
         function resetSimulation() {
             currentDay = 0;
             earthTrail = [];
             moonTrail = [];
+            marsTrail = [];
+            phobosTrail = [];
+            deimosTrail = [];
         }
         
         function togglePause() {
@@ -544,6 +668,12 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
         moonBtn.addEventListener('click', toggleMoon);
         earthTrailBtn.addEventListener('click', toggleEarthTrail);
         moonTrailBtn.addEventListener('click', toggleMoonTrail);
+        marsBtn.addEventListener('click', toggleMars);
+        phobosBtn.addEventListener('click', togglePhobos);
+        deimosBtn.addEventListener('click', toggleDeimos);
+        marsTrailBtn.addEventListener('click', toggleMarsTrail);
+        phobosTrailBtn.addEventListener('click', togglePhobosTrail);
+        deimosTrailBtn.addEventListener('click', toggleDeimosTrail);
         resetBtn.addEventListener('click', resetSimulation);
         pauseBtn.addEventListener('click', togglePause);
         
