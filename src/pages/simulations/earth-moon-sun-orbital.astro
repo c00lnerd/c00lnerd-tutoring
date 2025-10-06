@@ -100,6 +100,12 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
         .moon-btn { background: #c0c0c0; color: black; }
         .earth-trail-btn { background: #1e90ff; color: white; }
         .moon-trail-btn { background: #ffffff; color: black; }
+        .mars-btn { background: #cd5c5c; color: white; }
+        .phobos-btn { background: #8b7355; color: white; }
+        .deimos-btn { background: #696969; color: white; }
+        .mars-trail-btn { background: #ff6347; color: white; }
+        .phobos-trail-btn { background: #daa520; color: black; }
+        .deimos-trail-btn { background: #a9a9a9; color: white; }
         .reset-btn { background: #ff6600; color: white; }
         .pause-btn { background: #ff0000; color: white; }
         
@@ -161,7 +167,7 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
     </style>
 </head>
 <body>
-    <h1>🌍 Earth-Moon-Sun Orbital Mechanics</h1>
+    <h1>🌍 Solar System Orbital Mechanics - Earth, Moon, Mars & Moons</h1>
     
     <div class="container">
         <div class="simulation-area">
@@ -198,6 +204,16 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
                     <button class="control-button moon-btn" id="moonBtn">Moon: ON</button>
                     <button class="control-button earth-trail-btn" id="earthTrailBtn">Earth Trail: ON</button>
                     <button class="control-button moon-trail-btn" id="moonTrailBtn">Moon Trail: ON</button>
+                </div>
+                
+                <h3 style="color: #ff6600; margin: 15px 0 10px 0; font-size: 14px;">🔴 Mars System</h3>
+                <div class="button-grid">
+                    <button class="control-button mars-btn" id="marsBtn">Mars: ON</button>
+                    <button class="control-button phobos-btn" id="phobosBtn">Phobos: ON</button>
+                    <button class="control-button deimos-btn" id="deimosBtn">Deimos: ON</button>
+                    <button class="control-button mars-trail-btn" id="marsTrailBtn">Mars Trail: ON</button>
+                    <button class="control-button phobos-trail-btn" id="phobosTrailBtn">Phobos Trail: ON</button>
+                    <button class="control-button deimos-trail-btn" id="deimosTrailBtn">Deimos Trail: ON</button>
                     <button class="control-button reset-btn full-width" id="resetBtn">Reset Simulation</button>
                     <button class="control-button pause-btn full-width" id="pauseBtn">Pause</button>
                 </div>
@@ -217,6 +233,14 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
                     <span class="info-label">Moon Orbits:</span>
                     <span class="info-value" id="moonOrbitsValue">0.0</span>
                 </div>
+                <div class="info-item">
+                    <span class="info-label">Mars Year:</span>
+                    <span class="info-value" id="marsYearValue">0.000</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Phobos Orbits:</span>
+                    <span class="info-value" id="phobosOrbitsValue">0</span>
+                </div>
             </div>
             
             <div class="description">
@@ -224,13 +248,14 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
                 <ul>
                     <li><strong>Earth:</strong> Orbits Sun in 365.25 days</li>
                     <li><strong>Moon:</strong> Orbits Earth in 27.3 days</li>
-                    <li><strong>Ratio:</strong> ~13.4 lunar months per Earth year</li>
-                    <li><strong>Pattern:</strong> Moon creates beautiful epicycloid trail</li>
+                    <li><strong>Mars:</strong> Orbits Sun in 687 days (1.88 Earth years)</li>
+                    <li><strong>Phobos:</strong> Orbits Mars in 0.32 days (7.6 hours)</li>
+                    <li><strong>Deimos:</strong> Orbits Mars in 1.26 days (30.3 hours)</li>
                     <li><strong>Math:</strong> Pure trigonometric calculations</li>
                     <li><strong>Accuracy:</strong> Astronomically correct periods</li>
                 </ul>
                 
-                <p><strong>Educational Focus:</strong> Use visibility controls to isolate different orbital components and understand how the Earth-Moon system travels through space together!</p>
+                <p><strong>Educational Focus:</strong> Use visibility controls to compare Earth-Moon and Mars-moons systems! See how different orbital periods create unique patterns in space.</p>
             </div>
         </div>
     </div>
@@ -246,6 +271,14 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
         const moonOrbitalPeriod = 27.3; // days
         const moonOrbitRadius = AU * 0.08; // Moon-Earth distance
         
+        // Mars system constants
+        const marsOrbitalPeriod = 687.0; // days (Mars year)
+        const marsDistance = AU * 1.52; // Mars-Sun distance (1.52 AU)
+        const phobosOrbitalPeriod = 0.32; // days (7.6 hours)
+        const deimosOrbitalPeriod = 1.26; // days (30.3 hours)
+        const phobosOrbitRadius = AU * 0.02; // Phobos-Mars distance
+        const deimosOrbitRadius = AU * 0.035; // Deimos-Mars distance
+        
         // Simulation state
         let currentDay = 0;
         let paused = false;
@@ -254,12 +287,21 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
         // Trails
         let earthTrail = [];
         let moonTrail = [];
+        let marsTrail = [];
+        let phobosTrail = [];
+        let deimosTrail = [];
         
         // Visibility toggles
         let showEarth = true;
         let showMoon = true;
         let showEarthTrail = true;
         let showMoonTrail = true;
+        let showMars = true;
+        let showPhobos = true;
+        let showDeimos = true;
+        let showMarsTrail = true;
+        let showPhobosTrail = true;
+        let showDeimosTrail = true;
         
         // Control elements
         const timeSpeedSlider = document.getElementById('timeSpeed');
@@ -270,6 +312,12 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
         const moonBtn = document.getElementById('moonBtn');
         const earthTrailBtn = document.getElementById('earthTrailBtn');
         const moonTrailBtn = document.getElementById('moonTrailBtn');
+        const marsBtn = document.getElementById('marsBtn');
+        const phobosBtn = document.getElementById('phobosBtn');
+        const deimosBtn = document.getElementById('deimosBtn');
+        const marsTrailBtn = document.getElementById('marsTrailBtn');
+        const phobosTrailBtn = document.getElementById('phobosTrailBtn');
+        const deimosTrailBtn = document.getElementById('deimosTrailBtn');
         const resetBtn = document.getElementById('resetBtn');
         const pauseBtn = document.getElementById('pauseBtn');
         
@@ -310,7 +358,30 @@ description: "Interactive simulation showing how Earth and Moon orbit the Sun to
             const moonX = earthX + moonXRel;
             const moonY = earthY + moonYRel;
             
-            return { earthX, earthY, moonX, moonY };
+            // Mars position around Sun
+            const marsAngle = 2 * Math.PI * day / marsOrbitalPeriod;
+            const marsX = marsDistance * Math.cos(marsAngle);
+            const marsY = marsDistance * Math.sin(marsAngle);
+            
+            // Phobos position relative to Mars
+            const phobosAngle = 2 * Math.PI * day / phobosOrbitalPeriod;
+            const phobosXRel = phobosOrbitRadius * Math.cos(phobosAngle);
+            const phobosYRel = phobosOrbitRadius * Math.sin(phobosAngle);
+            
+            // Phobos absolute position
+            const phobosX = marsX + phobosXRel;
+            const phobosY = marsY + phobosYRel;
+            
+            // Deimos position relative to Mars
+            const deimosAngle = 2 * Math.PI * day / deimosOrbitalPeriod;
+            const deimosXRel = deimosOrbitRadius * Math.cos(deimosAngle);
+            const deimosYRel = deimosOrbitRadius * Math.sin(deimosAngle);
+            
+            // Deimos absolute position
+            const deimosX = marsX + deimosXRel;
+            const deimosY = marsY + deimosYRel;
+            
+            return { earthX, earthY, moonX, moonY, marsX, marsY, phobosX, phobosY, deimosX, deimosY };
         }
         
         // Draw trail with fading effect

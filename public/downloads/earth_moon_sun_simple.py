@@ -7,7 +7,7 @@ def create_earth_moon_sun_simulation():
     
     # Create main window
     root = tk.Tk()
-    root.title("Earth-Moon-Sun Simple Simulation")
+    root.title("Solar System Orbital Mechanics - Earth, Moon, Mars & Moons")
     root.geometry("1200x800")
     root.configure(bg='black')
     
@@ -30,6 +30,14 @@ def create_earth_moon_sun_simulation():
     moon_orbital_period = 27.3     # days
     moon_orbit_radius = AU * 0.08  # Moon-Earth distance in pixels (~16 pixels)
     
+    # Mars system constants
+    mars_orbital_period = 687.0    # days (Mars year)
+    mars_distance = AU * 1.52      # Mars-Sun distance (1.52 AU)
+    phobos_orbital_period = 0.32   # days (7.6 hours)
+    deimos_orbital_period = 1.26   # days (30.3 hours)
+    phobos_orbit_radius = AU * 0.02  # Phobos-Mars distance (~4 pixels)
+    deimos_orbit_radius = AU * 0.035 # Deimos-Mars distance (~7 pixels)
+    
     # Simulation parameters
     time_speed = tk.DoubleVar(value=2.0)  # days per frame
     zoom = tk.DoubleVar(value=1.0)
@@ -38,6 +46,9 @@ def create_earth_moon_sun_simulation():
     # Storage for trails
     earth_trail = []
     moon_trail = []
+    mars_trail = []
+    phobos_trail = []
+    deimos_trail = []
     
     # Current time
     current_day = [0.0]  # Use list to make it mutable
@@ -48,6 +59,12 @@ def create_earth_moon_sun_simulation():
     show_moon = [True]
     show_earth_trail = [True]
     show_moon_trail = [True]
+    show_mars = [True]
+    show_phobos = [True]
+    show_deimos = [True]
+    show_mars_trail = [True]
+    show_phobos_trail = [True]
+    show_deimos_trail = [True]
     
     def create_slider(parent, label, variable, from_, to, resolution=0.1):
         frame = Frame(parent, bg='black')
@@ -63,7 +80,7 @@ def create_earth_moon_sun_simulation():
         return slider
     
     # Create controls
-    Label(control_frame, text="Earth-Moon-Sun Simulation", 
+    Label(control_frame, text="Solar System Simulation", 
           font=("Arial", 16, "bold"), fg="yellow", bg="black").pack(pady=10)
     
     create_slider(control_frame, "Time Speed (days/frame)", time_speed, 0.1, 10.0, 0.1)
@@ -86,6 +103,14 @@ def create_earth_moon_sun_simulation():
                             font=("Arial", 12, "bold"))
     moon_phase_label.pack()
     
+    mars_year_label = Label(info_frame, text="Mars Year: 0.0", fg="orange", bg="black", 
+                           font=("Arial", 12, "bold"))
+    mars_year_label.pack()
+    
+    phobos_orbits_label = Label(info_frame, text="Phobos Orbits: 0.0", fg="goldenrod", bg="black", 
+                               font=("Arial", 12, "bold"))
+    phobos_orbits_label.pack()
+    
     # Control buttons
     button_frame = Frame(control_frame, bg='black')
     button_frame.pack(pady=20)
@@ -94,6 +119,9 @@ def create_earth_moon_sun_simulation():
         current_day[0] = 0.0
         earth_trail.clear()
         moon_trail.clear()
+        mars_trail.clear()
+        phobos_trail.clear()
+        deimos_trail.clear()
     
     def toggle_pause():
         paused[0] = not paused[0]
@@ -128,6 +156,36 @@ def create_earth_moon_sun_simulation():
         moon_trail_button.config(text=f"Moon Trail: {'ON' if show_moon_trail[0] else 'OFF'}",
                                 bg="#ffffff" if show_moon_trail[0] else "gray")
     
+    def toggle_mars():
+        show_mars[0] = not show_mars[0]
+        mars_button.config(text=f"Mars: {'ON' if show_mars[0] else 'OFF'}",
+                          bg="#cd5c5c" if show_mars[0] else "gray")
+    
+    def toggle_phobos():
+        show_phobos[0] = not show_phobos[0]
+        phobos_button.config(text=f"Phobos: {'ON' if show_phobos[0] else 'OFF'}",
+                            bg="#8b7355" if show_phobos[0] else "gray")
+    
+    def toggle_deimos():
+        show_deimos[0] = not show_deimos[0]
+        deimos_button.config(text=f"Deimos: {'ON' if show_deimos[0] else 'OFF'}",
+                            bg="#696969" if show_deimos[0] else "gray")
+    
+    def toggle_mars_trail():
+        show_mars_trail[0] = not show_mars_trail[0]
+        mars_trail_button.config(text=f"Mars Trail: {'ON' if show_mars_trail[0] else 'OFF'}",
+                                bg="#ff6347" if show_mars_trail[0] else "gray")
+    
+    def toggle_phobos_trail():
+        show_phobos_trail[0] = not show_phobos_trail[0]
+        phobos_trail_button.config(text=f"Phobos Trail: {'ON' if show_phobos_trail[0] else 'OFF'}",
+                                  bg="#daa520" if show_phobos_trail[0] else "gray")
+    
+    def toggle_deimos_trail():
+        show_deimos_trail[0] = not show_deimos_trail[0]
+        deimos_trail_button.config(text=f"Deimos Trail: {'ON' if show_deimos_trail[0] else 'OFF'}",
+                                  bg="#a9a9a9" if show_deimos_trail[0] else "gray")
+    
     # Visibility toggle buttons
     visibility_frame = Frame(control_frame, bg='black')
     visibility_frame.pack(pady=10)
@@ -151,13 +209,43 @@ def create_earth_moon_sun_simulation():
                               bg="#ffffff", fg="black", font=("Arial", 10, "bold"), width=18)
     moon_trail_button.pack(pady=2)
     
+    # Mars system buttons
+    Label(visibility_frame, text="Mars System:", 
+          font=("Arial", 11, "bold"), fg="orange", bg="black").pack(pady=(10,5))
+    
+    mars_button = Button(visibility_frame, text="Mars: ON", command=toggle_mars,
+                        bg="#cd5c5c", fg="white", font=("Arial", 10, "bold"), width=18)
+    mars_button.pack(pady=2)
+    
+    phobos_button = Button(visibility_frame, text="Phobos: ON", command=toggle_phobos,
+                          bg="#8b7355", fg="white", font=("Arial", 10, "bold"), width=18)
+    phobos_button.pack(pady=2)
+    
+    deimos_button = Button(visibility_frame, text="Deimos: ON", command=toggle_deimos,
+                          bg="#696969", fg="white", font=("Arial", 10, "bold"), width=18)
+    deimos_button.pack(pady=2)
+    
+    mars_trail_button = Button(visibility_frame, text="Mars Trail: ON", command=toggle_mars_trail,
+                              bg="#ff6347", fg="white", font=("Arial", 10, "bold"), width=18)
+    mars_trail_button.pack(pady=2)
+    
+    phobos_trail_button = Button(visibility_frame, text="Phobos Trail: ON", command=toggle_phobos_trail,
+                                bg="#daa520", fg="black", font=("Arial", 10, "bold"), width=18)
+    phobos_trail_button.pack(pady=2)
+    
+    deimos_trail_button = Button(visibility_frame, text="Deimos Trail: ON", command=toggle_deimos_trail,
+                                bg="#a9a9a9", fg="white", font=("Arial", 10, "bold"), width=18)
+    deimos_trail_button.pack(pady=2)
+    
     # Instructions
     Label(control_frame, text="Orbital Mechanics:", 
           font=("Arial", 14, "bold"), fg="yellow", bg="black").pack(pady=(20,5))
     
     physics_info = """• Earth orbits Sun in 365.25 days
 • Moon orbits Earth in 27.3 days
-• Moon completes ~13.4 orbits per Earth year
+• Mars orbits Sun in 687 days (1.88 Earth years)
+• Phobos orbits Mars in 0.32 days (7.6 hours)
+• Deimos orbits Mars in 1.26 days (30.3 hours)
 • Simple trigonometric calculations
 • Mathematically accurate periods
 • Beautiful epicycloid patterns"""
@@ -166,7 +254,7 @@ def create_earth_moon_sun_simulation():
           font=("Arial", 10), fg="white", bg="black", justify=tk.LEFT).pack(pady=5)
     
     def calculate_positions(day):
-        """Calculate Earth and Moon positions using simple trigonometry"""
+        """Calculate positions of all celestial bodies using simple trigonometry"""
         # Earth position around Sun (circular orbit)
         earth_angle = 2 * math.pi * day / earth_orbital_period
         earth_x = AU * math.cos(earth_angle)
@@ -181,7 +269,30 @@ def create_earth_moon_sun_simulation():
         moon_x = earth_x + moon_x_rel
         moon_y = earth_y + moon_y_rel
         
-        return earth_x, earth_y, moon_x, moon_y
+        # Mars position around Sun (circular orbit)
+        mars_angle = 2 * math.pi * day / mars_orbital_period
+        mars_x = mars_distance * math.cos(mars_angle)
+        mars_y = mars_distance * math.sin(mars_angle)
+        
+        # Phobos position relative to Mars (circular orbit)
+        phobos_angle = 2 * math.pi * day / phobos_orbital_period
+        phobos_x_rel = phobos_orbit_radius * math.cos(phobos_angle)
+        phobos_y_rel = phobos_orbit_radius * math.sin(phobos_angle)
+        
+        # Phobos absolute position (Mars + relative)
+        phobos_x = mars_x + phobos_x_rel
+        phobos_y = mars_y + phobos_y_rel
+        
+        # Deimos position relative to Mars (circular orbit)
+        deimos_angle = 2 * math.pi * day / deimos_orbital_period
+        deimos_x_rel = deimos_orbit_radius * math.cos(deimos_angle)
+        deimos_y_rel = deimos_orbit_radius * math.sin(deimos_angle)
+        
+        # Deimos absolute position (Mars + relative)
+        deimos_x = mars_x + deimos_x_rel
+        deimos_y = mars_y + deimos_y_rel
+        
+        return earth_x, earth_y, moon_x, moon_y, mars_x, mars_y, phobos_x, phobos_y, deimos_x, deimos_y
     
     def draw_frame():
         """Draw the current frame of the simulation"""
@@ -195,11 +306,14 @@ def create_earth_moon_sun_simulation():
         scale = zoom.get()
         
         # Calculate current positions
-        earth_x, earth_y, moon_x, moon_y = calculate_positions(current_day[0])
+        earth_x, earth_y, moon_x, moon_y, mars_x, mars_y, phobos_x, phobos_y, deimos_x, deimos_y = calculate_positions(current_day[0])
         
         # Add to trails
         earth_trail.append((earth_x, earth_y))
         moon_trail.append((moon_x, moon_y))
+        mars_trail.append((mars_x, mars_y))
+        phobos_trail.append((phobos_x, phobos_y))
+        deimos_trail.append((deimos_x, deimos_y))
         
         # Limit trail lengths
         max_trail = trail_length.get()
@@ -207,6 +321,12 @@ def create_earth_moon_sun_simulation():
             earth_trail.pop(0)
         if len(moon_trail) > max_trail:
             moon_trail.pop(0)
+        if len(mars_trail) > max_trail:
+            mars_trail.pop(0)
+        if len(phobos_trail) > max_trail:
+            phobos_trail.pop(0)
+        if len(deimos_trail) > max_trail:
+            deimos_trail.pop(0)
         
         # Draw trails (only if enabled)
         if show_earth_trail[0] and len(earth_trail) > 1:
@@ -231,6 +351,43 @@ def create_earth_moon_sun_simulation():
                     y2 = center_y + moon_trail[i][1] * scale
                     
                     color = f"#{int(192*fade):02x}{int(192*fade):02x}{int(192*fade):02x}"
+                    canvas.create_line(x1, y1, x2, y2, fill=color, width=1)
+        
+        # Draw Mars system trails
+        if show_mars_trail[0] and len(mars_trail) > 1:
+            for i in range(1, len(mars_trail)):
+                fade = i / len(mars_trail)
+                if fade > 0.3:  # Only draw recent trail
+                    x1 = center_x + mars_trail[i-1][0] * scale
+                    y1 = center_y + mars_trail[i-1][1] * scale
+                    x2 = center_x + mars_trail[i][0] * scale
+                    y2 = center_y + mars_trail[i][1] * scale
+                    
+                    color = f"#{int(205*fade):02x}{int(92*fade):02x}{int(92*fade):02x}"
+                    canvas.create_line(x1, y1, x2, y2, fill=color, width=2)
+        
+        if show_phobos_trail[0] and len(phobos_trail) > 1:
+            for i in range(1, len(phobos_trail)):
+                fade = i / len(phobos_trail)
+                if fade > 0.2:  # Only draw recent trail
+                    x1 = center_x + phobos_trail[i-1][0] * scale
+                    y1 = center_y + phobos_trail[i-1][1] * scale
+                    x2 = center_x + phobos_trail[i][0] * scale
+                    y2 = center_y + phobos_trail[i][1] * scale
+                    
+                    color = f"#{int(218*fade):02x}{int(165*fade):02x}{int(32*fade):02x}"
+                    canvas.create_line(x1, y1, x2, y2, fill=color, width=1)
+        
+        if show_deimos_trail[0] and len(deimos_trail) > 1:
+            for i in range(1, len(deimos_trail)):
+                fade = i / len(deimos_trail)
+                if fade > 0.2:  # Only draw recent trail
+                    x1 = center_x + deimos_trail[i-1][0] * scale
+                    y1 = center_y + deimos_trail[i-1][1] * scale
+                    x2 = center_x + deimos_trail[i][0] * scale
+                    y2 = center_y + deimos_trail[i][1] * scale
+                    
+                    color = f"#{int(169*fade):02x}{int(169*fade):02x}{int(169*fade):02x}"
                     canvas.create_line(x1, y1, x2, y2, fill=color, width=1)
         
         # Draw Sun at center
@@ -261,13 +418,45 @@ def create_earth_moon_sun_simulation():
             canvas.create_text(screen_moon_x, screen_moon_y-12, text="Moon", 
                               fill="white", font=("Arial", 8, "bold"))
         
+        # Draw Mars system (only if enabled)
+        if show_mars[0]:
+            screen_mars_x = center_x + mars_x * scale
+            screen_mars_y = center_y + mars_y * scale
+            canvas.create_oval(screen_mars_x-6, screen_mars_y-6, 
+                              screen_mars_x+6, screen_mars_y+6, 
+                              fill='#cd5c5c', outline='#ff6347', width=2)
+            canvas.create_text(screen_mars_x, screen_mars_y-16, text="Mars", 
+                              fill="orange", font=("Arial", 9, "bold"))
+        
+        if show_phobos[0]:
+            screen_phobos_x = center_x + phobos_x * scale
+            screen_phobos_y = center_y + phobos_y * scale
+            canvas.create_oval(screen_phobos_x-2, screen_phobos_y-2, 
+                              screen_phobos_x+2, screen_phobos_y+2, 
+                              fill='#8b7355', outline='#daa520', width=1)
+            canvas.create_text(screen_phobos_x, screen_phobos_y-10, text="Phobos", 
+                              fill="goldenrod", font=("Arial", 7, "bold"))
+        
+        if show_deimos[0]:
+            screen_deimos_x = center_x + deimos_x * scale
+            screen_deimos_y = center_y + deimos_y * scale
+            canvas.create_oval(screen_deimos_x-2, screen_deimos_y-2, 
+                              screen_deimos_x+2, screen_deimos_y+2, 
+                              fill='#696969', outline='#a9a9a9', width=1)
+            canvas.create_text(screen_deimos_x, screen_deimos_y-10, text="Deimos", 
+                              fill="lightgray", font=("Arial", 7, "bold"))
+        
         # Update information
         years = current_day[0] / 365.25
         moon_orbits = current_day[0] / moon_orbital_period
+        mars_years = current_day[0] / mars_orbital_period
+        phobos_orbits = current_day[0] / phobos_orbital_period
         
         day_label.config(text=f"Day: {current_day[0]:.1f}")
         year_label.config(text=f"Year: {years:.3f}")
         moon_phase_label.config(text=f"Moon Orbits: {moon_orbits:.1f}")
+        mars_year_label.config(text=f"Mars Year: {mars_years:.3f}")
+        phobos_orbits_label.config(text=f"Phobos Orbits: {phobos_orbits:.0f}")
         
         # Schedule next frame
         root.after(50, draw_frame)
@@ -277,6 +466,7 @@ def create_earth_moon_sun_simulation():
     root.mainloop()
 
 if __name__ == "__main__":
-    print("Starting Simple Earth-Moon-Sun Simulation...")
-    print("This uses clean trigonometric calculations for accurate orbital periods!")
+    print("Starting Solar System Orbital Mechanics Simulation...")
+    print("Features Earth, Moon, Mars, Phobos, and Deimos with accurate orbital periods!")
+    print("Use visibility controls to show/hide different celestial bodies and their trails.")
     create_earth_moon_sun_simulation()
