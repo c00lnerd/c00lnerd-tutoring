@@ -184,11 +184,12 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script is:inline>
-    // Load EmailJS
-    (function() {
+<script>
+
+    // Initialize EmailJS with error checking
+    if (typeof emailjs !== 'undefined') {
         emailjs.init("ct_s19oZHppLy9BlW");
-    })();
+    }
 
     // Store email in local storage if available
     document.addEventListener('DOMContentLoaded', function() {
@@ -269,18 +270,25 @@ ${conclusion || 'Not provided'}
             subject: `Physical Science Experiment 4.2 Results - ${studentName}`
         };
         
-        // Send email using EmailJS
-        emailjs.send('service_ot1jg6s', 'template_y556rhr', templateParams)
-            .then(function(response) {
-                console.log('SUCCESS!', response.status, response.text);
-                alert('Your experiment has been submitted successfully!');
-                document.getElementById('submitButton').disabled = false;
-                document.getElementById('submitButton').textContent = 'Submit Experiment';
-            }, function(error) {
-                console.log('FAILED...', error);
-                alert('Failed to submit. Please try again.');
-                document.getElementById('submitButton').disabled = false;
-                document.getElementById('submitButton').textContent = 'Submit Experiment';
-            });
+        // Check if EmailJS is available
+        if (typeof emailjs !== 'undefined') {
+            // Send email using EmailJS
+            emailjs.send('service_ot1jg6s', 'template_y556rhr', templateParams)
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    alert('Your experiment has been submitted successfully!');
+                    document.getElementById('submitButton').disabled = false;
+                    document.getElementById('submitButton').textContent = 'Submit Experiment';
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    alert('Failed to submit. Please try again.');
+                    document.getElementById('submitButton').disabled = false;
+                    document.getElementById('submitButton').textContent = 'Submit Experiment';
+                });
+        } else {
+            alert('Email service is not available. Please try again later.');
+            document.getElementById('submitButton').disabled = false;
+            document.getElementById('submitButton').textContent = 'Submit Experiment';
+        }
     });
 </script>

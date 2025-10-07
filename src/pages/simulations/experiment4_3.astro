@@ -414,11 +414,11 @@ import Layout from '../../layouts/Layout.astro';
 </Layout>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-<script is:inline>
-    // Load EmailJS
-    (function() {
+<script>
+    // Initialize EmailJS with error checking
+    if (typeof emailjs !== 'undefined') {
         emailjs.init("ct_s19oZHppLy9BlW");
-    })();
+    }
 
     // DOM Elements
     document.addEventListener('DOMContentLoaded', function() {
@@ -614,27 +614,34 @@ ${experimentData.conclusion}
 ---
 This is an automated submission from the C00lnerd Experiment System.`;
             
-            // Send email using EmailJS with proven parameter mapping
-            emailjs.send("service_ot1jg6s", "template_y556rhr", {
-                student_name: studentName || studentEmail?.split('@')[0] || 'Student',
-                student_email: studentEmail,
-                experiment_title: 'Experiment 4.3: Forces Between Molecules',
-                hypothesis: 'Exploring intermolecular forces and their effects on molecular behavior',
-                missing_elements: `Student Info: ${studentName ? '✓' : '✗'}, Email: ${studentEmail ? '✓' : '✗'}, Results: ${formattedMessage ? '✓' : '✗'}`,
-                conclusion: formattedMessage,
-                subject: `Physical Science Experiment 4.3 Results - ${studentName || studentEmail?.split('@')[0] || 'Student'}`
-            })
-            .then(function(response) {
-                console.log("Email sent successfully:", response);
-                showMessage("Your experiment results have been submitted successfully!", "success");
-                submitBtn.textContent = "Submitted";
-            })
-            .catch(function(error) {
-                console.error("Email sending failed:", error);
-                showMessage("Failed to submit results. Please try again later.", "error");
+            // Check if EmailJS is available
+            if (typeof emailjs !== 'undefined') {
+                // Send email using EmailJS with proven parameter mapping
+                emailjs.send("service_ot1jg6s", "template_y556rhr", {
+                    student_name: studentName || studentEmail?.split('@')[0] || 'Student',
+                    student_email: studentEmail,
+                    experiment_title: 'Experiment 4.3: Forces Between Molecules',
+                    hypothesis: 'Exploring intermolecular forces and their effects on molecular behavior',
+                    missing_elements: `Student Info: ${studentName ? '✓' : '✗'}, Email: ${studentEmail ? '✓' : '✗'}, Results: ${formattedMessage ? '✓' : '✗'}`,
+                    conclusion: formattedMessage,
+                    subject: `Physical Science Experiment 4.3 Results - ${studentName || studentEmail?.split('@')[0] || 'Student'}`
+                })
+                .then(function(response) {
+                    console.log("Email sent successfully:", response);
+                    showMessage("Your experiment results have been submitted successfully!", "success");
+                    submitBtn.textContent = "Submitted";
+                })
+                .catch(function(error) {
+                    console.error("Email sending failed:", error);
+                    showMessage("Failed to submit results. Please try again later.", "error");
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit Experiment Results";
+                });
+            } else {
+                showMessage("Email service is not available. Please try again later.", "error");
                 submitBtn.disabled = false;
                 submitBtn.textContent = "Submit Experiment Results";
-            });
+            }
         });
         
         function showMessage(message, type) {
