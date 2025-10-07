@@ -8,9 +8,9 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
                 <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 10: Output Devices and Actuators</h1>
-                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Control the physical world with LEDs, buzzers, servos, and motors</p>
+                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Control the physical world with sound and servo motors</p>
                 <div class="mt-4 p-4 bg-green-100 rounded-lg">
-                    <p class="text-green-800 font-medium">⚡ From sensing to acting - make things move and respond</p>
+                    <p class="text-green-800 font-medium">🔊 Create sound and precise movement with buzzers and servos</p>
                 </div>
             </div>
 
@@ -23,11 +23,11 @@ import Layout from '../../../layouts/Layout.astro';
                         <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
-                                Control various output devices (LEDs, buzzers, servos)
+                                Control sound output devices (buzzers) and servo motors
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
-                                Understand PWM control for brightness and speed
+                                Understand PWM control for servo positioning and sound frequency
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
@@ -35,7 +35,7 @@ import Layout from '../../../layouts/Layout.astro';
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
-                                Create interactive feedback systems
+                                Create interactive audio and motion feedback systems
                             </li>
                         </ul>
                     </div>
@@ -44,11 +44,11 @@ import Layout from '../../../layouts/Layout.astro';
                         <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
-                                Digital vs PWM output control
+                                PWM control for servo positioning and sound generation
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
-                                Current limiting and protection
+                                Servo power requirements and buzzer control
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-green-600 mr-2">•</span>
@@ -63,136 +63,10 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             </div>
 
-            <!-- Section 1: LED Control and Display -->
+
+            <!-- Section 1: Sound Output with Buzzers -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-green-800 mb-6">💡 Section 1: LED Control and Display</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding LEDs</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Light Emitting Diodes (LEDs) are one of the most common output devices in electronics. 
-                        They convert electrical energy into light and can be controlled for brightness, color, 
-                        and patterns to provide visual feedback in your projects.
-                    </p>
-                    
-                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">LED Characteristics:</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                            <div>
-                                <h5 class="font-medium text-yellow-700 mb-1">Electrical Properties:</h5>
-                                <ul class="text-yellow-600 text-sm space-y-1">
-                                    <li>• Forward voltage: ~2-3.3V (depends on color)</li>
-                                    <li>• Current: 10-20mA typical</li>
-                                    <li>• Polarity sensitive (anode/cathode)</li>
-                                    <li>• Requires current limiting resistor</li>
-                                </ul>
-                            </div>
-                            <div>
-                                <h5 class="font-medium text-yellow-700 mb-1">Control Methods:</h5>
-                                <ul class="text-yellow-600 text-sm space-y-1">
-                                    <li>• Digital: ON/OFF control</li>
-                                    <li>• PWM: Brightness control (0-255)</li>
-                                    <li>• RGB: Color mixing with 3 LEDs</li>
-                                    <li>• Patterns: Blinking, fading, sequences</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic LED Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Let's start with simple LED control using digital output:
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Basic LED Control Example
-const int ledPin = 13;      // Built-in LED on pin 13
-const int buttonPin = 2;    // Button for control
-
-bool ledState = false;      // Current LED state
-bool lastButtonState = HIGH;
-bool currentButtonState = HIGH;
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
-  Serial.begin(9600);
-  Serial.println("LED Control - Press button to toggle");
-}
-
-void loop() {
-  // Read button with simple debouncing
-  currentButtonState = digitalRead(buttonPin);
-  
-  // Check for button press (HIGH to LOW transition)
-  if (lastButtonState == HIGH && currentButtonState == LOW) {
-    ledState = !ledState;  // Toggle LED state
-    digitalWrite(ledPin, ledState);
-    
-    Serial.print("LED is now: ");
-    Serial.println(ledState ? "ON" : "OFF");
-    
-    delay(50);  // Simple debounce delay
-  }
-  
-  lastButtonState = currentButtonState;
-}`}</code></pre>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">PWM Brightness Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Use PWM to create smooth brightness transitions and fading effects:
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// LED Brightness Control with PWM
-const int ledPin = 9;       // PWM-capable pin
-const int potPin = A0;      // Potentiometer for brightness control
-
-int brightness = 0;         // LED brightness (0-255)
-int potValue = 0;           // Potentiometer reading
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("LED Brightness Control");
-  Serial.println("Turn potentiometer to adjust brightness");
-}
-
-void loop() {
-  // Read potentiometer value (0-1023)
-  potValue = analogRead(potPin);
-  
-  // Map to PWM range (0-255)
-  brightness = map(potValue, 0, 1023, 0, 255);
-  
-  // Set LED brightness
-  analogWrite(ledPin, brightness);
-  
-  // Display current values
-  Serial.print("Pot: ");
-  Serial.print(potValue);
-  Serial.print(" | Brightness: ");
-  Serial.print(brightness);
-  Serial.print(" | Percentage: ");
-  Serial.print((brightness * 100) / 255);
-  Serial.println("%");
-  
-  delay(100);
-}`}</code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 2: Sound Output with Buzzers -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-green-800 mb-6">🔊 Section 2: Sound Output with Buzzers</h2>
+                <h2 class="text-2xl font-bold text-green-800 mb-6">🔊 Section 1: Sound Output with Buzzers</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Types of Buzzers</h3>
@@ -344,9 +218,9 @@ void playMelody() {
                 </div>
             </div>
 
-            <!-- Section 3: Servo Motor Control -->
+            <!-- Section 2: Servo Motor Control -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-green-800 mb-6">🔄 Section 3: Servo Motor Control</h2>
+                <h2 class="text-2xl font-bold text-green-800 mb-6">🔄 Section 2: Servo Motor Control</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Servo Motors</h3>
@@ -499,24 +373,24 @@ void performSweep() {
                 <h2 class="text-2xl font-bold text-green-800 mb-6">🛠️ Hands-On Activity: Interactive Output Control System</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Multi-Output Control Dashboard</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Sound and Motion Control System</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Create a comprehensive system that demonstrates various output devices working together. 
-                        This project will combine LEDs, buzzers, and servo control with user input to create 
-                        an interactive demonstration of output device capabilities.
+                        Create a comprehensive system that demonstrates sound and servo control working together. 
+                        This project will combine buzzers and servo motors with user input to create 
+                        an interactive demonstration of audio and motion capabilities.
                     </p>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Requirements</h3>
                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li>Control LED brightness using potentiometer input</li>
                         <li>Create button-triggered sound patterns with buzzer</li>
                         <li>Implement servo position control with smooth movements</li>
                         <li>Add interactive Serial Monitor commands for device control</li>
-                        <li>Create coordinated patterns using multiple output devices</li>
+                        <li>Create coordinated patterns using sound and servo movement</li>
                         <li>Include safety features and error handling</li>
                         <li>Provide real-time status feedback</li>
+                        <li>Combine audio feedback with servo positioning</li>
                     </ol>
                 </div>
 
@@ -526,10 +400,10 @@ void performSweep() {
                         <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
                             <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Output Control</h4>
                             <ul class="text-yellow-700 text-sm space-y-1">
-                                <li>Variable LED brightness control</li>
-                                <li>Musical tone generation</li>
-                                <li>Precise servo positioning</li>
-                                <li>Coordinated device patterns</li>
+                                <li>Musical tone generation and sound patterns</li>
+                                <li>Precise servo positioning and movement</li>
+                                <li>Coordinated audio and motion patterns</li>
+                                <li>Variable frequency and position control</li>
                             </ul>
                         </div>
                         <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
@@ -552,8 +426,8 @@ void performSweep() {
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
                     <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                        <li>What is the difference between digital and PWM output control?</li>
-                        <li>Why do LEDs require current limiting resistors?</li>
+                        <li>What is the difference between active and passive buzzers?</li>
+                        <li>How does PWM control work for servo positioning?</li>
                         <li>What are the main differences between active and passive buzzers?</li>
                         <li>How does servo motor position control work?</li>
                         <li>What is the typical PWM signal timing for servo control?</li>
@@ -564,26 +438,28 @@ void performSweep() {
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Homework Challenges</h3>
                     <div class="space-y-4">
                         <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 1: RGB Color Mixer</h4>
+                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 1: Musical Servo Controller</h4>
                             <p class="text-red-700">
-                                Create an RGB LED color mixing system using three potentiometers to control 
-                                red, green, and blue intensity. Display color values on Serial Monitor.
+                                Create a system where servo position controls buzzer frequency. As the servo 
+                                moves from 0° to 180°, the buzzer plays different musical notes creating a 
+                                "servo theremin" effect.
                             </p>
                         </div>
                         
                         <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <h4 class="font-semibold text-indigo-800 mb-2">Challenge 2: Alarm System</h4>
+                            <h4 class="font-semibold text-indigo-800 mb-2">Challenge 2: Audio-Motion Alarm System</h4>
                             <p class="text-indigo-700">
-                                Build a security alarm with LED indicators, buzzer alerts, and servo-controlled 
-                                "camera" that sweeps when motion is detected (simulated with button).
+                                Build a security alarm with buzzer alerts and servo-controlled 
+                                "camera" that sweeps while playing different alarm tones when motion is detected (simulated with button).
                             </p>
                         </div>
                         
                         <div class="bg-teal-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-teal-800 mb-2">Challenge 3: Interactive Display</h4>
+                            <h4 class="font-semibold text-teal-800 mb-2">Challenge 3: Interactive Audio-Motion Display</h4>
                             <p class="text-teal-700">
-                                Design a mood indicator that uses sensor input to control LED color, 
-                                buzzer tone, and servo position to represent different "emotions" or states.
+                                Design a mood indicator that uses sensor input to control 
+                                buzzer tone and servo position to represent different "emotions" or states through 
+                                coordinated sound and movement patterns.
                             </p>
                         </div>
                     </div>
