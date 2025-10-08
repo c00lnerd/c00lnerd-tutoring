@@ -1,0 +1,525 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Python Lesson 14: Advanced Parametric Mathematical Art">
+  <div class="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12">
+    <div class="container mx-auto px-4">
+      <!-- Header -->
+      <div class="text-center mb-12">
+        <h1 class="text-5xl font-bold text-white mb-4">
+          Python Lesson 14: Advanced Parametric Mathematical Art
+        </h1>
+        <p class="text-xl text-blue-200 max-w-3xl mx-auto">
+          Create stunning mathematical art using complex parametric equations, trigonometry, and advanced animation techniques
+        </p>
+      </div>
+
+      <!-- Learning Objectives -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">🎯 What You'll Learn</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="text-xl font-semibold text-blue-200 mb-3">Mathematical Concepts</h3>
+            <ul class="text-gray-200 space-y-2">
+              <li>• Advanced parametric equations</li>
+              <li>• Complex trigonometric functions</li>
+              <li>• Phase shifts and frequency modulation</li>
+              <li>• Spirograph and Lissajous curves</li>
+              <li>• Mathematical art and visualization</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold text-blue-200 mb-3">Programming Skills</h3>
+            <ul class="text-gray-200 space-y-2">
+              <li>• Advanced tkinter animation</li>
+              <li>• Object-oriented design patterns</li>
+              <li>• Real-time mathematical computation</li>
+              <li>• Interactive user interfaces</li>
+              <li>• Trail effects and visual feedback</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Introduction -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">🎨 Mathematical Art Through Code</h2>
+        <p class="text-gray-200 text-lg leading-relaxed mb-6">
+          Mathematics and art have been connected for centuries. From the golden ratio in classical architecture to the fractal patterns in nature, 
+          mathematical relationships create some of the most beautiful designs we see. In this lesson, we'll use advanced parametric equations 
+          to create stunning visual art that flows and evolves in real-time.
+        </p>
+        <p class="text-gray-200 text-lg leading-relaxed">
+          Parametric equations allow us to describe complex curves and patterns by expressing x and y coordinates as functions of a parameter 
+          (usually time). By combining multiple trigonometric functions with different frequencies and phases, we can create intricate, 
+          organic-looking patterns that seem to dance across the screen.
+        </p>
+      </div>
+
+      <!-- Mathematical Foundation -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">📐 The Mathematics Behind the Art</h2>
+        
+        <h3 class="text-2xl font-semibold text-blue-200 mb-4">Parametric Equations</h3>
+        <p class="text-gray-200 mb-4">
+          Instead of y = f(x), parametric equations use a parameter t:
+        </p>
+        <div class="bg-black/30 rounded-lg p-4 mb-6 font-mono text-green-300">
+          x(t) = A₁ × cos(ω₁t + φ₁) + A₂ × cos(ω₂t + φ₂)<br>
+          y(t) = B₁ × sin(ω₃t + φ₃) + B₂ × sin(ω₄t + φ₄)
+        </div>
+        
+        <h3 class="text-2xl font-semibold text-blue-200 mb-4">Key Components</h3>
+        <ul class="text-gray-200 space-y-2 mb-6">
+          <li>• <strong>A₁, A₂, B₁, B₂:</strong> Amplitudes (control size)</li>
+          <li>• <strong>ω₁, ω₂, ω₃, ω₄:</strong> Frequencies (control speed of oscillation)</li>
+          <li>• <strong>φ₁, φ₂, φ₃, φ₄:</strong> Phase shifts (control starting position)</li>
+          <li>• <strong>t:</strong> Time parameter (creates animation)</li>
+        </ul>
+
+        <h3 class="text-2xl font-semibold text-blue-200 mb-4">Example: Simple Flower Pattern</h3>
+        <div class="bg-black/30 rounded-lg p-4 mb-4 font-mono text-green-300">
+          x(t) = 100 × cos(2t) × cos(0.5t)<br>
+          y(t) = 100 × sin(2t) × sin(0.7t)
+        </div>
+        <p class="text-gray-200">
+          This creates a flower-like pattern where the inner oscillations (2t) create petals, 
+          while the outer modulation (0.5t, 0.7t) makes the pattern evolve over time.
+        </p>
+      </div>
+
+      <!-- Code Example -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">💻 Complete Parametric Art Program</h2>
+        <p class="text-gray-200 mb-6">
+          Here's the complete program that creates beautiful parametric mathematical art:
+        </p>
+        
+        <div class="relative">
+          <button onclick="copyCode('main-code')" class="absolute top-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 z-10">
+            📋 Copy
+          </button>
+          <div class="bg-gray-900 rounded-lg p-6 overflow-x-auto">
+            <pre><code id="main-code" class="text-green-400 text-sm">import tkinter as tk
+import math
+import time
+
+class ParametricArt:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.title("Advanced Parametric Mathematical Art")
+        self.root.geometry("800x600")
+        
+        # Create canvas
+        self.canvas = tk.Canvas(self.root, width=800, height=600, bg='black')
+        self.canvas.pack()
+        
+        # Animation parameters
+        self.t = 0
+        self.dt = 0.05
+        self.running = True
+        self.trail_length = 300
+        self.trails = [[] for _ in range(5)]
+        
+        # Colors for different patterns
+        self.colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD']
+        
+        # Create control panel
+        self.create_controls()
+        
+        # Start animation
+        self.animate()
+    
+    def create_controls(self):
+        """Create the control panel"""
+        control_frame = tk.Frame(self.root, bg='#2C3E50')
+        control_frame.pack(fill=tk.X, pady=5)
+        
+        # Animation controls
+        tk.Button(control_frame, text="⏯️ Pause/Resume", 
+                 command=self.toggle_pause, bg='#3498DB', fg='white').pack(side=tk.LEFT, padx=5)
+        tk.Button(control_frame, text="🗑️ Clear", 
+                 command=self.clear_canvas, bg='#E74C3C', fg='white').pack(side=tk.LEFT, padx=5)
+        tk.Button(control_frame, text="🔄 Reset", 
+                 command=self.reset, bg='#27AE60', fg='white').pack(side=tk.LEFT, padx=5)
+        
+        # Speed control
+        tk.Label(control_frame, text="Speed:", bg='#2C3E50', fg='white').pack(side=tk.LEFT, padx=5)
+        self.speed_var = tk.DoubleVar(value=1.0)
+        speed_scale = tk.Scale(control_frame, from_=0.1, to=3.0, resolution=0.1, 
+                              orient=tk.HORIZONTAL, variable=self.speed_var,
+                              bg='#2C3E50', fg='white', highlightthickness=0)
+        speed_scale.pack(side=tk.LEFT, padx=5)
+        
+        # Pattern selector
+        tk.Label(control_frame, text="Pattern:", bg='#2C3E50', fg='white').pack(side=tk.LEFT, padx=5)
+        self.pattern_var = tk.IntVar(value=1)
+        for i in range(1, 4):
+            tk.Radiobutton(control_frame, text=f"{i}", variable=self.pattern_var, 
+                          value=i, bg='#2C3E50', fg='white', 
+                          selectcolor='#3498DB').pack(side=tk.LEFT)
+    
+    def flower_pattern(self, t):
+        """Create flowing flower-like patterns"""
+        center_x, center_y = 400, 300
+        points = []
+        
+        for i in range(5):
+            # Each petal has different phase and frequency
+            phase = i * 2 * math.pi / 5
+            
+            # Complex parametric equations for organic flow
+            r = 80 + 40 * math.cos(3 * t + phase)
+            x = center_x + r * math.cos(2 * t + phase) * (1 + 0.3 * math.sin(t * 0.5))
+            y = center_y + r * math.sin(2 * t + phase) * (1 + 0.3 * math.cos(t * 0.7))
+            
+            # Add subtle secondary motion
+            x += 15 * math.cos(5 * t + i)
+            y += 15 * math.sin(4 * t + i)
+            
+            points.append((x, y, i))
+        
+        return points
+    
+    def spirograph_pattern(self, t):
+        """Create spirograph-like patterns"""
+        center_x, center_y = 400, 300
+        points = []
+        
+        for i in range(3):
+            # Spirograph parameters
+            R = 100 + i * 30  # Outer circle radius
+            r = 25 + i * 10   # Inner circle radius  
+            d = 50 + i * 20   # Distance from inner circle center
+            
+            # Spirograph equations
+            ratio = (R - r) / r
+            angle = t * (1 + i * 0.2)
+            
+            x = center_x + (R - r) * math.cos(angle) + d * math.cos(ratio * angle)
+            y = center_y + (R - r) * math.sin(angle) - d * math.sin(ratio * angle)
+            
+            points.append((x, y, i))
+        
+        return points
+    
+    def lissajous_pattern(self, t):
+        """Create modulated Lissajous curves"""
+        center_x, center_y = 400, 300
+        points = []
+        
+        for i in range(4):
+            # Lissajous parameters
+            a = 3 + i * 0.5
+            b = 2 + i * 0.3
+            phase = i * math.pi / 4
+            
+            # Modulated Lissajous equations
+            amplitude = 120 * (1 + 0.4 * math.sin(t * 0.3 + i))
+            x = center_x + amplitude * math.cos(a * t + phase)
+            y = center_y + amplitude * math.sin(b * t + phase)
+            
+            points.append((x, y, i))
+        
+        return points
+    
+    def get_pattern_points(self, t):
+        """Get points based on selected pattern"""
+        pattern = self.pattern_var.get()
+        
+        if pattern == 1:
+            return self.flower_pattern(t)
+        elif pattern == 2:
+            return self.spirograph_pattern(t)
+        else:
+            return self.lissajous_pattern(t)
+    
+    def draw_frame(self):
+        """Draw one frame of animation with trailing effects"""
+        points = self.get_pattern_points(self.t)
+        
+        # Add new points to trails
+        for i, (x, y, trail_id) in enumerate(points):
+            if trail_id < len(self.trails):
+                self.trails[trail_id].append((x, y))
+                
+                # Limit trail length
+                if len(self.trails[trail_id]) > self.trail_length:
+                    self.trails[trail_id].pop(0)
+        
+        # Clear canvas and redraw trails
+        self.canvas.delete("all")
+        
+        # Draw trails with fading effect
+        for trail_id, trail in enumerate(self.trails):
+            if len(trail) > 1:
+                color = self.colors[trail_id % len(self.colors)]
+                
+                for i in range(1, len(trail)):
+                    # Create fading effect
+                    alpha = i / len(trail)
+                    prev_x, prev_y = trail[i-1]
+                    curr_x, curr_y = trail[i]
+                    
+                    # Vary line width and color for depth
+                    if alpha > 0.8:
+                        line_color = color
+                        width = 3
+                    elif alpha > 0.5:
+                        line_color = '#888888'
+                        width = 2
+                    else:
+                        line_color = '#444444'
+                        width = 1
+                    
+                    self.canvas.create_line(prev_x, prev_y, curr_x, curr_y, 
+                                          fill=line_color, width=width, 
+                                          capstyle=tk.ROUND)
+        
+        # Draw current points as bright dots
+        for x, y, trail_id in points:
+            color = self.colors[trail_id % len(self.colors)]
+            self.canvas.create_oval(x-3, y-3, x+3, y+3, 
+                                  fill=color, outline='white', width=1)
+    
+    def animate(self):
+        """Main animation loop"""
+        if self.running:
+            self.draw_frame()
+            self.t += self.dt * self.speed_var.get()
+        
+        # Schedule next frame (30 FPS)
+        self.root.after(33, self.animate)
+    
+    def toggle_pause(self):
+        """Toggle animation pause"""
+        self.running = not self.running
+    
+    def clear_canvas(self):
+        """Clear the canvas and trails"""
+        self.canvas.delete("all")
+        self.trails = [[] for _ in range(5)]
+    
+    def reset(self):
+        """Reset animation to beginning"""
+        self.t = 0
+        self.clear_canvas()
+    
+    def run(self):
+        """Start the application"""
+        print("🎨 Advanced Parametric Mathematical Art")
+        print("Controls:")
+        print("• ⏯️ Pause/Resume: Toggle animation")
+        print("• 🗑️ Clear: Clear all trails")
+        print("• 🔄 Reset: Start over from beginning")
+        print("• Speed slider: Adjust animation speed")
+        print("• Pattern buttons: Switch between different mathematical patterns")
+        print("\nPattern Types:")
+        print("1. Flower Pattern: Organic flowing petals")
+        print("2. Spirograph: Classic geometric curves")
+        print("3. Lissajous: Modulated harmonic motion")
+        
+        self.root.mainloop()
+
+if __name__ == "__main__":
+    app = ParametricArt()
+    app.run()</code></pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- What's Happening Here -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">🔍 What's Happening Here?</h2>
+        
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-xl font-semibold text-blue-200 mb-3">🌸 Pattern Generation</h3>
+            <p class="text-gray-200">
+              Each pattern type uses different mathematical approaches:
+            </p>
+            <ul class="text-gray-200 mt-2 space-y-1 ml-4">
+              <li>• <strong>Flower Pattern:</strong> Multiple oscillating petals with organic modulation</li>
+              <li>• <strong>Spirograph:</strong> Classic epicycloid curves from rolling circles</li>
+              <li>• <strong>Lissajous:</strong> Harmonic motion with amplitude modulation</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-semibold text-blue-200 mb-3">✨ Trail Effects</h3>
+            <p class="text-gray-200">
+              The program creates beautiful trailing effects by:
+            </p>
+            <ul class="text-gray-200 mt-2 space-y-1 ml-4">
+              <li>• Storing the last 300 positions for each pattern element</li>
+              <li>• Drawing lines between consecutive points</li>
+              <li>• Using different colors and widths to simulate fading</li>
+              <li>• Creating depth with varying line thickness</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="text-xl font-semibold text-blue-200 mb-3">🎮 Interactive Controls</h3>
+            <p class="text-gray-200">
+              The interface provides real-time control over:
+            </p>
+            <ul class="text-gray-200 mt-2 space-y-1 ml-4">
+              <li>• Animation speed (0.1x to 3.0x)</li>
+              <li>• Pattern selection (3 different mathematical types)</li>
+              <li>• Pause/resume functionality</li>
+              <li>• Clear and reset options</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Challenges -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">🚀 Programming Challenges</h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="bg-green-900/30 rounded-lg p-6">
+            <h3 class="text-xl font-semibold text-green-200 mb-4">🟢 Beginner Challenges</h3>
+            <ul class="text-gray-200 space-y-2">
+              <li>• Add a fourth pattern type with your own equations</li>
+              <li>• Change the colors to create a rainbow effect</li>
+              <li>• Add a trail length slider to control how long trails last</li>
+              <li>• Create a "freeze frame" button that stops time but keeps drawing</li>
+            </ul>
+          </div>
+          
+          <div class="bg-red-900/30 rounded-lg p-6">
+            <h3 class="text-xl font-semibold text-red-200 mb-4">🔴 Advanced Challenges</h3>
+            <ul class="text-gray-200 space-y-2">
+              <li>• Implement 3D parametric equations with perspective projection</li>
+              <li>• Add mouse interaction to modify parameters in real-time</li>
+              <li>• Create a "record" feature that saves the art as an image</li>
+              <li>• Build a parameter editor with sliders for all mathematical constants</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Download Section -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">📥 Download Complete Code</h2>
+        <p class="text-gray-200 mb-6">
+          Get the complete parametric art program to run on your computer:
+        </p>
+        <a href="/downloads/parametric_art_tkinter.py" download 
+           class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+          📁 Download parametric_art_tkinter.py
+        </a>
+      </div>
+
+      <!-- Mathematical Insights -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 mb-8">
+        <h2 class="text-3xl font-bold text-white mb-6">🧮 Mathematical Insights</h2>
+        
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-2xl font-semibold text-blue-200 mb-4">The Beauty of Parametric Equations</h3>
+            <p class="text-gray-200 leading-relaxed">
+              Parametric equations are incredibly powerful because they separate the x and y coordinates, allowing each to follow 
+              its own mathematical relationship with time. This creates possibilities that regular y = f(x) equations cannot achieve.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-2xl font-semibold text-blue-200 mb-4">Frequency Relationships</h3>
+            <p class="text-gray-200 leading-relaxed">
+              When the frequencies in your parametric equations have simple ratios (like 2:3 or 3:4), you get closed, repeating 
+              patterns. When the ratios are irrational (like π:2), you get patterns that never exactly repeat, creating endless variety.
+            </p>
+          </div>
+          
+          <div>
+            <h3 class="text-2xl font-semibold text-blue-200 mb-4">Real-World Applications</h3>
+            <p class="text-gray-200 leading-relaxed">
+              These same mathematical principles are used in:
+            </p>
+            <ul class="text-gray-200 mt-2 space-y-1 ml-4">
+              <li>• <strong>Computer Graphics:</strong> Animation and special effects</li>
+              <li>• <strong>Engineering:</strong> Cam design and mechanical motion</li>
+              <li>• <strong>Physics:</strong> Orbital mechanics and wave interference</li>
+              <li>• <strong>Music:</strong> Sound synthesis and audio effects</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <div class="flex justify-between items-center">
+        <a href="./lesson13.html" 
+           class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200">
+          ← Lesson 13: Earth-Moon-Sun Orbital Mechanics
+        </a>
+        
+        <div class="text-center">
+          <p class="text-blue-200 text-lg font-semibold">🎨 Lesson 14 Complete! 🎨</p>
+          <p class="text-gray-300">You've mastered advanced parametric mathematical art!</p>
+        </div>
+        
+        <div class="bg-gray-600 text-gray-400 font-bold py-3 px-6 rounded-lg">
+          Final Lesson ✨
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function copyCode(elementId) {
+      const codeElement = document.getElementById(elementId);
+      const textToCopy = codeElement.textContent;
+      
+      // Try to use the modern clipboard API
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showCopyFeedback(elementId, true);
+        }).catch(() => {
+          fallbackCopy(textToCopy, elementId);
+        });
+      } else {
+        fallbackCopy(textToCopy, elementId);
+      }
+    }
+    
+    function fallbackCopy(text, elementId) {
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        showCopyFeedback(elementId, true);
+      } catch (err) {
+        showCopyFeedback(elementId, false);
+      }
+      
+      document.body.removeChild(textArea);
+    }
+    
+    function showCopyFeedback(elementId, success) {
+      const button = document.querySelector(`button[onclick="copyCode('${elementId}')"]`);
+      const originalText = button.textContent;
+      
+      if (success) {
+        button.textContent = '✅ Copied!';
+        button.className = button.className.replace('bg-blue-600 hover:bg-blue-700', 'bg-green-600');
+      } else {
+        button.textContent = '❌ Failed';
+        button.className = button.className.replace('bg-blue-600 hover:bg-blue-700', 'bg-red-600');
+      }
+      
+      setTimeout(() => {
+        button.textContent = originalText;
+        button.className = button.className.replace('bg-green-600', 'bg-blue-600 hover:bg-blue-700');
+        button.className = button.className.replace('bg-red-600', 'bg-blue-600 hover:bg-blue-700');
+      }, 2000);
+    }
+  </script>
+</Layout>
