@@ -9,6 +9,7 @@ type Simulation = {
 	description: string;
 	preview?: string;
 	previewAlt?: string;
+	isVideo?: boolean;
 };
 
 type Category = {
@@ -404,10 +405,11 @@ const categories: Category[] = [
 			// Solar System
 			{
 				title: "Solar Eclipse",
-				url: "/images/astrophotography/solar-eclipse.png",
+				url: "/videos/astrophotography/solar-eclipse.mp4",
 				description: "Rare celestial alignment demonstrating orbital mechanics, shadow physics, and the Sun's corona. Perfect example of predictable astronomical events.",
 				preview: "/images/previews/solar-eclipse-preview.png",
-				previewAlt: "Solar eclipse photography showing corona and diamond ring effect"
+				previewAlt: "Solar eclipse photography showing corona and diamond ring effect",
+				isVideo: true
 			}
 		]
 	}
@@ -444,7 +446,8 @@ const categories: Category[] = [
 							<p>{simulation.description}</p>
 							<a href={simulation.url} target="_blank" class="launch-btn">
 								{category.name === "Physical Science Class Resources" ? "Launch Quiz" : 
-								 category.name === "Astrophotography Gallery" ? "View Full Image" : 
+								 category.name === "Astrophotography Gallery" ? 
+								   (simulation.isVideo ? "Watch Video" : "View Full Image") : 
 								 "Launch Simulation"}
 							</a>
 						</div>
