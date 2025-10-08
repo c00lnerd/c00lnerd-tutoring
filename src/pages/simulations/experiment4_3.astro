@@ -486,13 +486,12 @@ import Layout from '../../layouts/Layout.astro';
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script>
-    // Initialize EmailJS with error checking
-    if (typeof emailjs !== 'undefined') {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    }
-
-    // DOM Elements
+    // Wait for DOM to be fully loaded (matching module 3 experiments)
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize EmailJS (same as working module 3)
+        emailjs.init('ct_s19oZHppLy9BlW');
+        
+        // DOM Elements
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
