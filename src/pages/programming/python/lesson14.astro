@@ -120,7 +120,7 @@ class ParametricArt:
         self.dt = 0.05
         self.running = True
         self.trail_length = 300
-        self.trails = [[] for _ in range(5)]
+        self.trails = [[] for _ &#105;n range(5)]
         
         # Colors for different patterns
         self.colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD']
@@ -155,9 +155,9 @@ class ParametricArt:
         # Pattern selector
         tk.Label(control_frame, text="Pattern:", bg='#2C3E50', fg='white').pack(side=tk.LEFT, padx=5)
         self.pattern_var = tk.IntVar(value=1)
-        for i in range(1, 4):
-            tk.Radiobutton(control_frame, text=f"{i}", variable=self.pattern_var, 
-                          value=i, bg='#2C3E50', fg='white', 
+        for &#105; in range(1, 4):
+            tk.Radiobutton(control_frame, text=str(&#105;), variable=self.pattern_var, 
+                          value=&#105;, bg='#2C3E50', fg='white', 
                           selectcolor='#3498DB').pack(side=tk.LEFT)
     
     def flower_pattern(self, t):
@@ -165,9 +165,9 @@ class ParametricArt:
         center_x, center_y = 400, 300
         points = []
         
-        for i in range(5):
+        for &#105; in range(5):
             # Each petal has different phase and frequency
-            phase = i * 2 * math.pi / 5
+            phase = &#105; * 2 * math.pi / 5
             
             # Complex parametric equations for organic flow
             r = 80 + 40 * math.cos(3 * t + phase)
@@ -175,10 +175,10 @@ class ParametricArt:
             y = center_y + r * math.sin(2 * t + phase) * (1 + 0.3 * math.cos(t * 0.7))
             
             # Add subtle secondary motion
-            x += 15 * math.cos(5 * t + i)
-            y += 15 * math.sin(4 * t + i)
+            x += 15 * math.cos(5 * t + &#105;)
+            y += 15 * math.sin(4 * t + &#105;)
             
-            points.append((x, y, i))
+            points.append((x, y, &#105;))
         
         return points
     
@@ -187,20 +187,20 @@ class ParametricArt:
         center_x, center_y = 400, 300
         points = []
         
-        for i in range(3):
+        for &#105; in range(3):
             # Spirograph parameters
-            R = 100 + i * 30  # Outer circle radius
-            r = 25 + i * 10   # Inner circle radius  
-            d = 50 + i * 20   # Distance from inner circle center
+            R = 100 + &#105; * 30  # Outer circle radius
+            r = 25 + &#105; * 10   # Inner circle radius  
+            d = 50 + &#105; * 20   # Distance from inner circle center
             
             # Spirograph equations
             ratio = (R - r) / r
-            angle = t * (1 + i * 0.2)
+            angle = t * (1 + &#105; * 0.2)
             
             x = center_x + (R - r) * math.cos(angle) + d * math.cos(ratio * angle)
             y = center_y + (R - r) * math.sin(angle) - d * math.sin(ratio * angle)
             
-            points.append((x, y, i))
+            points.append((x, y, &#105;))
         
         return points
     
@@ -209,18 +209,18 @@ class ParametricArt:
         center_x, center_y = 400, 300
         points = []
         
-        for i in range(4):
+        for &#105; in range(4):
             # Lissajous parameters
-            a = 3 + i * 0.5
-            b = 2 + i * 0.3
-            phase = i * math.pi / 4
+            a = 3 + &#105; * 0.5
+            b = 2 + &#105; * 0.3
+            phase = &#105; * math.pi / 4
             
             # Modulated Lissajous equations
-            amplitude = 120 * (1 + 0.4 * math.sin(t * 0.3 + i))
+            amplitude = 120 * (1 + 0.4 * math.sin(t * 0.3 + &#105;))
             x = center_x + amplitude * math.cos(a * t + phase)
             y = center_y + amplitude * math.sin(b * t + phase)
             
-            points.append((x, y, i))
+            points.append((x, y, &#105;))
         
         return points
     
@@ -228,7 +228,7 @@ class ParametricArt:
         """Get points based on selected pattern"""
         pattern = self.pattern_var.get()
         
-        if pattern == 1:
+        &#105;f pattern == 1:
             return self.flower_pattern(t)
         elif pattern == 2:
             return self.spirograph_pattern(t)
@@ -240,12 +240,12 @@ class ParametricArt:
         points = self.get_pattern_points(self.t)
         
         # Add new points to trails
-        for i, (x, y, trail_id) in enumerate(points):
-            if trail_id < len(self.trails):
+        for &#105;, (x, y, trail_id) in enumerate(points):
+            &#105;f trail_id < len(self.trails):
                 self.trails[trail_id].append((x, y))
                 
                 # Limit trail length
-                if len(self.trails[trail_id]) > self.trail_length:
+                &#105;f len(self.trails[trail_id]) > self.trail_length:
                     self.trails[trail_id].pop(0)
         
         # Clear canvas and redraw trails
@@ -253,17 +253,17 @@ class ParametricArt:
         
         # Draw trails with fading effect
         for trail_id, trail in enumerate(self.trails):
-            if len(trail) > 1:
+            &#105;f len(trail) > 1:
                 color = self.colors[trail_id % len(self.colors)]
                 
-                for i in range(1, len(trail)):
+                for &#105; in range(1, len(trail)):
                     # Create fading effect
-                    alpha = i / len(trail)
-                    prev_x, prev_y = trail[i-1]
-                    curr_x, curr_y = trail[i]
+                    alpha = &#105; / len(trail)
+                    prev_x, prev_y = trail[&#105;-1]
+                    curr_x, curr_y = trail[&#105;]
                     
                     # Vary line width and color for depth
-                    if alpha > 0.8:
+                    &#105;f alpha > 0.8:
                         line_color = color
                         width = 3
                     elif alpha > 0.5:
@@ -285,7 +285,7 @@ class ParametricArt:
     
     def animate(self):
         """Main animation loop"""
-        if self.running:
+        &#105;f self.running:
             self.draw_frame()
             self.t += self.dt * self.speed_var.get()
         
@@ -299,7 +299,7 @@ class ParametricArt:
     def clear_canvas(self):
         """Clear the canvas and trails"""
         self.canvas.delete("all")
-        self.trails = [[] for _ in range(5)]
+        self.trails = [[] for _ &#105;n range(5)]
     
     def reset(self):
         """Reset animation to beginning"""
@@ -322,7 +322,7 @@ class ParametricArt:
         
         self.root.mainloop()
 
-if __name__ == "__main__":
+&#105;f __name__ == "__main__":
     app = ParametricArt()
     app.run()</code></pre>
           </div>
