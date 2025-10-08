@@ -28,8 +28,21 @@ class ParametricArt3D:
         self.focal_length = 500
         self.z_offset = -300  # Move patterns back in 3D space
         
-        # Colors for different patterns
-        self.colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#FF9F43', '#00D2D3']
+        # Enhanced colors for beautiful trails
+        self.colors = [
+            '#FF6B6B',  # Coral Red
+            '#4ECDC4',  # Turquoise
+            '#45B7D1',  # Sky Blue
+            '#96CEB4',  # Mint Green
+            '#FFEAA7',  # Warm Yellow
+            '#DDA0DD',  # Plum
+            '#FF9F43',  # Orange
+            '#00D2D3',  # Cyan
+            '#FF7675',  # Light Red
+            '#74B9FF',  # Bright Blue
+            '#00B894',  # Emerald
+            '#FDCB6E'   # Golden Yellow
+        ]
         
         # Mouse event bindings for 3D rotation
         self.canvas.bind("<Button-1>", self.mouse_down_event)
@@ -106,6 +119,23 @@ class ParametricArt3D:
     def mouse_up_event(self, event):
         """Handle mouse release"""
         self.mouse_down = False
+    
+    def _blend_color(self, color1, color2, blend_factor):
+        """Blend two hex colors together"""
+        # Convert hex to RGB
+        def hex_to_rgb(hex_color):
+            hex_color = hex_color.lstrip('#')
+            return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))
+        
+        def rgb_to_hex(rgb):
+            return '#{:02x}{:02x}{:02x}'.format(int(rgb[0]), int(rgb[1]), int(rgb[2]))
+        
+        rgb1 = hex_to_rgb(color1)
+        rgb2 = hex_to_rgb(color2)
+        
+        # Blend the colors
+        blended = tuple(rgb1[i] * (1 - blend_factor) + rgb2[i] * blend_factor for i in range(3))
+        return rgb_to_hex(blended)
     
     def project_to_2d(self, x, y, z):
         """Project 3D coordinates to 2D screen coordinates with rotation"""
@@ -245,12 +275,11 @@ class ParametricArt3D:
         
         points_3d = self.get_pattern_points_3d(self.t)
         
-        # Project 3D points to 2D and add to trails
+        # Store 3D points in trails (so they rotate with view changes)
         for i, (x, y, z, trail_id) in enumerate(points_3d):
-            screen_x, screen_y, depth = self.project_to_2d(x, y, z)
-            
             if trail_id < len(self.trails):
-                self.trails[trail_id].append((screen_x, screen_y, depth))
+                # Store 3D coordinates, not 2D screen coordinates
+                self.trails[trail_id].append((x, y, z))
                 
                 # Limit trail length
                 if len(self.trails[trail_id]) > self.trail_length:
@@ -259,53 +288,77 @@ class ParametricArt3D:
         # Clear canvas and redraw trails
         self.canvas.delete("all")
         
-        # Draw trails with depth-based effects
+        # Draw trails with enhanced colors and 3D rotation
         for trail_id, trail in enumerate(self.trails):
             if len(trail) > 1:
-                color = self.colors[trail_id % len(self.colors)]
+                base_color = self.colors[trail_id % len(self.colors)]
                 
-                for i in range(1, len(trail)):
+                # Convert trail points from 3D to 2D in real-time (so they rotate!)
+                projected_trail = []
+                for x3d, y3d, z3d in trail:
+                    screen_x, screen_y, depth = self.project_to_2d(x3d, y3d, z3d)
+                    projected_trail.append((screen_x, screen_y, depth))
+                
+                # Draw the trail with beautiful color gradients
+                for i in range(1, len(projected_trail)):
                     # Create fading and depth effects
-                    alpha = i / len(trail)
-                    prev_x, prev_y, prev_depth = trail[i-1]
-                    curr_x, curr_y, curr_depth = trail[i]
+                    alpha = i / len(projected_trail)
+                    prev_x, prev_y, prev_depth = projected_trail[i-1]
+                    curr_x, curr_y, curr_depth = projected_trail[i]
                     
-                    # Depth-based sizing and coloring
+                    # Depth-based sizing and enhanced coloring
                     avg_depth = (prev_depth + curr_depth) / 2
-                    depth_factor = max(0.3, min(1.0, (-avg_depth - 200) / 300))
+                    depth_factor = max(0.2, min(1.0, (-avg_depth - 200) / 400))
                     
-                    # Vary line width and color for depth and fading
-                    if alpha > 0.8 and depth_factor > 0.7:
-                        line_color = color
+                    # Enhanced color system with gradients
+                    if alpha > 0.9:  # Newest parts - brightest
+                        line_color = base_color
+                        width = int(4 * depth_factor)
+                    elif alpha > 0.7:  # Recent parts - bright
+                        line_color = self._blend_color(base_color, '#FFFFFF', 0.3)
                         width = int(3 * depth_factor)
-                    elif alpha > 0.5:
-                        line_color = '#888888'
+                    elif alpha > 0.4:  # Middle parts - medium
+                        line_color = self._blend_color(base_color, '#888888', 0.5)
                         width = int(2 * depth_factor)
-                    elif alpha > 0.2:
-                        line_color = '#555555'
+                    elif alpha > 0.2:  # Older parts - dim
+                        line_color = self._blend_color(base_color, '#444444', 0.7)
                         width = max(1, int(1 * depth_factor))
-                    else:
-                        line_color = '#333333'
+                    else:  # Oldest parts - very dim
+                        line_color = '#222222'
                         width = 1
                     
-                    if width > 0:
+                    if width > 0 and prev_x > 0 and curr_x > 0:  # Only draw visible points
                         self.canvas.create_line(prev_x, prev_y, curr_x, curr_y, 
                                               fill=line_color, width=width, 
-                                              capstyle=tk.ROUND)
+                                              capstyle=tk.ROUND, smooth=True)
         
-        # Draw current points as bright dots with depth sizing
+        # Draw current points as bright, glowing dots with depth sizing
         for x, y, z, trail_id in points_3d:
             screen_x, screen_y, depth = self.project_to_2d(x, y, z)
-            color = self.colors[trail_id % len(self.colors)]
+            base_color = self.colors[trail_id % len(self.colors)]
             
             # Size based on depth
             depth_factor = max(0.3, min(1.0, (-depth - 200) / 300))
-            radius = int(4 * depth_factor)
+            radius = int(5 * depth_factor)
             
-            if radius > 0:
+            if radius > 0 and screen_x > 0 and screen_y > 0:
+                # Create glowing effect with multiple circles
+                # Outer glow
+                glow_color = self._blend_color(base_color, '#FFFFFF', 0.7)
+                self.canvas.create_oval(screen_x-radius-1, screen_y-radius-1, 
+                                      screen_x+radius+1, screen_y+radius+1, 
+                                      fill=glow_color, outline='', width=0)
+                
+                # Main dot
                 self.canvas.create_oval(screen_x-radius, screen_y-radius, 
                                       screen_x+radius, screen_y+radius, 
-                                      fill=color, outline='white', width=1)
+                                      fill=base_color, outline='white', width=1)
+                
+                # Inner highlight
+                highlight_radius = max(1, radius // 2)
+                self.canvas.create_oval(screen_x-highlight_radius, screen_y-highlight_radius, 
+                                      screen_x+highlight_radius, screen_y+highlight_radius, 
+                                      fill='white', outline='', width=0)
         
         # Draw instructions
         self.canvas.create_text(450, 20, text="🖱️ Click and drag to rotate 3D view", 
