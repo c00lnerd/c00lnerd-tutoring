@@ -75,6 +75,25 @@ import Layout from '../../layouts/Layout.astro';
                     does. You should also catch the oil in a jar to save for the next experiment. Record your 
                     observations in your data table.
                 </li>
+            </ol>
+            
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h4 class="text-sm font-medium text-yellow-800">Important Note About Body Grounding:</h4>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <p>When testing the oil, make sure to isolate the cup from direct contact with your body. If you hold the cup directly with your hand, your body can act as a "ground" and may cause the oil to show slight attraction to the charged balloon even though oil is nonpolar. For the most accurate results, try to minimize direct hand contact with the cup or use an insulated holder. This ensures you're observing the true polarity behavior of the oil molecules rather than electrical effects from body grounding.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <ol class="list-decimal pl-8 mb-4" start="7">
                 <li class="mb-2">
                     Clean up and put everything away.
                 </li>
@@ -187,10 +206,11 @@ import Layout from '../../layouts/Layout.astro';
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script>
-        // Initialize EmailJS with error checking
-        if (typeof emailjs !== 'undefined') {
-            emailjs.init("ct_s19oZHppLy9BlW");
-        }
+        // Wait for DOM to be fully loaded (matching module 3 experiments)
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize EmailJS (same as working module 3)
+            emailjs.init('ct_s19oZHppLy9BlW');
+        });
 
         // Form submission
         document.getElementById('experimentForm').addEventListener('submit', function(e) {
