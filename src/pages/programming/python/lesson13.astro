@@ -174,8 +174,12 @@ moon_y = earth_y + moon_y_rel</code></pre>
                         </div>
                     </div>
 
-                    <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto mb-4">
-<pre><code>import tkinter as tk
+                    <div class="relative">
+                        <button onclick="copyAdvancedCode()" class="absolute top-2 right-2 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded text-xs transition-colors duration-200 z-10">
+                            📋 Copy Code
+                        </button>
+                        <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto mb-4">
+<pre><code id="advancedCode">import tkinter as tk
 import math
 
 class Planet:
@@ -333,6 +337,7 @@ class SolarSystemSim:
 root = tk.Tk()
 app = SolarSystemSim(root)
 root.mainloop()</code></pre>
+                        </div>
                     </div>
 
                     <div class="grid md:grid-cols-2 gap-6">
@@ -474,4 +479,48 @@ root.mainloop()</code></pre>
             </div>
         </div>
     </main>
+
+    <script>
+        function copyAdvancedCode() {
+            const codeElement = document.getElementById('advancedCode');
+            const codeText = codeElement.textContent;
+            
+            navigator.clipboard.writeText(codeText).then(() => {
+                // Change button text temporarily to show success
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                button.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-500');
+                    button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy code: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = codeText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                // Show success message
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✅ Copied!';
+                button.classList.remove('bg-blue-500', 'hover:bg-blue-600');
+                button.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('bg-green-500');
+                    button.classList.add('bg-blue-500', 'hover:bg-blue-600');
+                }, 2000);
+            });
+        }
+    </script>
 </Layout>
