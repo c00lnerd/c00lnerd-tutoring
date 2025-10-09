@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Parametric Mathematical Art</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-container {
+            flex: 1;
+            min-width: 600px;
+            background: #000;
+            border: 2px solid #333;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #artCanvas {
+            display: block;
+            cursor: grab;
+        }
+
+        #artCanvas:active {
+            cursor: grabbing;
+        }
+
+        .controls {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+            height: fit-content;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        label {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        select, input[type="range"] {
+            flex: 1;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px;
+        }
+
+        input[type="range"] {
+            height: 20px;
+        }
+
+        button {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: linear-gradient(45deg, #0099cc, #007399);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 212, 255, 0.3);
+        }
+
+        .value-display {
+            min-width: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        .instructions {
+            background: rgba(0, 100, 150, 0.2);
+            border: 1px solid #0066aa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .instructions h4 {
+            color: #00d4ff;
+            margin-top: 0;
+        }
+
+        .instructions ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .pattern-info {
+            background: rgba(50, 50, 50, 0.8);
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .canvas-container {
+                min-width: auto;
+            }
+            
+            .controls {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 3D Parametric Mathematical Art 🌟</h1>
+        <p class="subtitle">Interactive exploration of 3D mathematical beauty through parametric equations</p>
+        
+        <div class="main-content">
+            <div class="canvas-container">
+                <canvas id="artCanvas" width="900" height="600"></canvas>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <h3>🎨 Pattern Selection</h3>
+                    <div class="control-row">
+                        <label>Pattern:</label>
+                        <select id="patternSelect">
+                            <option value="1">Independent Objects (6 patterns)</option>
+                            <option value="2">Synchronized Lissajous</option>
+                            <option value="3">Spiral Galaxy</option>
+                            <option value="4">DNA Helix</option>
+                            <option value="5">Single Lissajous</option>
+                            <option value="6">Pure 3D Rose</option>
+                        </select>
+                    </div>
+                    <div class="pattern-info" id="patternInfo">
+                        Six independent mathematical objects creating a complex 3D art display
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>⚡ Animation Controls</h3>
+                    <div class="control-row">
+                        <label>Speed:</label>
+                        <input type="range" id="speedSlider" min="0.1" max="3.0" step="0.1" value="1.0">
+                        <span class="value-display" id="speedValue">1.0x</span>
+                    </div>
+                    <div class="control-row">
+                        <button id="playPauseBtn">⏸️ Pause</button>
+                        <button id="resetBtn">🔄 Reset</button>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>🎭 Visual Effects</h3>
+                    <div class="control-row">
+                        <label>Trail Mode:</label>
+                        <select id="trailMode">
+                            <option value="fading">Fading Trails</option>
+                            <option value="persistent">Persistent Trails</option>
+                        </select>
+                    </div>
+                    <div class="control-row">
+                        <label>Zoom:</label>
+                        <input type="range" id="zoomSlider" min="0.5" max="3.0" step="0.1" value="1.0">
+                        <span class="value-display" id="zoomValue">1.0x</span>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h4>🖱️ Interactive Controls</h4>
+                    <ul>
+                        <li><strong>Drag:</strong> Rotate the 3D view</li>
+                        <li><strong>Shift + Drag:</strong> Pan the view</li>
+                        <li><strong>Mouse Wheel:</strong> Zoom in/out</li>
+                        <li><strong>Pattern 6:</strong> Best for seeing rotation</li>
+                        <li><strong>Persistent Trails:</strong> Create mathematical art</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="parametric-art-3d.js"></script>
+</body>
+</html>
