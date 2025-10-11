@@ -516,7 +516,7 @@ void performAudioMotionSync() {
                     </div>
                     <div style="background: #f3e8ff; padding: 1rem; border-radius: 6px;">
                         <p style="color: #7c3aed; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
-                            <strong>Same as Section 3:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → Pin 2 & GND, Potentiometer → A0
+                            <strong>Updated Connections:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → A1 & GND, Potentiometer → A0
                         </p>
                     </div>
                 </div>
@@ -535,7 +535,7 @@ void performAudioMotionSync() {
 Servo myServo;
 const int servoPin = 9;
 const int buzzerPin = 8;
-const int buttonPin = 2;
+const int buttonPin = A1;
 
 // Pattern definitions
 struct Pattern {
@@ -594,7 +594,7 @@ void loop() {
       executePattern(currentPattern);
     }
     
-    delay(50);  // Debounce
+    delay(100);  // Debounce
   }
   
   lastButtonState = currentButtonState;
