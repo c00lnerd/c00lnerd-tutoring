@@ -259,11 +259,24 @@ void playMelody() {
                 <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 2 Wiring Diagram</h4>
                     <div style="text-align: center; margin-bottom: 1rem;">
-                        <img src="/images/wiring/lesson10_section2_wiring.png" alt="Servo Motor Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                        <img src="/images/wiring/lesson10_section2_wiring.png" alt="Musical Melody Buzzer Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
                     </div>
                     <div style="background: #fef3c7; padding: 1rem; border-radius: 6px;">
                         <p style="color: #92400e; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
-                            <strong>Connections:</strong> Servo signal (orange/yellow) → Pin 9, Servo power (red) → 5V, Servo ground (brown/black) → GND, Potentiometer → A0
+                            <strong>Musical Melody Setup:</strong> Buzzer positive → Pin 8, Buzzer negative → GND (for tone() function musical notes)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Section 3 Wiring Diagram -->
+                <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #22c55e;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 3 Wiring Diagram</h4>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <img src="/images/wiring/lesson10_section3_wiring.png" alt="Combined Buzzer and Servo Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+                    <div style="background: #dcfce7; padding: 1rem; border-radius: 6px;">
+                        <p style="color: #166534; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
+                            <strong>Combined Connections:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → A1 & GND, Potentiometer → A0
                         </p>
                     </div>
                 </div>
@@ -406,15 +419,15 @@ void performSweep() {
                     </p>
                 </div>
 
-                <!-- Section 3 Wiring Diagram -->
-                <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #22c55e;">
-                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 3 Wiring Diagram</h4>
+                <!-- Section 5 Wiring Diagram -->
+                <div style="background: #fef7ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #d946ef;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 5 Wiring Diagram</h4>
                     <div style="text-align: center; margin-bottom: 1rem;">
-                        <img src="/images/wiring/lesson10_section3_wiring.png" alt="Combined Buzzer and Servo Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                        <img src="/images/wiring/lesson10_section5_wiring.png" alt="Advanced Audio-Motion Synchronization Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
                     </div>
-                    <div style="background: #dcfce7; padding: 1rem; border-radius: 6px;">
-                        <p style="color: #166534; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
-                            <strong>Combined Connections:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → Pin 2 & GND, Potentiometer → A0
+                    <div style="background: #fae8ff; padding: 1rem; border-radius: 6px;">
+                        <p style="color: #a21caf; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
+                            <strong>Synchronization Setup:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → A1 & GND, Potentiometer → A0 (for real-time control)
                         </p>
                     </div>
                 </div>
@@ -433,7 +446,7 @@ void performSweep() {
 Servo myServo;
 const int servoPin = 9;
 const int buzzerPin = 8;
-const int buttonPin = 2;
+const int buttonPin = A1;
 const int potPin = A0;
 
 bool systemActive = false;
@@ -461,7 +474,7 @@ void loop() {
     if (!systemActive) {
       noTone(buzzerPin);  // Stop sound when inactive
     }
-    delay(50);  // Debounce
+    delay(100);  // Debounce
   }
   
   if (systemActive) {
