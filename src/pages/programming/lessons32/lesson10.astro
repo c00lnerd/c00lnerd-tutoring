@@ -98,6 +98,19 @@ import Layout from '../../../layouts/Layout.astro';
                     </div>
                 </div>
 
+                <!-- Section 1 Wiring Diagram -->
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #3b82f6;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 1 Wiring Diagram</h4>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <img src="/images/wiring/lesson10_section1_wiring.png" alt="Buzzer Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+                    <div style="background: #dbeafe; padding: 1rem; border-radius: 6px;">
+                        <p style="color: #1e40af; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
+                            <strong>Connections:</strong> Buzzer positive → Pin 8, Buzzer negative → GND, Button → Pin 2 & GND (with INPUT_PULLUP)
+                        </p>
+                    </div>
+                </div>
+
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic Buzzer Control</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
@@ -242,6 +255,19 @@ void playMelody() {
                     </div>
                 </div>
 
+                <!-- Section 2 Wiring Diagram -->
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 2 Wiring Diagram</h4>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <img src="/images/wiring/lesson10_section2_wiring.png" alt="Servo Motor Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+                    <div style="background: #fef3c7; padding: 1rem; border-radius: 6px;">
+                        <p style="color: #92400e; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
+                            <strong>Connections:</strong> Servo signal (orange/yellow) → Pin 9, Servo power (red) → 5V, Servo ground (brown/black) → GND, Potentiometer → A0
+                        </p>
+                    </div>
+                </div>
+
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic Servo Control</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
@@ -363,6 +389,256 @@ void performSweep() {
       }
     }
   }
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Combined Buzzer and Servo Control -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">🎵 Section 3: Combined Audio-Motion Control</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Coordinated Sound and Movement</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Combine buzzer and servo control to create synchronized audio-visual feedback systems. 
+                        This demonstrates how multiple output devices can work together for enhanced user interaction.
+                    </p>
+                </div>
+
+                <!-- Section 3 Wiring Diagram -->
+                <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #22c55e;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 3 Wiring Diagram</h4>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <img src="/images/wiring/lesson10_section3_wiring.png" alt="Combined Buzzer and Servo Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+                    <div style="background: #dcfce7; padding: 1rem; border-radius: 6px;">
+                        <p style="color: #166534; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
+                            <strong>Combined Connections:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → Pin 2 & GND, Potentiometer → A0
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Audio-Motion Synchronization Code</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create coordinated patterns where servo position affects buzzer frequency:
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Combined Audio-Motion Control
+#include <Servo.h>
+
+Servo myServo;
+const int servoPin = 9;
+const int buzzerPin = 8;
+const int buttonPin = 2;
+const int potPin = A0;
+
+bool systemActive = false;
+bool lastButtonState = HIGH;
+int servoPosition = 90;
+
+void setup() {
+  myServo.attach(servoPin);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  myServo.write(servoPosition);
+  Serial.begin(9600);
+  Serial.println("Audio-Motion Control - Press button to activate");
+}
+
+void loop() {
+  bool currentButtonState = digitalRead(buttonPin);
+  
+  // Toggle system on button press
+  if (lastButtonState == HIGH && currentButtonState == LOW) {
+    systemActive = !systemActive;
+    Serial.print("System: ");
+    Serial.println(systemActive ? "ACTIVE" : "INACTIVE");
+    
+    if (!systemActive) {
+      noTone(buzzerPin);  // Stop sound when inactive
+    }
+    delay(50);  // Debounce
+  }
+  
+  if (systemActive) {
+    performAudioMotionSync();
+  }
+  
+  lastButtonState = currentButtonState;
+}
+
+void performAudioMotionSync() {
+  // Read potentiometer for control
+  int potValue = analogRead(potPin);
+  
+  // Map pot to servo position (0-180 degrees)
+  servoPosition = map(potValue, 0, 1023, 0, 180);
+  myServo.write(servoPosition);
+  
+  // Map servo position to buzzer frequency (200-2000 Hz)
+  int frequency = map(servoPosition, 0, 180, 200, 2000);
+  tone(buzzerPin, frequency);
+  
+  // Display current values
+  Serial.print("Servo: ");
+  Serial.print(servoPosition);
+  Serial.print("° | Frequency: ");
+  Serial.print(frequency);
+  Serial.println(" Hz");
+  
+  delay(50);  // Smooth updates
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 4: Advanced Pattern Control -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-green-800 mb-6">🎭 Section 4: Advanced Pattern Control</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Automated Sequences and Patterns</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create complex automated sequences that combine servo movements with musical patterns. 
+                        This section demonstrates advanced programming techniques for coordinated device control.
+                    </p>
+                </div>
+
+                <!-- Section 4 Wiring Diagram (Same as Section 3) -->
+                <div style="background: #fdf4ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #a855f7;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🔌 Section 4 Wiring Diagram</h4>
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <img src="/images/wiring/lesson10_section4_wiring.png" alt="Advanced Pattern Control Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+                    </div>
+                    <div style="background: #f3e8ff; padding: 1rem; border-radius: 6px;">
+                        <p style="color: #7c3aed; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
+                            <strong>Same as Section 3:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → Pin 2 & GND, Potentiometer → A0
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Pattern Sequence Programming</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Create automated sequences with predefined patterns:
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Advanced Pattern Control System
+#include <Servo.h>
+
+Servo myServo;
+const int servoPin = 9;
+const int buzzerPin = 8;
+const int buttonPin = 2;
+
+// Pattern definitions
+struct Pattern {
+  int servoPos;
+  int frequency;
+  int duration;
+};
+
+// Define multiple patterns
+Pattern pattern1[] = {
+  {0, 262, 500},    // C4
+  {45, 294, 500},   // D4
+  {90, 330, 500},   // E4
+  {135, 349, 500},  // F4
+  {180, 392, 500}   // G4
+};
+
+Pattern pattern2[] = {
+  {180, 523, 300},  // C5
+  {90, 392, 300},   // G4
+  {0, 262, 300},    // C4
+  {90, 392, 300},   // G4
+  {180, 523, 600}   // C5
+};
+
+int currentPattern = 1;
+bool patternActive = false;
+bool lastButtonState = HIGH;
+
+void setup() {
+  myServo.attach(servoPin);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  myServo.write(90);  // Center position
+  Serial.begin(9600);
+  Serial.println("Advanced Pattern Control");
+  Serial.println("Press button to cycle through patterns");
+}
+
+void loop() {
+  bool currentButtonState = digitalRead(buttonPin);
+  
+  // Button press cycles through patterns
+  if (lastButtonState == HIGH && currentButtonState == LOW) {
+    currentPattern++;
+    if (currentPattern > 2) currentPattern = 0;
+    
+    Serial.print("Pattern: ");
+    Serial.println(currentPattern);
+    
+    if (currentPattern == 0) {
+      Serial.println("Pattern OFF");
+      noTone(buzzerPin);
+      myServo.write(90);
+    } else {
+      executePattern(currentPattern);
+    }
+    
+    delay(50);  // Debounce
+  }
+  
+  lastButtonState = currentButtonState;
+}
+
+void executePattern(int patternNum) {
+  Pattern* currentPatternArray;
+  int patternLength;
+  
+  if (patternNum == 1) {
+    currentPatternArray = pattern1;
+    patternLength = 5;
+    Serial.println("Executing Pattern 1: Rising Scale");
+  } else if (patternNum == 2) {
+    currentPatternArray = pattern2;
+    patternLength = 5;
+    Serial.println("Executing Pattern 2: Bounce Pattern");
+  }
+  
+  for (int i = 0; i < patternLength; i++) {
+    // Move servo to position
+    myServo.write(currentPatternArray[i].servoPos);
+    
+    // Play corresponding tone
+    tone(buzzerPin, currentPatternArray[i].frequency);
+    
+    // Display current step
+    Serial.print("Step ");
+    Serial.print(i + 1);
+    Serial.print(": Servo=");
+    Serial.print(currentPatternArray[i].servoPos);
+    Serial.print("° Freq=");
+    Serial.print(currentPatternArray[i].frequency);
+    Serial.println("Hz");
+    
+    // Wait for duration
+    delay(currentPatternArray[i].duration);
+    
+    // Brief pause between notes
+    noTone(buzzerPin);
+    delay(50);
+  }
+  
+  Serial.println("Pattern complete!");
 }`}</code></pre>
                     </div>
                 </div>
