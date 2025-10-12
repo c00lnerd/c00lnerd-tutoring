@@ -153,7 +153,16 @@ function setupEventListeners() {
     clearButton.addEventListener('click', clearSelection);
     
     // Naming challenge events
-    checkNameButton.addEventListener('click', checkCompoundName);
+    console.log('Setting up naming challenge events');
+    console.log('checkNameButton:', checkNameButton);
+    
+    if (checkNameButton) {
+        checkNameButton.addEventListener('click', checkCompoundName);
+        console.log('Check name button event listener added');
+    } else {
+        console.error('checkNameButton not found!');
+    }
+    
     showHintButton.addEventListener('click', showNamingHint);
     revealAnswerButton.addEventListener('click', revealCompoundName);
     compoundNameInput.addEventListener('keypress', function(e) {
@@ -268,6 +277,7 @@ function buildCompound() {
     
     if (compound) {
         currentCompound = { ...compound, cation, anion };
+        console.log('Setting currentCompound:', currentCompound);
         displayCompoundChallenge(compound);
         showFeedback('Compound built! Now try to name it!', 'success');
     }
@@ -365,10 +375,19 @@ function resetNamingChallenge() {
 
 // Check if the student's answer is correct
 function checkCompoundName() {
-    if (!currentCompound) return;
+    console.log('checkCompoundName called');
+    console.log('currentCompound:', currentCompound);
+    
+    if (!currentCompound) {
+        console.log('No current compound - returning');
+        return;
+    }
     
     const studentAnswer = compoundNameInput.value.trim().toLowerCase();
     const correctAnswer = currentCompound.name.toLowerCase();
+    
+    console.log('Student answer:', studentAnswer);
+    console.log('Correct answer:', correctAnswer);
     
     // Check for exact match or common variations
     const isCorrect = studentAnswer === correctAnswer || 
