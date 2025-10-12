@@ -153,15 +153,7 @@ function setupEventListeners() {
     clearButton.addEventListener('click', clearSelection);
     
     // Naming challenge events
-    console.log('Setting up naming challenge events');
-    console.log('checkNameButton:', checkNameButton);
-    
-    if (checkNameButton) {
-        checkNameButton.addEventListener('click', checkCompoundName);
-        console.log('Check name button event listener added');
-    } else {
-        console.error('checkNameButton not found!');
-    }
+    checkNameButton.addEventListener('click', checkCompoundName);
     
     showHintButton.addEventListener('click', showNamingHint);
     revealAnswerButton.addEventListener('click', revealCompoundName);
@@ -277,7 +269,6 @@ function buildCompound() {
     
     if (compound) {
         currentCompound = { ...compound, cation, anion };
-        console.log('Setting currentCompound:', currentCompound);
         displayCompoundChallenge(compound);
         showFeedback('Compound built! Now try to name it!', 'success');
     }
@@ -375,19 +366,10 @@ function resetNamingChallenge() {
 
 // Check if the student's answer is correct
 function checkCompoundName() {
-    console.log('checkCompoundName called');
-    console.log('currentCompound:', currentCompound);
-    
-    if (!currentCompound) {
-        console.log('No current compound - returning');
-        return;
-    }
+    if (!currentCompound) return;
     
     const studentAnswer = compoundNameInput.value.trim().toLowerCase();
     const correctAnswer = currentCompound.name.toLowerCase();
-    
-    console.log('Student answer:', studentAnswer);
-    console.log('Correct answer:', correctAnswer);
     
     // Check for exact match or common variations
     const isCorrect = studentAnswer === correctAnswer || 
@@ -468,12 +450,19 @@ function revealCompoundName() {
 // Check for alternative acceptable names
 function checkAlternativeNames(student, correct) {
     // Remove extra spaces and handle common variations
-    const studentClean = student.replace(/\s+/g, ' ');
-    const correctClean = correct.replace(/\s+/g, ' ');
+    const studentClean = student.replace(/\s+/g, ' ').trim();
+    const correctClean = correct.replace(/\s+/g, ' ').trim();
     
-    // Check if student used parentheses in Roman numerals differently
-    const studentNoParens = studentClean.replace(/[()]/g, '');
-    const correctNoParens = correctClean.replace(/[()]/g, '');
+    // Handle Roman numeral spacing variations: "chromium (iii)" vs "chromium(iii)"
+    const studentNormalized = studentClean.replace(/\s*\(\s*(i+v*|v*i+)\s*\)\s*/gi, '($1)');
+    const correctNormalized = correctClean.replace(/\s*\(\s*(i+v*|v*i+)\s*\)\s*/gi, '($1)');
+    
+    // Check if they match after normalization
+    if (studentNormalized === correctNormalized) return true;
+    
+    // Also check without parentheses entirely
+    const studentNoParens = studentClean.replace(/[()]/g, '').replace(/\s+/g, ' ');
+    const correctNoParens = correctClean.replace(/[()]/g, '').replace(/\s+/g, ' ');
     
     return studentNoParens === correctNoParens;
 }
