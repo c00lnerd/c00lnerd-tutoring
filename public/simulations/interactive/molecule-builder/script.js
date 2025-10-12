@@ -66,11 +66,21 @@ const buildButton = document.getElementById('build-compound');
 const clearButton = document.getElementById('clear-all');
 const compoundDisplay = document.getElementById('compound-display');
 const compoundFormula = document.getElementById('compound-formula');
-const compoundName = document.getElementById('compound-name');
+const namingChallenge = document.getElementById('naming-challenge');
+const compoundNameInput = document.getElementById('compound-name-input');
+const checkNameButton = document.getElementById('check-name');
+const showHintButton = document.getElementById('show-hint');
+const revealAnswerButton = document.getElementById('reveal-answer');
+const namingFeedback = document.getElementById('naming-feedback');
+const compoundAnswer = document.getElementById('compound-answer');
+const correctName = document.getElementById('correct-name');
 const compoundInfo = document.getElementById('compound-info');
 const scoreElement = document.getElementById('score');
 const compoundsBuiltElement = document.getElementById('compounds-built');
 const feedback = document.getElementById('feedback');
+
+// Current compound data
+let currentCompound = null;
 
 // Initialize the game
 function initGame() {
@@ -141,6 +151,16 @@ function setupEventListeners() {
     // Button events
     buildButton.addEventListener('click', buildCompound);
     clearButton.addEventListener('click', clearSelection);
+    
+    // Naming challenge events
+    checkNameButton.addEventListener('click', checkCompoundName);
+    showHintButton.addEventListener('click', showNamingHint);
+    revealAnswerButton.addEventListener('click', revealCompoundName);
+    compoundNameInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            checkCompoundName();
+        }
+    });
 }
 
 // Handle drag over building area
@@ -205,6 +225,7 @@ function clearSelection() {
     selectedIons = [];
     updateSelectedIonsDisplay();
     compoundDisplay.classList.remove('active');
+    resetNamingChallenge();
     showFeedback('Selection cleared!', 'success');
 }
 
@@ -246,11 +267,9 @@ function buildCompound() {
     const compound = calculateCompoundFormula(cation, anion);
     
     if (compound) {
-        displayCompound(compound, cation, anion);
-        updateScore(compound.difficulty);
-        compoundsBuilt++;
-        updateDisplay();
-        showFeedback(`Great! You built ${compound.name}!`, 'success');
+        currentCompound = { ...compound, cation, anion };
+        displayCompoundChallenge(compound);
+        showFeedback('Compound built! Now try to name it!', 'success');
     }
 }
 
@@ -329,27 +348,115 @@ function gcd(a, b) {
     return b === 0 ? a : gcd(b, a % b);
 }
 
-// Display the built compound
-function displayCompound(compound, cation, anion) {
+// Display compound challenge (formula only, student must name it)
+function displayCompoundChallenge(compound) {
     compoundFormula.textContent = compound.formula;
-    compoundName.textContent = compound.name;
+    compoundDisplay.classList.add('active');
+    resetNamingChallenge();
+}
+
+// Reset naming challenge interface
+function resetNamingChallenge() {
+    compoundNameInput.value = '';
+    namingFeedback.className = 'naming-feedback';
+    namingFeedback.style.display = 'none';
+    compoundAnswer.style.display = 'none';
+}
+
+// Check if the student's answer is correct
+function checkCompoundName() {
+    if (!currentCompound) return;
+    
+    const studentAnswer = compoundNameInput.value.trim().toLowerCase();
+    const correctAnswer = currentCompound.name.toLowerCase();
+    
+    // Check for exact match or common variations
+    const isCorrect = studentAnswer === correctAnswer || 
+                     checkAlternativeNames(studentAnswer, correctAnswer);
+    
+    if (isCorrect) {
+        namingFeedback.textContent = '🎉 Correct! Well done!';
+        namingFeedback.className = 'naming-feedback correct';
+        
+        // Award points and update stats
+        updateScore(currentCompound.difficulty);
+        compoundsBuilt++;
+        updateDisplay();
+        
+        // Show the full answer after a delay
+        setTimeout(() => {
+            revealCompoundName();
+        }, 1500);
+    } else {
+        namingFeedback.textContent = '❌ Not quite right. Try again or use a hint!';
+        namingFeedback.className = 'naming-feedback incorrect';
+    }
+}
+
+// Show a hint for naming the compound
+function showNamingHint() {
+    if (!currentCompound) return;
+    
+    const cation = currentCompound.cation;
+    const anion = currentCompound.anion;
+    
+    let hint = `💡 Hint: This compound contains ${cation.name}`;
+    if (cation.name.includes('(')) {
+        hint += ` (notice the Roman numeral for charge)`;
+    }
+    hint += ` and ${anion.name}.`;
+    
+    // Add prefix/suffix hints
+    if (anion.name.endsWith('ide')) {
+        hint += ` Remember: simple anions end in "-ide".`;
+    } else if (anion.name.endsWith('ate')) {
+        hint += ` Remember: this polyatomic ion ends in "-ate".`;
+    } else if (anion.name.endsWith('ite')) {
+        hint += ` Remember: this polyatomic ion ends in "-ite".`;
+    }
+    
+    namingFeedback.textContent = hint;
+    namingFeedback.className = 'naming-feedback hint';
+}
+
+// Reveal the correct answer
+function revealCompoundName() {
+    if (!currentCompound) return;
+    
+    const cation = currentCompound.cation;
+    const anion = currentCompound.anion;
+    
+    correctName.textContent = currentCompound.name;
     
     let info = `This compound is formed by combining `;
-    if (compound.cationCount === 1) {
+    if (currentCompound.cationCount === 1) {
         info += `one ${cation.name} ion`;
     } else {
-        info += `${compound.cationCount} ${cation.name} ions`;
+        info += `${currentCompound.cationCount} ${cation.name} ions`;
     }
     info += ` with `;
-    if (compound.anionCount === 1) {
+    if (currentCompound.anionCount === 1) {
         info += `one ${anion.name} ion`;
     } else {
-        info += `${compound.anionCount} ${anion.name} ions`;
+        info += `${currentCompound.anionCount} ${anion.name} ions`;
     }
     info += `. The charges balance out to form a neutral compound.`;
     
     compoundInfo.textContent = info;
-    compoundDisplay.classList.add('active');
+    compoundAnswer.style.display = 'block';
+}
+
+// Check for alternative acceptable names
+function checkAlternativeNames(student, correct) {
+    // Remove extra spaces and handle common variations
+    const studentClean = student.replace(/\s+/g, ' ');
+    const correctClean = correct.replace(/\s+/g, ' ');
+    
+    // Check if student used parentheses in Roman numerals differently
+    const studentNoParens = studentClean.replace(/[()]/g, '');
+    const correctNoParens = correctClean.replace(/[()]/g, '');
+    
+    return studentNoParens === correctNoParens;
 }
 
 // Update score

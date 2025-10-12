@@ -165,10 +165,89 @@
             margin-bottom: 10px;
         }
 
-        .compound-name {
+        .naming-challenge {
+            margin-bottom: 20px;
+        }
+
+        .naming-challenge h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .naming-challenge p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        #compound-name-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        #compound-name-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .naming-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .naming-buttons .btn {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .naming-feedback {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .naming-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .naming-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .naming-feedback.hint {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            display: block;
+        }
+
+        .compound-answer {
+            border-top: 2px solid #e9ecef;
+            padding-top: 15px;
+        }
+
+        .correct-name {
             font-size: 1.5em;
             color: #4CAF50;
             margin-bottom: 15px;
+            font-weight: bold;
         }
 
         .compound-info {
@@ -336,8 +415,21 @@
                 </div>
                 <div class="compound-display" id="compound-display">
                     <div class="compound-formula" id="compound-formula"></div>
-                    <div class="compound-name" id="compound-name"></div>
-                    <div class="compound-info" id="compound-info"></div>
+                    <div class="naming-challenge" id="naming-challenge">
+                        <h4>🎯 Naming Challenge</h4>
+                        <p>What is the name of this compound?</p>
+                        <input type="text" id="compound-name-input" placeholder="Enter compound name..." />
+                        <div class="naming-buttons">
+                            <button class="btn btn-primary" id="check-name">Check Answer</button>
+                            <button class="btn btn-secondary" id="show-hint">Show Hint</button>
+                            <button class="btn btn-secondary" id="reveal-answer">Reveal Answer</button>
+                        </div>
+                        <div class="naming-feedback" id="naming-feedback"></div>
+                    </div>
+                    <div class="compound-answer" id="compound-answer" style="display: none;">
+                        <div class="correct-name" id="correct-name"></div>
+                        <div class="compound-info" id="compound-info"></div>
+                    </div>
                 </div>
             </div>
         </div>
