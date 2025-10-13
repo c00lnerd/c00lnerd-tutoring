@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problem Stopwatch - C00lnerd Tutoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #2196F3 0%, #21CBF3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .stopwatch-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .main-display {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .stopwatch-face {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border: 8px solid #2196F3;
+            border-radius: 50%;
+            background: #f8f9fa;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .time-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2196F3;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            min-width: 300px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .stats-panel h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .stat-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .stat-value {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .controls {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-pause {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-pause:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        .btn-lap {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-lap:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .problem-controls {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .problem-btn {
+            padding: 10px 20px;
+            border: 2px solid #2196F3;
+            border-radius: 8px;
+            background: white;
+            color: #2196F3;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .problem-btn:hover {
+            background: #2196F3;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .lap-times {
+            margin-top: 30px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .lap-times h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .lap-list {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .lap-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #2196F3;
+        }
+
+        .lap-number {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .lap-time {
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .lap-duration {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .status {
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status.running {
+            color: #4CAF50;
+        }
+
+        .status.paused {
+            color: #ff9800;
+        }
+
+        .milestones {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .milestone {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            opacity: 0.3;
+            transition: all 0.3s ease;
+        }
+
+        .milestone.reached {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .milestone-1min {
+            background: #E8F5E8;
+            color: #4CAF50;
+        }
+
+        .milestone-5min {
+            background: #FFF3E0;
+            color: #FF9800;
+        }
+
+        .milestone-10min {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+
+        .milestone-15min {
+            background: #F3E5F5;
+            color: #9C27B0;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #666;
+        }
+
+        @media (max-width: 768px) {
+            .stopwatch-container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .main-display {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .stopwatch-face {
+                width: 200px;
+                height: 200px;
+            }
+
+            .time-display {
+                font-size: 2em;
+            }
+
+            .stats-panel {
+                min-width: auto;
+                width: 100%;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .problem-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .milestones {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stopwatch-container">
+        <div class="header">
+            <h1>⏱️ Problem Stopwatch</h1>
+            <p>Track student progress and problem-solving time</p>
+        </div>
+
+        <div class="main-display">
+            <div class="stopwatch-face">
+                <div class="time-display" id="timeDisplay">00:00.0</div>
+            </div>
+
+            <div class="stats-panel">
+                <h3>📊 Session Statistics</h3>
+                <div class="stat-item">
+                    <span class="stat-label">Problems Completed:</span>
+                    <span class="stat-value" id="problemCount">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Average Time:</span>
+                    <span class="stat-value" id="averageTime">--:--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Fastest Problem:</span>
+                    <span class="stat-value" id="fastestTime">--:--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Current Problem:</span>
+                    <span class="stat-value" id="currentProblem">--:--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Total Session:</span>
+                    <span class="stat-value" id="totalTime">00:00</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="status" id="status">Ready to start timing</div>
+
+        <div class="milestones">
+            <div class="milestone milestone-1min" id="milestone1">🎯 1 Minute</div>
+            <div class="milestone milestone-5min" id="milestone5">⭐ 5 Minutes</div>
+            <div class="milestone milestone-10min" id="milestone10">🏆 10 Minutes</div>
+            <div class="milestone milestone-15min" id="milestone15">👑 15 Minutes</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn" onclick="startStopwatch()">▶️ Start</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pauseStopwatch()" disabled>⏸️ Pause</button>
+            <button class="btn btn-lap" id="lapBtn" onclick="recordProblem()" disabled>✅ Problem Done</button>
+            <button class="btn btn-reset" id="resetBtn" onclick="resetStopwatch()">🔄 Reset</button>
+        </div>
+
+        <div class="problem-controls">
+            <button class="problem-btn" onclick="recordProblem()">📝 Mark Problem Complete</button>
+            <button class="problem-btn" onclick="skipProblem()">⏭️ Skip Problem</button>
+            <button class="problem-btn" onclick="exportResults()">📊 Export Results</button>
+        </div>
+
+        <div class="lap-times">
+            <h3>📋 Problem Times</h3>
+            <div class="lap-list" id="lapList">
+                <p style="color: #666; font-style: italic;">Problem times will appear here...</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎯 <strong>Perfect for:</strong> Individual problem tracking, speed assessments, progress monitoring</p>
+            <p>⌨️ <strong>Keyboard shortcuts:</strong> Space (start/pause), Enter (mark problem), R (reset)</p>
+        </div>
+    </div>
+
+    <script>
+        let timer = null;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let isRunning = false;
+        let isPaused = false;
+        let problemStartTime = 0;
+        let problemTimes = [];
+        let problemCount = 0;
+
+        function formatTime(milliseconds, includeDecimal = true) {
+            const totalSeconds = Math.floor(milliseconds / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            const decimal = Math.floor((milliseconds % 1000) / 100);
+            
+            if (includeDecimal) {
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${decimal}`;
+            } else {
+                return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function updateDisplay() {
+            const currentTime = isRunning ? Date.now() - startTime + elapsedTime : elapsedTime;
+            const currentProblemTime = isRunning ? Date.now() - problemStartTime : 0;
+            
+            document.getElementById('timeDisplay').textContent = formatTime(currentTime);
+            document.getElementById('totalTime').textContent = formatTime(currentTime, false);
+            document.getElementById('currentProblem').textContent = isRunning ? formatTime(currentProblemTime, false) : '--:--';
+            
+            // Update milestones
+            const minutes = Math.floor(currentTime / 60000);
+            updateMilestone('milestone1', minutes >= 1);
+            updateMilestone('milestone5', minutes >= 5);
+            updateMilestone('milestone10', minutes >= 10);
+            updateMilestone('milestone15', minutes >= 15);
+            
+            // Update status
+            const status = document.getElementById('status');
+            if (isRunning) {
+                status.textContent = '🏃 Timing in progress...';
+                status.className = 'status running';
+            } else if (isPaused) {
+                status.textContent = '⏸️ Timer paused';
+                status.className = 'status paused';
+            } else {
+                status.textContent = '⏳ Ready to start timing';
+                status.className = 'status';
+            }
+        }
+
+        function updateMilestone(id, reached) {
+            const milestone = document.getElementById(id);
+            if (reached) {
+                milestone.classList.add('reached');
+            } else {
+                milestone.classList.remove('reached');
+            }
+        }
+
+        function updateStatistics() {
+            document.getElementById('problemCount').textContent = problemCount;
+            
+            if (problemTimes.length > 0) {
+                const average = problemTimes.reduce((sum, time) => sum + time, 0) / problemTimes.length;
+                const fastest = Math.min(...problemTimes);
+                
+                document.getElementById('averageTime').textContent = formatTime(average, false);
+                document.getElementById('fastestTime').textContent = formatTime(fastest, false);
+            } else {
+                document.getElementById('averageTime').textContent = '--:--';
+                document.getElementById('fastestTime').textContent = '--:--';
+            }
+        }
+
+        function startStopwatch() {
+            if (!isRunning && !isPaused) {
+                // Fresh start
+                startTime = Date.now();
+                problemStartTime = Date.now();
+            } else if (isPaused) {
+                // Resume
+                startTime = Date.now() - elapsedTime;
+                problemStartTime = Date.now();
+            }
+            
+            isRunning = true;
+            isPaused = false;
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            document.getElementById('lapBtn').disabled = false;
+            
+            timer = setInterval(updateDisplay, 100);
+            updateDisplay();
+        }
+
+        function pauseStopwatch() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+                elapsedTime = Date.now() - startTime;
+                isPaused = true;
+                isRunning = false;
+                
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                document.getElementById('lapBtn').disabled = true;
+                document.getElementById('startBtn').textContent = '▶️ Resume';
+                
+                updateDisplay();
+            }
+        }
+
+        function stopStopwatch() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            isRunning = false;
+            isPaused = false;
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('lapBtn').disabled = true;
+            document.getElementById('startBtn').textContent = '▶️ Start';
+        }
+
+        function resetStopwatch() {
+            stopStopwatch();
+            startTime = 0;
+            elapsedTime = 0;
+            problemStartTime = 0;
+            problemTimes = [];
+            problemCount = 0;
+            
+            document.getElementById('lapList').innerHTML = '<p style="color: #666; font-style: italic;">Problem times will appear here...</p>';
+            
+            updateDisplay();
+            updateStatistics();
+        }
+
+        function recordProblem() {
+            if (!isRunning) return;
+            
+            const problemTime = Date.now() - problemStartTime;
+            problemTimes.push(problemTime);
+            problemCount++;
+            
+            // Add to lap list
+            const lapList = document.getElementById('lapList');
+            if (lapList.children.length === 1 && lapList.children[0].tagName === 'P') {
+                lapList.innerHTML = '';
+            }
+            
+            const lapItem = document.createElement('div');
+            lapItem.className = 'lap-item';
+            lapItem.innerHTML = `
+                <span class="lap-number">Problem ${problemCount}</span>
+                <span class="lap-time">${formatTime(problemTime, false)}</span>
+                <span class="lap-duration">${formatTime(Date.now() - startTime + elapsedTime, false)} total</span>
+            `;
+            
+            lapList.insertBefore(lapItem, lapList.firstChild);
+            
+            // Reset problem timer
+            problemStartTime = Date.now();
+            
+            updateStatistics();
+        }
+
+        function skipProblem() {
+            if (!isRunning) return;
+            
+            // Just reset the problem timer without recording
+            problemStartTime = Date.now();
+        }
+
+        function exportResults() {
+            if (problemTimes.length === 0) {
+                alert('No problem times to export yet!');
+                return;
+            }
+            
+            const totalTime = elapsedTime + (isRunning ? Date.now() - startTime : 0);
+            const average = problemTimes.reduce((sum, time) => sum + time, 0) / problemTimes.length;
+            const fastest = Math.min(...problemTimes);
+            const slowest = Math.max(...problemTimes);
+            
+            let report = `Problem Timing Report\n`;
+            report += `=====================\n\n`;
+            report += `Total Session Time: ${formatTime(totalTime, false)}\n`;
+            report += `Problems Completed: ${problemCount}\n`;
+            report += `Average Time per Problem: ${formatTime(average, false)}\n`;
+            report += `Fastest Problem: ${formatTime(fastest, false)}\n`;
+            report += `Slowest Problem: ${formatTime(slowest, false)}\n\n`;
+            report += `Individual Problem Times:\n`;
+            report += `-------------------------\n`;
+            
+            problemTimes.forEach((time, index) => {
+                report += `Problem ${index + 1}: ${formatTime(time, false)}\n`;
+            });
+            
+            // Create downloadable file
+            const blob = new Blob([report], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `problem-timing-report-${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Initialize display
+        updateDisplay();
+        updateStatistics();
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isRunning) {
+                    pauseStopwatch();
+                } else {
+                    startStopwatch();
+                }
+            } else if (e.code === 'Enter') {
+                e.preventDefault();
+                if (isRunning) {
+                    recordProblem();
+                }
+            } else if (e.key === 'r' || e.key === 'R') {
+                if (!isRunning) {
+                    resetStopwatch();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
