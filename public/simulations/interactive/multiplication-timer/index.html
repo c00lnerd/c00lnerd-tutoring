@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Test Timer - C00lnerd Tutoring</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .timer-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+
+        .clock-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+        }
+
+        .clock-face {
+            width: 100%;
+            height: 100%;
+            border: 8px solid #333;
+            border-radius: 50%;
+            position: relative;
+            background: #f8f9fa;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .clock-numbers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .number {
+            position: absolute;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            transform: translate(-50%, -50%);
+        }
+
+        .progress-ring {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            width: 316px;
+            height: 316px;
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle {
+            fill: none;
+            stroke: #e0e0e0;
+            stroke-width: 8;
+        }
+
+        .progress-bar {
+            fill: none;
+            stroke: #4CAF50;
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dasharray 0.1s ease;
+        }
+
+        .progress-bar.warning {
+            stroke: #ff9800;
+        }
+
+        .progress-bar.danger {
+            stroke: #f44336;
+        }
+
+        .time-display {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3em;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-display.warning {
+            color: #ff9800;
+        }
+
+        .time-display.danger {
+            color: #f44336;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        .controls {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .btn-pause {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-pause:hover {
+            background: #e68900;
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #da190b;
+            transform: translateY(-2px);
+        }
+
+        .presets {
+            margin: 20px 0;
+        }
+
+        .presets h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .preset-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 6px;
+            background: white;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .custom-time {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .custom-time input {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .custom-time label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status {
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .status.running {
+            color: #4CAF50;
+        }
+
+        .status.paused {
+            color: #ff9800;
+        }
+
+        .status.finished {
+            color: #f44336;
+            animation: pulse 2s infinite;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .timer-container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .clock-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .progress-ring {
+                width: 266px;
+                height: 266px;
+            }
+
+            .time-display {
+                font-size: 2.5em;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .preset-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="timer-container">
+        <div class="header">
+            <h1>📊 Multiplication Test Timer</h1>
+            <p>Perfect timing for 100-problem math tests</p>
+        </div>
+
+        <div class="clock-container">
+            <div class="clock-face">
+                <svg class="progress-ring">
+                    <circle class="progress-circle" cx="158" cy="158" r="150"></circle>
+                    <circle class="progress-bar" cx="158" cy="158" r="150" id="progressBar"></circle>
+                </svg>
+                
+                <div class="clock-numbers">
+                    <div class="number" style="top: 10px; left: 50%;">12</div>
+                    <div class="number" style="top: 25%; right: 10px;">3</div>
+                    <div class="number" style="bottom: 10px; left: 50%;">6</div>
+                    <div class="number" style="top: 25%; left: 10px;">9</div>
+                </div>
+                
+                <div class="time-display" id="timeDisplay">5:00</div>
+            </div>
+        </div>
+
+        <div class="status" id="status">Ready to start</div>
+
+        <div class="controls">
+            <button class="btn btn-start" id="startBtn" onclick="startTimer()">▶️ Start</button>
+            <button class="btn btn-pause" id="pauseBtn" onclick="pauseTimer()" disabled>⏸️ Pause</button>
+            <button class="btn btn-reset" id="resetBtn" onclick="resetTimer()">🔄 Reset</button>
+        </div>
+
+        <div class="presets">
+            <h3>⏱️ Preset Times</h3>
+            <div class="preset-buttons">
+                <button class="preset-btn" onclick="setTime(3, 0)">3 min</button>
+                <button class="preset-btn" onclick="setTime(5, 0)">5 min</button>
+                <button class="preset-btn" onclick="setTime(7, 0)">7 min</button>
+                <button class="preset-btn" onclick="setTime(10, 0)">10 min</button>
+                <button class="preset-btn" onclick="setTime(15, 0)">15 min</button>
+            </div>
+        </div>
+
+        <div class="custom-time">
+            <label for="minutes">Minutes:</label>
+            <input type="number" id="minutes" min="0" max="59" value="5">
+            <label for="seconds">Seconds:</label>
+            <input type="number" id="seconds" min="0" max="59" value="0">
+            <button class="preset-btn" onclick="setCustomTime()">Set Time</button>
+        </div>
+
+        <div class="footer">
+            <p>🎯 <strong>Perfect for:</strong> Multiplication facts, math drills, timed assessments</p>
+            <p>🔊 <strong>Audio alerts</strong> at 2 minutes, 1 minute, and 30 seconds remaining</p>
+        </div>
+    </div>
+
+    <script>
+        let timer = null;
+        let totalSeconds = 300; // 5 minutes default
+        let remainingSeconds = 300;
+        let isRunning = false;
+        let isPaused = false;
+
+        // Audio context for beeps
+        let audioContext = null;
+
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playBeep(frequency = 800, duration = 200) {
+            initAudio();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+        }
+
+        function updateDisplay() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            const timeDisplay = document.getElementById('timeDisplay');
+            const progressBar = document.getElementById('progressBar');
+            const status = document.getElementById('status');
+            
+            timeDisplay.textContent = timeString;
+            
+            // Update progress bar
+            const progress = (totalSeconds - remainingSeconds) / totalSeconds;
+            const circumference = 2 * Math.PI * 150;
+            const strokeDasharray = circumference * progress;
+            progressBar.style.strokeDasharray = `${strokeDasharray} ${circumference}`;
+            
+            // Update colors based on remaining time
+            timeDisplay.className = 'time-display';
+            progressBar.className = 'progress-bar';
+            
+            if (remainingSeconds <= 30) {
+                timeDisplay.className += ' danger';
+                progressBar.className += ' danger';
+            } else if (remainingSeconds <= 120) {
+                timeDisplay.className += ' warning';
+                progressBar.className += ' warning';
+            }
+            
+            // Update status
+            if (remainingSeconds === 0) {
+                status.textContent = '⏰ Time\'s Up!';
+                status.className = 'status finished';
+            } else if (isRunning && !isPaused) {
+                status.textContent = '🏃 Test in Progress';
+                status.className = 'status running';
+            } else if (isPaused) {
+                status.textContent = '⏸️ Paused';
+                status.className = 'status paused';
+            } else {
+                status.textContent = '⏳ Ready to start';
+                status.className = 'status';
+            }
+        }
+
+        function startTimer() {
+            if (remainingSeconds === 0) {
+                resetTimer();
+                return;
+            }
+            
+            initAudio();
+            isRunning = true;
+            isPaused = false;
+            
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('pauseBtn').disabled = false;
+            
+            timer = setInterval(() => {
+                remainingSeconds--;
+                updateDisplay();
+                
+                // Audio alerts
+                if (remainingSeconds === 120) { // 2 minutes
+                    playBeep(600, 300);
+                } else if (remainingSeconds === 60) { // 1 minute
+                    playBeep(700, 400);
+                } else if (remainingSeconds === 30) { // 30 seconds
+                    playBeep(800, 500);
+                } else if (remainingSeconds <= 10 && remainingSeconds > 0) { // Final countdown
+                    playBeep(900, 200);
+                } else if (remainingSeconds === 0) { // Time's up
+                    playBeep(1000, 1000);
+                    setTimeout(() => playBeep(1000, 1000), 1200);
+                    setTimeout(() => playBeep(1000, 1000), 2400);
+                    stopTimer();
+                }
+            }, 1000);
+            
+            updateDisplay();
+        }
+
+        function pauseTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+                isPaused = true;
+                isRunning = false;
+                
+                document.getElementById('startBtn').disabled = false;
+                document.getElementById('pauseBtn').disabled = true;
+                document.getElementById('startBtn').textContent = '▶️ Resume';
+                
+                updateDisplay();
+            }
+        }
+
+        function stopTimer() {
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            isRunning = false;
+            isPaused = false;
+            
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('startBtn').textContent = '▶️ Start';
+            
+            updateDisplay();
+        }
+
+        function resetTimer() {
+            stopTimer();
+            remainingSeconds = totalSeconds;
+            document.getElementById('startBtn').textContent = '▶️ Start';
+            updateDisplay();
+        }
+
+        function setTime(minutes, seconds) {
+            totalSeconds = minutes * 60 + seconds;
+            remainingSeconds = totalSeconds;
+            document.getElementById('minutes').value = minutes;
+            document.getElementById('seconds').value = seconds;
+            resetTimer();
+        }
+
+        function setCustomTime() {
+            const minutes = parseInt(document.getElementById('minutes').value) || 0;
+            const seconds = parseInt(document.getElementById('seconds').value) || 0;
+            setTime(minutes, seconds);
+        }
+
+        // Initialize display
+        updateDisplay();
+
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isRunning && !isPaused) {
+                    pauseTimer();
+                } else {
+                    startTimer();
+                }
+            } else if (e.key === 'r' || e.key === 'R') {
+                resetTimer();
+            }
+        });
+
+        // Handle input changes
+        document.getElementById('minutes').addEventListener('change', () => {
+            if (!isRunning && !isPaused) {
+                setCustomTime();
+            }
+        });
+
+        document.getElementById('seconds').addEventListener('change', () => {
+            if (!isRunning && !isPaused) {
+                setCustomTime();
+            }
+        });
+    </script>
+</body>
+</html>
