@@ -257,6 +257,122 @@
             line-height: 1.6;
         }
 
+        /* Student Info Section */
+        .student-info {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .student-input {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .student-input input[type="text"],
+        .student-input input[type="email"] {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1em;
+            width: 300px;
+            max-width: 90%;
+        }
+
+        .student-input input[type="text"]:focus,
+        .student-input input[type="email"]:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .student-input label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .student-display {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .header-actions {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        /* Results Section */
+        .results-section {
+            text-align: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 2rem;
+        }
+
+        .results-section h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .session-summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .results-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .email-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .email-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .email-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         .selected-ions {
             display: flex;
             justify-content: center;
@@ -378,19 +494,49 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🧪 Molecule Builder</h1>
-            <p>Drag and drop ions to build chemical compounds and learn their names!</p>
+    <div class="game-container">
+        <!-- Student Info Section -->
+        <div id="student-info-section" class="student-info">
+            <h1>🧪 Molecule Builder Game</h1>
+            <p>Build chemical compounds and practice nomenclature!</p>
+            <div class="student-input">
+                <input type="text" id="student-name" placeholder="Enter your name" required>
+                <input type="email" id="student-email" placeholder="Enter your email (optional)">
+                <label>
+                    <input type="checkbox" id="save-results" checked>
+                    Save results and send to instructor
+                </label>
+                <button id="start-game" class="btn btn-primary">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Game Header -->
+        <div class="header" id="game-header" style="display: none;">
+            <h1>🧪 Molecule Builder Game</h1>
+            <div class="student-display">
+                <span id="student-display-name"></span>
+            </div>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Score:</span>
+                    <span id="score" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Compounds Built:</span>
+                    <span id="compounds-built" class="stat-value">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Correct Names:</span>
+                    <span id="correct-names" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="show-results" class="btn btn-secondary">📊 View Results</button>
+            </div>
+            <div id="feedback" class="feedback"></div>
         </div>
 
         <div class="game-area">
-            <div class="score-board">
-                <div class="score">Score: <span id="score">0</span> | Compounds Built: <span id="compounds-built">0</span></div>
-            </div>
-
-            <div class="feedback" id="feedback"></div>
-
             <div class="ion-banks">
                 <div class="ion-bank cation-bank">
                     <h3>⚡ Cations (Positive Ions)</h3>
@@ -434,8 +580,21 @@
                 </div>
             </div>
         </div>
+
+        <!-- Results Section -->
+        <div id="results-section" class="results-section" style="display: none;">
+            <h2>🎉 Game Session Complete!</h2>
+            <div id="session-summary" class="session-summary"></div>
+            <div class="results-actions">
+                <button id="submit-results" class="btn btn-primary">📧 Submit Results to Instructor</button>
+                <button id="continue-playing" class="btn btn-secondary">🎮 Continue Playing</button>
+                <button id="restart-game" class="btn btn-secondary">🔄 Start New Session</button>
+            </div>
+            <div id="email-status" class="email-status"></div>
+        </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

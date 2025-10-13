@@ -58,6 +58,21 @@ let score = 0;
 let compoundsBuilt = 0;
 
 // DOM elements
+const studentInfoSection = document.getElementById('student-info-section');
+const gameHeader = document.getElementById('game-header');
+const studentNameInput = document.getElementById('student-name');
+const studentEmailInput = document.getElementById('student-email');
+const saveResultsCheckbox = document.getElementById('save-results');
+const startGameButton = document.getElementById('start-game');
+const studentDisplayName = document.getElementById('student-display-name');
+const resultsSection = document.getElementById('results-section');
+const sessionSummary = document.getElementById('session-summary');
+const submitResultsButton = document.getElementById('submit-results');
+const continuePlayingButton = document.getElementById('continue-playing');
+const restartGameButton = document.getElementById('restart-game');
+const showResultsButton = document.getElementById('show-results');
+const emailStatus = document.getElementById('email-status');
+
 const cationGrid = document.getElementById('cation-grid');
 const anionGrid = document.getElementById('anion-grid');
 const buildingArea = document.getElementById('building-area');
@@ -77,10 +92,21 @@ const correctName = document.getElementById('correct-name');
 const compoundInfo = document.getElementById('compound-info');
 const scoreElement = document.getElementById('score');
 const compoundsBuiltElement = document.getElementById('compounds-built');
+const correctNamesElement = document.getElementById('correct-names');
 const feedback = document.getElementById('feedback');
 
-// Current compound data
+// Game state
 let currentCompound = null;
+let studentName = '';
+let studentEmail = '';
+let gameStartTime = null;
+let sessionData = {
+    compounds: [],
+    correctAnswers: 0,
+    totalAttempts: 0,
+    startTime: null,
+    endTime: null
+};
 
 // Initialize the game
 function initGame() {
@@ -152,9 +178,17 @@ function setupEventListeners() {
     buildButton.addEventListener('click', buildCompound);
     clearButton.addEventListener('click', clearSelection);
     
+    // Student info events
+    startGameButton.addEventListener('click', startGame);
+    
+    // Results events
+    submitResultsButton.addEventListener('click', submitResults);
+    continuePlayingButton.addEventListener('click', continueGame);
+    restartGameButton.addEventListener('click', restartGame);
+    showResultsButton.addEventListener('click', showResults);
+    
     // Naming challenge events
     checkNameButton.addEventListener('click', checkCompoundName);
-    
     showHintButton.addEventListener('click', showNamingHint);
     revealAnswerButton.addEventListener('click', revealCompoundName);
     compoundNameInput.addEventListener('keypress', function(e) {
@@ -375,22 +409,56 @@ function checkCompoundName() {
     const isCorrect = studentAnswer === correctAnswer || 
                      checkAlternativeNames(studentAnswer, correctAnswer);
     
+    // Track the attempt
+    sessionData.totalAttempts++;
+    
     if (isCorrect) {
         namingFeedback.textContent = '🎉 Correct! Well done!';
         namingFeedback.className = 'naming-feedback correct';
         
+        // Track correct answer
+        sessionData.correctAnswers++;
+        
         // Award points and update stats
         updateScore(currentCompound.difficulty);
         compoundsBuilt++;
+        
+        // Record compound data
+        sessionData.compounds.push({
+            formula: currentCompound.formula,
+            name: currentCompound.name,
+            wasCorrect: true,
+            studentAnswer: studentAnswer,
+            timestamp: new Date()
+        });
+        
         updateDisplay();
         
         // Show the full answer after a delay
         setTimeout(() => {
             revealCompoundName();
         }, 1500);
+        
+        // Show results after 10 compounds or suggest submission
+        if (compoundsBuilt > 0 && compoundsBuilt % 10 === 0) {
+            setTimeout(() => {
+                if (confirm(`Great job! You've built ${compoundsBuilt} compounds. Would you like to submit your results now?`)) {
+                    showResults();
+                }
+            }, 3000);
+        }
     } else {
         namingFeedback.textContent = '❌ Not quite right. Try again or use a hint!';
         namingFeedback.className = 'naming-feedback incorrect';
+        
+        // Record incorrect attempt
+        sessionData.compounds.push({
+            formula: currentCompound.formula,
+            name: currentCompound.name,
+            wasCorrect: false,
+            studentAnswer: studentAnswer,
+            timestamp: new Date()
+        });
     }
 }
 
@@ -472,10 +540,164 @@ function updateScore(difficulty) {
     score += difficulty * 10;
 }
 
+// Start the game
+function startGame() {
+    const name = studentNameInput.value.trim();
+    if (!name) {
+        alert('Please enter your name to start the game.');
+        return;
+    }
+    
+    studentName = name;
+    studentEmail = studentEmailInput.value.trim();
+    
+    // Initialize session data
+    sessionData = {
+        compounds: [],
+        correctAnswers: 0,
+        totalAttempts: 0,
+        startTime: new Date(),
+        endTime: null
+    };
+    
+    // Show game interface
+    studentInfoSection.style.display = 'none';
+    gameHeader.style.display = 'block';
+    document.querySelector('.game-area').style.display = 'block';
+    
+    studentDisplayName.textContent = `Student: ${studentName}`;
+}
+
+// Continue playing after viewing results
+function continueGame() {
+    resultsSection.style.display = 'none';
+}
+
+// Restart the entire game
+function restartGame() {
+    // Reset all game state
+    score = 0;
+    compoundsBuilt = 0;
+    selectedIons = [];
+    currentCompound = null;
+    
+    // Reset session data
+    sessionData = {
+        compounds: [],
+        correctAnswers: 0,
+        totalAttempts: 0,
+        startTime: new Date(),
+        endTime: null
+    };
+    
+    // Reset UI
+    resultsSection.style.display = 'none';
+    gameHeader.style.display = 'none';
+    document.querySelector('.game-area').style.display = 'none';
+    studentInfoSection.style.display = 'block';
+    
+    // Clear inputs
+    studentNameInput.value = '';
+    studentEmailInput.value = '';
+    
+    updateDisplay();
+    clearSelection();
+}
+
+// Show results summary
+function showResults() {
+    sessionData.endTime = new Date();
+    const duration = Math.round((sessionData.endTime - sessionData.startTime) / 1000 / 60); // minutes
+    
+    const accuracy = sessionData.totalAttempts > 0 ? 
+        Math.round((sessionData.correctAnswers / sessionData.totalAttempts) * 100) : 0;
+    
+    sessionSummary.innerHTML = `
+        <div class="summary-item">
+            <span><strong>Student:</strong></span>
+            <span>${studentName}</span>
+        </div>
+        <div class="summary-item">
+            <span><strong>Total Score:</strong></span>
+            <span>${score} points</span>
+        </div>
+        <div class="summary-item">
+            <span><strong>Compounds Built:</strong></span>
+            <span>${compoundsBuilt}</span>
+        </div>
+        <div class="summary-item">
+            <span><strong>Correct Names:</strong></span>
+            <span>${sessionData.correctAnswers} / ${sessionData.totalAttempts}</span>
+        </div>
+        <div class="summary-item">
+            <span><strong>Naming Accuracy:</strong></span>
+            <span>${accuracy}%</span>
+        </div>
+        <div class="summary-item">
+            <span><strong>Session Duration:</strong></span>
+            <span>${duration} minutes</span>
+        </div>
+        <div class="summary-item">
+            <span><strong>Compounds Practiced:</strong></span>
+            <span>${sessionData.compounds.map(c => c.formula).join(', ')}</span>
+        </div>
+    `;
+    
+    resultsSection.style.display = 'block';
+}
+
+// Submit results via email
+function submitResults() {
+    if (!saveResultsCheckbox.checked) {
+        emailStatus.textContent = 'Results submission is disabled.';
+        emailStatus.className = 'email-status error';
+        return;
+    }
+    
+    // Initialize EmailJS
+    emailjs.init("ct_s19oZHppLy9BlW");
+    
+    const duration = Math.round((sessionData.endTime - sessionData.startTime) / 1000 / 60);
+    const accuracy = sessionData.totalAttempts > 0 ? 
+        Math.round((sessionData.correctAnswers / sessionData.totalAttempts) * 100) : 0;
+    
+    const templateParams = {
+        student_name: studentName,
+        student_email: studentEmail || 'Not provided',
+        activity_name: 'Molecule Builder Game - Physical Science Module 5',
+        total_score: score,
+        compounds_built: compoundsBuilt,
+        correct_answers: sessionData.correctAnswers,
+        total_attempts: sessionData.totalAttempts,
+        accuracy_percentage: accuracy,
+        session_duration: duration,
+        compounds_practiced: sessionData.compounds.map(c => 
+            `${c.formula} (${c.name}) - ${c.wasCorrect ? 'Correct' : 'Incorrect'}`
+        ).join('\n'),
+        timestamp: new Date().toLocaleString(),
+        reply_to: studentEmail || 'noreply@example.com'
+    };
+    
+    emailStatus.textContent = 'Sending results...';
+    emailStatus.className = 'email-status';
+    
+    emailjs.send("service_ot1jg6s", "template_0nxqbk8", templateParams)
+        .then(() => {
+            emailStatus.textContent = "✅ Results sent to instructor successfully!";
+            emailStatus.className = "email-status success";
+        })
+        .catch((error) => {
+            console.error('Email send failed:', error);
+            emailStatus.textContent = "❌ Failed to send results. Please try again.";
+            emailStatus.className = "email-status error";
+        });
+}
+
 // Update display elements
 function updateDisplay() {
     scoreElement.textContent = score;
     compoundsBuiltElement.textContent = compoundsBuilt;
+    correctNamesElement.textContent = sessionData.correctAnswers;
 }
 
 // Show feedback message
