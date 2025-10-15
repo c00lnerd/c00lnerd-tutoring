@@ -490,13 +490,20 @@ function checkSubscripts() {
         studentAnionCount = parseInt(anionInput.value) || 0;
     }
     
+    // Debug logging
+    console.log('Student answers:', studentCationCount, studentAnionCount);
+    console.log('Correct answers:', currentCompound.cationCount, currentCompound.anionCount);
+    
     // Check if correct
     const isCorrect = (studentCationCount === currentCompound.cationCount) && 
                      (studentAnionCount === currentCompound.anionCount);
     
+    console.log('Is correct:', isCorrect);
+    
     if (isCorrect) {
         subscriptFeedback.textContent = '🎉 Correct! The charges are balanced!';
         subscriptFeedback.className = 'subscript-feedback correct';
+        subscriptFeedback.style.display = 'block';
         
         // Show the complete formula and move to naming challenge
         setTimeout(() => {
@@ -506,6 +513,32 @@ function checkSubscripts() {
     } else {
         subscriptFeedback.textContent = '❌ Not quite right. Check your charge balancing!';
         subscriptFeedback.className = 'subscript-feedback incorrect';
+        subscriptFeedback.style.display = 'block';
+        
+        // Add visual emphasis to the input fields
+        const cationInput = document.getElementById('cation-subscript');
+        const anionInput = document.getElementById('anion-subscript');
+        
+        if (cationInput) {
+            cationInput.style.borderColor = '#dc3545';
+            cationInput.style.backgroundColor = '#fff5f5';
+        }
+        if (anionInput) {
+            anionInput.style.borderColor = '#dc3545';
+            anionInput.style.backgroundColor = '#fff5f5';
+        }
+        
+        // Reset input styling after 3 seconds
+        setTimeout(() => {
+            if (cationInput) {
+                cationInput.style.borderColor = '#ddd';
+                cationInput.style.backgroundColor = '#f8f9fa';
+            }
+            if (anionInput) {
+                anionInput.style.borderColor = '#ddd';
+                anionInput.style.backgroundColor = '#f8f9fa';
+            }
+        }, 3000);
     }
 }
 
