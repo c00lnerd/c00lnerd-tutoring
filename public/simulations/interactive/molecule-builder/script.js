@@ -81,6 +81,12 @@ const buildButton = document.getElementById('build-compound');
 const clearButton = document.getElementById('clear-all');
 const compoundDisplay = document.getElementById('compound-display');
 const compoundFormula = document.getElementById('compound-formula');
+const subscriptChallenge = document.getElementById('subscript-challenge');
+const formulaBuilder = document.getElementById('formula-builder');
+const checkFormulaButton = document.getElementById('check-formula');
+const showFormulaHintButton = document.getElementById('show-formula-hint');
+const revealFormulaButton = document.getElementById('reveal-formula');
+const subscriptFeedback = document.getElementById('subscript-feedback');
 const namingChallenge = document.getElementById('naming-challenge');
 const compoundNameInput = document.getElementById('compound-name-input');
 const checkNameButton = document.getElementById('check-name');
@@ -187,6 +193,11 @@ function setupEventListeners() {
     restartGameButton.addEventListener('click', restartGame);
     showResultsButton.addEventListener('click', showResults);
     
+    // Subscript challenge events
+    checkFormulaButton.addEventListener('click', checkSubscripts);
+    showFormulaHintButton.addEventListener('click', showFormulaHint);
+    revealFormulaButton.addEventListener('click', revealCorrectFormula);
+    
     // Naming challenge events
     checkNameButton.addEventListener('click', checkCompoundName);
     showHintButton.addEventListener('click', showNamingHint);
@@ -260,6 +271,7 @@ function clearSelection() {
     selectedIons = [];
     updateSelectedIonsDisplay();
     compoundDisplay.classList.remove('active');
+    resetSubscriptChallenge();
     resetNamingChallenge();
     showFeedback('Selection cleared!', 'success');
 }
@@ -298,13 +310,13 @@ function buildCompound() {
     const cation = cations[0];
     const anion = anions[0];
 
-    // Calculate the formula
+    // Calculate the correct formula for checking
     const compound = calculateCompoundFormula(cation, anion);
     
     if (compound) {
         currentCompound = { ...compound, cation, anion };
-        displayCompoundChallenge(compound);
-        showFeedback('Compound built! Now try to name it!', 'success');
+        displaySubscriptChallenge(cation, anion, compound);
+        showFeedback('Now balance the formula by entering the correct subscripts!', 'success');
     }
 }
 
@@ -383,11 +395,164 @@ function gcd(a, b) {
     return b === 0 ? a : gcd(b, a % b);
 }
 
-// Display compound challenge (formula only, student must name it)
-function displayCompoundChallenge(compound) {
-    compoundFormula.textContent = compound.formula;
+// Display subscript challenge (student must enter subscripts)
+function displaySubscriptChallenge(cation, anion, correctCompound) {
     compoundDisplay.classList.add('active');
+    subscriptChallenge.style.display = 'block';
+    namingChallenge.style.display = 'none';
+    compoundFormula.style.display = 'none';
+    
+    // Build the formula input interface
+    formulaBuilder.innerHTML = '';
+    
+    // Cation part
+    const cationPart = document.createElement('div');
+    cationPart.className = 'formula-part';
+    
+    const cationDisplay = document.createElement('span');
+    cationDisplay.className = 'ion-display';
+    cationDisplay.textContent = cation.element;
+    cationPart.appendChild(cationDisplay);
+    
+    // Only show subscript input if more than 1 is needed
+    if (correctCompound.cationCount > 1) {
+        const cationSubscript = document.createElement('input');
+        cationSubscript.type = 'number';
+        cationSubscript.className = 'subscript-input';
+        cationSubscript.id = 'cation-subscript';
+        cationSubscript.min = '1';
+        cationSubscript.max = '9';
+        cationSubscript.placeholder = '?';
+        cationPart.appendChild(cationSubscript);
+    }
+    
+    formulaBuilder.appendChild(cationPart);
+    
+    // Anion part
+    const anionPart = document.createElement('div');
+    anionPart.className = 'formula-part';
+    
+    const anionDisplay = document.createElement('span');
+    anionDisplay.className = 'ion-display';
+    
+    // Handle polyatomic ions with parentheses
+    const needsParentheses = (anion.element.length > 2 || (anion.element.includes('O') && anion.element.length > 1)) && correctCompound.anionCount > 1;
+    
+    if (needsParentheses) {
+        anionDisplay.textContent = '(' + anion.element + ')';
+    } else {
+        anionDisplay.textContent = anion.element;
+    }
+    
+    anionPart.appendChild(anionDisplay);
+    
+    // Only show subscript input if more than 1 is needed
+    if (correctCompound.anionCount > 1) {
+        const anionSubscript = document.createElement('input');
+        anionSubscript.type = 'number';
+        anionSubscript.className = 'subscript-input';
+        anionSubscript.id = 'anion-subscript';
+        anionSubscript.min = '1';
+        anionSubscript.max = '9';
+        anionSubscript.placeholder = '?';
+        anionPart.appendChild(anionSubscript);
+    }
+    
+    formulaBuilder.appendChild(anionPart);
+    
+    resetSubscriptChallenge();
+}
+
+// Check student's subscript answers
+function checkSubscripts() {
+    if (!currentCompound) return;
+    
+    const cationInput = document.getElementById('cation-subscript');
+    const anionInput = document.getElementById('anion-subscript');
+    
+    let studentCationCount = 1;
+    let studentAnionCount = 1;
+    
+    // Get student's answers (default to 1 if no input field)
+    if (cationInput) {
+        studentCationCount = parseInt(cationInput.value) || 0;
+    }
+    if (anionInput) {
+        studentAnionCount = parseInt(anionInput.value) || 0;
+    }
+    
+    // Check if correct
+    const isCorrect = (studentCationCount === currentCompound.cationCount) && 
+                     (studentAnionCount === currentCompound.anionCount);
+    
+    if (isCorrect) {
+        subscriptFeedback.textContent = '🎉 Correct! The charges are balanced!';
+        subscriptFeedback.className = 'subscript-feedback correct';
+        
+        // Show the complete formula and move to naming challenge
+        setTimeout(() => {
+            showCompletedFormula();
+        }, 1500);
+        
+    } else {
+        subscriptFeedback.textContent = '❌ Not quite right. Check your charge balancing!';
+        subscriptFeedback.className = 'subscript-feedback incorrect';
+    }
+}
+
+// Show formula hint
+function showFormulaHint() {
+    if (!currentCompound) return;
+    
+    const cation = currentCompound.cation;
+    const anion = currentCompound.anion;
+    
+    let hint = `💡 Hint: ${cation.name} has a charge of ${cation.charge > 0 ? '+' : ''}${cation.charge}, `;
+    hint += `and ${anion.name} has a charge of ${anion.charge}.\n`;
+    hint += `To balance the charges, you need the total positive charge to equal the total negative charge.\n`;
+    hint += `Think: How many of each ion do you need?`;
+    
+    subscriptFeedback.textContent = hint;
+    subscriptFeedback.className = 'subscript-feedback hint';
+}
+
+// Reveal the correct formula
+function revealCorrectFormula() {
+    if (!currentCompound) return;
+    
+    const cationInput = document.getElementById('cation-subscript');
+    const anionInput = document.getElementById('anion-subscript');
+    
+    if (cationInput) {
+        cationInput.value = currentCompound.cationCount;
+    }
+    if (anionInput) {
+        anionInput.value = currentCompound.anionCount;
+    }
+    
+    subscriptFeedback.textContent = `✅ The correct formula is: ${currentCompound.formula}. ` +
+        `You need ${currentCompound.cationCount} ${currentCompound.cation.name} ion(s) and ` +
+        `${currentCompound.anionCount} ${currentCompound.anion.name} ion(s) to balance the charges.`;
+    subscriptFeedback.className = 'subscript-feedback correct';
+    
+    setTimeout(() => {
+        showCompletedFormula();
+    }, 2000);
+}
+
+// Show the completed formula and move to naming challenge
+function showCompletedFormula() {
+    subscriptChallenge.style.display = 'none';
+    compoundFormula.style.display = 'block';
+    compoundFormula.textContent = currentCompound.formula;
+    namingChallenge.style.display = 'block';
     resetNamingChallenge();
+}
+
+// Reset subscript challenge interface
+function resetSubscriptChallenge() {
+    subscriptFeedback.className = 'subscript-feedback';
+    subscriptFeedback.style.display = 'none';
 }
 
 // Reset naming challenge interface

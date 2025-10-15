@@ -166,6 +166,102 @@
             margin-bottom: 10px;
         }
 
+        .subscript-challenge {
+            margin-bottom: 20px;
+        }
+
+        .subscript-challenge h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .subscript-challenge p {
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .formula-builder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .formula-part {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .ion-display {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .subscript-input {
+            width: 40px;
+            height: 40px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            background: #f8f9fa;
+        }
+
+        .subscript-input:focus {
+            outline: none;
+            border-color: #ff6b35;
+            background: white;
+        }
+
+        .subscript-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .subscript-buttons .btn {
+            padding: 8px 16px;
+            font-size: 0.9em;
+        }
+
+        .subscript-feedback {
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .subscript-feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .subscript-feedback.incorrect {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .subscript-feedback.hint {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            display: block;
+        }
+
         .naming-challenge {
             margin-bottom: 20px;
         }
@@ -561,8 +657,26 @@
                     <button class="btn btn-secondary" id="clear-all">Clear All</button>
                 </div>
                 <div class="compound-display" id="compound-display">
-                    <div class="compound-formula" id="compound-formula"></div>
-                    <div class="naming-challenge" id="naming-challenge">
+                    <!-- Subscript Challenge Section -->
+                    <div class="subscript-challenge" id="subscript-challenge">
+                        <h4>⚖️ Balance the Formula</h4>
+                        <p>Enter the subscripts needed to balance the charges:</p>
+                        <div class="formula-builder" id="formula-builder">
+                            <!-- Formula builder will be populated by JavaScript -->
+                        </div>
+                        <div class="subscript-buttons">
+                            <button class="btn btn-primary" id="check-formula">Check Formula</button>
+                            <button class="btn btn-secondary" id="show-formula-hint">Show Hint</button>
+                            <button class="btn btn-secondary" id="reveal-formula">Show Answer</button>
+                        </div>
+                        <div class="subscript-feedback" id="subscript-feedback"></div>
+                    </div>
+                    
+                    <!-- Final Formula Display -->
+                    <div class="compound-formula" id="compound-formula" style="display: none;"></div>
+                    
+                    <!-- Naming Challenge Section -->
+                    <div class="naming-challenge" id="naming-challenge" style="display: none;">
                         <h4>🎯 Naming Challenge</h4>
                         <p>What is the name of this compound?</p>
                         <input type="text" id="compound-name-input" placeholder="Enter compound name..." />
