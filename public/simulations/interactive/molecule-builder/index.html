@@ -417,12 +417,46 @@
             color: #666;
         }
 
+        .practice-info {
+            background: #e8f5e8;
+            border: 2px solid #4CAF50;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .practice-info p {
+            margin: 5px 0;
+            color: #2e7d32;
+        }
+
+        .practice-info strong {
+            color: #1b5e20;
+        }
+
         .student-display {
             text-align: center;
             margin-bottom: 15px;
             font-size: 1.1em;
             color: #4CAF50;
             font-weight: bold;
+        }
+
+        .progress-info {
+            text-align: center;
+            margin: 10px 0;
+            padding: 8px;
+            background: #fff3cd;
+            border-radius: 6px;
+            border: 1px solid #ffeaa7;
+        }
+
+        .progress-info p {
+            margin: 0;
+            color: #856404;
+            font-size: 0.9em;
+            font-weight: 500;
         }
 
         .header-actions {
@@ -640,6 +674,10 @@
         <div id="student-info-section" class="student-info">
             <h1>🧪 Molecule Builder Game</h1>
             <p>Build chemical compounds and practice nomenclature!</p>
+            <div class="practice-info">
+                <p><strong>💡 Tip:</strong> Try building at least <strong>10 compounds</strong> for meaningful practice and results!</p>
+                <p>The game will automatically prompt you to submit after every 10 compounds.</p>
+            </div>
             <div class="student-input">
                 <input type="text" id="student-name" placeholder="Enter your name" required>
                 <input type="email" id="student-email" placeholder="Enter your email (optional)">
@@ -671,6 +709,9 @@
                     <span id="correct-names" class="stat-value">0</span>
                 </div>
             </div>
+            <div class="progress-info">
+                <p id="progress-message">🎯 Try to complete at least 10 compounds for best results!</p>
+            </div>
             <div class="header-actions">
                 <button id="show-results" class="btn btn-secondary">📊 View Results</button>
             </div>
@@ -700,6 +741,7 @@
                 <div class="controls">
                     <button class="btn btn-primary" id="build-compound">Build Compound</button>
                     <button class="btn btn-secondary" id="clear-all">Clear All</button>
+                    <button class="btn btn-success" id="submit-game-results" style="margin-left: 10px;">📧 Submit My Results</button>
                 </div>
                 <div class="compound-display" id="compound-display">
                     <!-- Subscript Challenge Section -->

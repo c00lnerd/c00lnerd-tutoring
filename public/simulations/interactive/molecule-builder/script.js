@@ -194,6 +194,12 @@ function setupEventListeners() {
     restartGameButton.addEventListener('click', restartGame);
     showResultsButton.addEventListener('click', showResults);
     
+    // Add event listener for the new submit button in game area
+    const submitGameResultsButton = document.getElementById('submit-game-results');
+    if (submitGameResultsButton) {
+        submitGameResultsButton.addEventListener('click', showResults);
+    }
+    
     // Subscript challenge events
     checkFormulaButton.addEventListener('click', checkSubscripts);
     showFormulaHintButton.addEventListener('click', showFormulaHint);
@@ -1028,10 +1034,16 @@ function submitResults() {
     const accuracy = sessionData.totalAttempts > 0 ? 
         Math.round((sessionData.correctAnswers / sessionData.totalAttempts) * 100) : 0;
     
-    // Format the message for the existing template
-    const compoundsList = sessionData.compounds.map(c => 
-        `${c.formula} (${c.name}) - ${c.wasCorrect ? 'Correct' : 'Incorrect'}`
-    ).join('\n');
+    // Format the message for the existing template with detailed answers
+    const compoundsList = sessionData.compounds.map(c => {
+        if (c.wasCorrect) {
+            return `${c.formula} (${c.name}) - ✅ Correct`;
+        } else {
+            return `${c.formula} (${c.name}) - ❌ Incorrect
+   Student answered: "${c.studentAnswer}"
+   Correct answer: "${c.name}"`;
+        }
+    }).join('\n\n');
     
     const formattedMessage = `Student: ${studentName}
 Activity: Molecule Builder Game - Physical Science Module 5
@@ -1080,6 +1092,32 @@ function updateDisplay() {
     scoreElement.textContent = score;
     compoundsBuiltElement.textContent = compoundsBuilt;
     correctNamesElement.textContent = sessionData.correctAnswers;
+    
+    // Update progress message
+    updateProgressMessage();
+}
+
+// Update progress message based on compounds completed
+function updateProgressMessage() {
+    const progressMessage = document.getElementById('progress-message');
+    if (!progressMessage) return;
+    
+    if (compoundsBuilt < 5) {
+        progressMessage.textContent = `🎯 Try to complete at least 10 compounds for best results! (${compoundsBuilt}/10)`;
+        progressMessage.parentElement.style.background = '#fff3cd';
+        progressMessage.parentElement.style.borderColor = '#ffeaa7';
+        progressMessage.style.color = '#856404';
+    } else if (compoundsBuilt < 10) {
+        progressMessage.textContent = `🚀 Great progress! ${10 - compoundsBuilt} more compounds to reach the recommended 10! (${compoundsBuilt}/10)`;
+        progressMessage.parentElement.style.background = '#e3f2fd';
+        progressMessage.parentElement.style.borderColor = '#90caf9';
+        progressMessage.style.color = '#1565c0';
+    } else {
+        progressMessage.textContent = `🎉 Excellent! You've completed ${compoundsBuilt} compounds - ready to submit results!`;
+        progressMessage.parentElement.style.background = '#e8f5e8';
+        progressMessage.parentElement.style.borderColor = '#4CAF50';
+        progressMessage.style.color = '#2e7d32';
+    }
 }
 
 // Show feedback message
