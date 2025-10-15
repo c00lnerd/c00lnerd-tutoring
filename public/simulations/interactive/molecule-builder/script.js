@@ -207,6 +207,15 @@ function setupEventListeners() {
             checkCompoundName();
         }
     });
+    
+    // Clear feedback when student starts typing again
+    compoundNameInput.addEventListener('input', function() {
+        if (namingFeedback.classList.contains('incorrect')) {
+            namingFeedback.style.display = 'none';
+            compoundNameInput.style.borderColor = '#ddd';
+            compoundNameInput.style.backgroundColor = 'white';
+        }
+    });
 }
 
 // Handle drag over building area
@@ -558,6 +567,8 @@ function resetSubscriptChallenge() {
 // Reset naming challenge interface
 function resetNamingChallenge() {
     compoundNameInput.value = '';
+    compoundNameInput.style.borderColor = '#ddd';
+    compoundNameInput.style.backgroundColor = 'white';
     namingFeedback.className = 'naming-feedback';
     namingFeedback.style.display = 'none';
     compoundAnswer.style.display = 'none';
@@ -613,8 +624,19 @@ function checkCompoundName() {
             }, 3000);
         }
     } else {
-        namingFeedback.textContent = '❌ Not quite right. Try again or use a hint!';
+        namingFeedback.textContent = '❌ Incorrect! Try again or use a hint!';
         namingFeedback.className = 'naming-feedback incorrect';
+        namingFeedback.style.display = 'block'; // Ensure it's visible
+        
+        // Add visual emphasis by briefly highlighting the input field
+        compoundNameInput.style.borderColor = '#dc3545';
+        compoundNameInput.style.backgroundColor = '#fff5f5';
+        
+        // Reset input styling after 2 seconds
+        setTimeout(() => {
+            compoundNameInput.style.borderColor = '#ddd';
+            compoundNameInput.style.backgroundColor = 'white';
+        }, 2000);
         
         // Record incorrect attempt
         sessionData.compounds.push({
@@ -624,6 +646,11 @@ function checkCompoundName() {
             studentAnswer: studentAnswer,
             timestamp: new Date()
         });
+        
+        // Clear the feedback after 4 seconds to encourage another try
+        setTimeout(() => {
+            namingFeedback.style.display = 'none';
+        }, 4000);
     }
 }
 
