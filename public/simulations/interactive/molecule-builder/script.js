@@ -106,6 +106,7 @@ let currentCompound = null;
 let studentName = '';
 let studentEmail = '';
 let gameStartTime = null;
+let lastSubmissionTime = 0; // Track last submission to prevent spam
 let sessionData = {
     compounds: [],
     correctAnswers: 0,
@@ -765,6 +766,54 @@ function updateScore(difficulty) {
     score += difficulty * 10;
 }
 
+// Validation functions
+function isValidName(name) {
+    // Check for reasonable name patterns
+    if (name.length < 2 || name.length > 50) return false;
+    
+    // Must contain at least one letter
+    if (!/[a-zA-Z]/.test(name)) return false;
+    
+    // Reject names that are mostly random characters
+    const randomPattern = /^[a-zA-Z]{8,}$/; // 8+ consecutive letters (likely random)
+    if (randomPattern.test(name.replace(/\s/g, ''))) {
+        // Check if it looks like random gibberish (no vowels or too many consonants)
+        const vowels = (name.match(/[aeiouAEIOU]/g) || []).length;
+        const consonants = (name.match(/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/g) || []).length;
+        if (vowels === 0 || consonants > vowels * 3) return false;
+    }
+    
+    // Reject names with too many numbers or special characters
+    const specialChars = (name.match(/[^a-zA-Z\s\-'\.]/g) || []).length;
+    if (specialChars > 2) return false;
+    
+    return true;
+}
+
+function isValidEmail(email) {
+    if (!email) return true; // Email is optional
+    
+    // Basic email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return false;
+    
+    // Reject obviously fake domains
+    const fakeDomains = ['test.com', 'fake.com', 'spam.com', 'temp.com'];
+    const domain = email.split('@')[1]?.toLowerCase();
+    if (fakeDomains.includes(domain)) return false;
+    
+    return true;
+}
+
+function hasMinimumActivity() {
+    // Require at least 2 compounds attempted and 1 minute of activity
+    const minDuration = 60000; // 1 minute in milliseconds
+    const currentTime = new Date();
+    const sessionDuration = currentTime - sessionData.startTime;
+    
+    return compoundsBuilt >= 2 && sessionDuration >= minDuration;
+}
+
 // Start the game
 function startGame() {
     const name = studentNameInput.value.trim();
@@ -773,8 +822,22 @@ function startGame() {
         return;
     }
     
+    // Validate name
+    if (!isValidName(name)) {
+        alert('Please enter a valid name. Names should be 2-50 characters and contain letters.');
+        return;
+    }
+    
+    const email = studentEmailInput.value.trim();
+    
+    // Validate email if provided
+    if (email && !isValidEmail(email)) {
+        alert('Please enter a valid email address or leave it blank.');
+        return;
+    }
+    
     studentName = name;
-    studentEmail = studentEmailInput.value.trim();
+    studentEmail = email;
     
     // Initialize session data
     sessionData = {
@@ -879,6 +942,41 @@ function submitResults() {
         return;
     }
     
+    // Validate submission before sending
+    if (!isValidName(studentName)) {
+        emailStatus.textContent = '❌ Invalid student name. Cannot submit results.';
+        emailStatus.className = 'email-status error';
+        return;
+    }
+    
+    if (studentEmail && !isValidEmail(studentEmail)) {
+        emailStatus.textContent = '❌ Invalid email address. Cannot submit results.';
+        emailStatus.className = 'email-status error';
+        return;
+    }
+    
+    if (!hasMinimumActivity()) {
+        emailStatus.textContent = '❌ Insufficient activity. Please complete at least 2 compounds and spend at least 1 minute practicing.';
+        emailStatus.className = 'email-status error';
+        return;
+    }
+    
+    // Additional spam check - reject if no actual attempts were made
+    if (sessionData.totalAttempts === 0) {
+        emailStatus.textContent = '❌ No naming attempts recorded. Cannot submit results.';
+        emailStatus.className = 'email-status error';
+        return;
+    }
+    
+    // Rate limiting - prevent submissions within 30 seconds of each other
+    const currentTime = Date.now();
+    if (currentTime - lastSubmissionTime < 30000) {
+        const waitTime = Math.ceil((30000 - (currentTime - lastSubmissionTime)) / 1000);
+        emailStatus.textContent = `❌ Please wait ${waitTime} seconds before submitting again.`;
+        emailStatus.className = 'email-status error';
+        return;
+    }
+    
     // Initialize EmailJS
     emailjs.init("ct_s19oZHppLy9BlW");
     
@@ -886,20 +984,34 @@ function submitResults() {
     const accuracy = sessionData.totalAttempts > 0 ? 
         Math.round((sessionData.correctAnswers / sessionData.totalAttempts) * 100) : 0;
     
+    // Format the message for the existing template
+    const compoundsList = sessionData.compounds.map(c => 
+        `${c.formula} (${c.name}) - ${c.wasCorrect ? 'Correct' : 'Incorrect'}`
+    ).join('\n');
+    
+    const formattedMessage = `Student: ${studentName}
+Activity: Molecule Builder Game - Physical Science Module 5
+
+📊 SESSION SUMMARY:
+Total Score: ${score} points
+Compounds Built: ${compoundsBuilt}
+Correct Names: ${sessionData.correctAnswers} / ${sessionData.totalAttempts}
+Naming Accuracy: ${accuracy}%
+Session Duration: ${duration} minutes
+
+📝 COMPOUNDS PRACTICED:
+${compoundsList}
+
+⏰ Submitted: ${new Date().toLocaleString()}`;
+
     const templateParams = {
         student_name: studentName,
         student_email: studentEmail || 'Not provided',
-        activity_name: 'Molecule Builder Game - Physical Science Module 5',
-        total_score: score,
-        compounds_built: compoundsBuilt,
-        correct_answers: sessionData.correctAnswers,
-        total_attempts: sessionData.totalAttempts,
-        accuracy_percentage: accuracy,
-        session_duration: duration,
-        compounds_practiced: sessionData.compounds.map(c => 
-            `${c.formula} (${c.name}) - ${c.wasCorrect ? 'Correct' : 'Incorrect'}`
-        ).join('\n'),
-        timestamp: new Date().toLocaleString(),
+        message: formattedMessage,
+        submission_date: new Date().toLocaleString(),
+        from_name: studentName,
+        to_name: 'Chuck Summers',
+        subject: `Molecule Builder Results - ${studentName}`,
         reply_to: studentEmail || 'noreply@example.com'
     };
     
@@ -908,6 +1020,7 @@ function submitResults() {
     
     emailjs.send("service_ot1jg6s", "template_0nxqbk8", templateParams)
         .then(() => {
+            lastSubmissionTime = Date.now(); // Record successful submission time
             emailStatus.textContent = "✅ Results sent to instructor successfully!";
             emailStatus.className = "email-status success";
         })
