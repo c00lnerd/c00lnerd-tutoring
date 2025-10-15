@@ -598,6 +598,40 @@ function resetSubscriptChallenge() {
     subscriptFeedback.style.display = 'none';
 }
 
+// Show "Next Compound" button after completing a compound
+function showNextCompoundButton() {
+    // Create next compound button if it doesn't exist
+    let nextButton = document.getElementById('next-compound-btn');
+    if (!nextButton) {
+        nextButton = document.createElement('button');
+        nextButton.id = 'next-compound-btn';
+        nextButton.className = 'btn btn-success';
+        nextButton.innerHTML = '🚀 Build Next Compound';
+        nextButton.style.marginTop = '15px';
+        nextButton.style.fontSize = '1.1em';
+        nextButton.addEventListener('click', startNextCompound);
+        
+        // Add it after the compound answer section
+        compoundAnswer.appendChild(nextButton);
+    }
+    nextButton.style.display = 'block';
+}
+
+// Start next compound (clear everything and reset)
+function startNextCompound() {
+    // Hide the next compound button
+    const nextButton = document.getElementById('next-compound-btn');
+    if (nextButton) {
+        nextButton.style.display = 'none';
+    }
+    
+    // Clear everything and reset for next compound
+    clearSelection();
+    
+    // Show encouraging message
+    showFeedback('Ready for the next compound! Select your ions and build!', 'success');
+}
+
 // Reset naming challenge interface
 function resetNamingChallenge() {
     compoundNameInput.value = '';
@@ -606,6 +640,12 @@ function resetNamingChallenge() {
     namingFeedback.className = 'naming-feedback';
     namingFeedback.style.display = 'none';
     compoundAnswer.style.display = 'none';
+    
+    // Hide next compound button
+    const nextButton = document.getElementById('next-compound-btn');
+    if (nextButton) {
+        nextButton.style.display = 'none';
+    }
 }
 
 // Check if the student's answer is correct
@@ -647,6 +687,10 @@ function checkCompoundName() {
         // Show the full answer after a delay
         setTimeout(() => {
             revealCompoundName();
+            // Add "Next Compound" button after showing the answer
+            setTimeout(() => {
+                showNextCompoundButton();
+            }, 2000);
         }, 1500);
         
         // Show results after 10 compounds or suggest submission
