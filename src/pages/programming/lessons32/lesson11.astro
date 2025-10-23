@@ -2,16 +2,16 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 11: miniAuto Car Assembly - C00lnerd Tutoring">
+<Layout title="Lesson 11: miniAuto Assembly and Construction - C00lnerd Tutoring">
     <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
         
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 11: miniAuto Car Assembly</h1>
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 11: miniAuto Assembly and Construction</h1>
             <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Building Your Complete Arduino Robot Car</p>
             <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
                 <p style="margin: 0 0 0.5rem 0; font-weight: 600;">📖 Official Assembly Guide:</p>
-                <a href="https://docs.hiwonder.com/projects/miniAuto/en/latest/docs/1.getting_ready.html" target="_blank" style="color: #fbbf24; text-decoration: underline; font-weight: 500;">Hiwonder miniAuto Section 1.3 - Hardware Assembly →</a>
+                <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/index.html" target="_blank" style="color: #fbbf24; text-decoration: underline; font-weight: 500;">Hiwonder miniAuto Wiki Documentation →</a>
             </div>
         </div>
 
@@ -49,13 +49,36 @@ import Layout from '../../../layouts/Layout.astro';
                 <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Electronic Components:</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Arduino Uno</li>
-                        <li>• Motor driver (L298N)</li>
-                        <li>• Ultrasonic sensor</li>
-                        <li>• IMU sensor</li>
-                        <li>• Jumper wires</li>
+                        <li>• Arduino Uno microcontroller</li>
+                        <li>• Motor driver board</li>
+                        <li>• Ultrasonic sensor (HC-SR04)</li>
+                        <li>• IMU sensor (gyroscope/accelerometer)</li>
+                        <li>• Jumper wires and connectors</li>
+                        <li>• Battery pack and holder</li>
                     </ul>
                 </div>
+                <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Mechanical Parts:</h4>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Chassis frame (acrylic or metal)</li>
+                        <li>• 4x Mecanum wheels</li>
+                        <li>• 4x DC motors with encoders</li>
+                        <li>• Screws, bolts, and spacers</li>
+                        <li>• Motor mounting brackets</li>
+                        <li>• Sensor mounting hardware</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔧 Required Tools:</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                    <li>• Phillips head screwdriver</li>
+                    <li>• Hex keys (Allen wrenches) - various sizes</li>
+                    <li>• Small pliers</li>
+                    <li>• Wire strippers (if needed)</li>
+                    <li>• Anti-static wrist strap (recommended)</li>
+                </ul>
             </div>
         </div>
 
@@ -67,439 +90,213 @@ import Layout from '../../../layouts/Layout.astro';
                 <div style="display: flex; align-items: center; margin-bottom: 1rem;">
                     <div style="background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
                         <span style="font-size: 1.5rem;">🔗</span>
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔌 Section 2: Motor Driver Circuits</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">H-Bridge Motor Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        An H-bridge is a circuit that allows voltage to be applied across a motor in either 
-                        direction, enabling both forward and reverse rotation. It's called an H-bridge because 
-                        the circuit diagram resembles the letter "H".
-                    </p>
-                    
-                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">H-Bridge Operation States:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><strong>Forward:</strong> Top-left and bottom-right switches closed</li>
-                            <li><strong>Reverse:</strong> Top-right and bottom-left switches closed</li>
-                            <li><strong>Brake:</strong> Both bottom switches closed (short motor)</li>
-                            <li><strong>Coast:</strong> All switches open (motor freewheels)</li>
-                        </ul>
+                    </div>
+                    <div>
+                        <h3 style="color: white; font-size: 1.2rem; font-weight: bold; margin: 0;">Hiwonder miniAuto Wiki</h3>
+                        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.9rem;">Complete assembly and programming guide</p>
                     </div>
                 </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">L298N Motor Driver</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        The L298N is a popular dual H-bridge motor driver IC that can control two DC motors 
-                        or one stepper motor. It includes built-in protection and can handle up to 2A per channel.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// L298N Motor Driver Control Example
-// Motor A connections
-const int motorA_pin1 = 2;    // Direction control
-const int motorA_pin2 = 3;    // Direction control  
-const int motorA_enable = 9;  // Speed control (PWM)
-
-// Motor B connections
-const int motorB_pin1 = 4;    // Direction control
-const int motorB_pin2 = 5;    // Direction control
-const int motorB_enable = 10; // Speed control (PWM)
-
-void setup() {
-  // Set motor control pins as outputs
-  pinMode(motorA_pin1, OUTPUT);
-  pinMode(motorA_pin2, OUTPUT);
-  pinMode(motorA_enable, OUTPUT);
-  pinMode(motorB_pin1, OUTPUT);
-  pinMode(motorB_pin2, OUTPUT);
-  pinMode(motorB_enable, OUTPUT);
-  
-  Serial.begin(9600);
-  Serial.println("L298N Motor Driver Test");
-}
-
-void loop() {
-  // Test Motor A forward
-  Serial.println("Motor A Forward");
-  motorA_forward(200);  // Speed 0-255
-  delay(2000);
-  
-  // Test Motor A reverse
-  Serial.println("Motor A Reverse");
-  motorA_reverse(150);
-  delay(2000);
-  
-  // Stop Motor A
-  Serial.println("Motor A Stop");
-  motorA_stop();
-  delay(1000);
-}
-
-void motorA_forward(int speed) {
-  digitalWrite(motorA_pin1, HIGH);
-  digitalWrite(motorA_pin2, LOW);
-  analogWrite(motorA_enable, speed);
-}
-
-void motorA_reverse(int speed) {
-  digitalWrite(motorA_pin1, LOW);
-  digitalWrite(motorA_pin2, HIGH);
-  analogWrite(motorA_enable, speed);
-}
-
-void motorA_stop() {
-  digitalWrite(motorA_pin1, LOW);
-  digitalWrite(motorA_pin2, LOW);
-  analogWrite(motorA_enable, 0);
-}`}</code></pre>
-                    </div>
-                </div>
+                <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/index.html" target="_blank" style="color: #fbbf24; text-decoration: underline; font-weight: 500; font-size: 1.1rem;">
+                    Visit Official Documentation →
+                </a>
             </div>
 
-            <!-- Section 3: Speed and Direction Control -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🎛️ Section 3: Speed and Direction Control</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">PWM Speed Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Motor speed is controlled using PWM (Pulse Width Modulation) on the enable pins. 
-                        Higher PWM values result in higher average voltage and faster motor speed.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Interactive Motor Speed Control
-const int motorPin1 = 2;
-const int motorPin2 = 3;
-const int enablePin = 9;
-const int potPin = A0;        // Potentiometer for speed
-const int directionPin = 7;   // Button for direction
-
-int motorSpeed = 0;
-bool motorDirection = true;   // true = forward, false = reverse
-bool lastButtonState = HIGH;
-
-void setup() {
-  pinMode(motorPin1, OUTPUT);
-  pinMode(motorPin2, OUTPUT);
-  pinMode(enablePin, OUTPUT);
-  pinMode(directionPin, INPUT_PULLUP);
-  
-  Serial.begin(9600);
-  Serial.println("Interactive Motor Control");
-  Serial.println("Turn pot for speed, press button to change direction");
-}
-
-void loop() {
-  // Read speed from potentiometer
-  int potValue = analogRead(potPin);
-  motorSpeed = map(potValue, 0, 1023, 0, 255);
-  
-  // Check direction button
-  bool currentButtonState = digitalRead(directionPin);
-  if (lastButtonState == HIGH && currentButtonState == LOW) {
-    motorDirection = !motorDirection;
-    Serial.print("Direction changed to: ");
-    Serial.println(motorDirection ? "Forward" : "Reverse");
-    delay(50); // Debounce
-  }
-  lastButtonState = currentButtonState;
-  
-  // Control motor based on direction and speed
-  if (motorDirection) {
-    // Forward
-    digitalWrite(motorPin1, HIGH);
-    digitalWrite(motorPin2, LOW);
-  } else {
-    // Reverse
-    digitalWrite(motorPin1, LOW);
-    digitalWrite(motorPin2, HIGH);
-  }
-  
-  // Set speed
-  analogWrite(enablePin, motorSpeed);
-  
-  // Display status
-  Serial.print("Speed: ");
-  Serial.print(motorSpeed);
-  Serial.print(" | Direction: ");
-  Serial.print(motorDirection ? "Forward" : "Reverse");
-  Serial.print(" | Percentage: ");
-  Serial.print((motorSpeed * 100) / 255);
-  Serial.println("%");
-  
-  delay(100);
-}`}</code></pre>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Control Functions</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Create reusable functions for common motor operations:
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Motor Control Function Library
-class DCMotor {
-  private:
-    int pin1, pin2, enablePin;
-    
-  public:
-    DCMotor(int p1, int p2, int en) {
-      pin1 = p1;
-      pin2 = p2;
-      enablePin = en;
-      pinMode(pin1, OUTPUT);
-      pinMode(pin2, OUTPUT);
-      pinMode(enablePin, OUTPUT);
-    }
-    
-    void forward(int speed) {
-      digitalWrite(pin1, HIGH);
-      digitalWrite(pin2, LOW);
-      analogWrite(enablePin, constrain(speed, 0, 255));
-    }
-    
-    void reverse(int speed) {
-      digitalWrite(pin1, LOW);
-      digitalWrite(pin2, HIGH);
-      analogWrite(enablePin, constrain(speed, 0, 255));
-    }
-    
-    void stop() {
-      digitalWrite(pin1, LOW);
-      digitalWrite(pin2, LOW);
-      analogWrite(enablePin, 0);
-    }
-    
-    void brake() {
-      digitalWrite(pin1, HIGH);
-      digitalWrite(pin2, HIGH);
-      analogWrite(enablePin, 255);
-    }
-};
-
-// Create motor objects
-DCMotor leftMotor(2, 3, 9);
-DCMotor rightMotor(4, 5, 10);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("DC Motor Class Demo");
-}
-
-void loop() {
-  // Move both motors forward
-  leftMotor.forward(200);
-  rightMotor.forward(200);
-  delay(2000);
-  
-  // Turn right (left motor forward, right motor reverse)
-  leftMotor.forward(150);
-  rightMotor.reverse(150);
-  delay(1000);
-  
-  // Stop both motors
-  leftMotor.stop();
-  rightMotor.stop();
-  delay(1000);
-}`}</code></pre>
-                    </div>
-                </div>
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">What you'll find in the official docs:</h4>
+                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                    <li>📋 Detailed assembly instructions with photos</li>
+                    <li>🔌 Complete wiring diagrams</li>
+                    <li>💻 Ready-to-use Arduino code samples</li>
+                    <li>🔧 Troubleshooting guide for common issues</li>
+                    <li>🚀 Advanced project examples</li>
+                </ul>
             </div>
+        </div>
 
-            <!-- Hands-On Activity -->
-            <div class="bg-gradient-to-r from-orange-50 to-purple-50 rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: Robot Movement Control</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Remote Control Robot Base</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Create a comprehensive motor control system that simulates a robot base with 
-                        two DC motors. Implement various movement patterns and control methods using 
-                        Serial Monitor commands and sensor inputs.
-                    </p>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Requirements</h3>
-                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li>Control two DC motors for differential drive</li>
-                        <li>Implement forward, reverse, left, right, and stop commands</li>
-                        <li>Add speed control using potentiometer or serial commands</li>
-                        <li>Create automated movement patterns (square, circle, figure-8)</li>
-                        <li>Include safety features and emergency stop</li>
-                        <li>Add status feedback and motor monitoring</li>
-                        <li>Implement smooth acceleration and deceleration</li>
+        <!-- Section 2: Assembly Process -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔧 Section 2: Assembly Process</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Step 1: Chassis Preparation</h3>
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <ol style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
+                        <li>Unpack all components and verify against parts list</li>
+                        <li>Identify the main chassis frame and mounting holes</li>
+                        <li>Remove any protective film from acrylic parts</li>
+                        <li>Organize screws and hardware by size</li>
                     </ol>
                 </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Expected Features</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
-                        <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Movement Control</h4>
-                            <ul class="text-orange-700 text-sm space-y-1">
-                                <li>Differential drive control</li>
-                                <li>Variable speed adjustment</li>
-                                <li>Smooth direction changes</li>
-                                <li>Automated movement patterns</li>
-                            </ul>
-                        </div>
-                        <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">User Interface</h4>
-                            <ul class="text-purple-700 text-sm space-y-1">
-                                <li>Serial command system</li>
-                                <li>Real-time status display</li>
-                                <li>Emergency stop function</li>
-                                <li>Movement pattern selection</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
             </div>
 
-            <!-- Assessment & Homework -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
-                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                        <li>Why can't we connect DC motors directly to Arduino pins?</li>
-                        <li>What is an H-bridge and how does it control motor direction?</li>
-                        <li>How does PWM control motor speed?</li>
-                        <li>What are the four basic states of H-bridge operation?</li>
-                        <li>What safety considerations are important when working with motors?</li>
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Step 2: Motor Installation</h3>
+                <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <ol style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
+                        <li>Attach motor mounting brackets to chassis</li>
+                        <li>Secure DC motors to mounting brackets</li>
+                        <li>Ensure motors are properly aligned</li>
+                        <li>Attach Mecanum wheels to motor shafts</li>
+                        <li>Verify wheels rotate freely without obstruction</li>
                     </ol>
                 </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Homework Challenges</h3>
-                    <div class="space-y-4">
-                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 1: Speed Ramping</h4>
-                            <p class="text-blue-700">
-                                Create a motor control system with smooth acceleration and deceleration. 
-                                Motors should gradually increase to target speed and slowly stop.
-                            </p>
-                        </div>
-                        
-                        <div style="background: #e6fffa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 2: Obstacle Avoidance</h4>
-                            <p class="text-green-700">
-                                Build a simple obstacle avoidance system using button sensors to simulate 
-                                bumper switches. Robot should back up and turn when obstacle detected.
-                            </p>
-                        </div>
-                        
-                        <div style="background: #f7fafc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge 3: Line Following Simulation</h4>
-                            <p class="text-yellow-700">
-                                Create a line-following simulation using potentiometers to represent line 
-                                sensors. Adjust motor speeds to keep the "robot" centered on the line.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <a href="/programming/quizzes32/Lesson11" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Take Lesson 11 Quiz →
-                    </a>
-                </div>
             </div>
 
-            <!-- Navigation -->
-            <div class="flex justify-between items-center mt-8">
-                <div>
-                    <a href="/programming/lessons32/Lesson10" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ← Previous: Lesson 10
-                    </a>
-                </div>
-                <div>
-                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Course Overview
-                    </a>
-                </div>
-                <div>
-                    <a href="/programming/lessons32/Lesson12" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Lesson 12 →
-                    </a>
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Step 3: Electronics Mounting</h3>
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <ol style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
+                        <li>Mount Arduino Uno to designated mounting points</li>
+                        <li>Install motor driver board near Arduino</li>
+                        <li>Mount ultrasonic sensor at front of chassis</li>
+                        <li>Install IMU sensor in stable location</li>
+                        <li>Secure battery pack in designated compartment</li>
+                    </ol>
                 </div>
             </div>
         </div>
-    </main>
+
+        <!-- Section 3: Wiring and Connections -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔌 Section 3: Wiring and Connections</h2>
+            
+            <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #dc2626;">
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Safety First!</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    Always disconnect power before making any connections. Double-check polarity before connecting batteries or power supplies.
+                </p>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Power Connections</h3>
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Connect battery pack to motor driver power input</li>
+                        <li>• Connect Arduino power from motor driver 5V output</li>
+                        <li>• Ensure all ground connections are secure</li>
+                        <li>• Verify voltage levels before powering on</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Connections</h3>
+                <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px;">
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Connect motor wires to driver outputs (A1, A2, B1, B2)</li>
+                        <li>• Connect PWM control pins to Arduino digital pins</li>
+                        <li>• Connect direction control pins to Arduino digital pins</li>
+                        <li>• Test each motor individually before final assembly</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Sensor Connections</h3>
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Connect ultrasonic sensor Trig and Echo pins</li>
+                        <li>• Connect IMU sensor via I2C (SDA, SCL)</li>
+                        <li>• Ensure sensor power connections (VCC, GND)</li>
+                        <li>• Route wires to avoid interference with moving parts</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 4: Testing and Troubleshooting -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧪 Section 4: Testing and Troubleshooting</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Initial Testing Checklist</h3>
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>✅ Visual inspection of all connections</li>
+                        <li>✅ Power-on test (LEDs and indicators)</li>
+                        <li>✅ Individual motor function test</li>
+                        <li>✅ Sensor reading verification</li>
+                        <li>✅ Communication test (Arduino to sensors)</li>
+                        <li>✅ Mechanical movement test</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Common Issues and Solutions</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Motors not turning</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check power connections, verify motor driver wiring, test with simple code</p>
+                    </div>
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Sensors not responding</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Verify power and signal connections, check pin assignments in code</p>
+                    </div>
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Robot moves erratically</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check wheel alignment, verify motor directions, calibrate sensors</p>
+                    </div>
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Power issues</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check battery charge, verify voltage levels, inspect power connections</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment & Next Steps -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📝 Assessment & Next Steps</h2>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Assembly Verification</h3>
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Before proceeding to programming, ensure your miniAuto is properly assembled:
+                    </p>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>🔧 All screws are tightened securely</li>
+                        <li>🔌 All electrical connections are correct</li>
+                        <li>⚡ Power system functions properly</li>
+                        <li>🎯 Components are properly aligned</li>
+                        <li>🔄 Wheels rotate freely</li>
+                        <li>📡 Sensors are mounted securely</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🎯 Preparation for Week 12</h4>
+                <p style="color: #4a5568; line-height: 1.6; margin: 0;">
+                    With your miniAuto fully assembled, you're ready to begin programming! In Week 12, we'll learn how to control the Mecanum wheels for omnidirectional movement, implement sensor reading, and create your first autonomous behaviors.
+                </p>
+            </div>
+
+            <div style="text-center">
+                <a href="/programming/quizzes32/lesson11" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Take Lesson 11 Quiz →
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <div>
+                <a href="/programming/lessons32/lesson10" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous: Lesson 10
+                </a>
+            </div>
+            <div>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Course Overview
+                </a>
+            </div>
+            <div>
+                <a href="/programming/lessons32/lesson12" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Lesson 12 →
+                </a>
+            </div>
+        </div>
+    </div>
 </Layout>
-
-<script>
-window.copyCode = function(button) {
-    try {
-        const codeElement = button.parentElement.querySelector('code');
-        if (!codeElement) {
-            showCopyFeedback(button, false);
-            return;
-        }
-        
-        const codeText = codeElement.textContent || codeElement.innerText;
-        
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(codeText).then(() => {
-                showCopyFeedback(button, true);
-            }).catch(() => {
-                fallbackCopy(codeText, button);
-            });
-        } else {
-            fallbackCopy(codeText, button);
-        }
-    } catch (err) {
-        showCopyFeedback(button, false);
-    }
-};
-
-function fallbackCopy(text, button) {
-    try {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'absolute';
-        textarea.style.left = '-9999px';
-        textarea.style.top = '0';
-        textarea.setAttribute('readonly', '');
-        document.body.appendChild(textarea);
-        
-        textarea.select();
-        textarea.setSelectionRange(0, 99999);
-        
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textarea);
-        
-        showCopyFeedback(button, successful);
-    } catch (err) {
-        showCopyFeedback(button, false);
-    }
-}
-
-function showCopyFeedback(button, success) {
-    const originalText = button.textContent;
-    const originalBg = button.style.backgroundColor;
-    
-    if (success) {
-        button.textContent = '✅ Copied!';
-        button.style.backgroundColor = '#10b981';
-    } else {
-        button.textContent = '❌ Failed';
-        button.style.backgroundColor = '#dc2626';
-    }
-    
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.style.backgroundColor = originalBg || '#2563eb';
-    }, 2000);
-}
-</script>
