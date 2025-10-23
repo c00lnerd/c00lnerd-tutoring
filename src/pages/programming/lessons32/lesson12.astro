@@ -63,148 +63,169 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             </div>
 
-            <!-- Section 1: Ultrasonic Sensor Fundamentals -->
+            <!-- Section 1: miniAuto Movement Basics -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🔊 Section 1: Ultrasonic Sensor Fundamentals</h2>
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🤖 Section 1: miniAuto Movement Basics</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How Ultrasonic Sensors Work</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Mecanum Wheels</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Ultrasonic sensors use high-frequency sound waves to measure distance. They work like 
-                        sonar systems - sending out sound pulses and measuring the time for echoes to return.
+                        The miniAuto uses Mecanum wheels that allow omnidirectional movement. Each wheel has rollers 
+                        at 45° angles that enable the robot to move forward, backward, sideways, and rotate without changing orientation.
                     </p>
                     
                     <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">HC-SR04 Specifications:</h4>
+                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Motor Control Pins:</h4>
                         <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><strong>Range:</strong> 2cm to 400cm</li>
-                            <li><strong>Accuracy:</strong> ±3mm</li>
-                            <li><strong>Frequency:</strong> 40kHz ultrasonic</li>
-                            <li><strong>Distance Formula:</strong> Distance = (Time × 0.0343) ÷ 2</li>
+                            <li><strong>Front Left Motor:</strong> PWM Pin 5, Direction Pin 4</li>
+                            <li><strong>Front Right Motor:</strong> PWM Pin 6, Direction Pin 7</li>
+                            <li><strong>Rear Left Motor:</strong> PWM Pin 9, Direction Pin 8</li>
+                            <li><strong>Rear Right Motor:</strong> PWM Pin 10, Direction Pin 11</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 2: Basic Distance Measurement -->
+            <!-- Section 2: Basic Movement Functions -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">📏 Section 2: Basic Distance Measurement</h2>
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">⚡ Section 2: Basic Movement Functions</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Simple Distance Reading</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Control Setup</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Basic program to read distance from an HC-SR04 sensor:
+                        First, let's set up the basic motor control functions for the miniAuto:
                     </p>
                     
                     <div style="position: relative;">
                         <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Basic HC-SR04 Distance Measurement
-const int trigPin = 9;    // Trigger pin
-const int echoPin = 10;   // Echo pin
-
-long duration;
-int distance;
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// miniAuto Basic Movement Setup
+// Motor pin definitions
+const int FL_PWM = 5;   // Front Left PWM
+const int FL_DIR = 4;   // Front Left Direction
+const int FR_PWM = 6;   // Front Right PWM  
+const int FR_DIR = 7;   // Front Right Direction
+const int RL_PWM = 9;   // Rear Left PWM
+const int RL_DIR = 8;   // Rear Left Direction
+const int RR_PWM = 10;  // Rear Right PWM
+const int RR_DIR = 11;  // Rear Right Direction
 
 void setup() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  // Set all motor pins as outputs
+  pinMode(FL_PWM, OUTPUT);
+  pinMode(FL_DIR, OUTPUT);
+  pinMode(FR_PWM, OUTPUT);
+  pinMode(FR_DIR, OUTPUT);
+  pinMode(RL_PWM, OUTPUT);
+  pinMode(RL_DIR, OUTPUT);
+  pinMode(RR_PWM, OUTPUT);
+  pinMode(RR_DIR, OUTPUT);
+  
   Serial.begin(9600);
-  Serial.println("HC-SR04 Distance Sensor");
+  Serial.println("miniAuto Movement System Ready");
+  
+  // Stop all motors initially
+  stopMotors();
 }
 
-void loop() {
-  // Clear trigger
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  
-  // Send 10µs pulse
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
-  
-  // Read echo duration
-  duration = pulseIn(echoPin, HIGH);
-  
-  // Calculate distance
-  distance = duration * 0.0343 / 2;
-  
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" cm");
-  
-  delay(500);
+void stopMotors() {
+  analogWrite(FL_PWM, 0);
+  analogWrite(FR_PWM, 0);
+  analogWrite(RL_PWM, 0);
+  analogWrite(RR_PWM, 0);
 }`}</code></pre>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 3: Obstacle Detection -->
+            <!-- Section 3: Omnidirectional Movement -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🚧 Section 3: Obstacle Detection</h2>
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🎯 Section 3: Omnidirectional Movement</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Obstacle Detection System</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Movement Functions</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Combine sensors with LEDs and buzzers for obstacle alerts:
+                        Create functions for forward, backward, left, right, and rotational movement:
                     </p>
                     
                     <div style="position: relative;">
                         <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Obstacle Detection System
-const int trigPin = 9;
-const int echoPin = 10;
-const int redLED = 13;
-const int yellowLED = 12;
-const int greenLED = 11;
-const int buzzer = 8;
-
-void setup() {
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
-  pinMode(redLED, OUTPUT);
-  pinMode(yellowLED, OUTPUT);
-  pinMode(greenLED, OUTPUT);
-  pinMode(buzzer, OUTPUT);
-  Serial.begin(9600);
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Movement Functions for miniAuto
+void moveForward(int speed) {
+  // All wheels forward
+  digitalWrite(FL_DIR, HIGH);
+  digitalWrite(FR_DIR, HIGH);
+  digitalWrite(RL_DIR, HIGH);
+  digitalWrite(RR_DIR, HIGH);
+  
+  analogWrite(FL_PWM, speed);
+  analogWrite(FR_PWM, speed);
+  analogWrite(RL_PWM, speed);
+  analogWrite(RR_PWM, speed);
 }
 
-void loop() {
-  int distance = getDistance();
+void moveBackward(int speed) {
+  // All wheels backward
+  digitalWrite(FL_DIR, LOW);
+  digitalWrite(FR_DIR, LOW);
+  digitalWrite(RL_DIR, LOW);
+  digitalWrite(RR_DIR, LOW);
   
-  // Turn off all LEDs
-  digitalWrite(redLED, LOW);
-  digitalWrite(yellowLED, LOW);
-  digitalWrite(greenLED, LOW);
-  noTone(buzzer);
-  
-  if (distance <= 10) {
-    // DANGER
-    digitalWrite(redLED, HIGH);
-    tone(buzzer, 1000);
-    Serial.println("DANGER - Very close!");
-  } else if (distance <= 30) {
-    // WARNING
-    digitalWrite(yellowLED, HIGH);
-    tone(buzzer, 500);
-    Serial.println("WARNING - Obstacle detected");
-  } else {
-    // SAFE
-    digitalWrite(greenLED, HIGH);
-    Serial.println("SAFE - Path clear");
-  }
-  
-  delay(200);
+  analogWrite(FL_PWM, speed);
+  analogWrite(FR_PWM, speed);
+  analogWrite(RL_PWM, speed);
+  analogWrite(RR_PWM, speed);
 }
 
-int getDistance() {
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+void moveLeft(int speed) {
+  // Mecanum wheel pattern for left movement
+  digitalWrite(FL_DIR, LOW);   // Front left backward
+  digitalWrite(FR_DIR, HIGH);  // Front right forward
+  digitalWrite(RL_DIR, HIGH);  // Rear left forward
+  digitalWrite(RR_DIR, LOW);   // Rear right backward
   
-  long duration = pulseIn(echoPin, HIGH);
-  return duration * 0.0343 / 2;
+  analogWrite(FL_PWM, speed);
+  analogWrite(FR_PWM, speed);
+  analogWrite(RL_PWM, speed);
+  analogWrite(RR_PWM, speed);
+}
+
+void moveRight(int speed) {
+  // Mecanum wheel pattern for right movement
+  digitalWrite(FL_DIR, HIGH);  // Front left forward
+  digitalWrite(FR_DIR, LOW);   // Front right backward
+  digitalWrite(RL_DIR, LOW);   // Rear left backward
+  digitalWrite(RR_DIR, HIGH);  // Rear right forward
+  
+  analogWrite(FL_PWM, speed);
+  analogWrite(FR_PWM, speed);
+  analogWrite(RL_PWM, speed);
+  analogWrite(RR_PWM, speed);
+}
+
+void rotateClockwise(int speed) {
+  // Right side backward, left side forward
+  digitalWrite(FL_DIR, HIGH);
+  digitalWrite(FR_DIR, LOW);
+  digitalWrite(RL_DIR, HIGH);
+  digitalWrite(RR_DIR, LOW);
+  
+  analogWrite(FL_PWM, speed);
+  analogWrite(FR_PWM, speed);
+  analogWrite(RL_PWM, speed);
+  analogWrite(RR_PWM, speed);
+}
+
+void rotateCounterClockwise(int speed) {
+  // Left side backward, right side forward
+  digitalWrite(FL_DIR, LOW);
+  digitalWrite(FR_DIR, HIGH);
+  digitalWrite(RL_DIR, LOW);
+  digitalWrite(RR_DIR, HIGH);
+  
+  analogWrite(FL_PWM, speed);
+  analogWrite(FR_PWM, speed);
+  analogWrite(RL_PWM, speed);
+  analogWrite(RR_PWM, speed);
 }`}</code></pre>
                     </div>
                 </div>
@@ -212,23 +233,75 @@ int getDistance() {
 
             <!-- Hands-On Activity -->
             <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Smart Parking Assistant</h2>
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Movement Sequence Demo</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Ultrasonic Parking Sensor</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Autonomous Movement Pattern</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Create a parking assistance system with progressive alerts as objects get closer.
+                        Create a demonstration program that shows all movement capabilities of the miniAuto.
                     </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void loop() {
+  Serial.println("Starting movement demonstration...");
+  
+  // Forward movement
+  Serial.println("Moving Forward");
+  moveForward(150);
+  delay(2000);
+  stopMotors();
+  delay(500);
+  
+  // Backward movement
+  Serial.println("Moving Backward");
+  moveBackward(150);
+  delay(2000);
+  stopMotors();
+  delay(500);
+  
+  // Left strafe
+  Serial.println("Strafing Left");
+  moveLeft(150);
+  delay(2000);
+  stopMotors();
+  delay(500);
+  
+  // Right strafe
+  Serial.println("Strafing Right");
+  moveRight(150);
+  delay(2000);
+  stopMotors();
+  delay(500);
+  
+  // Clockwise rotation
+  Serial.println("Rotating Clockwise");
+  rotateClockwise(120);
+  delay(1500);
+  stopMotors();
+  delay(500);
+  
+  // Counter-clockwise rotation
+  Serial.println("Rotating Counter-Clockwise");
+  rotateCounterClockwise(120);
+  delay(1500);
+  stopMotors();
+  delay(500);
+  
+  Serial.println("Movement demonstration complete!");
+  delay(3000);
+}`}</code></pre>
+                    </div>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Requirements</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Challenge Requirements</h3>
                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li>Multi-zone distance detection (safe, caution, warning, danger)</li>
-                        <li>Progressive LED indicators</li>
-                        <li>Variable-frequency buzzer alerts</li>
-                        <li>Serial Monitor status display</li>
-                        <li>Error detection and handling</li>
+                        <li>Program a square movement pattern using forward and rotation</li>
+                        <li>Create a figure-8 pattern using curves and turns</li>
+                        <li>Implement variable speed control for different movements</li>
+                        <li>Add LED indicators for each movement direction</li>
+                        <li>Create a remote control mode using serial commands</li>
                     </ol>
                 </div>
             </div>
@@ -240,11 +313,11 @@ int getDistance() {
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
                     <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                        <li>How do ultrasonic sensors measure distance?</li>
-                        <li>What is the speed of sound in air?</li>
-                        <li>Why do we divide by 2 in the distance calculation?</li>
-                        <li>What is the operating range of the HC-SR04?</li>
-                        <li>How can you improve measurement reliability?</li>
+                        <li>What makes Mecanum wheels different from regular wheels?</li>
+                        <li>How many motors does the miniAuto have and what pins control them?</li>
+                        <li>What wheel pattern creates sideways movement to the left?</li>
+                        <li>How do you make the robot rotate in place?</li>
+                        <li>What's the difference between PWM and direction pins?</li>
                     </ol>
                 </div>
 
