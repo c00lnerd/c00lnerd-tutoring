@@ -156,8 +156,15 @@ uint16_t measureDistance(){
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
   
-  long duration = pulseIn(ECHO_PIN, HIGH);
-  uint16_t distance = duration * 0.034 / 2;  // Convert to mm
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000); // 30ms timeout
+  if(duration == 0) return 0; // No echo received
+  
+  // Convert to millimeters: duration in microseconds * 0.34 mm/μs / 2
+  uint16_t distance = (duration * 0.34) / 2;
+  
+  // Limit to sensor range (20mm to 4000mm)
+  if(distance < 20) distance = 20;
+  if(distance > 4000) distance = 4000;
   
   return distance;
 }
@@ -300,8 +307,15 @@ uint16_t measureDistance(){
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
   
-  long duration = pulseIn(ECHO_PIN, HIGH);
-  uint16_t distance = duration * 0.034 / 2;  // Convert to mm
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000); // 30ms timeout
+  if(duration == 0) return 0; // No echo received
+  
+  // Convert to millimeters: duration in microseconds * 0.34 mm/μs / 2
+  uint16_t distance = (duration * 0.34) / 2;
+  
+  // Limit to sensor range (20mm to 4000mm)
+  if(distance < 20) distance = 20;
+  if(distance > 4000) distance = 4000;
   
   return distance;
 }
