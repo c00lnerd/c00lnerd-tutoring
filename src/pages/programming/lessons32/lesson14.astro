@@ -53,5 +53,296 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             </div>
         </div>
+
+        <!-- Section 6.4: Ultrasonic Ranging -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">📡 Section 6.4: Ultrasonic Ranging</h2>
+                
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Distance Detection with RGB Feedback</h3>
+                <p class="text-gray-700 mb-4">
+                    In this lesson, you'll learn how to use a glowing ultrasonic sensor to detect the distance of nearby obstacles. You'll also control the color of the sensor's built-in RGB LED based on the measured distance.
+                </p>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🌈 RGB LED Behavior</h4>
+                    <ul style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Distance < 80mm:</strong> Red breathing light</li>
+                        <li><strong>80mm - 180mm:</strong> Red gradient (brighter as distance increases)</li>
+                        <li><strong>180mm - 320mm:</strong> Blue gradient (brighter as distance increases)</li>
+                        <li><strong>320mm - 500mm:</strong> Green gradient (brighter as distance increases)</li>
+                        <li><strong>> 500mm:</strong> Solid green light</li>
+                    </ul>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
+                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 1rem;">⚙️ How It Works</h4>
+                    <p style="color: #92400e; margin-bottom: 1rem; line-height: 1.6;">
+                        The ultrasonic sensor emits 8 square waves at 40kHz and measures the time for the echo to return. The distance is calculated using: <strong>Distance = (High-level time × 340 m/s) ÷ 2</strong>
+                    </p>
+                    <ul style="color: #92400e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Supply Voltage:</strong> 5V</li>
+                        <li><strong>Operating Current:</strong> 2mA</li>
+                        <li><strong>Effective Range:</strong> 2cm - 400cm</li>
+                    </ul>
+                </div>
+
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`// Ultrasonic Ranging with RGB Feedback
+#include "Ultrasound.h"
+
+#define FILTER_N 3                    // Filter array capacity
+int Filter_Value;                     // Filtered distance value
+int filter_buf[FILTER_N + 1];        // Filter buffer array
+Ultrasound ultrasound;                // Ultrasound sensor object
+
+void setup() {
+  Serial.begin(9600);                 // Initialize serial communication
+}
+
+void loop() {
+  ultrasonic_distance();              // Continuously measure distance and update LED
+}
+
+// Ultrasonic distance measurement and LED control
+int ultrasonic_distance(){
+  uint8_t s;
+  uint16_t distance = Filter();       // Get filtered distance value
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" mm");
+  
+  // Distance-based RGB LED control
+  if (distance > 0 && distance <= 80){
+    ultrasound.Breathing(1, 0, 0, 1, 0, 0);  // Red breathing light, 0.1s cycle
+  }
+  else if (distance > 80 && distance <= 180){
+    s = map(distance, 80, 180, 0, 255);
+    ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);  // Red gradient
+  }
+  else if (distance > 180 && distance <= 320){
+    s = map(distance, 180, 320, 0, 255);
+    ultrasound.Color(0, 0, s, 0, 0, s);  // Blue gradient
+  }
+  else if (distance > 320 && distance <= 500){
+    s = map(distance, 320, 500, 0, 255);
+    ultrasound.Color(0, s, 255-s, 0, s, 255-s);  // Green gradient
+  }
+  else if (distance > 500){
+    ultrasound.Color(0, 255, 0, 0, 255, 0);  // Solid green
+  }
+  
+  return distance;
+}
+
+// Distance filter function (implement median filter)
+uint16_t Filter(){
+  // Filter implementation for stable readings
+  // Returns filtered distance value
+}`}</code>
+</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6.5: Ultrasonic Following -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">🤖 Section 6.5: Ultrasonic Following</h2>
+                
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Object Following Behavior</h3>
+                <p class="text-gray-700 mb-4">
+                    In this section, you'll learn how to use a glowing ultrasonic module to detect obstacle distances and control a robot car to follow the movement of an object.
+                </p>
+
+                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
+                    <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🚗 Car Movement Behavior</h4>
+                    <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Distance < 200mm:</strong> Car moves backward</li>
+                        <li><strong>200mm - 300mm:</strong> Car stops</li>
+                        <li><strong>300mm - 700mm:</strong> Car moves forward</li>
+                        <li><strong>Distance > 700mm:</strong> Car stops again</li>
+                    </ul>
+                </div>
+
+                <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #ef4444; margin-bottom: 1.5rem;">
+                    <h4 style="color: #991b1b; font-weight: bold; margin-bottom: 1rem;">⚠️ Important Notes</h4>
+                    <ul style="color: #991b1b; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li>Remove the Bluetooth module before uploading to avoid serial port conflicts</li>
+                        <li>Turn off the battery box before connecting USB cable</li>
+                        <li>Ensure proper motor connections before testing</li>
+                    </ul>
+                </div>
+
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`// Ultrasonic Following Robot
+#include "Ultrasound.h"
+
+Ultrasound ultrasound;                // Ultrasound sensor object
+const static uint8_t pwm_min = 50;   // Minimum PWM value
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};        // Motor PWM pins
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};  // Motor direction pins
+uint16_t dis;                         // Distance variable
+
+void setup() {
+  Serial.begin(9600);                 // Initialize serial communication
+  Motor_Init();                       // Initialize motors
+}
+
+void loop() {
+  ultrasonic_distance();              // Update RGB LED based on distance
+  dis = ultrasonic_distance();       // Get current distance
+  
+  // Control robot movement based on distance
+  if(dis >= 700) 
+    Velocity_Controller(0, 0, 0, 0);           // Stop - object too far
+  if(dis >= 300 && dis < 700) 
+    Velocity_Controller(0, 50, 0, 0);          // Move forward - follow object
+  if(dis >= 200 && dis < 300) 
+    Velocity_Controller(0, 0, 0, 0);           // Stop - optimal distance
+  if(dis < 200) 
+    Velocity_Controller(180, 50, 0, 0);        // Move backward - too close
+}
+
+// Ultrasonic distance measurement with RGB control
+uint16_t ultrasonic_distance(){
+  uint8_t s;
+  uint16_t distance = Filter();       // Get filtered distance
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" mm");
+  
+  // RGB LED feedback (same as Section 6.4)
+  if (distance > 0 && distance <= 80){
+    ultrasound.Breathing(1, 0, 0, 1, 0, 0);  // Red breathing
+  }
+  else if (distance > 80 && distance <= 180){
+    s = map(distance, 80, 180, 0, 255);
+    ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);  // Red gradient
+  }
+  else if (distance > 180 && distance <= 320){
+    s = map(distance, 180, 320, 0, 255);
+    ultrasound.Color(0, 0, s, 0, 0, s);  // Blue gradient
+  }
+  else if (distance > 320 && distance <= 500){
+    s = map(distance, 320, 500, 0, 255);
+    ultrasound.Color(0, s, 255-s, 0, s, 255-s);  // Green gradient
+  }
+  else if (distance > 500){
+    ultrasound.Color(0, 255, 0, 0, 255, 0);  // Solid green
+  }
+  
+  return distance;
+}
+
+// Motor initialization function
+void Motor_Init(){
+  for(int i = 0; i < 4; i++){
+    pinMode(motorpwmPin[i], OUTPUT);
+    pinMode(motordirectionPin[i], OUTPUT);
+  }
+}
+
+// Velocity controller for mecanum wheel movement
+void Velocity_Controller(int angle, int velocity, int rot, int drift){
+  // Calculate motor speeds based on mecanum wheel kinematics
+  // angle: movement direction (0° = forward)
+  // velocity: movement speed
+  // rot: rotation (+ = counterclockwise, - = clockwise)
+  // drift: enable/disable drift mode
+}`}</code>
+</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mt-8">
+            <div>
+                <a href="/programming/lessons32/lesson13" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous: Lesson 13
+                </a>
+            </div>
+            <div>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Course Overview
+                </a>
+            </div>
+            <div>
+                <a href="/programming/lessons32/lesson15" style="background-color: #dc2626; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #b91c1c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Lesson 15 →
+                </a>
+            </div>
+        </div>
     </div>
 </Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
