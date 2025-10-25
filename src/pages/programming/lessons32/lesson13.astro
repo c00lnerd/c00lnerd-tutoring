@@ -175,7 +175,17 @@ void Rgb_Show(uint8_t rValue, uint8_t gValue, uint8_t bValue) {
                     <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                     <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
 <code>{`// Buzzer Music Control with Button Input
-#include "tone.h"
+// No additional libraries needed - uses built-in Arduino tone() function
+
+// Musical note frequencies (Hz)
+#define NOTE_C4  262
+#define NOTE_E3  165
+#define NOTE_E4  330
+#define NOTE_G3  196
+#define NOTE_G4  392
+#define NOTE_A3  220
+#define NOTE_AS3 233
+#define NOTE_B3  247
 
 // Musical notes array (simplified version)
 static int song[16] = { 
@@ -216,10 +226,10 @@ void tune_task(void) {
     // Calculate note duration (1 beat = 1 second)
     int noteDuration = 1000/noteDurations[thisNote];
     
-    // Play the note
+    // Play the note using built-in tone() function
     tone(buzzerPin, song[thisNote], noteDuration);
     
-    // Pause between notes (130% of note duration)
+    // Pause between notes (110% of note duration)
     int pauseBetweenNotes = noteDuration * 1.10;
     delay(pauseBetweenNotes);
     
