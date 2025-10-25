@@ -94,98 +94,232 @@ import Layout from '../../../layouts/Layout.astro';
                 <div style="position: relative;">
                     <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                     <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`// Obstacle Avoidance Program
-#include "Ultrasound.h"
+<code>{`
+/**
+ * @file ultrasonic_avoid.ino
+ * @author Anonymity(Anonymity@hiwonder.com)
+ * @brief 超声波避障(Obstacle avoidance)
+ * @version V1.0
+ * @date 2024-04-23
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 
-Ultrasound ultrasound;                // Ultrasound sensor object
-const static uint8_t keyPin = 3;     // Button pin
-const static uint8_t pwm_min = 50;   // Minimum PWM value
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};        // Motor PWM pins
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};  // Motor direction pins
-bool keyState;                        // Button state detection
-bool taskStart = 0;                   // Task start flag
-uint16_t dis;                         // Distance variable
+// Compatible Ultrasound class - matches Hiwonder I2C implementation
+#include <Arduino.h>
+#include <Wire.h>
+
+// I2C Constants (exact Hiwonder Ultrasound.h definitions)
+#define ULTRASOUND_I2C_ADDR         0x77
+#define DISDENCE_L                  0    // Distance low 8 bits, unit: mm
+#define DISDENCE_H                  1    // Distance high 8 bits
+#define RGB_BRIGHTNESS              50   // 0-255
+#define RGB_WORK_MODE               2    // RGB mode: 0=user defined, 1=breathing mode
+#define RGB1_R                      3    // Probe 1 R value, 0~255
+#define RGB1_G                      4    // Probe 1 G value, 0~255  
+#define RGB1_B                      5    // Probe 1 B value, 0~255
+#define RGB2_R                      6    // Probe 2 R value, 0~255
+#define RGB2_G                      7    // Probe 2 G value, 0~255
+#define RGB2_B                      8    // Probe 2 B value, 0~255
+#define RGB1_R_BREATHING_CYCLE      9    // Breathing cycle for probe 1 R, unit: 100ms
+#define RGB1_G_BREATHING_CYCLE      10   // Breathing cycle for probe 1 G, unit: 100ms
+#define RGB1_B_BREATHING_CYCLE      11   // Breathing cycle for probe 1 B, unit: 100ms
+#define RGB2_R_BREATHING_CYCLE      12   // Breathing cycle for probe 2 R, unit: 100ms
+#define RGB2_G_BREATHING_CYCLE      13   // Breathing cycle for probe 2 G, unit: 100ms
+#define RGB2_B_BREATHING_CYCLE      14   // Breathing cycle for probe 2 B, unit: 100ms
+#define RGB_WORK_SIMPLE_MODE        0
+#define RGB_WORK_BREATHING_MODE     1
+
+class Ultrasound {
+private:
+  bool wireWriteByte(uint8_t addr, uint8_t val) {
+    Wire.beginTransmission(addr);
+    Wire.write(val);
+    return (Wire.endTransmission() == 0);
+  }
+  
+  bool wireWriteDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len) {
+    Wire.beginTransmission(addr);
+    Wire.write(reg);
+    for(unsigned int i = 0; i < len; i++) {
+      Wire.write(val[i]);
+    }
+    return (Wire.endTransmission() == 0);
+  }
+  
+  int wireReadDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len) {
+    if (!wireWriteByte(addr, reg)) return -1;
+    Wire.requestFrom(addr, len);
+    unsigned char i = 0;
+    while (Wire.available() && i < len) {
+      val[i] = Wire.read();
+      i++;
+    }
+    return i;
+  }
+  
+public:
+  Ultrasound() {
+    Wire.begin();
+  }
+  
+  void Breathing(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2) {
+    uint8_t value = RGB_WORK_BREATHING_MODE;
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R_BREATHING_CYCLE, &r1, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_G_BREATHING_CYCLE, &g1, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_B_BREATHING_CYCLE, &b1, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_R_BREATHING_CYCLE, &r2, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_G_BREATHING_CYCLE, &g2, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_B_BREATHING_CYCLE, &b2, 1);
+  }
+  
+  void Color(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2) {
+    uint8_t value = RGB_WORK_SIMPLE_MODE;
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R, &r1, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_G, &g1, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_B, &b1, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_R, &r2, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_G, &g2, 1);
+    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_B, &b2, 1);
+  }
+  
+  uint16_t GetDistance() {
+    uint16_t distance;
+    wireReadDataArray(ULTRASOUND_I2C_ADDR, DISDENCE_L, (uint8_t *)&distance, 2);
+    return distance;
+  }
+};
+
+// OFFICIAL HIWONDER OBSTACLE AVOIDANCE CODE
+#define STOP 0
+#define FORWARD 1
+#define BACKWARD 2
+#define FILTER_N 3                ///< 递推平均滤波法(Recursive average filtering method)
+
+Ultrasound ultrasound;  ///< 实例化超声波类(Instantiate the ultrasound class)
+
+const static uint8_t keyPin = 3;
+const static uint8_t pwm_min = 50;
+const static uint8_t motorpwmPin[4] = { 10, 9, 6, 11} ;
+const static uint8_t motordirectionPin[4] = { 12, 8, 7, 13};
+
+bool keyState;          ///< 按键状态检测(Detect button status)
+bool taskStart = 0;
+uint16_t dis;
+uint16_t last_avoid_dis;
+uint16_t ultrasonic_distance(void);
+int filter_buf[FILTER_N + 1];
+int Filter(void);
+void Motor_Init(void);
+void Velocity_Controller(uint16_t angle, uint8_t velocity,int8_t rot,bool drift);
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
 
 void setup() {
-  Serial.begin(9600);                 // Initialize serial communication
-  Serial.setTimeout(500);             // Set serial timeout
-  pinMode(keyPin, INPUT);             // Configure button as input
-  Motor_Init();                       // Initialize motors
-  printf("2");                        // Debug output
+  Serial.begin(9600);
+  Serial.setTimeout(500);
+  pinMode(keyPin, INPUT);
+  Motor_Init();
+  printf("2");
 }
 
 void loop() {
-  keyState = analogRead(keyPin);      // Read button state
-  printf("111");                      // Debug output
-  
-  if(!keyState) taskStart = 1;        // Start task when button pressed
-  
+  keyState = analogRead(keyPin);
+  printf("111");
+  if(!keyState) taskStart = 1;
   if(taskStart) {
-    ultrasonic_distance();            // Update RGB LED
-    dis = ultrasonic_distance();      // Get distance reading
-    
-    Velocity_Controller(0, 100, 0, 0); // Move forward by default
-    
-    // Obstacle avoidance logic
+    ultrasonic_distance();
+    dis = ultrasonic_distance();
+    Velocity_Controller( 0, 100, 0, 0);
     while(dis < 300) {
-      dis = ultrasonic_distance();    // Keep checking distance
-      Velocity_Controller(0, 0, -100, 0); // Turn right to avoid obstacle
-    }
+      dis = ultrasonic_distance();
+      Velocity_Controller( 0, 0, -100, 0);
+    }  
   }
 }
 
-// Ultrasonic distance measurement with RGB control
+ /**
+ * @brief 滤波(filter)
+ * @param filter_sum / FILTER_N
+ * @arg None
+ * @retval None
+ * @note None
+ */
+int Filter() {
+  int i;
+  int filter_sum = 0;
+  filter_buf[FILTER_N] = ultrasound.GetDistance();     ///< 读取超声波测值(Read the ultrasonic ranging value)
+  for(i = 0; i < FILTER_N; i++) {
+    filter_buf[i] = filter_buf[i + 1];               ///< 所有数据左移，低位仍掉(Shift all data to the left, and clear the low bit)
+    filter_sum += filter_buf[i];
+  }
+  return (int)(filter_sum / FILTER_N);
+}
+
+ /**
+ * @brief 超声波距离数据获取(Obtain ultrasonic distance data)
+ * @param None
+ * @arg None
+ * @retval distance
+ * @note None
+ */
 uint16_t ultrasonic_distance(){
   uint8_t s;
-  uint16_t distance = Filter();       // Get filtered distance
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" mm");
-  
-  // RGB LED feedback based on distance
+  uint16_t distance = Filter();                                               ///< 获得滤波器输出值(Get the output value of the filter)
+  Serial.print("Distance: ");Serial.print(distance);Serial.println(" mm"); ///< 获取并且串口打印距离，单位mm(Get and print the distance via serial port, unit: mm)
+
   if (distance > 0 && distance <= 80){
-    ultrasound.Breathing(1, 0, 0, 1, 0, 0);  // Red breathing light
-  }
+      ultrasound.Breathing(1, 0, 0, 1, 0, 0);                                 ///< 呼吸灯模式，周期0.1s，颜色红色(Red breathing light mode, in 0.1s)
+   }
+   
   else if (distance > 80 && distance <= 180){
-    s = map(distance, 80, 180, 0, 255);
-    ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);  // Red gradient
-  }
-  else if (distance > 180 && distance <= 320){
-    s = map(distance, 180, 320, 0, 255);
-    ultrasound.Color(0, 0, s, 0, 0, s);  // Blue gradient
-  }
-  else if (distance > 320 && distance <= 500){
-    s = map(distance, 320, 500, 0, 255);
-    ultrasound.Color(0, s, 255-s, 0, s, 255-s);  // Green gradient
-  }
+      s = map(distance,80,180,0,255);
+      ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);                         ///< 红色渐变(Red gradient)
+   }
+   
+   else if (distance > 180 && distance <= 320){
+      s = map(distance,180,320,0,255);
+      ultrasound.Color(0, 0, s, 0, 0, s);                                     ///< 蓝色渐变(Blue gradient)
+   }
+   
+   else if (distance > 320 && distance <= 500){
+      s = map(distance,320,500,0,255);
+      ultrasound.Color(0, s, 255-s, 0, s, 255-s);                             ///< 绿色渐变(Green gradient)
+   }
   else if (distance > 500){
-    ultrasound.Color(0, 255, 0, 0, 255, 0);  // Solid green
-  }
-  
-  return distance;
+      ultrasound.Color(0, 255, 0, 0, 255, 0);                                 ///< 绿色(Green)
+   }
+  return distance;  
 }
 
-// Motor initialization function
-void Motor_Init(){
-  for(int i = 0; i < 4; i++){
-    pinMode(motorpwmPin[i], OUTPUT);
+ /* 电机初始化函数 */
+void Motor_Init(void){
+  for(uint8_t i = 0; i < 4; i++){
     pinMode(motordirectionPin[i], OUTPUT);
   }
+  Velocity_Controller( 0, 0, 0, 0);
 }
 
-// Velocity controller for mecanum wheel movement
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
+/**
+ * @brief 速度控制函数(Speed control function)
+ * @param angle   用于控制小车的运动方向，小车以车头为0度方向，逆时针为正方向。("angle" controls the robot's motion direction, with the front of the robot as 0 degrees and counterclockwise as the positive direction)
+ *                取值为0~359(range from 0 to 359)
+ * @param velocity   用于控制小车速度，取值为0~100。("velocity" controls the robot's speed, with a value range of 0 to 100)
+ * @param rot     用于控制小车的自转速度，取值为-100~100，若大于0小车有一个逆("rot" controls the robot's self-rotation speed, with a value range of -100 to 100)
+ *                 时针的自转速度，若小于0则有一个顺时针的自转速度。(If it is greater than 0, the robot has a counterclockwise self-rotation speed. If it is less than 0, the robot has a clockwise self-rotation speed)
+ * @param drift   用于决定小车是否开启漂移功能，取值为0或1，若为0则开启，反之关闭。("drift" determines whether the robot enables drift. Value range: 0 or 1. If it is 0, drift is enabled; otherwise, it is disabled)
+ * @retval None
+ */
+void Velocity_Controller(uint16_t angle, uint8_t velocity,int8_t rot,bool drift) {
   int8_t velocity_0, velocity_1, velocity_2, velocity_3;
   float speed = 1;
-  
   angle += 90;
   float rad = angle * PI / 180;
-  
-  if (rot == 0) speed = 1;            // Speed factor
-  else speed = 0.5;
-  
+  if (rot == 0) speed = 1;///< 速度因子(Speed factor)
+  else speed = 0.5; 
   velocity /= sqrt(2);
-  
   if (drift) {
     velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
     velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
@@ -197,27 +331,30 @@ void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drif
     velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
     velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
   }
-  
   Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
 }
-
-// Motor control function with PWM
+ 
+/**
+ * @brief PWM与轮子转向设置函数(PWM and wheel turning setting function)
+ * @param Motor_x   作为PWM与电机转向的控制数值。根据麦克纳姆轮的运动学分析求得。("Motor_x" is the control value for PWM and motor rotating. Calculated based on the kinematics analysis of mecanum wheels)
+ * @retval None
+ */
 void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
   int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1};   // Forward direction mapping
-  
-  for(uint8_t i = 0; i < 4; ++i) {
+  int8_t motors[4] = { Motor_0, Motor_1, Motor_2, Motor_3};
+  bool direction[4] = { 1, 0, 0, 1};///< 前进 左1 右0(Forward; left 1; right 0)
+  for(uint8_t i; i < 4; ++i) {
     if(motors[i] < 0) direction[i] = !direction[i];
     else direction[i] = direction[i];
-    
+
     if(motors[i] == 0) pwm_set[i] = 0;
     else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
+
+    digitalWrite(motordirectionPin[i], direction[i]); 
+    analogWrite(motorpwmPin[i], pwm_set[i]); 
   }
-}`}</code>
+}
+`}</code>
 </pre>
                 </div>
             </div>
