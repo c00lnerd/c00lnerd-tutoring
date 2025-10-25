@@ -231,6 +231,258 @@ void rotateCounterClockwise(int speed) {
                 </div>
             </div>
 
+            <!-- Section 4: Hiwonder Motor Testing Programs -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🔧 Section 4: Advanced Motor Testing Programs</h2>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 2rem;">
+                    The following programs are based on the official Hiwonder miniAuto documentation and provide comprehensive motor testing capabilities using the manufacturer's advanced control functions.
+                </p>
+
+                <!-- 5.2: Move Forward & Turn -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.2 Forward Movement & Turning Test</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Tests basic forward movement and in-place rotation using the Hiwonder velocity controller system.
+                        The robot moves forward for 1 second, turns left for 1 second, then turns right for 1 second.
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.2 Forward Movement & Turning Test
+#include <Arduino.h>
+
+const static uint8_t pwm_min = 50;
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11}; // Motor PWM pins
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13}; // Motor direction pins
+
+void Motor_Init(void);
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
+
+void setup() {
+  Serial.begin(9600);
+  Serial.setTimeout(500);
+  Motor_Init();
+  
+  Velocity_Controller(0, 100, 0, 0);  // Move forward
+  delay(1000);
+  Velocity_Controller(0, 0, 100, 0);  // Turn left in place
+  delay(1000);
+  Velocity_Controller(0, 0, -100, 0); // Turn right in place
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0);    // Stop
+}
+
+void loop() {
+  // Empty - single test sequence
+}
+
+void Motor_Init(void) {
+  for(uint8_t i = 0; i < 4; i++) {
+    pinMode(motordirectionPin[i], OUTPUT);
+  }
+  Velocity_Controller(0, 0, 0, 0);
+}
+
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
+  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
+  float speed = 1;
+  angle += 90;
+  float rad = angle * PI / 180;
+  
+  if (rot == 0) speed = 1;
+  else speed = 0.5;
+  
+  velocity /= sqrt(2);
+  
+  if (drift) {
+    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
+    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
+    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
+    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
+  } else {
+    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
+    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
+    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
+    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
+  }
+  
+  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
+}
+
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
+  int8_t pwm_set[4];
+  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
+  bool direction[4] = {1, 0, 0, 1}; // Forward direction defaults
+  
+  for(uint8_t i = 0; i < 4; ++i) {
+    if(motors[i] < 0) direction[i] = !direction[i];
+    
+    if(motors[i] == 0) pwm_set[i] = 0;
+    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
+    
+    digitalWrite(motordirectionPin[i], direction[i]);
+    analogWrite(motorpwmPin[i], pwm_set[i]);
+  }
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <!-- 5.3: Four-Direction Movement -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.3 Four-Direction Movement Test</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Tests all four basic movement directions: forward, backward, left strafe, and right strafe.
+                        Each movement lasts 1 second, demonstrating the full omnidirectional capabilities of mecanum wheels.
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.3 Four-Direction Movement Test
+void setup() {
+  Serial.begin(9600);
+  Serial.setTimeout(500);
+  Motor_Init();
+  
+  Serial.println("Starting 4-direction movement test...");
+  
+  // Forward movement
+  Serial.println("Moving Forward");
+  Velocity_Controller(0, 100, 0, 0);
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(500);
+  
+  // Backward movement  
+  Serial.println("Moving Backward");
+  Velocity_Controller(180, 100, 0, 0);
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(500);
+  
+  // Left strafe
+  Serial.println("Moving Left");
+  Velocity_Controller(270, 100, 0, 0);
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(500);
+  
+  // Right strafe
+  Serial.println("Moving Right");
+  Velocity_Controller(90, 100, 0, 0);
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  
+  Serial.println("4-direction test complete!");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <!-- 5.4: Oblique Movement -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.4 Diagonal Movement Test</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Tests diagonal movements by controlling specific wheel combinations. Demonstrates advanced mecanum wheel
+                        kinematics: forward-left, backward-right, forward-right, and backward-left movements.
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.4 Diagonal Movement Test
+void setup() {
+  Serial.begin(9600);
+  Serial.setTimeout(500);
+  Motor_Init();
+  
+  Serial.println("Starting diagonal movement test...");
+  
+  // Forward-Left diagonal
+  Serial.println("Moving Forward-Left");
+  Velocity_Controller(315, 100, 0, 0); // 45° angle for diagonal
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(500);
+  
+  // Backward-Right diagonal
+  Serial.println("Moving Backward-Right");
+  Velocity_Controller(135, 100, 0, 0); // 135° angle
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(500);
+  
+  // Forward-Right diagonal
+  Serial.println("Moving Forward-Right");
+  Velocity_Controller(45, 100, 0, 0); // 45° angle
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(500);
+  
+  // Backward-Left diagonal
+  Serial.println("Moving Backward-Left");
+  Velocity_Controller(225, 100, 0, 0); // 225° angle
+  delay(1000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  
+  Serial.println("Diagonal movement test complete!");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <!-- 5.5: Drifting Movement -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.5 Drifting Movement Test</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Tests advanced drifting capabilities where the robot moves sideways while rotating. This demonstrates
+                        the drift parameter in the velocity controller, creating car-like drifting motion.
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.5 Drifting Movement Test
+void setup() {
+  Serial.begin(9600);
+  Serial.setTimeout(500);
+  Motor_Init();
+  
+  Serial.println("Starting drift movement test...");
+  
+  // Clockwise drift
+  Serial.println("Drifting Clockwise");
+  Velocity_Controller(90, 80, 50, true); // Right movement with rotation and drift enabled
+  delay(2000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(1000);
+  
+  // Counter-clockwise drift
+  Serial.println("Drifting Counter-Clockwise");
+  Velocity_Controller(270, 80, -50, true); // Left movement with opposite rotation and drift
+  delay(2000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  delay(1000);
+  
+  // Forward drift with rotation
+  Serial.println("Forward Drift with Rotation");
+  Velocity_Controller(0, 60, 40, true); // Forward with rotation and drift
+  delay(2000);
+  Velocity_Controller(0, 0, 0, 0); // Stop
+  
+  Serial.println("Drift test complete!");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 2rem;">
+                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">📋 Testing Notes:</h4>
+                    <ul style="color: #92400e; margin: 0; padding-left: 1.5rem;">
+                        <li>Remove Bluetooth module before uploading to avoid serial port conflicts</li>
+                        <li>Speed range is -100 to 100 for all parameters</li>
+                        <li>Positive rotation values = counter-clockwise, negative = clockwise</li>
+                        <li>Drift mode changes the motor control algorithm for special effects</li>
+                        <li>Test on a clear, flat surface with adequate space</li>
+                    </ul>
+                </div>
+            </div>
+
             <!-- Hands-On Activity -->
             <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg shadow-lg p-8 mb-8">
                 <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Movement Sequence Demo</h2>
