@@ -1,0 +1,320 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Lesson 13: miniAuto Secondary Development - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 13: miniAuto Secondary Development</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Library Files, RGB Control, and Music Programming</p>
+            <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                <p class="text-purple-800 font-medium">🔧 Advanced programming with custom libraries and hardware control</p>
+            </div>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Programming Skills:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Understand and use custom Arduino libraries
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Control RGB LEDs with button input
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Program musical sequences with buzzers
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Hardware Control:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Ultrasonic sensor library functions
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            FastLED library for RGB control
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Tone library for music generation
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6.1: Secondary Development Library File Introduction -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">📚 Section 6.1: Secondary Development Library File Introduction</h2>
+                
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Arduino Libraries</h3>
+                <p class="text-gray-700 mb-4">
+                    During development, you can simplify programming by using various library files, including official Arduino libraries like Servo and Tone, as well as custom libraries such as Ultrasound and FastLED. This section focuses on explaining the custom libraries that will be used in miniAuto projects.
+                </p>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🔗 Ultrasound Library Functions</h4>
+                    <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
+                        The "Ultrasound" library manages the glowing ultrasonic module, allowing you to set RGB LED colors and retrieve distance measurements using I2C communication.
+                    </p>
+                    <ul style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Ultrasound::Color(r1, g1, b1, r2, g2, b2)</strong> - Controls RGB LED colors on left and right sides</li>
+                        <li><strong>Ultrasound::GetDistance()</strong> - Returns measured distance from ultrasonic sensor</li>
+                        <li><strong>I2C Communication</strong> - Uses wireWriteDataArray and wireReadDataArray functions</li>
+                    </ul>
+                </div>
+
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
+                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 1rem;">⚙️ Library Usage Example</h4>
+                    <p style="color: #92400e; margin-bottom: 1rem; line-height: 1.6;">
+                        Here's how to create an ultrasound object and use its functions:
+                    </p>
+                    <div style="background: #fffbeb; padding: 1rem; border-radius: 6px; font-family: monospace; color: #92400e;">
+                        <code>
+                            Ultrasound ul;  // Create ultrasound object<br>
+                            ul.Color(0,0,255,0,0,255);  // Set both LEDs to blue<br>
+                            int distance = ul.GetDistance();  // Get distance reading
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6.2: RGB Control -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">🌈 Section 6.2: RGB Control</h2>
+                
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Button-Controlled RGB LED</h3>
+                <p class="text-gray-700 mb-4">
+                    In this lesson, you'll learn how to read the status of the onboard buttons on the Arduino expansion board to control the color of the RGB LED. The three colors—red, green, and blue—can be individually controlled to produce various colorful display effects.
+                </p>
+
+                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
+                    <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🎮 Program Behavior</h4>
+                    <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Default State:</strong> RGB LED lights up red</li>
+                        <li><strong>Button Pressed (KEY1):</strong> LED changes to white</li>
+                        <li><strong>Button Released:</strong> LED returns to red</li>
+                        <li><strong>FastLED Library:</strong> Used for precise color control</li>
+                    </ul>
+                </div>
+
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`// RGB Control with Button Input
+#include "FastLED.h"
+
+const static uint8_t ledPin = 2;    // RGB LED pin
+const static uint8_t keyPin = 3;    // Button pin
+static CRGB rgbs[1];                // RGB LED object
+bool keyState;                      // Button state detection
+
+void setup() {
+  Serial.begin(9600);               // Initialize serial communication
+  pinMode(keyPin, INPUT);           // Configure button as input
+  FastLED.addLeds<WS2812, ledPin, GRB>(rgbs, 1);  // Initialize RGB LED
+  Rgb_Show(255, 0, 0);              // Set initial color to red
+}
+
+void loop() {
+  keyState = analogRead(keyPin);    // Read button state
+  if(keyState) 
+    Rgb_Show(255, 0, 0);            // Button released: red
+  else 
+    Rgb_Show(255, 255, 255);        // Button pressed: white
+  delay(100);
+}
+
+// RGB Control Function
+void Rgb_Show(uint8_t rValue, uint8_t gValue, uint8_t bValue) {
+  rgbs[0].r = rValue;               // Set red value
+  rgbs[0].g = gValue;               // Set green value  
+  rgbs[0].b = bValue;               // Set blue value
+  FastLED.show();                   // Display the color
+}`}</code>
+</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6.3: Play Music -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">🎵 Section 6.3: Play Music</h2>
+                
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Button-Controlled Buzzer Music</h3>
+                <p class="text-gray-700 mb-4">
+                    In this lesson, you'll learn how to use the onboard buttons on the Arduino expansion board to control the buzzer and play music. The onboard buzzer is a 5V passive buzzer capable of producing different tones by varying the frequency of the output PWM signal.
+                </p>
+
+                <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #ef4444; margin-bottom: 1.5rem;">
+                    <h4 style="color: #991b1b; font-weight: bold; margin-bottom: 1rem;">🎼 Program Behavior</h4>
+                    <ul style="color: #991b1b; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Power On:</strong> Robot is ready, buzzer is silent</li>
+                        <li><strong>KEY1 Button Pressed:</strong> Buzzer plays predefined melody</li>
+                        <li><strong>Melody Features:</strong> Uses note arrays and timing for realistic music</li>
+                        <li><strong>Tone Library:</strong> Controls frequency and duration of each note</li>
+                    </ul>
+                </div>
+
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`// Buzzer Music Control with Button Input
+#include "tone.h"
+
+// Musical notes array (simplified version)
+static int song[16] = { 
+  NOTE_E4, NOTE_E4, NOTE_E4, NOTE_C4, NOTE_E4, NOTE_G4, NOTE_G3, NOTE_C4,
+  NOTE_G3, NOTE_E3, NOTE_A3, NOTE_B3, NOTE_AS3, NOTE_A3, NOTE_G3, NOTE_E4
+};
+
+// Note durations array
+static int noteDurations[16] = { 
+  8, 4, 4, 8, 4, 2, 2, 3,
+  3, 3, 4, 4, 8, 4, 8, 8
+};
+
+const static uint8_t buzzerPin = 3;    // Buzzer pin
+const static uint8_t keyPin = A3;      // Button pin
+bool keyState;                         // Button state detection
+bool taskStart = 0;                    // Music task control
+
+void setup() {
+  pinMode(keyPin, INPUT);              // Configure button as input
+  Serial.begin(9600);                  // Initialize serial communication
+  Serial.setTimeout(500);              // Set timeout for serial reading
+}
+
+void loop() {
+  keyState = analogRead(keyPin);       // Read button state
+  if (!keyState) taskStart = 1;       // Button pressed: start music
+  
+  if (taskStart) {
+    tune_task();                       // Play music
+    taskStart = 0;                     // Reset task flag
+  }
+}
+
+// Music playback function
+void tune_task(void) {
+  for (int thisNote = 0; thisNote < 16; thisNote++) {
+    // Calculate note duration (1 beat = 1 second)
+    int noteDuration = 1000/noteDurations[thisNote];
+    
+    // Play the note
+    tone(buzzerPin, song[thisNote], noteDuration);
+    
+    // Pause between notes (130% of note duration)
+    int pauseBetweenNotes = noteDuration * 1.10;
+    delay(pauseBetweenNotes);
+    
+    // Stop the tone
+    noTone(buzzerPin);
+  }
+}`}</code>
+</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex justify-between items-center mt-8">
+            <div>
+                <a href="/programming/lessons32/lesson12" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous: Lesson 12
+                </a>
+            </div>
+            <div>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Course Overview
+                </a>
+            </div>
+            <div>
+                <a href="/programming/lessons32/lesson13-5" style="background-color: #dc2626; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #b91c1c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Assembly Time! →
+                </a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
