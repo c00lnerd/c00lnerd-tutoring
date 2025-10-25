@@ -64,6 +64,24 @@ import Layout from '../../../layouts/Layout.astro';
                     In this lesson, you'll learn how to use a glowing ultrasonic sensor to detect the distance of nearby obstacles. You'll also control the color of the sensor's built-in RGB LED based on the measured distance.
                 </p>
 
+                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
+                    <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🚗 Car Movement Behavior</h4>
+                    <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Distance < 200mm:</strong> Car moves backward</li>
+                        <li><strong>200mm - 300mm:</strong> Car stops</li>
+                        <li><strong>300mm - 700mm:</strong> Car moves forward</li>
+                        <li><strong>Distance > 700mm:</strong> Car stops again</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🎬 Demo Video</h4>
+                    <div style="text-align: center;">
+                        <img src="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_images/6.5.gif" alt="Ultrasonic Following Demo" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <p style="color: #0c4a6e; margin-top: 0.5rem; font-size: 0.9rem;">Robot follows objects by maintaining optimal distance</p>
+                    </div>
+                </div>
+
                 <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
                     <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🌈 RGB LED Behavior</h4>
                     <ul style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
@@ -99,6 +117,7 @@ import Layout from '../../../layouts/Layout.astro';
  */
 
 // Compatible Ultrasound class - matches Hiwonder I2C implementation
+#include <Arduino.h>
 #include <Wire.h>
 
 // I2C Constants (exact Hiwonder Ultrasound.h definitions)
@@ -282,14 +301,21 @@ int ultrasonic_distance(){
                     In this section, you'll learn how to use a glowing ultrasonic module to detect obstacle distances and control a robot car to follow the movement of an object.
                 </p>
 
-                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
-                    <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🚗 Car Movement Behavior</h4>
-                    <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                        <li><strong>Distance < 200mm:</strong> Car moves backward</li>
-                        <li><strong>200mm - 300mm:</strong> Car stops</li>
-                        <li><strong>300mm - 700mm:</strong> Car moves forward</li>
-                        <li><strong>Distance > 700mm:</strong> Car stops again</li>
+                <div style="background: #fbbf24; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
+                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 1rem;">⚙️ Technical Specifications</h4>
+                    <ul style="color: #92400e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Supply Voltage:</strong> 5V</li>
+                        <li><strong>Operating Current:</strong> 2mA</li>
+                        <li><strong>Effective Range:</strong> 2cm - 400cm</li>
                     </ul>
+                </div>
+
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🎬 Demo Video</h4>
+                    <div style="text-align: center;">
+                        <img src="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_images/6.4.gif" alt="Ultrasonic Ranging Demo" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <p style="color: #0c4a6e; margin-top: 0.5rem; font-size: 0.9rem;">RGB LEDs change colors based on distance measurements</p>
+                    </div>
                 </div>
 
                 <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #ef4444; margin-bottom: 1.5rem;">
@@ -313,6 +339,7 @@ int ultrasonic_distance(){
  */
 
 // Compatible Ultrasound class - matches Hiwonder I2C implementation
+#include <Arduino.h>
 #include <Wire.h>
 
 // I2C Constants (exact Hiwonder Ultrasound.h definitions)
