@@ -1,0 +1,566 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Lesson 14: Ultrasonic Ranging and Following - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 14: Ultrasonic Ranging and Following</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Distance Detection with RGB Feedback and Object Following</p>
+            <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                <p class="text-purple-800 font-medium">📡 Advanced ultrasonic sensor programming with intelligent following behavior</p>
+            </div>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Ultrasonic Skills:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Master ultrasonic distance measurement
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Control RGB LEDs based on distance
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Implement object following behavior
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Programming Concepts:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            I2C sensor communication
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Distance-based decision making
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Motor control algorithms
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+                    <ul style="color: #4a5568; line-height: 1.8;">
+                        <li>Implement real-time obstacle detection systems</li>
+                        <li>Create intelligent avoidance algorithms</li>
+                        <li>Combine multiple sensors for robust navigation</li>
+                        <li>Develop autonomous exploration behaviors</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #4c51bf; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">Advanced Skills:</h3>
+                    <ul style="color: #4a5568; line-height: 1.8;">
+                        <li>Design reactive navigation systems</li>
+                        <li>Implement multi-sensor data fusion</li>
+                        <li>Create adaptive behavior algorithms</li>
+                        <li>Optimize autonomous exploration patterns</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: miniAuto Platform Overview -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🚗 Section 1: miniAuto Platform Overview (20 minutes)</h2>
+            
+            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">miniAuto Hardware Components</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    The miniAuto platform integrates all the sensors and actuators we've learned about into a cohesive robotic system:
+                </p>
+                <ul style="color: #4a5568; line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Microcontroller:</strong> Arduino-compatible brain for processing</li>
+                    <li><strong>Motor Driver:</strong> H-bridge for controlling DC motors</li>
+                    <li><strong>Ultrasonic Sensor:</strong> For distance measurement and obstacle detection</li>
+                    <li><strong>IMU (Inertial Measurement Unit):</strong> For orientation and movement tracking</li>
+                    <li><strong>Camera Module:</strong> For vision-based navigation</li>
+                    <li><strong>Communication Module:</strong> WiFi/Bluetooth for remote control</li>
+                </ul>
+            </div>
+
+            <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Software Architecture</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    miniAuto programming follows a modular approach with distinct layers:
+                </p>
+                <ul style="color: #4a5568; line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Hardware Abstraction Layer:</strong> Low-level sensor and actuator control</li>
+                    <li><strong>Control Layer:</strong> Motion planning and execution</li>
+                    <li><strong>Behavior Layer:</strong> High-level autonomous behaviors</li>
+                    <li><strong>Application Layer:</strong> User-defined tasks and missions</li>
+                </ul>
+            </div>
+
+            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #38b2ac;">
+                <h4 style="color: #234e52; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight</h4>
+                <p style="color: #234e52; line-height: 1.6; margin: 0;">
+                    The miniAuto platform demonstrates how individual components work together to create intelligent, autonomous behavior - the same principles used in full-scale autonomous vehicles!
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: Basic Motion Control -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🎮 Section 2: Basic Motion Control (20 minutes)</h2>
+            
+            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Fundamental Movement Commands</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    miniAuto provides high-level functions for basic movements:
+                </p>
+                
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`#include <miniAuto.h>
+
+miniAuto robot;
+
+void setup() {
+  robot.begin();
+  Serial.begin(9600);
+  Serial.println("miniAuto Ready!");
+}
+
+void loop() {
+  // Basic movement commands
+  robot.moveForward(100);    // Move forward at speed 100
+  delay(1000);               // Move for 1 second
+  
+  robot.turnRight(90);       // Turn right 90 degrees
+  delay(500);                // Wait for turn to complete
+  
+  robot.moveBackward(50);    // Move backward at speed 50
+  delay(1000);
+  
+  robot.turnLeft(180);       // Turn left 180 degrees
+  delay(1000);
+  
+  robot.stop();              // Stop all movement
+  delay(2000);               // Wait 2 seconds before repeating
+}`}</code>
+                </pre>
+                </div>
+                </div>
+            </div>
+
+            <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Speed and Direction Control</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Fine-tune movement with precise speed and direction control:
+                </p>
+                
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`// Differential drive control
+void moveWithDifferentialSpeed(int leftSpeed, int rightSpeed) {
+  robot.setMotorSpeeds(leftSpeed, rightSpeed);
+}
+
+// Smooth acceleration and deceleration
+void smoothMove(int targetSpeed, int duration) {
+  int currentSpeed = 0;
+  int steps = 20;
+  int speedIncrement = targetSpeed / steps;
+  
+  // Accelerate
+  for (int i = 0; i < steps; i++) {
+    currentSpeed += speedIncrement;
+    robot.moveForward(currentSpeed);
+    delay(duration / (steps * 2));
+  }
+  
+  // Decelerate
+  for (int i = steps; i > 0; i--) {
+    currentSpeed -= speedIncrement;
+    robot.moveForward(currentSpeed);
+    delay(duration / (steps * 2));
+  }
+  
+  robot.stop();
+}`}</code>
+                </pre>
+                </div>
+            </div>
+
+            <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565;">
+                <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Safety Note</h4>
+                <p style="color: #742a2a; line-height: 1.6; margin: 0;">
+                    Always test movement commands in a safe, open area. Start with low speeds and gradually increase as you become familiar with the robot's behavior.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 3: Sensor Integration -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📡 Section 3: Sensor Integration (20 minutes)</h2>
+            
+            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Reading Sensor Data</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Access sensor information to make intelligent decisions:
+                </p>
+                
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`void readAllSensors() {
+  // Ultrasonic distance measurement
+  float distance = robot.getDistance();
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+  
+  // IMU orientation data
+  float heading = robot.getHeading();
+  Serial.print("Heading: ");
+  Serial.print(heading);
+  Serial.println(" degrees");
+  
+  // Battery voltage monitoring
+  float voltage = robot.getBatteryVoltage();
+  Serial.print("Battery: ");
+  Serial.print(voltage);
+  Serial.println(" V");
+  
+  // Light sensor readings
+  int lightLevel = robot.getLightLevel();
+  Serial.print("Light Level: ");
+  Serial.println(lightLevel);
+}`}</code>
+                </pre>
+                </div>
+            </div>
+
+            <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Sensor-Based Decision Making</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Use sensor data to control robot behavior:
+                </p>
+                
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`void sensorBasedNavigation() {
+  float distance = robot.getDistance();
+  
+  if (distance > 30) {
+    // Path is clear - move forward
+    robot.moveForward(80);
+    Serial.println("Moving forward - path clear");
+  }
+  else if (distance > 15) {
+    // Obstacle detected - slow down
+    robot.moveForward(30);
+    Serial.println("Slowing down - obstacle ahead");
+  }
+  else {
+    // Obstacle too close - stop and turn
+    robot.stop();
+    delay(500);
+    robot.turnRight(45);
+    delay(1000);
+    Serial.println("Turning to avoid obstacle");
+  }
+}`}</code>
+                </pre>
+                </div>
+            </div>
+
+            <div style="background: #f0fff4; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #48bb78;">
+                <h4 style="color: #22543d; font-weight: bold; margin-bottom: 0.5rem;">🎯 Pro Tip</h4>
+                <p style="color: #22543d; line-height: 1.6; margin: 0;">
+                    Combine multiple sensors for more robust navigation. For example, use both ultrasonic and IMU data to maintain straight-line movement while avoiding obstacles.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 4: First Autonomous Program -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🤖 Section 4: First Autonomous Program (20 minutes)</h2>
+            
+            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Simple Obstacle Avoidance</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Create your first fully autonomous program that navigates around obstacles:
+                </p>
+                
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`#include <miniAuto.h>
+
+miniAuto robot;
+
+// Autonomous navigation parameters
+const int SAFE_DISTANCE = 25;
+const int SLOW_DISTANCE = 40;
+const int NORMAL_SPEED = 70;
+const int SLOW_SPEED = 30;
+
+void setup() {
+  robot.begin();
+  Serial.begin(9600);
+  Serial.println("Autonomous Navigation Started!");
+  
+  // Initial sensor calibration
+  robot.calibrateSensors();
+  delay(2000);
+}
+
+void loop() {
+  autonomousNavigation();
+  delay(100);  // Small delay for stability
+}
+
+void autonomousNavigation() {
+  float frontDistance = robot.getDistance();
+  
+  // Display current sensor reading
+  Serial.print("Distance: ");
+  Serial.print(frontDistance);
+  Serial.print(" cm - ");
+  
+  if (frontDistance > SLOW_DISTANCE) {
+    // Clear path - move at normal speed
+    robot.moveForward(NORMAL_SPEED);
+    Serial.println("Normal speed forward");
+  }
+  else if (frontDistance > SAFE_DISTANCE) {
+    // Obstacle detected - reduce speed
+    robot.moveForward(SLOW_SPEED);
+    Serial.println("Reduced speed forward");
+  }
+  else {
+    // Obstacle too close - execute avoidance maneuver
+    avoidObstacle();
+  }
+}
+
+void avoidObstacle() {
+  Serial.println("Obstacle avoidance activated!");
+  
+  // Stop immediately
+  robot.stop();
+  delay(500);
+  
+  // Check left and right distances
+  robot.turnLeft(45);
+  delay(800);
+  float leftDistance = robot.getDistance();
+  
+  robot.turnRight(90);
+  delay(800);
+  float rightDistance = robot.getDistance();
+  
+  // Return to center
+  robot.turnLeft(45);
+  delay(800);
+  
+  // Choose best direction
+  if (leftDistance > rightDistance && leftDistance > SAFE_DISTANCE) {
+    Serial.println("Turning left to avoid obstacle");
+    robot.turnLeft(90);
+    delay(1000);
+  }
+  else if (rightDistance > SAFE_DISTANCE) {
+    Serial.println("Turning right to avoid obstacle");
+    robot.turnRight(90);
+    delay(1000);
+  }
+  else {
+    Serial.println("No clear path - backing up");
+    robot.moveBackward(50);
+    delay(1000);
+    robot.turnRight(180);
+    delay(2000);
+  }
+}`}</code>
+                </pre>
+                </div>
+                </div>
+            </div>
+
+            <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Program Structure Analysis</h3>
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    This autonomous program demonstrates key robotics concepts:
+                </p>
+                <ul style="color: #4a5568; line-height: 1.8; margin-left: 1.5rem;">
+                    <li><strong>Sensor Fusion:</strong> Using distance measurements for decision making</li>
+                    <li><strong>State Machine:</strong> Different behaviors based on sensor conditions</li>
+                    <li><strong>Path Planning:</strong> Choosing optimal directions for navigation</li>
+                    <li><strong>Safety Systems:</strong> Stopping and backing up when necessary</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: miniAuto Navigation Challenge (25 minutes)</h2>
+            
+            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #234e52; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Autonomous Room Explorer</h3>
+                <p style="color: #234e52; line-height: 1.6; margin-bottom: 1rem;">
+                    Program your miniAuto to autonomously explore a room while avoiding obstacles and mapping its environment.
+                </p>
+                
+                <h4 style="color: #234e52; font-weight: bold; margin: 1rem 0 0.5rem 0;">Requirements:</h4>
+                <ul style="color: #234e52; line-height: 1.8; margin-left: 1.5rem;">
+                    <li>Navigate autonomously for at least 2 minutes</li>
+                    <li>Avoid all obstacles without getting stuck</li>
+                    <li>Cover maximum area of the available space</li>
+                    <li>Log movement patterns and sensor readings</li>
+                </ul>
+            </div>
+
+            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Implementation Steps</h3>
+                <ol style="color: #4a5568; line-height: 1.8; margin-left: 1.5rem;">
+                    <li>Set up the miniAuto hardware and test basic movements</li>
+                    <li>Implement the obstacle avoidance algorithm</li>
+                    <li>Add exploration behavior (wall following or random walk)</li>
+                    <li>Include data logging for movement analysis</li>
+                    <li>Test and refine the navigation algorithm</li>
+                    <li>Document performance and areas for improvement</li>
+                </ol>
+            </div>
+
+            <div style="background: #fffaf0; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #ed8936;">
+                <h4 style="color: #7b341e; font-weight: bold; margin-bottom: 0.5rem;">🏆 Challenge Extensions</h4>
+                <ul style="color: #7b341e; line-height: 1.8; margin-left: 1.5rem; margin-bottom: 0;">
+                    <li>Add return-to-start functionality using IMU data</li>
+                    <li>Implement different exploration strategies (spiral, zigzag)</li>
+                    <li>Create a simple map of discovered obstacles</li>
+                    <li>Add light-seeking or light-avoiding behavior</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Assessment & Homework -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">📊 Quick Assessment</h3>
+                    <ul style="color: #4a5568; line-height: 1.8;">
+                        <li>Demonstrate basic miniAuto movements</li>
+                        <li>Explain sensor integration concepts</li>
+                        <li>Show autonomous navigation program</li>
+                        <li>Analyze robot behavior and performance</li>
+                    </ul>
+                </div>
+                
+                <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">🏠 Homework Assignment</h3>
+                    <ul style="color: #4a5568; line-height: 1.8;">
+                        <li>Research advanced navigation algorithms</li>
+                        <li>Design improvements to obstacle avoidance</li>
+                        <li>Plan a complex autonomous mission</li>
+                        <li>Study real-world autonomous vehicle systems</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <a href="/programming/lessons32/Lesson13-5" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #dc2626; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s ease;">
+                ← Previous: Assembly
+            </a>
+            
+            <a href="/programming/semester1" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s ease;">
+                📚 Semester Overview
+            </a>
+            
+            <a href="/programming/quizzes32/Lesson14" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s ease;">
+                📝 Take Lesson 14 Quiz
+            </a>
+            
+            <a href="/programming/lessons32/Lesson15" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.2s ease;">
+                Next: Lesson 15 →
+            </a>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
