@@ -91,15 +91,26 @@ import Layout from '../../../layouts/Layout.astro';
                     <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                     <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
 <code>{`// Ultrasonic Ranging with RGB Feedback
-#include "Ultrasound.h"
+// Uses standard Arduino libraries - no custom libraries needed
+
+// Pin definitions
+#define TRIG_PIN 2                    // Ultrasonic trigger pin
+#define ECHO_PIN 4                    // Ultrasonic echo pin
+#define RED_PIN 9                     // RGB LED red pin
+#define GREEN_PIN 10                  // RGB LED green pin  
+#define BLUE_PIN 11                   // RGB LED blue pin
 
 #define FILTER_N 3                    // Filter array capacity
 int Filter_Value;                     // Filtered distance value
 int filter_buf[FILTER_N + 1];        // Filter buffer array
-Ultrasound ultrasound;                // Ultrasound sensor object
 
 void setup() {
   Serial.begin(9600);                 // Initialize serial communication
+  pinMode(TRIG_PIN, OUTPUT);          // Set trigger pin as output
+  pinMode(ECHO_PIN, INPUT);           // Set echo pin as input
+  pinMode(RED_PIN, OUTPUT);           // Set RGB pins as output
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
 }
 
 void loop() {
@@ -109,38 +120,69 @@ void loop() {
 // Ultrasonic distance measurement and LED control
 int ultrasonic_distance(){
   uint8_t s;
-  uint16_t distance = Filter();       // Get filtered distance value
+  uint16_t distance = measureDistance(); // Get distance measurement
   Serial.print("Distance: ");
   Serial.print(distance);
   Serial.println(" mm");
   
   // Distance-based RGB LED control
   if (distance > 0 && distance <= 80){
-    ultrasound.Breathing(1, 0, 0, 1, 0, 0);  // Red breathing light, 0.1s cycle
+    breathingLight(255, 0, 0);        // Red breathing light
   }
   else if (distance > 80 && distance <= 180){
     s = map(distance, 80, 180, 0, 255);
-    ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);  // Red gradient
+    setRGBColor(255-s, 0, 0);         // Red gradient
   }
   else if (distance > 180 && distance <= 320){
     s = map(distance, 180, 320, 0, 255);
-    ultrasound.Color(0, 0, s, 0, 0, s);  // Blue gradient
+    setRGBColor(0, 0, s);             // Blue gradient
   }
   else if (distance > 320 && distance <= 500){
     s = map(distance, 320, 500, 0, 255);
-    ultrasound.Color(0, s, 255-s, 0, s, 255-s);  // Green gradient
+    setRGBColor(0, s, 255-s);         // Green gradient
   }
   else if (distance > 500){
-    ultrasound.Color(0, 255, 0, 0, 255, 0);  // Solid green
+    setRGBColor(0, 255, 0);           // Solid green
   }
   
   return distance;
 }
 
-// Distance filter function (implement median filter)
-uint16_t Filter(){
-  // Filter implementation for stable readings
-  // Returns filtered distance value
+// Measure distance using ultrasonic sensor
+uint16_t measureDistance(){
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  uint16_t distance = duration * 0.034 / 2;  // Convert to mm
+  
+  return distance;
+}
+
+// Set RGB LED color
+void setRGBColor(int red, int green, int blue){
+  analogWrite(RED_PIN, red);
+  analogWrite(GREEN_PIN, green);
+  analogWrite(BLUE_PIN, blue);
+}
+
+// Breathing light effect
+void breathingLight(int red, int green, int blue){
+  static int brightness = 0;
+  static int fadeDirection = 1;
+  
+  brightness += fadeDirection * 5;
+  if(brightness >= 255 || brightness <= 0){
+    fadeDirection = -fadeDirection;
+  }
+  
+  setRGBColor((red * brightness) / 255, 
+              (green * brightness) / 255, 
+              (blue * brightness) / 255);
+  delay(30);
 }`}</code>
 </pre>
                 </div>
@@ -180,9 +222,15 @@ uint16_t Filter(){
                     <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                     <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
 <code>{`// Ultrasonic Following Robot
-#include "Ultrasound.h"
+// Uses standard Arduino libraries - no custom libraries needed
 
-Ultrasound ultrasound;                // Ultrasound sensor object
+// Pin definitions
+#define TRIG_PIN 2                    // Ultrasonic trigger pin
+#define ECHO_PIN 4                    // Ultrasonic echo pin
+#define RED_PIN 9                     // RGB LED red pin
+#define GREEN_PIN 10                  // RGB LED green pin  
+#define BLUE_PIN 11                   // RGB LED blue pin
+
 const static uint8_t pwm_min = 50;   // Minimum PWM value
 const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};        // Motor PWM pins
 const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};  // Motor direction pins
@@ -190,6 +238,11 @@ uint16_t dis;                         // Distance variable
 
 void setup() {
   Serial.begin(9600);                 // Initialize serial communication
+  pinMode(TRIG_PIN, OUTPUT);          // Set trigger pin as output
+  pinMode(ECHO_PIN, INPUT);           // Set echo pin as input
+  pinMode(RED_PIN, OUTPUT);           // Set RGB pins as output
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
   Motor_Init();                       // Initialize motors
 }
 
@@ -211,32 +264,69 @@ void loop() {
 // Ultrasonic distance measurement with RGB control
 uint16_t ultrasonic_distance(){
   uint8_t s;
-  uint16_t distance = Filter();       // Get filtered distance
+  uint16_t distance = measureDistance(); // Get distance measurement
   Serial.print("Distance: ");
   Serial.print(distance);
   Serial.println(" mm");
   
   // RGB LED feedback (same as Section 6.4)
   if (distance > 0 && distance <= 80){
-    ultrasound.Breathing(1, 0, 0, 1, 0, 0);  // Red breathing
+    breathingLight(255, 0, 0);        // Red breathing
   }
   else if (distance > 80 && distance <= 180){
     s = map(distance, 80, 180, 0, 255);
-    ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);  // Red gradient
+    setRGBColor(255-s, 0, 0);         // Red gradient
   }
   else if (distance > 180 && distance <= 320){
     s = map(distance, 180, 320, 0, 255);
-    ultrasound.Color(0, 0, s, 0, 0, s);  // Blue gradient
+    setRGBColor(0, 0, s);             // Blue gradient
   }
   else if (distance > 320 && distance <= 500){
     s = map(distance, 320, 500, 0, 255);
-    ultrasound.Color(0, s, 255-s, 0, s, 255-s);  // Green gradient
+    setRGBColor(0, s, 255-s);         // Green gradient
   }
   else if (distance > 500){
-    ultrasound.Color(0, 255, 0, 0, 255, 0);  // Solid green
+    setRGBColor(0, 255, 0);           // Solid green
   }
   
   return distance;
+}
+
+// Measure distance using ultrasonic sensor
+uint16_t measureDistance(){
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(TRIG_PIN, LOW);
+  
+  long duration = pulseIn(ECHO_PIN, HIGH);
+  uint16_t distance = duration * 0.034 / 2;  // Convert to mm
+  
+  return distance;
+}
+
+// Set RGB LED color
+void setRGBColor(int red, int green, int blue){
+  analogWrite(RED_PIN, red);
+  analogWrite(GREEN_PIN, green);
+  analogWrite(BLUE_PIN, blue);
+}
+
+// Breathing light effect
+void breathingLight(int red, int green, int blue){
+  static int brightness = 0;
+  static int fadeDirection = 1;
+  
+  brightness += fadeDirection * 5;
+  if(brightness >= 255 || brightness <= 0){
+    fadeDirection = -fadeDirection;
+  }
+  
+  setRGBColor((red * brightness) / 255, 
+              (green * brightness) / 255, 
+              (blue * brightness) / 255);
+  delay(30);
 }
 
 // Motor initialization function
@@ -254,6 +344,27 @@ void Velocity_Controller(int angle, int velocity, int rot, int drift){
   // velocity: movement speed
   // rot: rotation (+ = counterclockwise, - = clockwise)
   // drift: enable/disable drift mode
+  
+  // Basic implementation for demonstration
+  // Students can expand this based on their specific motor setup
+  if(velocity > 0){
+    // Move forward
+    for(int i = 0; i < 4; i++){
+      analogWrite(motorpwmPin[i], velocity);
+      digitalWrite(motordirectionPin[i], HIGH);
+    }
+  } else if(rot != 0){
+    // Turn in place
+    for(int i = 0; i < 4; i++){
+      analogWrite(motorpwmPin[i], abs(rot));
+      digitalWrite(motordirectionPin[i], (i < 2) ? (rot > 0) : (rot < 0));
+    }
+  } else {
+    // Stop
+    for(int i = 0; i < 4; i++){
+      analogWrite(motorpwmPin[i], 0);
+    }
+  }
 }`}</code>
 </pre>
                 </div>
