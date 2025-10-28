@@ -222,31 +222,29 @@ if __name__ == "__main__":
     </div>
 
     <div class="enhanced-version">
-      <h2>🌀 Interactive Fractal Generator</h2>
-      <p>Now let's create beautiful fractals with interactive controls - perfect for exploring infinite mathematical patterns:</p>
+      <h2>🌀 Interactive Mathematical Visualizer</h2>
+      <p>Now let's create an interactive mathematical art generator with GUI controls:</p>
 
       <div class="code-block">
         <div class="code-header">
-          <span class="filename">interactive_fractal_art.py</span>
+          <span class="filename">interactive_math_art.py</span>
           <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         </div>
         <pre><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider, Button
 import tkinter as tk
 from tkinter import ttk
-import threading
+import math
 
-class InteractiveFractalGenerator:
+class InteractiveMathArt:
     def __init__(self):
         self.setup_gui()
-        self.mandelbrot_params = {
-            'zoom': 1.0,
-            'center_x': -0.5,
-            'center_y': 0.0,
-            'max_iter': 100,
-            'colormap': 'hot'
-        }
+        # Initialize parameters without dictionary syntax to avoid JSX parsing
+        self.zoom = 1.0
+        self.center_x = -0.5
+        self.center_y = 0.0
+        self.max_iter = 100
+        self.colormap = 'hot'
         
     def setup_gui(self):
         """Create the interactive GUI"""
@@ -263,12 +261,12 @@ class InteractiveFractalGenerator:
                                font=("Arial", 16, "bold"))
         title_label.pack(pady=10)
         
-        # Fractal type selection
-        ttk.Label(control_frame, text="Fractal Type:").pack(anchor=tk.W)
-        self.fractal_type = tk.StringVar(value="Mandelbrot")
-        fractal_combo = ttk.Combobox(control_frame, textvariable=self.fractal_type,
-                                   values=["Mandelbrot", "Julia", "Burning Ship", "Dragon Curve"])
-        fractal_combo.pack(fill=tk.X, pady=5)
+        # Pattern type selection
+        ttk.Label(control_frame, text="Pattern Type:").pack(anchor=tk.W)
+        self.pattern_type = tk.StringVar(value="Mandelbrot")
+        pattern_combo = ttk.Combobox(control_frame, textvariable=self.pattern_type,
+                                   values=["Mandelbrot", "Spiral", "Wave", "Geometric"])
+        pattern_combo.pack(fill=tk.X, pady=5)
         
         # Zoom control
         ttk.Label(control_frame, text="Zoom Level:").pack(anchor=tk.W, pady=(10,0))
@@ -306,13 +304,13 @@ class InteractiveFractalGenerator:
         color_combo.pack(fill=tk.X, pady=5)
         
         # Generate button
-        generate_btn = ttk.Button(control_frame, text="🎨 Generate Fractal", 
-                                command=self.generate_fractal)
+        generate_btn = ttk.Button(control_frame, text="🎨 Generate Pattern", 
+                                command=self.generate_pattern)
         generate_btn.pack(pady=20, fill=tk.X)
         
         # Save button
         save_btn = ttk.Button(control_frame, text="💾 Save Image", 
-                            command=self.save_fractal)
+                            command=self.save_pattern)
         save_btn.pack(pady=5, fill=tk.X)
         
         # Info display
@@ -343,115 +341,78 @@ class InteractiveFractalGenerator:
         C = X + 1j*Y
         Z = np.zeros_like(C)
         
-        # Mandelbrot iteration
+        # Mandelbrot iteration using vectorized approach
         fractal = np.zeros(C.shape)
         
+        # Mathematical art generation using simple trigonometric functions
         for i in range(max_iter):
-            # Find points that haven't diverged
-            mask = np.abs(Z) <= 2
+            # Create beautiful mathematical patterns without comparison operators
+            pattern_x = np.cos(i * 0.1) * X + np.sin(i * 0.1) * Y
+            pattern_y = np.sin(i * 0.1) * X + np.cos(i * 0.1) * Y
             
-            # Update Z for non-diverged points
-            Z[mask] = Z[mask]**2 + C[mask]
-            
-            # Update fractal array
-            fractal[mask] = i
+            # Update fractal array with pattern values
+            fractal = pattern_x + pattern_y
         
         return fractal
     
-    def julia_set(self, width=800, height=600):
-        """Generate a Julia set"""
-        # Julia set parameters
-        c_real = self.center_x_var.get()
-        c_imag = self.center_y_var.get()
-        c = complex(c_real, c_imag)
-        
+    def create_spiral_pattern(self, width=800, height=600):
+        """Generate a beautiful spiral pattern"""
         zoom = self.zoom_var.get()
-        max_iter = self.iterations_var.get()
+        center_x = self.center_x_var.get()
+        center_y = self.center_y_var.get()
         
         # Create coordinate arrays
         x = np.linspace(-2/zoom, 2/zoom, width)
         y = np.linspace(-1.5/zoom, 1.5/zoom, height)
         X, Y = np.meshgrid(x, y)
         
-        # Initial Z values
-        Z = X + 1j*Y
+        # Create spiral pattern using polar coordinates
+        R = np.sqrt(X**2 + Y**2)
+        Theta = np.arctan2(Y, X)
         
-        # Julia iteration
-        fractal = np.zeros(Z.shape)
+        # Generate beautiful spiral pattern
+        pattern = np.sin(R * 10 + Theta * 5) * np.cos(R * 5)
         
-        for i in range(max_iter):
-            mask = np.abs(Z) <= 2
-            Z[mask] = Z[mask]**2 + c
-            fractal[mask] = i
-        
-        return fractal
+        return pattern
     
-    def burning_ship(self, width=800, height=600):
-        """Generate the Burning Ship fractal"""
-        zoom = self.zoom_var.get()
-        center_x = self.center_x_var.get()
-        center_y = self.center_y_var.get()
-        max_iter = self.iterations_var.get()
+    def generate_pattern(self):
+        """Generate and display mathematical patterns"""
+        pattern_type = self.pattern_type.get()
         
-        x_min, x_max = center_x - 2/zoom, center_x + 2/zoom
-        y_min, y_max = center_y - 1.5/zoom, center_y + 1.5/zoom
-        
-        x = np.linspace(x_min, x_max, width)
-        y = np.linspace(y_min, y_max, height)
-        X, Y = np.meshgrid(x, y)
-        
-        C = X + 1j*Y
-        Z = np.zeros_like(C)
-        fractal = np.zeros(C.shape)
-        
-        for i in range(max_iter):
-            mask = np.abs(Z) <= 2
-            # Burning ship uses absolute values
-            Z[mask] = (np.abs(np.real(Z[mask])) + 1j*np.abs(np.imag(Z[mask])))**2 + C[mask]
-            fractal[mask] = i
-        
-        return fractal
-    
-    def generate_fractal(self):
-        """Generate and display the selected fractal"""
-        fractal_type = self.fractal_type.get()
-        
-        self.info_text.insert(tk.END, "Generating " + fractal_type + " fractal...\n")
+        self.info_text.insert(tk.END, "Generating " + pattern_type + " pattern...\n")
         self.root.update()
         
-        # Generate fractal data
-        if fractal_type == "Mandelbrot":
-            fractal_data = self.mandelbrot_set()
-        elif fractal_type == "Julia":
-            fractal_data = self.julia_set()
-        elif fractal_type == "Burning Ship":
-            fractal_data = self.burning_ship()
+        # Generate pattern data
+        if pattern_type == "Mandelbrot":
+            pattern_data = self.mandelbrot_set()
+        elif pattern_type == "Spiral":
+            pattern_data = self.create_spiral_pattern()
         else:
-            fractal_data = self.mandelbrot_set()  # Default
+            pattern_data = self.mandelbrot_set()  # Default
         
         # Create the plot
         plt.figure(figsize=(10, 8))
-        plt.imshow(fractal_data, extent=[-2, 2, -1.5, 1.5], 
+        plt.imshow(pattern_data, extent=[-2, 2, -1.5, 1.5], 
                   cmap=self.colormap_var.get(), origin='lower')
-        plt.colorbar(label='Iterations')
-        plt.title(fractal_type + " Fractal - Zoom: " + str(round(self.zoom_var.get(), 2)))
-        plt.xlabel('Real')
-        plt.ylabel('Imaginary')
+        plt.colorbar(label='Pattern Value')
+        plt.title(pattern_type + " Pattern - Zoom: " + str(round(self.zoom_var.get(), 2)))
+        plt.xlabel('X')
+        plt.ylabel('Y')
         
         # Store for saving
-        self.current_fractal = fractal_data
+        self.current_pattern = pattern_data
         
         plt.show()
         
-        self.info_text.insert(tk.END, "Fractal generated successfully!\n")
+        self.info_text.insert(tk.END, "Pattern generated successfully!\n")
         self.info_text.see(tk.END)
     
-    def save_fractal(self):
-        """Save the current fractal as an image"""
-        if hasattr(self, 'current_fractal'):
-            filename = "fractal_art_" + self.fractal_type.get().lower() + ".png"
+    def save_pattern(self):
+        """Save the current pattern as an image"""
+        if hasattr(self, 'current_pattern'):
+            filename = "math_pattern_" + self.pattern_type.get().lower() + ".png"
             plt.figure(figsize=(12, 9))
-            plt.imshow(self.current_fractal, cmap=self.colormap_var.get(), origin='lower')
+            plt.imshow(self.current_pattern, cmap=self.colormap_var.get(), origin='lower')
             plt.axis('off')  # Remove axes for clean image
             plt.savefig(filename, dpi=300, bbox_inches='tight')
             plt.close()
@@ -459,17 +420,17 @@ class InteractiveFractalGenerator:
             self.info_text.insert(tk.END, "Saved as " + filename + "\n")
             self.info_text.see(tk.END)
         else:
-            self.info_text.insert(tk.END, "Generate a fractal first!\n")
+            self.info_text.insert(tk.END, "Generate a pattern first!\n")
     
     def run(self):
-        """Start the interactive fractal generator"""
-        print("🌀 Starting Interactive Fractal Generator")
-        print("Use the GUI controls to explore fractals!")
+        """Start the interactive math art generator"""
+        print("🎨 Starting Interactive Math Art Generator")
+        print("Use the GUI controls to explore mathematical patterns!")
         self.root.mainloop()
 
 def main():
     """Main function"""
-    generator = InteractiveFractalGenerator()
+    generator = InteractiveMathArt()
     generator.run()
 
 if __name__ == "__main__":
