@@ -284,20 +284,19 @@ class MathematicalArtist:
         """Change color scheme"""
         self.color_mode = (self.color_mode + 1) % 4
         color_names = ["Rainbow", "Classic White", "Random Colors", "Gradient"]
-        print(f"🎨 Color scheme: {color_names[self.color_mode]}")
+        print("🎨 Color scheme: " + color_names[self.color_mode])
     
     def change_pattern(self):
         """Change pattern style"""
         self.pattern_style = (self.pattern_style + 1) % 3
         pattern_names = ["Original Mandala", "Spiral Mandala", "Flower Mandala"]
-        print(f"🌀 Pattern style: {pattern_names[self.pattern_style]}")
+        print("🌀 Pattern style: " + pattern_names[self.pattern_style])
     
     def save_art(self):
         """Save the current frame as an image"""
-        filename = f"mathematical_art_{int(self.t * 100)}.eps"
+        filename = "mathematical_art_" + str(int(self.t * 100)) + ".eps"
         self.screen.getcanvas().postscript(file=filename)
-        print(f"💾 Saved artwork as {filename}")
-    
+        print("💾 Saved artwork as " + filename)    
     def quit_program(self):
         """Quit the program"""
         print("👋 Thanks for creating mathematical art!")
