@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>V380 Camera Monitor - Web Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .settings-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .settings-panel h3 {
+            margin-bottom: 15px;
+            color: #4fc3f7;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 14px;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4fc3f7, #29b6f6);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #66bb6a, #4caf50);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffb74d, #ff9800);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ef5350, #f44336);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .video-container {
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #videoElement {
+            width: 100%;
+            height: auto;
+            max-height: 500px;
+        }
+
+        .no-video {
+            color: #666;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .status-bar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #f44336;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #4caf50;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .info-panel {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .info-panel h4 {
+            margin-bottom: 10px;
+            color: #4fc3f7;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #4fc3f7;
+            padding-left: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .log-entry.error {
+            border-left-color: #f44336;
+            color: #ffcdd2;
+        }
+
+        .log-entry.success {
+            border-left-color: #4caf50;
+            color: #c8e6c9;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .recording-indicator.active {
+            display: block;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+
+        .camera-list {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .camera-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .camera-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .quality-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎥 V380 Camera Monitor</h1>
+        
+        <!-- Connection Settings -->
+        <div class="settings-panel">
+            <h3>📡 Camera Connection Settings</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cameraIP">Camera IP Address</label>
+                    <input type="text" id="cameraIP" placeholder="192.168.1.100" value="192.168.1.100">
+                </div>
+                <div class="form-group">
+                    <label for="httpPort">HTTP Port</label>
+                    <input type="number" id="httpPort" placeholder="8080" value="8080">
+                </div>
+                <div class="form-group">
+                    <label for="rtspPort">RTSP Port</label>
+                    <input type="number" id="rtspPort" placeholder="554" value="554">
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="admin" value="admin">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Password">
+                </div>
+                <div class="form-group">
+                    <label for="streamPath">Stream Path</label>
+                    <select id="streamPath">
+                        <option value="/live">Default (/live)</option>
+                        <option value="/stream1">Stream 1 (/stream1)</option>
+                        <option value="/cam/realmonitor?channel=1&subtype=0">Realmonitor</option>
+                        <option value="/h264Preview_01_main">H264 Main</option>
+                        <option value="/h264Preview_01_sub">H264 Sub</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="scanNetwork()">🔍 Scan Network</button>
+                <button class="btn btn-warning" onclick="testConnection()">🔧 Test Connection</button>
+                <button class="btn btn-success" onclick="connectCamera()" id="connectBtn">🎥 Connect</button>
+                <button class="btn btn-danger" onclick="disconnectCamera()" id="disconnectBtn" disabled>❌ Disconnect</button>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <!-- Video Display -->
+            <div class="video-container">
+                <video id="videoElement" autoplay muted playsinline style="display: none;"></video>
+                <img id="mjpegStream" style="display: none; width: 100%; height: auto;">
+                <div id="noVideo" class="no-video">
+                    📷 No camera connected<br>
+                    <small>Connect to a V380 camera to view live feed</small>
+                </div>
+                <div class="recording-indicator" id="recordingIndicator">
+                    🔴 RECORDING
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="control-panel">
+                <h3>🎛️ Camera Controls</h3>
+                
+                <div class="quality-controls">
+                    <div class="form-group">
+                        <label for="videoQuality">Video Quality</label>
+                        <select id="videoQuality">
+                            <option value="high">High Quality</option>
+                            <option value="medium" selected>Medium Quality</option>
+                            <option value="low">Low Quality</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="refreshRate">Refresh Rate</label>
+                        <select id="refreshRate">
+                            <option value="1000">1 FPS</option>
+                            <option value="500">2 FPS</option>
+                            <option value="200" selected>5 FPS</option>
+                            <option value="100">10 FPS</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="startRecording()" id="recordBtn">🎬 Start Recording</button>
+                    <button class="btn btn-primary" onclick="takeSnapshot()">📸 Snapshot</button>
+                    <button class="btn btn-warning" onclick="toggleFullscreen()">🔍 Fullscreen</button>
+                </div>
+
+                <div class="info-panel">
+                    <h4>📊 Camera Information</h4>
+                    <div id="cameraInfo">
+                        <div>Status: <span id="connectionStatus">Disconnected</span></div>
+                        <div>Stream URL: <span id="streamUrl">None</span></div>
+                        <div>Resolution: <span id="resolution">Unknown</span></div>
+                        <div>Last Update: <span id="lastUpdate">Never</span></div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h4>📝 Activity Log</h4>
+                    <div id="activityLog"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discovered Cameras -->
+        <div class="settings-panel" id="discoveredCameras" style="display: none;">
+            <h3>📡 Discovered Cameras</h3>
+            <div class="camera-list" id="cameraList"></div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Disconnected</span>
+            </div>
+            <div>
+                <span id="timestamp"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let isConnected = false;
+        let isRecording = false;
+        let streamInterval = null;
+        let recordedChunks = [];
+        let mediaRecorder = null;
+        let currentStreamUrl = '';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTimestamp();
+            setInterval(updateTimestamp, 1000);
+            logActivity('Application initialized', 'success');
+        });
+
+        function updateTimestamp() {
+            document.getElementById('timestamp').textContent = new Date().toLocaleString();
+        }
+
+        function logActivity(message, type = 'info') {
+            const log = document.getElementById('activityLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+            
+            // Keep only last 50 entries
+            while (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        async function scanNetwork() {
+            logActivity('Starting network scan...');
+            const cameraList = document.getElementById('cameraList');
+            const discoveredPanel = document.getElementById('discoveredCameras');
+            
+            cameraList.innerHTML = '<div>Scanning network... Please wait</div>';
+            discoveredPanel.style.display = 'block';
+
+            // Simulate network scanning (in real implementation, this would use WebRTC or server-side scanning)
+            const commonIPs = [
+                '192.168.1.100', '192.168.1.101', '192.168.1.102', '192.168.1.103',
+                '192.168.0.100', '192.168.0.101', '192.168.0.102', '192.168.0.103',
+                '10.0.0.100', '10.0.0.101', '10.0.0.102', '10.0.0.103'
+            ];
+
+            cameraList.innerHTML = '';
+            let foundCameras = 0;
+
+            for (let ip of commonIPs) {
+                try {
+                    // In a real implementation, you'd ping these IPs or check for camera responses
+                    // For demo purposes, we'll simulate finding some cameras
+                    if (Math.random() > 0.8) { // 20% chance to "find" a camera
+                        const cameraItem = document.createElement('div');
+                        cameraItem.className = 'camera-item';
+                        cameraItem.innerHTML = `
+                            <strong>📷 V380 Camera</strong><br>
+                            IP: ${ip}<br>
+                            Port: 8080
+                        `;
+                        cameraItem.onclick = () => selectCamera(ip, '8080');
+                        cameraList.appendChild(cameraItem);
+                        foundCameras++;
+                    }
+                } catch (error) {
+                    // Ignore errors during scanning
+                }
+            }
+
+            if (foundCameras === 0) {
+                cameraList.innerHTML = '<div>No cameras found. Try manual IP entry.</div>';
+            }
+
+            logActivity(`Network scan complete. Found ${foundCameras} cameras.`, foundCameras > 0 ? 'success' : 'info');
+        }
+
+        function selectCamera(ip, port) {
+            document.getElementById('cameraIP').value = ip;
+            document.getElementById('httpPort').value = port;
+            logActivity(`Selected camera: ${ip}:${port}`, 'info');
+        }
+
+        async function testConnection() {
+            const ip = document.getElementById('cameraIP').value;
+            const port = document.getElementById('httpPort').value;
+            
+            if (!ip) {
+                logActivity('Please enter camera IP address', 'error');
+                return;
+            }
+
+            logActivity(`Testing connection to ${ip}:${port}...`);
+            
+            try {
+                // Test HTTP connection
+                const httpUrl = `http://${ip}:${port}`;
+                
+                // Note: Due to CORS restrictions, direct HTTP testing from browser is limited
+                // In a real implementation, you'd need a backend proxy or use WebRTC
+                logActivity(`HTTP URL: ${httpUrl}`, 'info');
+                
+                // Test RTSP URL construction
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const rtspPort = document.getElementById('rtspPort').value;
+                const streamPath = document.getElementById('streamPath').value;
+                
+                const rtspUrl = `rtsp://${username}:${password}@${ip}:${rtspPort}${streamPath}`;
+                logActivity(`RTSP URL: ${rtspUrl}`, 'info');
+                
+                // For demo purposes, assume connection test passes
+                logActivity('Connection test completed. Ready to connect.', 'success');
+                
+            } catch (error) {
+                logActivity(`Connection test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function connectCamera() {
+            const ip = document.getElementById('cameraIP').value;
+            const httpPort = document.getElementById('httpPort').value;
+            const rtspPort = document.getElementById('rtspPort').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const streamPath = document.getElementById('streamPath').value;
+
+            if (!ip) {
+                logActivity('Please enter camera IP address', 'error');
+                return;
+            }
+
+            logActivity(`Connecting to camera at ${ip}...`);
+            
+            // Try MJPEG stream first (more compatible with browsers)
+            const mjpegUrl = `http://${ip}:${httpPort}/mjpeg`;
+            const rtspUrl = `rtsp://${username}:${password}@${ip}:${rtspPort}${streamPath}`;
+            
+            try {
+                // Try MJPEG stream
+                const mjpegImg = document.getElementById('mjpegStream');
+                mjpegImg.onload = () => {
+                    document.getElementById('noVideo').style.display = 'none';
+                    mjpegImg.style.display = 'block';
+                    document.getElementById('videoElement').style.display = 'none';
+                    
+                    isConnected = true;
+                    updateConnectionStatus(true);
+                    currentStreamUrl = mjpegUrl;
+                    
+                    document.getElementById('streamUrl').textContent = mjpegUrl;
+                    document.getElementById('resolution').textContent = `${mjpegImg.naturalWidth}x${mjpegImg.naturalHeight}`;
+                    
+                    logActivity('Connected via MJPEG stream', 'success');
+                };
+                
+                mjpegImg.onerror = () => {
+                    // Fallback to snapshot refresh method
+                    startSnapshotStream(ip, httpPort);
+                };
+                
+                mjpegImg.src = mjpegUrl;
+                
+            } catch (error) {
+                logActivity(`Connection failed: ${error.message}`, 'error');
+                // Try snapshot method as fallback
+                startSnapshotStream(ip, httpPort);
+            }
+        }
+
+        function startSnapshotStream(ip, port) {
+            logActivity('Trying snapshot stream method...');
+            
+            const refreshRate = parseInt(document.getElementById('refreshRate').value);
+            
+            // Try multiple V380 snapshot URL formats
+            const snapshotUrls = [
+                `http://${ip}:${port}/snapshot.jpg`,
+                `http://${ip}:${port}/snapshot.cgi`,
+                `http://${ip}:${port}/tmpfs/auto.jpg`,
+                `http://${ip}:${port}/webcapture.jpg`,
+                `http://${ip}:${port}/image/jpeg.cgi`,
+                `http://${ip}:${port}/cgi-bin/snapshot.cgi`
+            ];
+            
+            let currentUrlIndex = 0;
+            let snapshotUrl = snapshotUrls[currentUrlIndex];
+            
+            const mjpegImg = document.getElementById('mjpegStream');
+            
+            function updateSnapshot() {
+                if (!isConnected) return;
+                
+                const img = new Image();
+                img.onload = () => {
+                    mjpegImg.src = img.src;
+                    document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+                };
+                img.onerror = () => {
+                    // Try next URL format if current one fails
+                    currentUrlIndex++;
+                    if (currentUrlIndex < snapshotUrls.length) {
+                        snapshotUrl = snapshotUrls[currentUrlIndex];
+                        logActivity(`Trying snapshot URL: ${snapshotUrl}`, 'info');
+                        img.src = `${snapshotUrl}?t=${Date.now()}`;
+                        return;
+                    }
+                    logActivity('All snapshot URLs failed', 'error');
+                };
+                img.src = `${snapshotUrl}?t=${Date.now()}`;
+            }
+            
+            // Start snapshot updates
+            streamInterval = setInterval(updateSnapshot, refreshRate);
+            updateSnapshot(); // First update
+            
+            document.getElementById('noVideo').style.display = 'none';
+            mjpegImg.style.display = 'block';
+            document.getElementById('videoElement').style.display = 'none';
+            
+            isConnected = true;
+            updateConnectionStatus(true);
+            currentStreamUrl = snapshotUrl;
+            
+            document.getElementById('streamUrl').textContent = snapshotUrl;
+            logActivity('Connected via snapshot stream', 'success');
+        }
+
+        function disconnectCamera() {
+            isConnected = false;
+            updateConnectionStatus(false);
+            
+            if (streamInterval) {
+                clearInterval(streamInterval);
+                streamInterval = null;
+            }
+            
+            document.getElementById('mjpegStream').style.display = 'none';
+            document.getElementById('videoElement').style.display = 'none';
+            document.getElementById('noVideo').style.display = 'block';
+            
+            document.getElementById('streamUrl').textContent = 'None';
+            document.getElementById('resolution').textContent = 'Unknown';
+            
+            if (isRecording) {
+                stopRecording();
+            }
+            
+            logActivity('Disconnected from camera', 'info');
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusDot = document.getElementById('statusDot');
+            const statusText = document.getElementById('statusText');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const connectBtn = document.getElementById('connectBtn');
+            const disconnectBtn = document.getElementById('disconnectBtn');
+            
+            if (connected) {
+                statusDot.classList.add('connected');
+                statusText.textContent = 'Connected';
+                connectionStatus.textContent = 'Connected';
+                connectBtn.disabled = true;
+                disconnectBtn.disabled = false;
+            } else {
+                statusDot.classList.remove('connected');
+                statusText.textContent = 'Disconnected';
+                connectionStatus.textContent = 'Disconnected';
+                connectBtn.disabled = false;
+                disconnectBtn.disabled = true;
+            }
+        }
+
+        function startRecording() {
+            if (!isConnected) {
+                logActivity('Connect to camera first', 'error');
+                return;
+            }
+
+            if (isRecording) {
+                stopRecording();
+                return;
+            }
+
+            // For web-based recording, we'll simulate the recording process
+            isRecording = true;
+            document.getElementById('recordingIndicator').classList.add('active');
+            document.getElementById('recordBtn').textContent = '⏹️ Stop Recording';
+            
+            logActivity('Recording started', 'success');
+            
+            // In a real implementation, you'd capture the video stream
+            // For now, we'll just track the recording state
+        }
+
+        function stopRecording() {
+            isRecording = false;
+            document.getElementById('recordingIndicator').classList.remove('active');
+            document.getElementById('recordBtn').textContent = '🎬 Start Recording';
+            
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const filename = `v380_recording_${timestamp}.webm`;
+            
+            logActivity(`Recording stopped. File: ${filename}`, 'success');
+        }
+
+        function takeSnapshot() {
+            if (!isConnected) {
+                logActivity('Connect to camera first', 'error');
+                return;
+            }
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = document.getElementById('mjpegStream');
+            
+            if (img.style.display !== 'none' && img.naturalWidth > 0) {
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+                
+                // Create download link
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `v380_snapshot_${new Date().toISOString().replace(/[:.]/g, '-')}.png`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    
+                    logActivity('Snapshot saved', 'success');
+                });
+            } else {
+                logActivity('No image available for snapshot', 'error');
+            }
+        }
+
+        function toggleFullscreen() {
+            const videoContainer = document.querySelector('.video-container');
+            
+            if (!document.fullscreenElement) {
+                videoContainer.requestFullscreen().then(() => {
+                    logActivity('Entered fullscreen mode', 'info');
+                }).catch((err) => {
+                    logActivity(`Fullscreen error: ${err.message}`, 'error');
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    logActivity('Exited fullscreen mode', 'info');
+                });
+            }
+        }
+
+        // Update refresh rate when changed
+        document.getElementById('refreshRate').addEventListener('change', function() {
+            if (isConnected && streamInterval) {
+                clearInterval(streamInterval);
+                const ip = document.getElementById('cameraIP').value;
+                const port = document.getElementById('httpPort').value;
+                startSnapshotStream(ip, port);
+                logActivity(`Refresh rate updated to ${this.selectedOptions[0].text}`, 'info');
+            }
+        });
+
+        // Handle quality changes
+        document.getElementById('videoQuality').addEventListener('change', function() {
+            logActivity(`Video quality set to ${this.value}`, 'info');
+            // In a real implementation, this would change the stream quality
+        });
+    </script>
+</body>
+</html>
