@@ -864,214 +864,76 @@ void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) 
 
             <!-- Hands-On Activity -->
             <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Interactive Robot Control</h2>
+                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Standalone Movement Demos</h2>
                 
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Serial Command Control System</h3>
+                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 2rem;">
+                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">💡 Why Separate Files?</h4>
+                    <p style="color: #92400e; margin: 0; line-height: 1.6;">
+                        Each demo is a separate program you can upload and run independently. Upload the code, disconnect the USB cable, 
+                        and watch your robot perform the movement pattern without being tethered to your computer!
+                    </p>
+                </div>
+
+                <!-- Demo 1: Basic Movement Test -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 1: Basic Movement Test</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Build an interactive control system that lets you command your miniAuto using keyboard input through the Serial Monitor:
+                        Tests all basic movements: forward, backward, left, right, and rotations. Perfect for verifying your robot works correctly.
                     </p>
                     
                     <div style="position: relative;">
                         <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Interactive miniAuto Control System
-// Use Serial Monitor to control your robot with keyboard commands
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 1: Basic Movement Test
+// Upload this code, disconnect USB, and watch your robot move!
 
 const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
 const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
 const static uint8_t pwm_min = 50;
 
-// Control variables
-int currentSpeed = 80;
-bool isMoving = false;
-String lastCommand = "";
-
 void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(500);
   Motor_Init();
-  
-  // Print control instructions
-  printInstructions();
+  delay(3000); // Wait 3 seconds after power on
 }
 
 void loop() {
-  // Check for serial commands
-  if (Serial.available() > 0) {
-    String command = Serial.readString();
-    command.trim(); // Remove whitespace
-    command.toLowerCase(); // Convert to lowercase
-    
-    processCommand(command);
-  }
-  
-  // Small delay to prevent overwhelming the serial
-  delay(50);
-}
-
-void printInstructions() {
-  Serial.println("\\n=== miniAuto Interactive Control System ===");
-  Serial.println("Commands:");
-  Serial.println("  w or forward    - Move forward");
-  Serial.println("  s or backward   - Move backward");
-  Serial.println("  a or left       - Strafe left");
-  Serial.println("  d or right      - Strafe right");
-  Serial.println("  q or rotleft    - Rotate counter-clockwise");
-  Serial.println("  e or rotright   - Rotate clockwise");
-  Serial.println("  x or stop       - Stop all movement");
-  Serial.println("  speed [1-100]   - Set movement speed");
-  Serial.println("  demo            - Run demonstration sequence");
-  Serial.println("  square          - Draw a square pattern");
-  Serial.println("  circle          - Draw a circle pattern");
-  Serial.println("  drift           - Perform drift movement");
-  Serial.println("  help            - Show this menu");
-  Serial.println("\\nCurrent speed: " + String(currentSpeed));
-  Serial.println("Enter command:");
-}
-
-void processCommand(String cmd) {
-  lastCommand = cmd;
-  
-  if (cmd == "w" || cmd == "forward") {
-    Serial.println("Moving forward at speed " + String(currentSpeed));
-    Velocity_Controller(0, currentSpeed, 0, false);
-    isMoving = true;
-    
-  } else if (cmd == "s" || cmd == "backward") {
-    Serial.println("Moving backward at speed " + String(currentSpeed));
-    Velocity_Controller(180, currentSpeed, 0, false);
-    isMoving = true;
-    
-  } else if (cmd == "a" || cmd == "left") {
-    Serial.println("Strafing left at speed " + String(currentSpeed));
-    Velocity_Controller(270, currentSpeed, 0, false);
-    isMoving = true;
-    
-  } else if (cmd == "d" || cmd == "right") {
-    Serial.println("Strafing right at speed " + String(currentSpeed));
-    Velocity_Controller(90, currentSpeed, 0, false);
-    isMoving = true;
-    
-  } else if (cmd == "q" || cmd == "rotleft") {
-    Serial.println("Rotating counter-clockwise");
-    Velocity_Controller(0, 0, 60, false);
-    isMoving = true;
-    
-  } else if (cmd == "e" || cmd == "rotright") {
-    Serial.println("Rotating clockwise");
-    Velocity_Controller(0, 0, -60, false);
-    isMoving = true;
-    
-  } else if (cmd == "x" || cmd == "stop") {
-    Serial.println("Stopping robot");
-    stopRobot();
-    isMoving = false;
-    
-  } else if (cmd.startsWith("speed ")) {
-    int newSpeed = cmd.substring(6).toInt();
-    if (newSpeed >= 1 && newSpeed <= 100) {
-      currentSpeed = newSpeed;
-      Serial.println("Speed set to: " + String(currentSpeed));
-    } else {
-      Serial.println("Invalid speed. Use 1-100");
-    }
-    
-  } else if (cmd == "demo") {
-    Serial.println("Running demonstration sequence...");
-    runDemoSequence();
-    
-  } else if (cmd == "square") {
-    Serial.println("Drawing square pattern...");
-    drawSquare();
-    
-  } else if (cmd == "circle") {
-    Serial.println("Drawing circle pattern...");
-    drawCircle();
-    
-  } else if (cmd == "drift") {
-    Serial.println("Performing drift movement...");
-    performDrift();
-    
-  } else if (cmd == "help") {
-    printInstructions();
-    
-  } else {
-    Serial.println("Unknown command: " + cmd);
-    Serial.println("Type 'help' for available commands");
-  }
-}
-
-void runDemoSequence() {
-  // Quick demo of all movements
-  Serial.println("Demo: Forward");
-  Velocity_Controller(0, 70, 0, false);
-  delay(1500);
-  
-  Serial.println("Demo: Right strafe");
-  Velocity_Controller(90, 70, 0, false);
-  delay(1500);
-  
-  Serial.println("Demo: Backward");
-  Velocity_Controller(180, 70, 0, false);
-  delay(1500);
-  
-  Serial.println("Demo: Left strafe");
-  Velocity_Controller(270, 70, 0, false);
-  delay(1500);
-  
-  Serial.println("Demo: Rotation");
-  Velocity_Controller(0, 0, 50, false);
+  // Forward movement
+  Velocity_Controller(0, 80, 0, false);
   delay(2000);
+  stopRobot();
+  delay(1000);
   
-  stopRobot();
-  Serial.println("Demo complete!");
-}
-
-void drawSquare() {
-  // Draw a square using forward movement and rotation
-  for(int i = 0; i < 4; i++) {
-    Serial.println("Square side " + String(i+1));
-    Velocity_Controller(0, 60, 0, false); // Forward
-    delay(2000);
-    
-    Serial.println("Square turn " + String(i+1));
-    Velocity_Controller(0, 0, -50, false); // Turn right
-    delay(1500);
-  }
-  stopRobot();
-  Serial.println("Square complete!");
-}
-
-void drawCircle() {
-  // Draw a circle using forward movement with constant rotation
-  Serial.println("Drawing circle...");
-  for(int i = 0; i < 20; i++) {
-    Velocity_Controller(0, 50, 25, false); // Forward with rotation
-    delay(400);
-  }
-  stopRobot();
-  Serial.println("Circle complete!");
-}
-
-void performDrift() {
-  // Perform impressive drift movements
-  Serial.println("Drift 1: Right drift");
-  Velocity_Controller(90, 60, 40, true);
+  // Backward movement
+  Velocity_Controller(180, 80, 0, false);
   delay(2000);
-  
-  Serial.println("Drift 2: Left drift");
-  Velocity_Controller(270, 60, -40, true);
-  delay(2000);
-  
-  Serial.println("Drift 3: Forward spiral");
-  Velocity_Controller(0, 50, 60, true);
-  delay(3000);
-  
   stopRobot();
-  Serial.println("Drift sequence complete!");
+  delay(1000);
+  
+  // Left strafe
+  Velocity_Controller(270, 80, 0, false);
+  delay(2000);
+  stopRobot();
+  delay(1000);
+  
+  // Right strafe
+  Velocity_Controller(90, 80, 0, false);
+  delay(2000);
+  stopRobot();
+  delay(1000);
+  
+  // Clockwise rotation
+  Velocity_Controller(0, 0, -60, false);
+  delay(2000);
+  stopRobot();
+  delay(1000);
+  
+  // Counter-clockwise rotation
+  Velocity_Controller(0, 0, 60, false);
+  delay(2000);
+  stopRobot();
+  delay(5000); // Wait 5 seconds before repeating
 }
 
-// Include all the motor control functions from the main program
+// Motor control functions (include in all demos)
 void Motor_Init(void) {
   for(uint8_t i = 0; i < 4; i++) {
     pinMode(motordirectionPin[i], OUTPUT);
@@ -1127,28 +989,188 @@ void stopRobot() {
                     </div>
                 </div>
 
+                <!-- Demo 2: Square Pattern -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 2: Square Pattern</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Makes your robot draw a perfect square using forward movement and 90-degree turns.
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 2: Square Pattern
+// Upload, disconnect, and watch your robot draw a square!
+
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
+const static uint8_t pwm_min = 50;
+
+void setup() {
+  Motor_Init();
+  delay(3000); // Wait 3 seconds after power on
+}
+
+void loop() {
+  // Draw a square (4 sides with 4 turns)
+  for(int i = 0; i < 4; i++) {
+    // Move forward for one side
+    Velocity_Controller(0, 70, 0, false);
+    delay(2500);
+    
+    // Stop briefly
+    stopRobot();
+    delay(500);
+    
+    // Turn right 90 degrees
+    Velocity_Controller(0, 0, -50, false);
+    delay(1800);
+    
+    // Stop briefly
+    stopRobot();
+    delay(500);
+  }
+  
+  // Wait 10 seconds before drawing another square
+  delay(10000);
+}
+
+// Include motor control functions here (same as Demo 1)
+// [Motor_Init, Velocity_Controller, Motors_Set, stopRobot functions]`}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Demo 3: Circle Pattern -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 3: Circle Pattern</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Creates smooth circular motion by combining forward movement with continuous rotation.
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 3: Circle Pattern
+// Upload, disconnect, and watch your robot draw circles!
+
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
+const static uint8_t pwm_min = 50;
+
+void setup() {
+  Motor_Init();
+  delay(3000); // Wait 3 seconds after power on
+}
+
+void loop() {
+  // Draw a circle using forward movement + rotation
+  for(int i = 0; i < 25; i++) {
+    Velocity_Controller(0, 60, 30, false); // Forward with left turn
+    delay(400);
+  }
+  
+  // Stop and wait
+  stopRobot();
+  delay(3000);
+  
+  // Draw circle in opposite direction
+  for(int i = 0; i < 25; i++) {
+    Velocity_Controller(0, 60, -30, false); // Forward with right turn
+    delay(400);
+  }
+  
+  // Stop and wait before repeating
+  stopRobot();
+  delay(5000);
+}
+
+// Include motor control functions here (same as Demo 1)
+// [Motor_Init, Velocity_Controller, Motors_Set, stopRobot functions]`}</code></pre>
+                    </div>
+                </div>
+
+                <!-- Demo 4: Drift Showcase -->
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 4: Drift Showcase</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Shows off the advanced drift capabilities - the most impressive demo for audiences!
+                    </p>
+                    
+                    <div style="position: relative;">
+                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 4: Drift Showcase
+// Upload, disconnect, and watch impressive drift movements!
+
+const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
+const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
+const static uint8_t pwm_min = 50;
+
+void setup() {
+  Motor_Init();
+  delay(3000); // Wait 3 seconds after power on
+}
+
+void loop() {
+  // Right drift
+  Velocity_Controller(90, 70, 50, true);
+  delay(2500);
+  stopRobot();
+  delay(1000);
+  
+  // Left drift
+  Velocity_Controller(270, 70, -50, true);
+  delay(2500);
+  stopRobot();
+  delay(1000);
+  
+  // Forward spiral drift
+  Velocity_Controller(0, 60, 60, true);
+  delay(3000);
+  stopRobot();
+  delay(1000);
+  
+  // Backward spiral drift
+  Velocity_Controller(180, 60, -60, true);
+  delay(3000);
+  stopRobot();
+  delay(5000); // Wait before repeating
+}
+
+// Include motor control functions here (same as Demo 1)
+// [Motor_Init, Velocity_Controller, Motors_Set, stopRobot functions]`}</code></pre>
+                    </div>
+                </div>
+
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How to Use This Program</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How to Use These Demos</h3>
                     <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9;">
                         <ol style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                            <li><strong>Upload the code</strong> to your miniAuto</li>
-                            <li><strong>Open Serial Monitor</strong> (Tools → Serial Monitor)</li>
-                            <li><strong>Set baud rate to 9600</strong></li>
-                            <li><strong>Type commands</strong> like "w" for forward, "demo" for demonstration</li>
-                            <li><strong>Try advanced patterns</strong> like "square", "circle", or "drift"</li>
-                            <li><strong>Adjust speed</strong> with "speed 50" (or any number 1-100)</li>
+                            <li><strong>Choose a demo</strong> - Copy one of the complete programs above</li>
+                            <li><strong>Upload to miniAuto</strong> - Paste into Arduino IDE and upload</li>
+                            <li><strong>Disconnect USB cable</strong> - No need to stay connected!</li>
+                            <li><strong>Power on and watch</strong> - Robot runs the demo automatically</li>
+                            <li><strong>Try different demos</strong> - Upload a new one to see different patterns</li>
+                            <li><strong>Modify and experiment</strong> - Change speeds, delays, and patterns</li>
                         </ol>
                     </div>
+                </div>
+
+                <div style="background: #dcfce7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #16a34a; margin-bottom: 1.5rem;">
+                    <h4 style="color: #15803d; font-weight: bold; margin-bottom: 0.5rem;">✅ Benefits of Standalone Demos:</h4>
+                    <ul style="color: #15803d; margin: 0; padding-left: 1.5rem; line-height: 1.6;">
+                        <li><strong>No USB tether</strong> - Robot moves freely without cable constraints</li>
+                        <li><strong>Perfect for demonstrations</strong> - Show friends and family without a laptop</li>
+                        <li><strong>Easy to modify</strong> - Each demo is self-contained and simple to understand</li>
+                        <li><strong>Safe testing</strong> - Each pattern is predictable and repeatable</li>
+                    </ul>
                 </div>
 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Extension Challenges</h3>
                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li><strong>Add new patterns:</strong> Create triangle, pentagon, or spiral movements</li>
-                        <li><strong>Speed ramping:</strong> Gradually increase/decrease speed during movements</li>
+                        <li><strong>Create new patterns:</strong> Triangle, pentagon, or figure-8 movements</li>
+                        <li><strong>Add LED indicators:</strong> Different colors for different movement types</li>
+                        <li><strong>Speed variations:</strong> Gradually change speed during patterns</li>
                         <li><strong>Obstacle course:</strong> Program a sequence to navigate around objects</li>
-                        <li><strong>Dance routine:</strong> Create a choreographed movement sequence</li>
-                        <li><strong>Remote control:</strong> Use Bluetooth module for wireless control</li>
+                        <li><strong>Combine patterns:</strong> Chain multiple demos together in one program</li>
                     </ol>
                 </div>
             </div>
