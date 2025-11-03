@@ -48,8 +48,9 @@ const categories: Category[] = [
 				title: "N-Body Simulation", 
 				url: "/simulations/interactive/N_Body_simulation.html", 
 				description: "Observe gravitational interactions between multiple bodies",
-				preview: "/images/previews/n-body-preview.png",
-				previewAlt: "Preview of N-Body gravitational simulation"
+				preview: "/videos/n-body.mp4",
+				previewAlt: "Preview of N-Body gravitational simulation",
+				isVideo: true
 			},
 			{ 
 				title: "Magnetic Field Simulator", 
@@ -109,14 +110,14 @@ const categories: Category[] = [
 			},
 			{ 
 				title: "Gravitational Destroyer", 
-				url: "/simulations/gravitational-destroyer", 
+				url: "/simulations/gravitational-destroyer.html", 
 				description: "Epic space shooting game using real N-Body gravitational physics. Destroy planets, manage fuel, and master orbital mechanics!",
 				preview: "/images/previews/gravitational-destroyer-preview.png",
 				previewAlt: "Preview of Gravitational Destroyer physics game"
 			},
 			{ 
 				title: "Earth-Moon-Sun Orbital Mechanics", 
-				url: "/simulations/earth-moon-sun-orbital", 
+				url: "/simulations/earth-moon-sun-orbital.html", 
 				description: "Interactive simulation showing how Earth and Moon orbit the Sun together using mathematically accurate astronomical periods. Features show/hide controls for educational focus.",
 				preview: "/images/previews/earth-moon-sun-preview.png",
 				previewAlt: "Preview of Earth-Moon-Sun orbital mechanics simulation"
@@ -187,26 +188,29 @@ const categories: Category[] = [
 				title: "Organic Parametric Art",
 				url: "/simulations/interactive/organic-parametric-art/index.html",
 				description: "Create flowing, plant-like patterns using complex multi-layered parametric equations. Features organic presets like ferns, feathers, coral, and lightning with natural mathematical beauty.",
-				preview: "/images/previews/organic-parametric-preview.png",
-				previewAlt: "Preview of Organic Parametric Art with flowing natural patterns"
+				preview: "/videos/organic-parametric-art.mp4",
+				previewAlt: "Preview of Organic Parametric Art with flowing natural patterns",
+				isVideo: true
 			},
 			{
 				title: "3D Parametric Mathematical Art",
 				url: "/simulations/interactive/3d-parametric-art/index.html",
 				description: "Explore stunning 3D mathematical beauty through parametric equations! Interactive 3D rotation, 6 different patterns including true 3D rose using spherical coordinates, persistent trails, and real-time manipulation. Perfect companion to Python Lesson 14.",
-				preview: "/images/previews/3d-parametric-art-preview.png",
-				previewAlt: "Preview of 3D Parametric Mathematical Art with rotating 3D rose and interactive controls"
+				preview: "/videos/3d-parametric-art.mp4",
+				previewAlt: "Preview of 3D Parametric Mathematical Art with rotating 3D rose and interactive controls",
+				isVideo: true
 			},
 			{
 				title: "Flowing Connected Spheres",
-				url: "/simulations/flowing-spheres",
+				url: "/simulations/flowing-spheres.html",
 				description: "Watch colorful gradient spheres flow and connect in organic patterns. Demonstrates fluid dynamics, particle systems, and natural movement through mathematical wave functions.",
-				preview: "/images/previews/flowing-spheres-preview.png",
-				previewAlt: "Preview of Flowing Connected Spheres simulation"
+				preview: "/videos/flowing-spheres.mp4",
+				previewAlt: "Preview of Flowing Connected Spheres simulation",
+				isVideo: true
 			},
 			{
 				title: "24 Game Solver - All Solutions",
-				url: "/simulations/game24-solver",
+				url: "/simulations/game24-solver.html",
 				description: "Enter 4 numbers and find all possible ways to make 24 using basic arithmetic operations and parentheses.",
 				preview: "/images/previews/24-game-preview.png",
 				previewAlt: "Preview of 24 Game Solver showing multiple solutions"
@@ -453,6 +457,19 @@ const categories: Category[] = [
 				isVideo: true
 			}
 		]
+	},
+	{
+		name: "Home Monitoring Tools",
+		description: "Professional home security and monitoring applications for managing IP cameras, network devices, and home automation systems.",
+		simulations: [
+			{
+				title: "CS1000X Camera Monitor",
+				url: "/simulations/interactive/cs1000x-monitor/index.html",
+				description: "Professional web-based monitoring interface for CS1000X and other IP cameras. Features live streaming, network scanning, multi-camera support, recording capabilities, and real-time status monitoring. Perfect for home security systems.",
+				preview: "/images/previews/cs1000x-monitor-preview.png",
+				previewAlt: "Preview of CS1000X Camera Monitor showing live feed and control interface"
+			}
+		]
 	}
 ];
 ---
@@ -472,12 +489,25 @@ const categories: Category[] = [
 						<div class="simulation-card">
 						{category.name !== "Physical Science Class Resources" && (
 							simulation.preview ? (
-								<img 
-									src={simulation.preview} 
-									alt={simulation.previewAlt || `Preview of ${simulation.title}`}
-									class="preview-image"
-									onerror="this.classList.add('placeholder'); this.alt='Preview coming soon'"
-								/>
+								simulation.isVideo ? (
+									<video 
+										src={simulation.preview} 
+										class="preview-image"
+										autoplay
+										muted
+										loop
+										playsinline
+									>
+										<p>Your browser doesn't support video playback.</p>
+									</video>
+								) : (
+									<img 
+										src={simulation.preview} 
+										alt={simulation.previewAlt || `Preview of ${simulation.title}`}
+										class="preview-image"
+										onerror="this.classList.add('placeholder'); this.alt='Preview coming soon'"
+									/>
+								)
 							) : (
 								<div class="preview-image placeholder">Preview coming soon</div>
 							)

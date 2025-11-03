@@ -22,12 +22,20 @@ class RokuCameraMonitor:
         self.root.title("Roku CS1000X Camera Monitor")
         self.root.geometry("1200x800")
         
-        # Camera connection variables
-        self.camera_ip = tk.StringVar(value="192.168.1.100")
+        # Camera connection variables - Pre-configured for your CS1000X
+        self.camera_ip = tk.StringVar(value="192.168.0.198")
         self.camera_port = tk.StringVar(value="8080")
         self.username = tk.StringVar(value="admin")
         self.password = tk.StringVar(value="")
         self.rtsp_port = tk.StringVar(value="554")
+        
+        # Known camera information
+        self.camera_mac = "7C:67:AB:23:DF:1E"
+        self.camera_model = "CS1000X"
+        self.camera_network = "SummersBasement"
+        self.camera_device_id = "SOS2000V3AD89EB106D4"
+        self.camera_firmware = "7.0.0 • build 26-FD"
+        self.camera_activation = "09/16/2023"
         
         # Video stream variables
         self.cap = None
@@ -116,6 +124,9 @@ class RokuCameraMonitor:
         self.info_text = scrolledtext.ScrolledText(info_frame, height=8, width=30)
         self.info_text.pack(fill=tk.BOTH, expand=True)
         
+        # Display known camera information
+        self.display_camera_info()
+        
         # Recording controls
         record_frame = ttk.LabelFrame(control_frame, text="Recording", padding="5")
         record_frame.pack(fill=tk.X, pady=(0, 10))
@@ -141,6 +152,23 @@ class RokuCameraMonitor:
         
         ttk.Button(settings_control_frame, text="Apply Settings", 
                   command=lambda: self.apply_settings(quality_var.get())).pack()
+    
+    def display_camera_info(self):
+        """Display known camera information"""
+        info = f"""Known CS1000X Camera Information:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Device Model: {self.camera_model}
+MAC Address: {self.camera_mac}
+IP Address: {self.camera_ip.get()}
+Network: {self.camera_network}
+Firmware: {self.camera_firmware}
+Activation Date: {self.camera_activation}
+Virtual Device ID: {self.camera_device_id}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Status: Ready to connect
+"""
+        self.info_text.insert(tk.END, info)
     
     def scan_network(self):
         """Scan local network for Roku CS1000X cameras"""

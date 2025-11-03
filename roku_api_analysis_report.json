@@ -1,0 +1,61 @@
+{
+  "timestamp": "2025-10-29 13:59:03",
+  "device_id": "android_71:e5:67:4c:e5:ed_1761764325",
+  "discovered_domains": [
+    {
+      "url": "https://device.roku.com",
+      "status": 403,
+      "server": "unknown"
+    }
+  ],
+  "api_endpoints": [
+    {
+      "url": "https://my.roku.com/auth/oauth/token",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "response_size": 75376
+    }
+  ],
+  "authentication_tests": [
+    {
+      "endpoint": "https://my.roku.com/api/v1/auth/login",
+      "payload_format": [
+        "username",
+        "password",
+        "device_id",
+        "app_version"
+      ],
+      "status_code": 403,
+      "response": "Forbidden"
+    },
+    {
+      "endpoint": "https://my.roku.com/api/v1/auth/login",
+      "payload_format": [
+        "email",
+        "password",
+        "deviceId",
+        "platform"
+      ],
+      "status_code": 403,
+      "response": "Forbidden"
+    },
+    {
+      "endpoint": "https://my.roku.com/api/v1/auth/login",
+      "payload_format": [
+        "user",
+        "pass",
+        "device",
+        "type"
+      ],
+      "status_code": 403,
+      "response": "Forbidden"
+    }
+  ],
+  "cs1000x_patterns": [],
+  "summary": {
+    "total_domains_found": 1,
+    "total_endpoints_found": 1,
+    "auth_endpoints_tested": 3,
+    "cs1000x_patterns_found": 0
+  }
+}
