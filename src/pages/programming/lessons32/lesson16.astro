@@ -129,9 +129,9 @@ import Layout from '../../../layouts/Layout.astro';
             <h2 class="text-2xl font-bold text-purple-800 mb-6">🛤️ Section 7.1: Basic Line Following</h2>
                 
             <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Main Program Structure</h3>
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Complete Line Following Implementation</h3>
                 <p class="text-gray-700 mb-4">
-                    The complete Hiwonder line following implementation with I2C sensor communication, FastLED control, and button activation.
+                    The complete Hiwonder line following code with I2C sensor communication, motor control, and all helper functions in one comprehensive implementation.
                 </p>
 
                 <div style="position: relative;">
@@ -168,6 +168,17 @@ uint8_t rec_data[4];  // Individual sensor readings
 bool keyState;
 bool taskStart = 0;
 
+// Function prototypes
+bool WireWriteByte(uint8_t val);
+bool WireReadDataByte(uint8_t reg, uint8_t &val);
+void Motor_Init(void);
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
+void Sensor_Receive(void);
+void Tracking_Line_Task(void);
+void Task_Dispatcher(void);
+void Rgb_Show(uint8_t rValue, uint8_t gValue, uint8_t bValue);
+
 void setup() {
   Serial.begin(9600);
   
@@ -187,21 +198,9 @@ void loop() {
     Sensor_Receive();
     Task_Dispatcher();
   }
-}`}</code>
-                    </pre>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">I2C Communication & Line Following Logic</h3>
-                <p class="text-gray-700 mb-4">
-                    Essential functions for I2C sensor communication and the core line following algorithm:
-                </p>
+}
 
-                <div style="position: relative;">
-                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`/* I2C Communication Functions */
+/* I2C Communication Functions */
 bool WireWriteByte(uint8_t val) {
   Wire.beginTransmission(LINE_FOLLOWER_I2C_ADDR);
   Wire.write(val);
@@ -253,21 +252,9 @@ void Tracking_Line_Task(void) {
     Sensor_Receive();
     Velocity_Controller(0, 0, 0, 0);  // Stop
   }
-}`}</code>
-                    </pre>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Control & Utility Functions</h3>
-                <p class="text-gray-700 mb-4">
-                    Complete the implementation with these essential motor control and utility functions:
-                </p>
+}
 
-                <div style="position: relative;">
-                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`/* Motor initialization */
+/* Motor initialization */
 void Motor_Init(void) {
   for (uint8_t i = 0; i < 4; i++) {
     pinMode(motordirectionPin[i], OUTPUT);
@@ -333,7 +320,8 @@ void Rgb_Show(uint8_t rValue, uint8_t gValue, uint8_t bValue) {
   rgbs[0].g = gValue;
   rgbs[0].b = bValue;
   FastLED.show();
-}`}</code>
+}
+</code>
                     </pre>
                 </div>
             </div>
