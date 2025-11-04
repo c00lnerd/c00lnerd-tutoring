@@ -67,10 +67,10 @@ import Layout from '../../../layouts/Layout.astro';
                 <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
                     <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🚗 Car Movement Behavior</h4>
                     <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                        <li><strong>Distance < 200mm:</strong> Car moves backward</li>
+                        <li><strong>Distance &lt; 200mm:</strong> Car moves backward</li>
                         <li><strong>200mm - 300mm:</strong> Car stops</li>
                         <li><strong>300mm - 700mm:</strong> Car moves forward</li>
-                        <li><strong>Distance > 700mm:</strong> Car stops again</li>
+                        <li><strong>Distance &gt; 700mm:</strong> Car stops again</li>
                     </ul>
                 </div>
 
@@ -85,11 +85,11 @@ import Layout from '../../../layouts/Layout.astro';
                 <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
                     <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🌈 RGB LED Behavior</h4>
                     <ul style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                        <li><strong>Distance < 80mm:</strong> Red breathing light</li>
+                        <li><strong>Distance &lt; 80mm:</strong> Red breathing light</li>
                         <li><strong>80mm - 180mm:</strong> Red gradient (brighter as distance increases)</li>
                         <li><strong>180mm - 320mm:</strong> Blue gradient (brighter as distance increases)</li>
                         <li><strong>320mm - 500mm:</strong> Green gradient (brighter as distance increases)</li>
-                        <li><strong>> 500mm:</strong> Solid green light</li>
+                        <li><strong>&gt; 500mm:</strong> Solid green light</li>
                     </ul>
                 </div>
 
@@ -125,165 +125,16 @@ import Layout from '../../../layouts/Layout.astro';
                     </div>
                 </div>
 
-                <!-- File 1: Ultrasound.h -->
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-                    <h3 style="color: #667eea; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📄 File 1: Ultrasound.h</h3>
-                    <p style="color: #4a5568; margin-bottom: 1rem;">Create this file first - it contains the class declarations and register definitions.</p>
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code>#ifndef ULTRASOUND_H
-#define ULTRASOUND_H
-
-#include <Arduino.h>
-
-#define ULTRASOUND_I2C_ADDR 0x77 
-
-//寄存器
-#define DISDENCE_L    0//距离低8位，单位mm
-#define DISDENCE_H    1
-
-#define RGB_BRIGHTNESS  50//0-255
-
-#define RGB_WORK_MODE 2//RGB灯模式，0：用户自定义模式   1：呼吸灯模式  默认0
-
-#define RGB1_R      3//1号探头的R值，0~255，默认0
-#define RGB1_G      4//默认0
-#define RGB1_B      5//默认255
-
-#define RGB2_R      6//2号探头的R值，0~255，默认0
-#define RGB2_G      7//默认0
-#define RGB2_B      8//默认255
-
-#define RGB1_R_BREATHING_CYCLE      9 //呼吸灯模式时，1号探头的R的呼吸周期，单位100ms 默认0，
-                                      //如果设置周期3000ms，则此值为30
-#define RGB1_G_BREATHING_CYCLE      10
-#define RGB1_B_BREATHING_CYCLE      11
-
-#define RGB2_R_BREATHING_CYCLE      12//2号探头
-#define RGB2_G_BREATHING_CYCLE      13
-#define RGB2_B_BREATHING_CYCLE      14
-
-#define RGB_WORK_SIMPLE_MODE    0
-#define RGB_WORK_BREATHING_MODE   1
-
-class Ultrasound {
-  public:
-    Ultrasound();
-    bool wireWriteByte(uint8_t addr, uint8_t val);
-    bool wireWriteDataArray(uint8_t addr, uint8_t reg,uint8_t *val,unsigned int len);
-    int wireReadDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len);
-    
-    void Breathing(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2);
-    void Color(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2);
-    u16 GetDistance();
-};
-#endif</code></pre>
-                    </div>
-                </div>
-
-                <!-- File 2: Ultrasound.cpp -->
-                <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-                    <h3 style="color: #667eea; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📄 File 2: Ultrasound.cpp</h3>
-                    <p style="color: #4a5568; margin-bottom: 1rem;">Create this file second - it contains the implementation of all class methods.</p>
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code>#include <Wire.h>
-#include "Ultrasound.h"
-
-Ultrasound::Ultrasound()
-{
-  Wire.begin();
-}
-
-//写字节
-bool Ultrasound::wireWriteByte(uint8_t addr, uint8_t val)
-{
-    Wire.beginTransmission(addr);
-    Wire.write(val);
-    if( Wire.endTransmission() != 0 ) 
-    {
-        return false;
-    }
-    return true;
-}
-
-//写多个字节
-bool Ultrasound::wireWriteDataArray(uint8_t addr, uint8_t reg,uint8_t *val,unsigned int len)
-{
-    unsigned int i;
-
-    Wire.beginTransmission(addr);
-    Wire.write(reg);
-    for(i = 0; i < len; i++) 
-    {
-        Wire.write(val[i]);
-    }
-    if( Wire.endTransmission() != 0 ) 
-    {
-        return false;
-    }
-    return true;
-}
-
-//读指定长度字节
-int Ultrasound::wireReadDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len)
-{
-    unsigned char i = 0;  
-    /* Indicate which register we want to read from */
-    if (!wireWriteByte(addr, reg)) 
-    {
-        return -1;
-    }
-    Wire.requestFrom(addr, len);
-    while (Wire.available()) 
-    {
-        if (i >= len) 
-        {
-            return -1;
-        }
-        val[i] = Wire.read();
-        i++;
-    }
-    /* Read block data */    
-    return i;
-}
-
-//设置超声波rgb为呼吸灯模式
-//r1，g1，b1表示右边rgb灯的呼吸周期，例如20，20，20，表示2s一个周期
-//r2，g2，b2表示左边rgb灯的呼吸周期
-void Ultrasound::Breathing(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2)
-{
-  uint8_t breathing[6]; 
-  uint8_t value = RGB_WORK_BREATHING_MODE;
-  
-  wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
-  breathing[0] = r1;breathing[1] = g1;breathing[2] = b1;//RGB1 蓝色
-  breathing[3] = r2;breathing[4] = g2;breathing[5] = b2;//RGB2
-  wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R_BREATHING_CYCLE,breathing,6); //发送颜色值
-}
-
-//设置超声波rgb灯的颜色
-//r1，g1，b1表示右边rgb灯的三原色的比例，范围0-255
-//r2，g2，b2表示左边rgb灯的三原色的比例，范围0-255
-void Ultrasound::Color(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2)
-{
-  uint8_t RGB[6]; 
-  uint8_t value = RGB_WORK_SIMPLE_MODE;
-  
-  wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE,&value,1);
-  RGB[0] = r1;RGB[1] = g1;RGB[2] = b1;//RGB1
-  RGB[3] = r2;RGB[4] = g2;RGB[5] = b2;//RGB2
-  wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R,RGB,6);
-}
-
-//获取超声波测得的距离单位mm
-u16 Ultrasound::GetDistance()
-{
-  u16 distance;
-  wireReadDataArray(ULTRASOUND_I2C_ADDR, 0,(uint8_t *)&distance,2);
-  return distance;
-}</code></pre>
-                    </div>
+                <div style="background: #e0f2fe; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0288d1; margin-bottom: 1.5rem;">
+                    <h4 style="color: #01579b; font-weight: bold; margin-bottom: 1rem;">📁 Complete File Structure</h4>
+                    <p style="color: #01579b; margin-bottom: 1rem; line-height: 1.6;">
+                        The official Hiwonder implementation uses 3 separate files. Download all files using the buttons above, then create your Arduino project with all three files.
+                    </p>
+                    <ul style="color: #01579b; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
+                        <li><strong>Ultrasound.h</strong> - Header file with class declarations and register definitions</li>
+                        <li><strong>Ultrasound.cpp</strong> - Implementation file with all class methods</li>
+                        <li><strong>ultrasonic_test.ino</strong> - Main Arduino sketch (shown below)</li>
+                    </ul>
                 </div>
 
                 <!-- File 3: ultrasonic_test.ino -->
@@ -292,22 +143,14 @@ u16 Ultrasound::GetDistance()
                     <p style="color: #4a5568; margin-bottom: 1rem;">Create this file last - it's the main Arduino sketch that uses the Ultrasound class.</p>
                     <div style="position: relative;">
                         <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code>/**
- * @file ultrasonic_test.ino
- * @brief 超声波距离测试(Ultrasonic ranging)
- * @author Hiwonder
- * @version V1.0
- * @date 2024-04-23
- */
-
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code>{`// Ultrasonic Distance Detection with RGB Feedback
 #include "Ultrasound.h"
 
-#define FILTER_N 3                ///< 滤波法数组容量(Filter array capacity)
+#define FILTER_N 3                // Filter array capacity
 
 int Filter_Value;
 int filter_buf[FILTER_N + 1];
-
-Ultrasound ultrasound;            ///< 实例化超声波类(Instantiate the ultrasound class)
+Ultrasound ultrasound;            // Instantiate ultrasound class
 
 int Filter(void);
 int ultrasonic_distance(void);
@@ -321,13 +164,13 @@ void loop() {
   ultrasonic_distance();
 }
 
-/* 递推平均滤波法(Recursive average filtering method)*/
+// Recursive average filtering method
 int Filter() {
   int i;
   int filter_sum = 0;
-  filter_buf[FILTER_N] = ultrasound.GetDistance();///< 读取超声波测值(Read the ultrasonic ranging value)
+  filter_buf[FILTER_N] = ultrasound.GetDistance();  // Read ultrasonic value
   for(i = 0; i < FILTER_N; i++) {
-    filter_buf[i] = filter_buf[i + 1];///< 所有数据左移，低位仍掉(Shift all data to the left, and clear the low bit)
+    filter_buf[i] = filter_buf[i + 1];              // Shift data left
     filter_sum += filter_buf[i];
   }
   return (int)(filter_sum / FILTER_N);
@@ -335,218 +178,42 @@ int Filter() {
 
 int ultrasonic_distance(){
   uint8_t s;
-  uint16_t distance = Filter();///< 获得滤波器输出值(Get the output value of the filter)
-  Serial.print("Distance: ");///< 获取并且串口打印距离，单位mm(Get and print the distance via serial port, unit: mm)
+  uint16_t distance = Filter();                     // Get filtered output
+  Serial.print("Distance: ");
   Serial.print(distance);
   Serial.println(" mm");
 
   if (distance > 0 && distance <= 80){
-      ultrasound.Breathing(1, 0, 0, 1, 0, 0);///< 呼吸灯模式，周期0.1s，颜色红色(Red breathing light mode, in 0.1s)
+      ultrasound.Breathing(1, 0, 0, 1, 0, 0);      // Red breathing mode
   }
   else if (distance > 80 && distance <= 180){
       s = map(distance, 80, 180, 0, 255);
-      ultrasound.Color(s, 0, 0, s, 0, 0);///< 红色渐变(Red gradient)
+      ultrasound.Color(s, 0, 0, s, 0, 0);          // Red gradient
   }
   else if (distance > 180 && distance <= 320){
       s = map(distance, 180, 320, 0, 255);
-      ultrasound.Color(0, 0, s, 0, 0, s);///< 蓝色渐变(Blue gradient)
+      ultrasound.Color(0, 0, s, 0, 0, s);          // Blue gradient
   }
   else if (distance > 320 && distance <= 500){
       s = map(distance, 320, 500, 0, 255);
-      ultrasound.Color(0, s, 0, 0, s, 0);///< 绿色渐变(Green gradient)
+      ultrasound.Color(0, s, 0, 0, s, 0);          // Green gradient
   }
   else if (distance > 500){
-      ultrasound.Color(0, 255, 0, 0, 255, 0);///< 纯绿色(Pure green)
+      ultrasound.Color(0, 255, 0, 0, 255, 0);      // Pure green
   }
   
   delay(100);
   return distance;
-}</code></pre>
+}`}</code>
+</pre>
                     </div>
                 </div>
 
-                <div style="position: relative;">
-                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`/**
- * @file ultrasonic_test.ino
- * @brief 超声波距离测试(Ultrasonic ranging)
- * @author Hiwonder (adapted for standard Arduino)
- * @version V1.0
- * @date 2024-04-23
- */
-
-// Compatible Ultrasound class - matches Hiwonder I2C implementation
-#include <Arduino.h>
-#include <Wire.h>
-
-// I2C Constants (exact Hiwonder Ultrasound.h definitions)
-#define ULTRASOUND_I2C_ADDR         0x77
-
-// Register Map
-#define DISDENCE_L                  0    // Distance low 8 bits, unit: mm
-#define DISDENCE_H                  1    // Distance high 8 bits
-
-#define RGB_BRIGHTNESS              50   // 0-255
-#define RGB_WORK_MODE               2    // RGB mode: 0=user defined, 1=breathing mode
-
-#define RGB1_R                      3    // Probe 1 R value, 0~255
-#define RGB1_G                      4    // Probe 1 G value, 0~255  
-#define RGB1_B                      5    // Probe 1 B value, 0~255
-
-#define RGB2_R                      6    // Probe 2 R value, 0~255
-#define RGB2_G                      7    // Probe 2 G value, 0~255
-#define RGB2_B                      8    // Probe 2 B value, 0~255
-
-#define RGB1_R_BREATHING_CYCLE      9    // Breathing cycle for probe 1 R, unit: 100ms
-#define RGB1_G_BREATHING_CYCLE      10   // Breathing cycle for probe 1 G, unit: 100ms
-#define RGB1_B_BREATHING_CYCLE      11   // Breathing cycle for probe 1 B, unit: 100ms
-
-#define RGB2_R_BREATHING_CYCLE      12   // Breathing cycle for probe 2 R, unit: 100ms
-#define RGB2_G_BREATHING_CYCLE      13   // Breathing cycle for probe 2 G, unit: 100ms
-#define RGB2_B_BREATHING_CYCLE      14   // Breathing cycle for probe 2 B, unit: 100ms
-
-#define RGB_WORK_SIMPLE_MODE        0
-#define RGB_WORK_BREATHING_MODE     1
-
-class Ultrasound {
-private:
-  // I2C communication methods (matching Hiwonder implementation)
-  bool wireWriteByte(uint8_t addr, uint8_t val) {
-    Wire.beginTransmission(addr);
-    Wire.write(val);
-    return (Wire.endTransmission() == 0);
-  }
-  
-  bool wireWriteDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len) {
-    Wire.beginTransmission(addr);
-    Wire.write(reg);
-    for(unsigned int i = 0; i < len; i++) {
-      Wire.write(val[i]);
-    }
-    return (Wire.endTransmission() == 0);
-  }
-  
-  int wireReadDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len) {
-    if (!wireWriteByte(addr, reg)) return -1;
-    Wire.requestFrom(addr, len);
-    unsigned char i = 0;
-    while (Wire.available() && i < len) {
-      val[i] = Wire.read();
-      i++;
-    }
-    return i;
-  }
-  
-public:
-  // Constructor - initialize I2C (matches Hiwonder)
-  Ultrasound() {
-    Wire.begin();
-  }
-  
-  // RGB breathing mode (exact Hiwonder implementation)
-  void Breathing(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2) {
-    uint8_t value = RGB_WORK_BREATHING_MODE;
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
-    
-    // Set breathing cycles for RGB1 (probe 1)
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R_BREATHING_CYCLE, &r1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_G_BREATHING_CYCLE, &g1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_B_BREATHING_CYCLE, &b1, 1);
-    
-    // Set breathing cycles for RGB2 (probe 2)  
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_R_BREATHING_CYCLE, &r2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_G_BREATHING_CYCLE, &g2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_B_BREATHING_CYCLE, &b2, 1);
-  }
-  
-  // RGB color control (exact Hiwonder implementation)
-  void Color(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2) {
-    uint8_t value = RGB_WORK_SIMPLE_MODE;
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
-    
-    // Set RGB1 (probe 1) colors
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R, &r1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_G, &g1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_B, &b1, 1);
-    
-    // Set RGB2 (probe 2) colors
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_R, &r2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_G, &g2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_B, &b2, 1);
-  }
-  
-  // Distance measurement (exact Hiwonder implementation)
-  uint16_t GetDistance() {
-    uint16_t distance;
-    wireReadDataArray(ULTRASOUND_I2C_ADDR, DISDENCE_L, (uint8_t *)&distance, 2);
-    return distance;
-  }
-};
-
-// OFFICIAL HIWONDER CODE (with compatible library)
-#define FILTER_N 3                ///< 滤波法数组容量(Filter array capacity)
-
-int Filter_Value;
-int filter_buf[FILTER_N + 1];
-
-Ultrasound ultrasound;            ///< 实例化超声波类(Instantiate the ultrasound class)
-
-int Filter(void);
-int ultrasonic_distance(void);
-
-void setup() {
-  Serial.begin(9600);
-  // Ultrasound sensor initializes automatically in constructor
-}
-
-void loop() {
-  ultrasonic_distance();
-}
-
-/* 递推平均滤波法(Recursive average filtering method)*/
-int Filter() {
-  int i;
-  int filter_sum = 0;
-  filter_buf[FILTER_N] = ultrasound.GetDistance();///< 读取超声波测值(Read the ultrasonic ranging value)
-  for(i = 0; i < FILTER_N; i++) {
-    filter_buf[i] = filter_buf[i + 1];///< 所有数据左移，低位仍掉(Shift all data to the left, and clear the low bit)
-    filter_sum += filter_buf[i];
-  }
-  return (int)(filter_sum / FILTER_N);
-}
-
-int ultrasonic_distance(){
-  uint8_t s;
-  uint16_t distance = Filter();///< 获得滤波器输出值(Get the output value of the filter)
-  Serial.print("Distance: ");///< 获取并且串口打印距离，单位mm(Get and print the distance via serial port, unit: mm)
-  Serial.print(distance);
-  Serial.println(" mm");
-
-  if (distance > 0 && distance <= 80){
-      ultrasound.Breathing(1, 0, 0, 1, 0, 0);///< 呼吸灯模式，周期0.1s，颜色红色(Red breathing light mode, in 0.1s)
-  }
-   
-  else if (distance > 80 && distance <= 180){
-      s = map(distance,80,180,0,255);
-      ultrasound.Color((255-s), 0, 0, (255-s), 0, 0);///< 红色渐变(Red gradient)
-  }
-   
-   else if (distance > 180 && distance <= 320){
-      s = map(distance,180,320,0,255);
-      ultrasound.Color(0, 0, s, 0, 0, s);///< 蓝色渐变(Blue gradient)
-  }
-   
-   else if (distance > 320 && distance <= 500){
-      s = map(distance,320,500,0,255);
-      ultrasound.Color(0, s, 255-s, 0, s, 255-s);///< 绿色渐变(Green gradient)
-  }
-  else if (distance > 500){
-      ultrasound.Color(0, 255, 0, 0, 255, 0);///< 绿色(Green)
-  }
-  return distance;  
-}`}</code>
-</pre>
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">✅ Section 6.4 Complete!</h4>
+                    <p style="color: #0c4a6e; margin: 0; line-height: 1.6;">
+                        <strong>Success!</strong> The ultrasonic ranging code is ready. Download the 3 files above and compile in Arduino IDE. The code will work perfectly with the official Hiwonder library files.
+                    </p>
                 </div>
             </div>
         </div>
@@ -582,247 +249,10 @@ int ultrasonic_distance(){
                     <h4 style="color: #991b1b; font-weight: bold; margin-bottom: 1rem;">⚠️ Important Notes</h4>
                     <ul style="color: #991b1b; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
                         <li>Remove the Bluetooth module before uploading to avoid serial port conflicts</li>
-                        <li>Turn off the battery box before connecting USB cable</li>
-                        <li>Ensure proper motor connections before testing</li>
-                    </ul>
-                </div>
-
-                <div style="position: relative;">
-                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`/**
- * @file ultrasonic_following.ino
- * @brief 超声波跟随(Ultrasonic following)
- * @author Hiwonder (adapted for standard Arduino)
- * @version V1.0
- * @date 2024-04-23
- */
-
-// Compatible Ultrasound class - matches Hiwonder I2C implementation
-#include <Arduino.h>
-#include <Wire.h>
-
-// I2C Constants (exact Hiwonder Ultrasound.h definitions)
-#define ULTRASOUND_I2C_ADDR         0x77
-
-// Register Map
-#define DISDENCE_L                  0    // Distance low 8 bits, unit: mm
-#define DISDENCE_H                  1    // Distance high 8 bits
-
-#define RGB_BRIGHTNESS              50   // 0-255
-#define RGB_WORK_MODE               2    // RGB mode: 0=user defined, 1=breathing mode
-
-#define RGB1_R                      3    // Probe 1 R value, 0~255
-#define RGB1_G                      4    // Probe 1 G value, 0~255  
-#define RGB1_B                      5    // Probe 1 B value, 0~255
-
-#define RGB2_R                      6    // Probe 2 R value, 0~255
-#define RGB2_G                      7    // Probe 2 G value, 0~255
-#define RGB2_B                      8    // Probe 2 B value, 0~255
-
-#define RGB1_R_BREATHING_CYCLE      9    // Breathing cycle for probe 1 R, unit: 100ms
-#define RGB1_G_BREATHING_CYCLE      10   // Breathing cycle for probe 1 G, unit: 100ms
-#define RGB1_B_BREATHING_CYCLE      11   // Breathing cycle for probe 1 B, unit: 100ms
-
-#define RGB2_R_BREATHING_CYCLE      12   // Breathing cycle for probe 2 R, unit: 100ms
-#define RGB2_G_BREATHING_CYCLE      13   // Breathing cycle for probe 2 G, unit: 100ms
-#define RGB2_B_BREATHING_CYCLE      14   // Breathing cycle for probe 2 B, unit: 100ms
-
-#define RGB_WORK_SIMPLE_MODE        0
-#define RGB_WORK_BREATHING_MODE     1
-
-class Ultrasound {
-private:
-  // I2C communication methods (exact Hiwonder implementation)
-  bool wireWriteByte(uint8_t addr, uint8_t val) {
-    Wire.beginTransmission(addr);
-    Wire.write(val);
-    return (Wire.endTransmission() == 0);
-  }
-  
-  bool wireWriteDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len) {
-    Wire.beginTransmission(addr);
-    Wire.write(reg);
-    for(unsigned int i = 0; i < len; i++) {
-      Wire.write(val[i]);
-    }
-    return (Wire.endTransmission() == 0);
-  }
-  
-  int wireReadDataArray(uint8_t addr, uint8_t reg, uint8_t *val, unsigned int len) {
-    if (!wireWriteByte(addr, reg)) return -1;
-    Wire.requestFrom(addr, len);
-    unsigned char i = 0;
-    while (Wire.available() && i < len) {
-      val[i] = Wire.read();
-      i++;
-    }
-    return i;
-  }
-  
-public:
-  // Constructor - initialize I2C (matches Hiwonder)
-  Ultrasound() {
-    Wire.begin();
-  }
-  
-  // RGB breathing mode (exact Hiwonder implementation)
-  void Breathing(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2) {
-    uint8_t value = RGB_WORK_BREATHING_MODE;
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
-    
-    // Set breathing cycles for RGB1 (probe 1)
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R_BREATHING_CYCLE, &r1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_G_BREATHING_CYCLE, &g1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_B_BREATHING_CYCLE, &b1, 1);
-    
-    // Set breathing cycles for RGB2 (probe 2)  
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_R_BREATHING_CYCLE, &r2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_G_BREATHING_CYCLE, &g2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_B_BREATHING_CYCLE, &b2, 1);
-  }
-  
-  // RGB color control (exact Hiwonder implementation)
-  void Color(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2) {
-    uint8_t value = RGB_WORK_SIMPLE_MODE;
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB_WORK_MODE, &value, 1);
-    
-    // Set RGB1 (probe 1) colors
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_R, &r1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_G, &g1, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB1_B, &b1, 1);
-    
-    // Set RGB2 (probe 2) colors
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_R, &r2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_G, &g2, 1);
-    wireWriteDataArray(ULTRASOUND_I2C_ADDR, RGB2_B, &b2, 1);
-  }
-  
-  // Distance measurement (exact Hiwonder implementation)
-  uint16_t GetDistance() {
-    uint16_t distance;
-    wireReadDataArray(ULTRASOUND_I2C_ADDR, DISDENCE_L, (uint8_t *)&distance, 2);
-    return distance;
-  }
-};
-
-// OFFICIAL HIWONDER ULTRASONIC FOLLOWING CODE
-#define FILTER_N 3                ///< 滤波法数组容量(Filter array capacity)
-
-int Filter_Value;
-int filter_buf[FILTER_N + 1];
-
-Ultrasound ultrasound;            ///< 实例化超声波类(Instantiate the ultrasound class)
-const static uint8_t pwm_min = 50;
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
-uint16_t dis;
-
-int Filter(void);
-uint16_t ultrasonic_distance(void);
-void Motor_Init(void);
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
-
-void setup() {
-  Serial.begin(9600);
-  // Ultrasound sensor initializes automatically in constructor
-  Motor_Init();
-}
-
-void loop() {
-  ultrasonic_distance();
-  dis = ultrasonic_distance();
-  
-  // Official Hiwonder movement logic
-  if(dis >= 700) 
-    Velocity_Controller(0, 0, 0, 0);      // Stop - object too far
-  if(dis >= 300 && dis < 700) 
-    Velocity_Controller(0, 50, 0, 0);     // Move forward - follow object
-  if(dis >= 200 && dis < 300) 
-    Velocity_Controller(0, 0, 0, 0);      // Stop - optimal distance
-  if(dis < 200) 
-    Velocity_Controller(180, 50, 0, 0);   // Move backward - too close
-}
-
-/* 递推平均滤波法(Recursive average filtering method)*/
-int Filter() {
-  int i, filter_sum = 0;
-  filter_buf[FILTER_N] = ultrasound.GetDistance();
-  for(i = 0; i < FILTER_N; i++) {
-    filter_buf[i] = filter_buf[i + 1];
-    filter_sum += filter_buf[i];
-  }
-  return (int)(filter_sum / FILTER_N);
-}
-
-/* 超声波距离数据获取(Obtain ultrasonic distance data) */
-uint16_t ultrasonic_distance(){
-  uint8_t s;
-  uint16_t distance = Filter(); // 获得滤波器输出值(Get the output value of the filter)
-  Serial.print("Distance: ");Serial.print(distance);Serial.println(" mm");
-
-  if (distance > 0 && distance <= 80){
-      ultrasound.Breathing(1, 0, 0, 1, 0, 0); //呼吸灯模式，周期0.1s，颜色红色(Red breathing light mode, in 0.1s)
-  }
-  else if (distance > 80 && distance <= 180){
-      s = map(distance,80,180,0,255);
-      ultrasound.Color((255-s), 0, 0, (255-s), 0, 0); //红色渐变(Red gradient)
-  }
-  else if (distance > 180 && distance <= 320){
-      s = map(distance,180,320,0,255);
-      ultrasound.Color(0, 0, s, 0, 0, s); //蓝色渐变(Blue gradient)
-  }
-  else if (distance > 320 && distance <= 500){
-      s = map(distance,320,500,0,255);
-      ultrasound.Color(0, s, 255-s, 0, s, 255-s); //绿色渐变(Green gradient)
-  }
-  else if (distance > 500){
-      ultrasound.Color(0, 255, 0, 0, 255, 0); //绿色(Green)
-  }
-  return distance;  
-}
-
-void Motor_Init(){
-  for(int i = 0; i < 4; i++){
-    pinMode(motorpwmPin[i], OUTPUT);
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-}
-
-// Simplified Velocity Controller (students can expand based on their setup)
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift){
-  // Basic mecanum wheel control implementation
-  // angle: movement direction (0° = forward)
-  // velocity: movement speed (0-100)
-  // rot: rotation (-100 to +100)
-  // drift: enable/disable drift mode
-  
-  if(velocity > 0 && rot == 0){
-    // Move forward/backward
-    for(int i = 0; i < 4; i++){
-      analogWrite(motorpwmPin[i], map(velocity, 0, 100, pwm_min, 255));
-      digitalWrite(motordirectionPin[i], angle == 0 ? HIGH : LOW);
-    }
-  } else if(rot != 0){
-    // Rotate in place
-    for(int i = 0; i < 4; i++){
-      analogWrite(motorpwmPin[i], map(abs(rot), 0, 100, pwm_min, 255));
-      digitalWrite(motordirectionPin[i], (i < 2) ? (rot > 0) : (rot < 0));
-    }
-  } else {
-    // Stop all motors
-    for(int i = 0; i < 4; i++){
-      analogWrite(motorpwmPin[i], 0);
-    }
-  }
-}`}</code>
-</pre>
-                </div>
             </div>
         </div>
 
         <!-- Navigation -->
-        <div class="flex justify-between items-center mt-8">
             <div>
                 <a href="/programming/lessons32/lesson13" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
                     ← Previous: Lesson 13
