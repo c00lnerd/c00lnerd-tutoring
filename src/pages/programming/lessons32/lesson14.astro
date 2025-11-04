@@ -208,7 +208,7 @@ int ultrasonic_distance(){
   }
   else if (distance > 80 && distance <= 180){
       s = map(distance, 80, 180, 0, 255);
-      ultrasound.Color(s, 0, 0, s, 0, 0);          // Red gradient
+      ultrasound.Color((255-s), 0, 0, (255-s), 0, 0); // Red gradient
   }
   else if (distance > 180 && distance <= 320){
       s = map(distance, 180, 320, 0, 255);
@@ -342,6 +342,7 @@ int Filter(void);
 uint16_t ultrasonic_distance(void);
 void Motor_Init(void);
 void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
 
 void setup() {
   Serial.begin(9600);
@@ -409,31 +410,43 @@ void Motor_Init(){
   }
 }
 
-// Simplified Velocity Controller (students can expand based on their setup)
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift){
-  // Basic mecanum wheel control implementation
-  // angle: movement direction (0° = forward)
-  // velocity: movement speed (0-100)
-  // rot: rotation (-100 to +100)
-  // drift: enable/disable drift mode
-  
-  if(velocity > 0 && rot == 0){
-    // Move forward/backward
-    for(int i = 0; i < 4; i++){
-      analogWrite(motorpwmPin[i], map(velocity, 0, 100, pwm_min, 255));
-      digitalWrite(motordirectionPin[i], angle == 0 ? HIGH : LOW);
-    }
-  } else if(rot != 0){
-    // Rotate in place
-    for(int i = 0; i < 4; i++){
-      analogWrite(motorpwmPin[i], map(abs(rot), 0, 100, pwm_min, 255));
-      digitalWrite(motordirectionPin[i], (i < 2) ? (rot > 0) : (rot < 0));
-    }
+// Official Hiwonder Velocity Controller
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
+  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
+  float speed = 1;
+  angle += 90;
+  float rad = angle * PI / 180;
+  if (rot == 0) speed = 1;    // Speed factor
+  else speed = 0.5; 
+  velocity /= sqrt(2);
+  if (drift) {
+    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
+    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
+    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
+    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
   } else {
-    // Stop all motors
-    for(int i = 0; i < 4; i++){
-      analogWrite(motorpwmPin[i], 0);
-    }
+    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
+    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
+    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
+    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
+  }
+  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
+}
+
+// Official Hiwonder Motors_Set function
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
+  int8_t pwm_set[4];
+  int8_t motors[4] = { Motor_0, Motor_1, Motor_2, Motor_3};
+  bool direction[4] = { 1, 0, 0, 1};  // Forward; left 1; right 0
+  for(uint8_t i = 0; i < 4; ++i) {  // Fixed: added i = 0 initialization
+    if(motors[i] < 0) direction[i] = !direction[i];
+    else direction[i] = direction[i];
+
+    if(motors[i] == 0) pwm_set[i] = 0;
+    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
+
+    digitalWrite(motordirectionPin[i], direction[i]); 
+    analogWrite(motorpwmPin[i], pwm_set[i]); 
   }
 }`}</code>
 </pre>
