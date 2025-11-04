@@ -54,6 +54,78 @@ import Layout from '../../../layouts/Layout.astro';
             </div>
         </div>
 
+        <!-- Ultrasonic Sensor Technology Overview -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📡 Ultrasonic Sensor Technology</h2>
+            
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
+                    In this lesson, we use a <strong>glowing ultrasonic distance sensor module</strong> that communicates via the <strong>I2C interface</strong>. The module retrieves distance measurements from the ultrasonic sensor through I2C communication.
+                </p>
+                
+                <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
+                    During operation, the module automatically emits <strong>eight 40kHz square wave pulses</strong> and then listens for an echo. If an echo is detected, it outputs a high signal. The duration of this high-level signal corresponds to the time it takes for the ultrasonic wave to travel to the obstacle and return.
+                </p>
+                
+                <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 0.5rem;">📐 Distance Calculation Formula:</h4>
+                    <p style="color: #0c4a6e; margin: 0; font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: bold;">
+                        Distance = (High-level duration × Speed of sound (340 m/s)) ÷ 2
+                    </p>
+                </div>
+            </div>
+            
+            <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🚗 Car Function Description</h4>
+                <p style="color: #065f46; margin-bottom: 1rem; line-height: 1.6;">
+                    When the robot car is powered on, it will adjust the color of the glowing ultrasonic module based on the distance to nearby obstacles and will control the car's movement accordingly.
+                </p>
+                <p style="color: #065f46; margin-bottom: 1rem; line-height: 1.6;">
+                    <strong>Experiment Setup:</strong> Place an obstacle directly in front of the ultrasonic sensor and slowly move it closer.
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+                    <div>
+                        <h5 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🌈 (1) Ultrasonic Sensor Color Effects:</h5>
+                        <ul style="color: #065f46; margin: 0; padding-left: 1rem; line-height: 1.6; font-size: 0.9rem;">
+                            <li><strong>Distance &lt; 80mm:</strong> RGB light enters red breathing mode</li>
+                            <li><strong>80mm ≤ Distance &lt; 180mm:</strong> Red gradient, lighter as distance increases</li>
+                            <li><strong>180mm ≤ Distance &lt; 320mm:</strong> Blue gradient, intensifying as distance increases</li>
+                            <li><strong>320mm ≤ Distance &lt; 500mm:</strong> Green gradient, brighter as distance increases</li>
+                            <li><strong>Distance &gt; 500mm:</strong> Solid green light</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🚗 (2) Car Movement Behavior:</h5>
+                        <ul style="color: #065f46; margin: 0; padding-left: 1rem; line-height: 1.6; font-size: 0.9rem;">
+                            <li><strong>Distance ≥ 300mm:</strong> The car moves forward</li>
+                            <li><strong>Distance &lt; 300mm:</strong> The car turns</li>
+                        </ul>
+                        <div style="background: #d1fae5; padding: 0.75rem; border-radius: 4px; margin-top: 0.5rem;">
+                            <p style="color: #065f46; margin: 0; font-size: 0.85rem; font-style: italic;">
+                                💡 <strong>Tip:</strong> Watch how the RGB colors provide visual feedback while the car makes intelligent navigation decisions!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <!-- Local MP4 Video - Place 6.6.mp4 in public/images/ folder -->
+                <video controls style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 1rem;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <source src="/images/6.6.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                
+                <!-- Fallback content when video is not available -->
+                <div style="display: none; background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <p style="color: #0c4a6e; margin: 0; line-height: 1.6; font-weight: 500;">📹 Demo Video: <em>Place your screen-captured 6.6.mp4 in /public/images/ folder</em></p>
+                </div>
+                
+                <p style="color: #0c4a6e; margin-top: 0.5rem; font-size: 0.9rem;">Obstacle avoidance demonstration with intelligent navigation</p>
+            </div>
+        </div>
+
         <!-- Section 6.6: Obstacle Avoidance -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 class="text-2xl font-bold text-purple-800 mb-6">🚧 Section 6.6: Obstacle Avoidance</h2>
