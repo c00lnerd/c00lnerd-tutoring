@@ -2,177 +2,429 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 16: Final Project and Competition">
-    <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
-        <div style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 16: Final Project and Competition</h1>
-            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Showcase your skills in the semester finale</p>
+<Layout title="Lesson 16: Line Following - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 16: Line Following</h1>
+            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Autonomous Navigation with Infrared Line Detection</p>
+            <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                <p class="text-purple-800 font-medium">🛤️ Master precise line following with 4-channel infrared sensors</p>
+            </div>
         </div>
 
         <!-- Learning Objectives -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #f59e0b; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem; border-bottom: 3px solid #f59e0b; padding-bottom: 0.5rem;">🎯 Learning Objectives</h2>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1.5rem;">
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                 <div>
-                    <h3 style="color: #d97706; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">Knowledge Goals:</h3>
-                    <ul style="color: #4a5568; line-height: 1.8;">
-                        <li>Integrate all semester concepts into a cohesive project</li>
-                        <li>Apply engineering design process</li>
-                        <li>Understand project management principles</li>
-                        <li>Learn presentation and documentation skills</li>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Line Following Skills:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Master 4-channel infrared sensor arrays
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Implement precise line tracking algorithms
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Handle intersections and turns
+                        </li>
                     </ul>
                 </div>
                 <div>
-                    <h3 style="color: #d97706; font-size: 1.2rem; font-weight: bold; margin-bottom: 0.5rem;">Practical Skills:</h3>
-                    <ul style="color: #4a5568; line-height: 1.8;">
-                        <li>Design and implement complex autonomous systems</li>
-                        <li>Debug and optimize robot performance</li>
-                        <li>Present technical work professionally</li>
-                        <li>Collaborate effectively in teams</li>
+                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Programming Concepts:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            I2C sensor communication
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            PID control algorithms
+                        </li>
+                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
+                            Real-time sensor processing
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Section 1: Project Planning -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #f59e0b; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📋 Section 1: Project Planning and Design (20 minutes)</h2>
+        <!-- Line Follower Sensor Technology Overview -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔍 4-Channel Line Follower Technology</h2>
             
-            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Engineering Design Process</h3>
-                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                    Follow a systematic approach to create your final project:
-                </p>
-                <ol style="color: #4a5568; line-height: 1.8; margin-left: 1.5rem;">
-                    <li><strong>Define the Problem:</strong> What challenge will your robot solve?</li>
-                    <li><strong>Research and Brainstorm:</strong> What solutions already exist? What's innovative?</li>
-                    <li><strong>Design Solutions:</strong> Create multiple design concepts</li>
-                    <li><strong>Select Best Design:</strong> Evaluate based on feasibility and impact</li>
-                    <li><strong>Build Prototype:</strong> Implement your chosen design</li>
-                    <li><strong>Test and Iterate:</strong> Refine based on performance</li>
-                    <li><strong>Present Solution:</strong> Demonstrate and document your work</li>
-                </ol>
-            </div>
-
-            <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project Categories</h3>
-                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                    Choose from these challenge categories or propose your own:
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
+                <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
+                    In this lesson, we will use a <strong>4-channel line follower</strong> that utilizes an <strong>I2C communication interface</strong> to read data from the sensor probes.
                 </p>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
-                    <div style="background: #e6fffa; padding: 1rem; border-radius: 6px;">
-                        <h4 style="color: #234e52; font-weight: bold; margin-bottom: 0.5rem;">🏁 Racing Challenge</h4>
-                        <p style="color: #234e52; font-size: 0.9rem;">Navigate a complex course as quickly as possible while avoiding obstacles</p>
-                    </div>
-                    <div style="background: #f0fff4; padding: 1rem; border-radius: 6px;">
-                        <h4 style="color: #22543d; font-weight: bold; margin-bottom: 0.5rem;">🔍 Search & Rescue</h4>
-                        <p style="color: #22543d; font-size: 0.9rem;">Find and identify targets in a complex environment</p>
-                    </div>
-                    <div style="background: #fffaf0; padding: 1rem; border-radius: 6px;">
-                        <h4 style="color: #7b341e; font-weight: bold; margin-bottom: 0.5rem;">🎯 Precision Task</h4>
-                        <p style="color: #7b341e; font-size: 0.9rem;">Perform precise manipulations or measurements</p>
-                    </div>
-                    <div style="background: #f0f9ff; padding: 1rem; border-radius: 6px;">
-                        <h4 style="color: #553c9a; font-weight: bold; margin-bottom: 0.5rem;">🤝 Collaborative</h4>
-                        <p style="color: #553c9a; font-size: 0.9rem;">Multiple robots working together on a shared goal</p>
-                    </div>
-                </div>
-            </div>
-
-            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #38b2ac;">
-                <h4 style="color: #234e52; font-weight: bold; margin-bottom: 0.5rem;">💡 Key Insight</h4>
-                <p style="color: #234e52; line-height: 1.6; margin: 0;">
-                    The best projects combine multiple concepts from the semester: sensor fusion, computer vision, machine learning, and intelligent navigation. Think about how to showcase your learning!
+                <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
+                    The sensor module consists of <strong>four probes</strong>, each equipped with an <strong>infrared emitter</strong> and an <strong>infrared receiver</strong>. The infrared light is strongly reflected by white surfaces and weakly reflected by black surfaces. This variation in reflection allows the sensor to detect whether the line is present.
                 </p>
+                
+                <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 0.5rem;">🌟 How It Works:</h4>
+                    <ul style="color: #0c4a6e; margin: 0; padding-left: 1rem; line-height: 1.6;">
+                        <li><strong>White Surface:</strong> High infrared reflection → Sensor reads HIGH</li>
+                        <li><strong>Black Line:</strong> Low infrared reflection → Sensor reads LOW</li>
+                        <li><strong>4 Sensors:</strong> Provide precise positioning relative to the line</li>
+                        <li><strong>I2C Interface:</strong> Digital communication for reliable data transfer</li>
+                    </ul>
+                </div>
             </div>
         </div>
 
-        <!-- Section 2: Implementation Strategy -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #f59e0b; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">⚙️ Section 2: Implementation Strategy (20 minutes)</h2>
+        <!-- Sensor Configuration and Behavior -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">⚙️ Sensor Configuration and Line Detection</h2>
             
-            <div style="background: #f7fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Modular Development Approach</h3>
-                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                    Break your project into manageable modules that can be developed and tested independently:
-                </p>
+            <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🔧 4-Channel Sensor Array Layout</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div>
+                        <h5 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">Sensor Positions:</h5>
+                        <ul style="color: #065f46; margin: 0; padding-left: 1rem; line-height: 1.6; font-size: 0.9rem;">
+                            <li><strong>Sensor 0:</strong> Far Left</li>
+                            <li><strong>Sensor 1:</strong> Center Left</li>
+                            <li><strong>Sensor 2:</strong> Center Right</li>
+                            <li><strong>Sensor 3:</strong> Far Right</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">Line Position Detection:</h5>
+                        <ul style="color: #065f46; margin: 0; padding-left: 1rem; line-height: 1.6; font-size: 0.9rem;">
+                            <li><strong>0001:</strong> Line far right → Turn right</li>
+                            <li><strong>0011:</strong> Line center-right → Slight right</li>
+                            <li><strong>0110:</strong> Line centered → Go straight</li>
+                            <li><strong>1100:</strong> Line center-left → Slight left</li>
+                            <li><strong>1000:</strong> Line far left → Turn left</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+                <!-- Local MP4 Video - Place line-following.mp4 in public/images/ folder -->
+                <video controls style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 1rem;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <source src="/images/line-following.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
                 
+                <!-- Fallback content when video is not available -->
+                <div style="display: none; background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
+                    <p style="color: #0c4a6e; margin: 0; line-height: 1.6; font-weight: 500;">📹 Demo Video: <em>Place your screen-captured line-following.mp4 in /public/images/ folder</em></p>
+                </div>
+                
+                <p style="color: #0c4a6e; margin-top: 0.5rem; font-size: 0.9rem;">Line following demonstration with 4-channel sensor array</p>
+            </div>
+        </div>
+
+        <!-- Section 7.1: Basic Line Following -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 class="text-2xl font-bold text-purple-800 mb-6">🛤️ Section 7.1: Basic Line Following</h2>
+                
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Main Program Structure</h3>
+                <p class="text-gray-700 mb-4">
+                    The complete Hiwonder line following implementation with I2C sensor communication, FastLED control, and button activation.
+                </p>
+
                 <div style="position: relative;">
                     <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                     <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`// Example: Search and Rescue Robot Architecture
-class SearchRescueRobot {
-private:
-  NavigationModule navigator;
-  VisionModule vision;
-  CommunicationModule comm;
-  MissionController mission;
+<code>{`/**
+ * @file tracking_test.ino
+ * @author Hiwonder
+ * @brief Line following with 4-channel I2C sensor
+ * @version V1.0
+ * @date 2024-04-23
+ */
+
+#include <Wire.h>
+#include "FastLED.h"
+
+/* I2C address of the line follower sensor */
+#define LINE_FOLLOWER_I2C_ADDR 0x78 
+
+const static uint8_t ledPin = 2;
+const static uint8_t keyPin = 3;
+const static uint8_t pwm_min = 50;
+const static uint8_t motorpwmPin[4] = { 10, 9, 6, 11 };
+const static uint8_t motordirectionPin[4] = { 12, 8, 7, 13 };
+const static uint8_t TRACKING = 4;
+
+static CRGB rgbs[1];
+static uint8_t modestate = TRACKING;
+
+uint8_t state = 0;
+uint8_t data;
+uint8_t rec_data[4];  // Individual sensor readings
+
+bool keyState;
+bool taskStart = 0;
+
+void setup() {
+  Serial.begin(9600);
   
-public:
-  void setup() {
-    // Initialize all modules
-    navigator.init();
-    vision.init();
-    comm.init();
-    mission.init();
-    
-    Serial.println("Search and Rescue Robot Ready!");
+  pinMode(keyPin, INPUT);
+  FastLED.addLeds<WS2812, ledPin, GRB>(rgbs, 1);
+  Rgb_Show(255, 255, 255);  // White LED initially
+  
+  Wire.begin();
+  Motor_Init();
+}
+
+void loop() {
+  keyState = analogRead(keyPin);
+  if (!keyState) taskStart = 1;  // Start when button pressed
+  
+  if (taskStart) {
+    Sensor_Receive();
+    Task_Dispatcher();
+  }
+}`}</code>
+                    </pre>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">I2C Communication & Line Following Logic</h3>
+                <p class="text-gray-700 mb-4">
+                    Essential functions for I2C sensor communication and the core line following algorithm:
+                </p>
+
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`/* I2C Communication Functions */
+bool WireWriteByte(uint8_t val) {
+  Wire.beginTransmission(LINE_FOLLOWER_I2C_ADDR);
+  Wire.write(val);
+  if (Wire.endTransmission() != 0) {
+    return false;  // Send failed
+  }
+  return true;     // Send successful
+}
+
+bool WireReadDataByte(uint8_t reg, uint8_t &val) {
+  if (!WireWriteByte(reg)) {
+    return false;
+  }
+  Wire.requestFrom(LINE_FOLLOWER_I2C_ADDR, 1);
+  while (Wire.available()) {
+    val = Wire.read();
+  }
+  return true;
+}
+
+/* Get sensor data from I2C */
+void Sensor_Receive(void) {
+  WireReadDataByte(1, data);
+  rec_data[0] = data & 0x01;        // Sensor 0 (rightmost)
+  rec_data[1] = (data >> 1) & 0x01; // Sensor 1 
+  rec_data[2] = (data >> 2) & 0x01; // Sensor 2
+  rec_data[3] = (data >> 3) & 0x01; // Sensor 3 (leftmost)
+}
+
+/* Line following algorithm */
+void Tracking_Line_Task(void) {
+  Rgb_Show(255, 0, 0);  // Red LED during tracking
+  
+  if (rec_data[1] == 1 && rec_data[2] == 1) {
+    // Both center sensors detect line - go straight
+    Velocity_Controller(0, 80, 0, 0);
+  }
+  else if (rec_data[1] == 1 && rec_data[2] == 0) {
+    // Left center sensor detects line - turn left
+    Velocity_Controller(0, 80, 65, 0);
+  }
+  else if (rec_data[1] == 0 && rec_data[2] == 1) {
+    // Right center sensor detects line - turn right
+    Velocity_Controller(0, 80, -65, 0);
   }
   
-  void loop() {
-    // Get current mission state
-    MissionState state = mission.getCurrentState();
+  // If no center sensors detect line, stop and wait
+  while (rec_data[1] == 0 && rec_data[2] == 0) {
+    Sensor_Receive();
+    Velocity_Controller(0, 0, 0, 0);  // Stop
+  }
+}`}</code>
+                    </pre>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Control & Utility Functions</h3>
+                <p class="text-gray-700 mb-4">
+                    Complete the implementation with these essential motor control and utility functions:
+                </p>
+
+                <div style="position: relative;">
+                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
+<code>{`/* Motor initialization */
+void Motor_Init(void) {
+  for (uint8_t i = 0; i < 4; i++) {
+    pinMode(motordirectionPin[i], OUTPUT);
+  }
+  Velocity_Controller(0, 0, 0, 0);  // Stop all motors initially
+}
+
+/* Mecanum wheel velocity controller */
+void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
+  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
+  float speed = 1;
+  angle += 90;
+  float rad = angle * PI / 180;
+  
+  if (rot == 0) speed = 1;    // Normal speed
+  else speed = 0.5;           // Reduced speed when rotating
+  
+  velocity /= sqrt(2);
+  
+  if (drift) {
+    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
+    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
+    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
+    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
+  } else {
+    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
+    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
+    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
+    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
+  }
+  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
+}
+
+/* Set individual motor speeds and directions */
+void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
+  int8_t pwm_set[4];
+  int8_t motors[4] = { Motor_0, Motor_1, Motor_2, Motor_3 };
+  bool direction[4] = { 1, 0, 0, 1 };  // Forward direction settings
+  
+  for (uint8_t i = 0; i < 4; ++i) {
+    if (motors[i] < 0) direction[i] = !direction[i];
     
-    switch(state) {
-      case SEARCHING:
-        executeSearchPattern();
-        break;
-      case TARGET_FOUND:
-        approachTarget();
-        break;
-      case COLLECTING_DATA:
-        gatherTargetInfo();
-        break;
-      case REPORTING:
-        transmitResults();
-        break;
-      case RETURNING:
-        returnToBase();
-        break;
+    if (motors[i] == 0) pwm_set[i] = 0;
+    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
+    
+    digitalWrite(motordirectionPin[i], direction[i]);
+    analogWrite(motorpwmPin[i], pwm_set[i]);
+  }
+}
+
+/* Task dispatcher */
+void Task_Dispatcher() {
+  switch (modestate) {
+    case TRACKING:
+      Tracking_Line_Task();
+      break;
+  }
+}
+
+/* RGB LED control */
+void Rgb_Show(uint8_t rValue, uint8_t gValue, uint8_t bValue) {
+  rgbs[0].r = rValue;
+  rgbs[0].g = gValue;
+  rgbs[0].b = bValue;
+  FastLED.show();
+}`}</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+            <div>
+                <a href="/programming/lessons32/lesson15" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous: Lesson 15
+                </a>
+            </div>
+            <div>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Course Overview
+                </a>
+            </div>
+            <div>
+                <a href="/programming/lessons32/lesson17" style="background-color: #dc2626; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #b91c1c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Lesson 17 →
+                </a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
     }
     
-    // Update all modules
-    navigator.update();
-    vision.update();
-    comm.update();
-    mission.update();
-  }
-  
-private:
-  void executeSearchPattern() {
-    // Use computer vision to scan for targets
-    vector<Target> targets = vision.scanForTargets();
-    
-    if (!targets.empty()) {
-      mission.setTarget(targets[0]);
-      mission.setState(TARGET_FOUND);
-      return;
-    }
-    
-    // Continue systematic search
-    navigator.executeSearchPattern();
-  }
-  
-  void approachTarget() {
-    Target currentTarget = mission.getCurrentTarget();
-    
-    if (navigator.navigateToPoint(currentTarget.location)) {
-      mission.setState(COLLECTING_DATA);
-    }
-  }
-};`}</code>
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
                 </pre>
                 </div>
             </div>
@@ -466,67 +718,4 @@ private:
 </Layout>
 
 <script>
-window.copyCode = function(button) {
-    try {
-        const codeElement = button.parentElement.querySelector('code');
-        if (!codeElement) {
-            showCopyFeedback(button, false);
-            return;
-        }
-        
-        const codeText = codeElement.textContent || codeElement.innerText;
-        
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(codeText).then(() => {
-                showCopyFeedback(button, true);
-            }).catch(() => {
-                fallbackCopy(codeText, button);
-            });
-        } else {
-            fallbackCopy(codeText, button);
-        }
-    } catch (err) {
-        showCopyFeedback(button, false);
-    }
-};
-
-function fallbackCopy(text, button) {
-    try {
-        const textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'absolute';
-        textarea.style.left = '-9999px';
-        textarea.style.top = '0';
-        textarea.setAttribute('readonly', '');
-        document.body.appendChild(textarea);
-        
-        textarea.select();
-        textarea.setSelectionRange(0, 99999);
-        
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textarea);
-        
-        showCopyFeedback(button, successful);
-    } catch (err) {
-        showCopyFeedback(button, false);
-    }
-}
-
-function showCopyFeedback(button, success) {
-    const originalText = button.textContent;
-    const originalBg = button.style.backgroundColor;
-    
-    if (success) {
-        button.textContent = '✅ Copied!';
-        button.style.backgroundColor = '#10b981';
-    } else {
-        button.textContent = '❌ Failed';
-        button.style.backgroundColor = '#dc2626';
-    }
-    
-    setTimeout(() => {
-        button.textContent = originalText;
-        button.style.backgroundColor = originalBg || '#2563eb';
-    }, 2000);
-}
 </script>
