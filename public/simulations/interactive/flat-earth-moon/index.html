@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flat Earth Moon Simulation - Educational Demonstration</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .subtitle {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .simulation-container {
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        #flatEarthCanvas {
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            background: #000;
+            border-radius: 10px;
+            display: block;
+            margin: 0 auto;
+            border: 2px solid #4a90e2;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            margin: 5px;
+        }
+
+        button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+
+        button.active {
+            background: #e74c3c;
+        }
+
+        .info-panel {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .phase-display {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #ffd700;
+        }
+
+        .problems-list {
+            background: rgba(231, 76, 60, 0.2);
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .problems-list h3 {
+            margin-top: 0;
+            color: #ff6b6b;
+        }
+
+        .problems-list ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .problems-list li {
+            margin: 8px 0;
+            line-height: 1.4;
+        }
+
+        .explanation {
+            background: rgba(46, 204, 113, 0.2);
+            border-left: 4px solid #2ecc71;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .explanation h3 {
+            margin-top: 0;
+            color: #2ecc71;
+        }
+
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            #flatEarthCanvas {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌙 Flat Earth Moon Simulation</h1>
+        <p class="subtitle">Educational demonstration of moon behavior on a flat earth model</p>
+
+        <div class="simulation-container">
+            <canvas id="flatEarthCanvas" width="800" height="600"></canvas>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label>Moon Position (Days)</label>
+                    <input type="range" id="moonPosition" min="0" max="29.5" step="0.1" value="0">
+                    <span id="dayDisplay">Day 0.0</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>Moon Height</label>
+                    <input type="range" id="moonHeight" min="50" max="300" value="150">
+                    <span id="heightDisplay">150</span>
+                </div>
+                
+                <div class="control-group">
+                    <label>Animation Speed</label>
+                    <input type="range" id="animSpeed" min="0.1" max="5" step="0.1" value="1">
+                    <span id="speedDisplay">1x</span>
+                </div>
+                
+                <button id="playPause">▶ Play</button>
+                <button id="resetBtn">🔄 Reset</button>
+            </div>
+
+            <div class="phase-display" id="phaseDisplay">New Moon</div>
+        </div>
+
+        <div class="info-panel">
+            <div class="problems-list">
+                <h3>🚫 Problems with Flat Earth Moon Model:</h3>
+                <ul>
+                    <li><strong>Moon Phases Don't Work:</strong> On a flat earth, the moon would need to be self-illuminating or have impossible lighting to create phases</li>
+                    <li><strong>Same Moon Phase Globally:</strong> Everyone on earth would see the same moon phase simultaneously, which contradicts reality</li>
+                    <li><strong>No Lunar Eclipses:</strong> Earth's shadow couldn't create lunar eclipses in this model</li>
+                    <li><strong>Moon Size Changes:</strong> The moon would appear dramatically different sizes from different locations</li>
+                    <li><strong>Impossible Orbit:</strong> No physical mechanism could maintain the moon's circular path above a flat surface</li>
+                    <li><strong>Tidal Forces:</strong> Tides would behave completely differently and inconsistently across the flat earth</li>
+                </ul>
+            </div>
+
+            <div class="explanation">
+                <h3>✅ Reality: Spherical Earth Model</h3>
+                <p>In reality, the Earth is a sphere, and the moon orbits around it. Moon phases are created by the changing angles of sunlight hitting the moon as viewed from Earth. This spherical model perfectly explains:</p>
+                <ul>
+                    <li>Why moon phases progress predictably</li>
+                    <li>Why lunar eclipses occur when Earth blocks sunlight</li>
+                    <li>Why the moon appears the same size globally</li>
+                    <li>How tidal forces work consistently</li>
+                    <li>Why we can predict moon positions centuries in advance</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class FlatEarthMoonSimulation {
+            constructor() {
+                this.canvas = document.getElementById('flatEarthCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.centerX = this.canvas.width / 2;
+                this.centerY = this.canvas.height / 2;
+                
+                // Simulation parameters
+                this.moonPosition = 0; // 0-29.5 days
+                this.moonHeight = 150;
+                this.animSpeed = 1;
+                this.isPlaying = false;
+                this.animationId = null;
+                
+                // Earth parameters
+                this.earthRadius = 200;
+                this.sunDistance = 300;
+                
+                this.setupControls();
+                this.animate();
+            }
+
+            setupControls() {
+                const moonPosSlider = document.getElementById('moonPosition');
+                const moonHeightSlider = document.getElementById('moonHeight');
+                const animSpeedSlider = document.getElementById('animSpeed');
+                const playPauseBtn = document.getElementById('playPause');
+                const resetBtn = document.getElementById('resetBtn');
+
+                moonPosSlider.addEventListener('input', (e) => {
+                    this.moonPosition = parseFloat(e.target.value);
+                    document.getElementById('dayDisplay').textContent = `Day ${this.moonPosition.toFixed(1)}`;
+                    this.updatePhaseDisplay();
+                });
+
+                moonHeightSlider.addEventListener('input', (e) => {
+                    this.moonHeight = parseInt(e.target.value);
+                    document.getElementById('heightDisplay').textContent = this.moonHeight;
+                });
+
+                animSpeedSlider.addEventListener('input', (e) => {
+                    this.animSpeed = parseFloat(e.target.value);
+                    document.getElementById('speedDisplay').textContent = `${this.animSpeed}x`;
+                });
+
+                playPauseBtn.addEventListener('click', () => {
+                    this.isPlaying = !this.isPlaying;
+                    playPauseBtn.textContent = this.isPlaying ? '⏸ Pause' : '▶ Play';
+                    playPauseBtn.classList.toggle('active', this.isPlaying);
+                });
+
+                resetBtn.addEventListener('click', () => {
+                    this.moonPosition = 0;
+                    moonPosSlider.value = 0;
+                    document.getElementById('dayDisplay').textContent = 'Day 0.0';
+                    this.updatePhaseDisplay();
+                });
+            }
+
+            updatePhaseDisplay() {
+                const phases = [
+                    'New Moon', 'Waxing Crescent', 'First Quarter', 'Waxing Gibbous',
+                    'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'
+                ];
+                
+                const phaseIndex = Math.floor((this.moonPosition / 29.5) * 8) % 8;
+                document.getElementById('phaseDisplay').textContent = phases[phaseIndex];
+            }
+
+            drawFlatEarth() {
+                // Draw flat earth disk
+                this.ctx.fillStyle = '#4a5d23';
+                this.ctx.beginPath();
+                this.ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw continents (simplified)
+                this.ctx.fillStyle = '#2d3d15';
+                this.ctx.beginPath();
+                this.ctx.arc(this.centerX - 50, this.centerY - 30, 40, 0, Math.PI * 2);
+                this.ctx.fill();
+                this.ctx.beginPath();
+                this.ctx.arc(this.centerX + 60, this.centerY + 20, 35, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Draw ice wall around edge
+                this.ctx.strokeStyle = '#e8f4fd';
+                this.ctx.lineWidth = 8;
+                this.ctx.beginPath();
+                this.ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
+                this.ctx.stroke();
+
+                // Label
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = '16px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('Flat Earth', this.centerX, this.centerY + 10);
+            }
+
+            drawSun() {
+                const sunAngle = (this.moonPosition / 29.5) * Math.PI * 2;
+                const sunX = this.centerX + Math.cos(sunAngle) * this.sunDistance;
+                const sunY = this.centerY + Math.sin(sunAngle) * this.sunDistance;
+
+                // Sun glow
+                const gradient = this.ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 30);
+                gradient.addColorStop(0, '#ffff00');
+                gradient.addColorStop(0.5, '#ffaa00');
+                gradient.addColorStop(1, 'rgba(255, 170, 0, 0)');
+                
+                this.ctx.fillStyle = gradient;
+                this.ctx.beginPath();
+                this.ctx.arc(sunX, sunY, 30, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Sun core
+                this.ctx.fillStyle = '#ffff00';
+                this.ctx.beginPath();
+                this.ctx.arc(sunX, sunY, 15, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Label
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = '12px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('Sun', sunX, sunY - 25);
+
+                return { x: sunX, y: sunY };
+            }
+
+            drawMoon(sunPos) {
+                const moonAngle = (this.moonPosition / 29.5) * Math.PI * 2;
+                const moonOrbitRadius = this.earthRadius + this.moonHeight;
+                const moonX = this.centerX + Math.cos(moonAngle) * moonOrbitRadius;
+                const moonY = this.centerY + Math.sin(moonAngle) * moonOrbitRadius;
+
+                // Calculate moon phase (this is problematic on flat earth!)
+                const phaseAngle = (this.moonPosition / 29.5) * Math.PI * 2;
+                
+                // Moon shadow (showing the problem with flat earth lighting)
+                this.ctx.fillStyle = '#333';
+                this.ctx.beginPath();
+                this.ctx.arc(moonX, moonY, 12, 0, Math.PI * 2);
+                this.ctx.fill();
+
+                // Moon illuminated part (artificially created for demonstration)
+                const illuminationAngle = phaseAngle + Math.PI;
+                this.ctx.fillStyle = '#f0f0f0';
+                this.ctx.beginPath();
+                this.ctx.arc(moonX, moonY, 12, illuminationAngle - Math.PI/2, illuminationAngle + Math.PI/2);
+                this.ctx.fill();
+
+                // Draw line showing impossible lighting
+                this.ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+                this.ctx.lineWidth = 2;
+                this.ctx.setLineDash([5, 5]);
+                this.ctx.beginPath();
+                this.ctx.moveTo(sunPos.x, sunPos.y);
+                this.ctx.lineTo(moonX, moonY);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+
+                // Label
+                this.ctx.fillStyle = 'white';
+                this.ctx.font = '12px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('Moon', moonX, moonY - 20);
+
+                // Problem indicator
+                this.ctx.fillStyle = '#ff6b6b';
+                this.ctx.font = '10px Arial';
+                this.ctx.fillText('Impossible!', moonX, moonY + 25);
+            }
+
+            drawProblems() {
+                // Draw problem indicators
+                this.ctx.fillStyle = 'rgba(231, 76, 60, 0.3)';
+                this.ctx.font = '14px Arial';
+                this.ctx.textAlign = 'left';
+                
+                // Problem 1: Same phase everywhere
+                this.ctx.fillText('❌ Same moon phase visible globally', 20, 30);
+                
+                // Problem 2: No physical mechanism for orbit
+                this.ctx.fillText('❌ No force to maintain circular orbit', 20, 50);
+                
+                // Problem 3: Impossible lighting
+                this.ctx.fillText('❌ Sun angle cannot create realistic phases', 20, 70);
+            }
+
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw space background
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw stars
+                this.ctx.fillStyle = 'white';
+                for (let i = 0; i < 50; i++) {
+                    const x = (i * 37) % this.canvas.width;
+                    const y = (i * 73) % this.canvas.height;
+                    this.ctx.beginPath();
+                    this.ctx.arc(x, y, 1, 0, Math.PI * 2);
+                    this.ctx.fill();
+                }
+
+                this.drawFlatEarth();
+                const sunPos = this.drawSun();
+                this.drawMoon(sunPos);
+                this.drawProblems();
+
+                // Update animation
+                if (this.isPlaying) {
+                    this.moonPosition += 0.02 * this.animSpeed;
+                    if (this.moonPosition > 29.5) {
+                        this.moonPosition = 0;
+                    }
+                    
+                    document.getElementById('moonPosition').value = this.moonPosition;
+                    document.getElementById('dayDisplay').textContent = `Day ${this.moonPosition.toFixed(1)}`;
+                    this.updatePhaseDisplay();
+                }
+
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+        }
+
+        // Initialize simulation when page loads
+        window.addEventListener('load', () => {
+            new FlatEarthMoonSimulation();
+        });
+    </script>
+</body>
+</html>
