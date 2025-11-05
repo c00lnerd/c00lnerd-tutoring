@@ -186,6 +186,9 @@
             <!-- Overhead View -->
             <div class="simulation-container">
                 <h3 style="text-align: center; margin-bottom: 15px;">🗺️ Overhead View (Gleason Map)</h3>
+                <p style="text-align: center; margin-bottom: 10px; font-size: 0.9rem; opacity: 0.8;">
+                    Click anywhere on the flat earth to place observer
+                </p>
                 <canvas id="overheadCanvas" width="600" height="600"></canvas>
             </div>
 
@@ -198,11 +201,12 @@
                         <label>Observer Location</label>
                         <select id="observerLocation">
                             <option value="center">North Pole (Center)</option>
-                            <option value="northAmerica">North America</option>
+                            <option value="northAmerica" selected>North America</option>
                             <option value="europe">Europe</option>
                             <option value="asia">Asia</option>
                             <option value="australia">Australia</option>
                             <option value="antarctica">Antarctica (Edge)</option>
+                            <option value="custom">Custom (Click on map)</option>
                         </select>
                     </div>
                 </div>
@@ -275,6 +279,7 @@
                 this.animSpeed = 1;
                 this.isPlaying = false;
                 this.observerLocation = 'northAmerica';
+                this.customObserver = null; // For click-to-place observer
                 
                 // Earth parameters (Gleason map projection)
                 this.earthRadius = 280;
@@ -292,7 +297,35 @@
                 };
                 
                 this.setupControls();
+                this.setupCanvasInteraction();
                 this.animate();
+            }
+
+            setupCanvasInteraction() {
+                // Add click event listener to overhead canvas for observer placement
+                this.overheadCanvas.addEventListener('click', (e) => {
+                    const rect = this.overheadCanvas.getBoundingClientRect();
+                    const clickX = e.clientX - rect.left;
+                    const clickY = e.clientY - rect.top;
+                    
+                    // Check if click is within the earth disk
+                    const distance = Math.sqrt((clickX - this.centerX)**2 + (clickY - this.centerY)**2);
+                    if (distance <= this.earthRadius) {
+                        this.customObserver = { x: clickX, y: clickY };
+                        // Reset dropdown to show custom location
+                        document.getElementById('observerLocation').value = 'custom';
+                    }
+                });
+
+                // Add cursor change on hover
+                this.overheadCanvas.addEventListener('mousemove', (e) => {
+                    const rect = this.overheadCanvas.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const mouseY = e.clientY - rect.top;
+                    
+                    const distance = Math.sqrt((mouseX - this.centerX)**2 + (mouseY - this.centerY)**2);
+                    this.overheadCanvas.style.cursor = distance <= this.earthRadius ? 'crosshair' : 'default';
+                });
             }
 
             setupControls() {
@@ -324,6 +357,9 @@
 
                 observerSelect.addEventListener('change', (e) => {
                     this.observerLocation = e.target.value;
+                    if (e.target.value !== 'custom') {
+                        this.customObserver = null; // Clear custom observer when selecting preset
+                    }
                 });
 
                 playPauseBtn.addEventListener('click', () => {
@@ -379,60 +415,119 @@
             drawGleasonMap() {
                 const ctx = this.overheadCtx;
                 
-                // Clear canvas
-                ctx.fillStyle = '#001122';
+                // Clear canvas with space background
+                ctx.fillStyle = '#000011';
                 ctx.fillRect(0, 0, this.overheadCanvas.width, this.overheadCanvas.height);
                 
-                // Draw flat earth disk
-                ctx.fillStyle = '#2d5016';
+                // Draw stars
+                ctx.fillStyle = 'white';
+                for (let i = 0; i < 100; i++) {
+                    const x = (i * 37) % this.overheadCanvas.width;
+                    const y = (i * 73) % this.overheadCanvas.height;
+                    if (Math.sqrt((x - this.centerX)**2 + (y - this.centerY)**2) > this.earthRadius + 20) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 1, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                
+                // Draw flat earth disk (ocean)
+                ctx.fillStyle = '#1e3a5f';
                 ctx.beginPath();
                 ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Draw continents (Gleason projection style)
-                ctx.fillStyle = '#4a7c23';
-                
-                // North America
+                // Draw continents with proper Gleason projection colors
+                // North Pole (Arctic) - center
+                ctx.fillStyle = '#f0f8ff';
                 ctx.beginPath();
-                ctx.arc(this.centerX - 80, this.centerY + 100, 60, 0, Math.PI * 2);
+                ctx.arc(this.centerX, this.centerY, 30, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Europe/Africa
+                // North America
+                ctx.fillStyle = '#8fbc8f';
                 ctx.beginPath();
-                ctx.arc(this.centerX + 30, this.centerY + 80, 45, 0, Math.PI * 2);
+                ctx.ellipse(this.centerX - 60, this.centerY + 80, 70, 50, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // South America
+                ctx.fillStyle = '#9acd32';
+                ctx.beginPath();
+                ctx.ellipse(this.centerX - 40, this.centerY + 160, 40, 80, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Europe
+                ctx.fillStyle = '#daa520';
+                ctx.beginPath();
+                ctx.ellipse(this.centerX + 40, this.centerY + 60, 35, 25, 0, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Africa
+                ctx.fillStyle = '#cd853f';
+                ctx.beginPath();
+                ctx.ellipse(this.centerX + 60, this.centerY + 120, 45, 70, 0, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Asia
+                ctx.fillStyle = '#f4a460';
                 ctx.beginPath();
-                ctx.arc(this.centerX + 120, this.centerY + 50, 70, 0, Math.PI * 2);
+                ctx.ellipse(this.centerX + 120, this.centerY + 40, 80, 60, 0, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Australia (outer edge)
+                // Australia
+                ctx.fillStyle = '#deb887';
                 ctx.beginPath();
-                ctx.arc(this.centerX + 80, this.centerY - 180, 40, 0, Math.PI * 2);
+                ctx.ellipse(this.centerX + 140, this.centerY + 140, 50, 35, 0, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Antarctica ice wall
-                ctx.strokeStyle = '#e8f4fd';
-                ctx.lineWidth = 12;
+                ctx.strokeStyle = '#e6f3ff';
+                ctx.lineWidth = 15;
                 ctx.beginPath();
                 ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
                 ctx.stroke();
                 
-                // Draw observer location
-                const observer = this.observerLocations[this.observerLocation];
-                const obsX = this.centerX + observer.x * this.earthRadius;
-                const obsY = this.centerY + observer.y * this.earthRadius;
-                
-                ctx.fillStyle = '#ff4444';
-                ctx.beginPath();
-                ctx.arc(obsX, obsY, 8, 0, Math.PI * 2);
-                ctx.fill();
-                
+                // Add continent labels
                 ctx.fillStyle = 'white';
-                ctx.font = '12px Arial';
+                ctx.font = 'bold 12px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText('Observer', obsX, obsY - 15);
+                ctx.fillText('Arctic', this.centerX, this.centerY + 5);
+                ctx.fillText('N. America', this.centerX - 60, this.centerY + 85);
+                ctx.fillText('S. America', this.centerX - 40, this.centerY + 165);
+                ctx.fillText('Europe', this.centerX + 40, this.centerY + 65);
+                ctx.fillText('Africa', this.centerX + 60, this.centerY + 125);
+                ctx.fillText('Asia', this.centerX + 120, this.centerY + 45);
+                ctx.fillText('Australia', this.centerX + 140, this.centerY + 145);
+                
+                // Antarctica label
+                ctx.fillText('Antarctica Ice Wall', this.centerX, this.centerY + this.earthRadius + 30);
+                
+                // Draw observer location
+                if (this.customObserver) {
+                    ctx.fillStyle = '#ff4444';
+                    ctx.beginPath();
+                    ctx.arc(this.customObserver.x, this.customObserver.y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Observer', this.customObserver.x, this.customObserver.y - 20);
+                } else {
+                    const observer = this.observerLocations[this.observerLocation];
+                    const obsX = this.centerX + observer.x * this.earthRadius;
+                    const obsY = this.centerY + observer.y * this.earthRadius;
+                    
+                    ctx.fillStyle = '#ff4444';
+                    ctx.beginPath();
+                    ctx.arc(obsX, obsY, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Observer', obsX, obsY - 20);
+                }
             }
 
             drawSunAndMoon() {
@@ -491,7 +586,6 @@
 
             drawGroundView() {
                 const ctx = this.groundCtx;
-                const observer = this.observerLocations[this.observerLocation];
                 const sunPos = this.getSunPosition();
                 const moonPos = this.getMoonPosition();
                 
@@ -504,8 +598,17 @@
                 ctx.fillRect(0, 0, this.groundCanvas.width, this.groundCanvas.height);
                 
                 // Calculate observer position
-                const obsX = this.centerX + observer.x * this.earthRadius;
-                const obsY = this.centerY + observer.y * this.earthRadius;
+                let obsX, obsY, observerName;
+                if (this.customObserver) {
+                    obsX = this.customObserver.x;
+                    obsY = this.customObserver.y;
+                    observerName = "Custom Location";
+                } else {
+                    const observer = this.observerLocations[this.observerLocation];
+                    obsX = this.centerX + observer.x * this.earthRadius;
+                    obsY = this.centerY + observer.y * this.earthRadius;
+                    observerName = observer.name;
+                }
                 
                 // Calculate angles to sun and moon from observer
                 const sunAngle = Math.atan2(sunPos.y - obsY, sunPos.x - obsX);
@@ -570,7 +673,7 @@
                 ctx.fillStyle = 'white';
                 ctx.font = '14px Arial';
                 ctx.textAlign = 'left';
-                ctx.fillText(`Observer: ${observer.name}`, 10, 25);
+                ctx.fillText(`Observer: ${observerName}`, 10, 25);
                 ctx.fillText(`Time: ${Math.floor(this.currentTime).toString().padStart(2, '0')}:${Math.floor((this.currentTime % 1) * 60).toString().padStart(2, '0')}`, 10, 45);
                 
                 // Problem indicators
