@@ -15,8 +15,21 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+        }
+
+        .simulation-views {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .simulation-views {
+                grid-template-columns: 1fr;
+            }
         }
 
         h1 {
@@ -169,34 +182,57 @@
         <h1>🌙 Flat Earth Moon Simulation</h1>
         <p class="subtitle">Educational demonstration of moon behavior on a flat earth model</p>
 
-        <div class="simulation-container">
-            <canvas id="flatEarthCanvas" width="800" height="600"></canvas>
-            
-            <div class="controls">
-                <div class="control-group">
-                    <label>Moon Position (Days)</label>
-                    <input type="range" id="moonPosition" min="0" max="29.5" step="0.1" value="0">
-                    <span id="dayDisplay">Day 0.0</span>
-                </div>
-                
-                <div class="control-group">
-                    <label>Moon Height</label>
-                    <input type="range" id="moonHeight" min="50" max="300" value="150">
-                    <span id="heightDisplay">150</span>
-                </div>
-                
-                <div class="control-group">
-                    <label>Animation Speed</label>
-                    <input type="range" id="animSpeed" min="0.1" max="5" step="0.1" value="1">
-                    <span id="speedDisplay">1x</span>
-                </div>
-                
-                <button id="playPause">▶ Play</button>
-                <button id="resetBtn">🔄 Reset</button>
+        <div class="simulation-views">
+            <!-- Overhead View -->
+            <div class="simulation-container">
+                <h3 style="text-align: center; margin-bottom: 15px;">🗺️ Overhead View (Gleason Map)</h3>
+                <canvas id="overheadCanvas" width="600" height="600"></canvas>
             </div>
 
-            <div class="phase-display" id="phaseDisplay">New Moon</div>
+            <!-- Ground View -->
+            <div class="simulation-container">
+                <h3 style="text-align: center; margin-bottom: 15px;">👁️ Ground Observer View</h3>
+                <canvas id="groundCanvas" width="600" height="400"></canvas>
+                <div style="text-align: center; margin-top: 10px;">
+                    <div class="control-group">
+                        <label>Observer Location</label>
+                        <select id="observerLocation">
+                            <option value="center">North Pole (Center)</option>
+                            <option value="northAmerica">North America</option>
+                            <option value="europe">Europe</option>
+                            <option value="asia">Asia</option>
+                            <option value="australia">Australia</option>
+                            <option value="antarctica">Antarctica (Edge)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
+            
+        <div class="controls">
+            <div class="control-group">
+                <label>Time (Hours)</label>
+                <input type="range" id="timeSlider" min="0" max="24" step="0.1" value="12">
+                <span id="timeDisplay">12:00</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Day of Month</label>
+                <input type="range" id="daySlider" min="1" max="29.5" step="0.1" value="1">
+                <span id="dayDisplay">Day 1.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Animation Speed</label>
+                <input type="range" id="animSpeed" min="0.1" max="5" step="0.1" value="1">
+                <span id="speedDisplay">1x</span>
+            </div>
+            
+            <button id="playPause">▶ Play</button>
+            <button id="resetBtn">🔄 Reset</button>
+        </div>
+
+        <div class="phase-display" id="phaseDisplay">New Moon</div>
 
         <div class="info-panel">
             <div class="problems-list">
@@ -228,47 +264,66 @@
     <script>
         class FlatEarthMoonSimulation {
             constructor() {
-                this.canvas = document.getElementById('flatEarthCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.centerX = this.canvas.width / 2;
-                this.centerY = this.canvas.height / 2;
+                this.overheadCanvas = document.getElementById('overheadCanvas');
+                this.overheadCtx = this.overheadCanvas.getContext('2d');
+                this.groundCanvas = document.getElementById('groundCanvas');
+                this.groundCtx = this.groundCanvas.getContext('2d');
                 
                 // Simulation parameters
-                this.moonPosition = 0; // 0-29.5 days
-                this.moonHeight = 150;
+                this.currentTime = 12; // Hours (0-24)
+                this.currentDay = 1; // Day of lunar month (1-29.5)
                 this.animSpeed = 1;
                 this.isPlaying = false;
-                this.animationId = null;
+                this.observerLocation = 'northAmerica';
                 
-                // Earth parameters
-                this.earthRadius = 200;
-                this.sunDistance = 300;
+                // Earth parameters (Gleason map projection)
+                this.earthRadius = 280;
+                this.centerX = this.overheadCanvas.width / 2;
+                this.centerY = this.overheadCanvas.height / 2;
+                
+                // Observer locations on flat earth map
+                this.observerLocations = {
+                    center: { x: 0, y: 0, name: "North Pole" },
+                    northAmerica: { x: -0.3, y: 0.4, name: "North America" },
+                    europe: { x: 0.1, y: 0.3, name: "Europe" },
+                    asia: { x: 0.4, y: 0.2, name: "Asia" },
+                    australia: { x: 0.3, y: -0.6, name: "Australia" },
+                    antarctica: { x: 0, y: -0.9, name: "Antarctica" }
+                };
                 
                 this.setupControls();
                 this.animate();
             }
 
             setupControls() {
-                const moonPosSlider = document.getElementById('moonPosition');
-                const moonHeightSlider = document.getElementById('moonHeight');
+                const timeSlider = document.getElementById('timeSlider');
+                const daySlider = document.getElementById('daySlider');
                 const animSpeedSlider = document.getElementById('animSpeed');
                 const playPauseBtn = document.getElementById('playPause');
                 const resetBtn = document.getElementById('resetBtn');
+                const observerSelect = document.getElementById('observerLocation');
 
-                moonPosSlider.addEventListener('input', (e) => {
-                    this.moonPosition = parseFloat(e.target.value);
-                    document.getElementById('dayDisplay').textContent = `Day ${this.moonPosition.toFixed(1)}`;
+                timeSlider.addEventListener('input', (e) => {
+                    this.currentTime = parseFloat(e.target.value);
+                    const hours = Math.floor(this.currentTime);
+                    const minutes = Math.floor((this.currentTime - hours) * 60);
+                    document.getElementById('timeDisplay').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
                     this.updatePhaseDisplay();
                 });
 
-                moonHeightSlider.addEventListener('input', (e) => {
-                    this.moonHeight = parseInt(e.target.value);
-                    document.getElementById('heightDisplay').textContent = this.moonHeight;
+                daySlider.addEventListener('input', (e) => {
+                    this.currentDay = parseFloat(e.target.value);
+                    document.getElementById('dayDisplay').textContent = `Day ${this.currentDay.toFixed(1)}`;
+                    this.updatePhaseDisplay();
                 });
 
                 animSpeedSlider.addEventListener('input', (e) => {
                     this.animSpeed = parseFloat(e.target.value);
                     document.getElementById('speedDisplay').textContent = `${this.animSpeed}x`;
+                });
+
+                observerSelect.addEventListener('change', (e) => {
+                    this.observerLocation = e.target.value;
                 });
 
                 playPauseBtn.addEventListener('click', () => {
@@ -278,9 +333,12 @@
                 });
 
                 resetBtn.addEventListener('click', () => {
-                    this.moonPosition = 0;
-                    moonPosSlider.value = 0;
-                    document.getElementById('dayDisplay').textContent = 'Day 0.0';
+                    this.currentTime = 12;
+                    this.currentDay = 1;
+                    timeSlider.value = 12;
+                    daySlider.value = 1;
+                    document.getElementById('timeDisplay').textContent = '12:00';
+                    document.getElementById('dayDisplay').textContent = 'Day 1.0';
                     this.updatePhaseDisplay();
                 });
             }
@@ -291,166 +349,270 @@
                     'Full Moon', 'Waning Gibbous', 'Last Quarter', 'Waning Crescent'
                 ];
                 
-                const phaseIndex = Math.floor((this.moonPosition / 29.5) * 8) % 8;
+                const phaseIndex = Math.floor((this.currentDay / 29.5) * 8) % 8;
                 document.getElementById('phaseDisplay').textContent = phases[phaseIndex];
             }
 
-            drawFlatEarth() {
+            // Calculate sun position (moves in circle over flat earth)
+            getSunPosition() {
+                const sunAngle = (this.currentTime / 24) * Math.PI * 2 - Math.PI/2; // Start at top
+                const sunRadius = this.earthRadius * 0.7; // Sun orbits within earth disk
+                return {
+                    x: this.centerX + Math.cos(sunAngle) * sunRadius,
+                    y: this.centerY + Math.sin(sunAngle) * sunRadius
+                };
+            }
+
+            // Calculate moon position (chases sun with lunar month offset)
+            getMoonPosition() {
+                const sunAngle = (this.currentTime / 24) * Math.PI * 2 - Math.PI/2;
+                const moonPhaseOffset = (this.currentDay / 29.5) * Math.PI * 2;
+                const moonAngle = sunAngle + moonPhaseOffset;
+                const moonRadius = this.earthRadius * 0.8; // Moon orbits slightly outside sun
+                return {
+                    x: this.centerX + Math.cos(moonAngle) * moonRadius,
+                    y: this.centerY + Math.sin(moonAngle) * moonRadius,
+                    angle: moonAngle
+                };
+            }
+
+            drawGleasonMap() {
+                const ctx = this.overheadCtx;
+                
+                // Clear canvas
+                ctx.fillStyle = '#001122';
+                ctx.fillRect(0, 0, this.overheadCanvas.width, this.overheadCanvas.height);
+                
                 // Draw flat earth disk
-                this.ctx.fillStyle = '#4a5d23';
-                this.ctx.beginPath();
-                this.ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
-                this.ctx.fill();
-
-                // Draw continents (simplified)
-                this.ctx.fillStyle = '#2d3d15';
-                this.ctx.beginPath();
-                this.ctx.arc(this.centerX - 50, this.centerY - 30, 40, 0, Math.PI * 2);
-                this.ctx.fill();
-                this.ctx.beginPath();
-                this.ctx.arc(this.centerX + 60, this.centerY + 20, 35, 0, Math.PI * 2);
-                this.ctx.fill();
-
-                // Draw ice wall around edge
-                this.ctx.strokeStyle = '#e8f4fd';
-                this.ctx.lineWidth = 8;
-                this.ctx.beginPath();
-                this.ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
-                this.ctx.stroke();
-
-                // Label
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = '16px Arial';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Flat Earth', this.centerX, this.centerY + 10);
-            }
-
-            drawSun() {
-                const sunAngle = (this.moonPosition / 29.5) * Math.PI * 2;
-                const sunX = this.centerX + Math.cos(sunAngle) * this.sunDistance;
-                const sunY = this.centerY + Math.sin(sunAngle) * this.sunDistance;
-
-                // Sun glow
-                const gradient = this.ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, 30);
-                gradient.addColorStop(0, '#ffff00');
-                gradient.addColorStop(0.5, '#ffaa00');
-                gradient.addColorStop(1, 'rgba(255, 170, 0, 0)');
+                ctx.fillStyle = '#2d5016';
+                ctx.beginPath();
+                ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
+                ctx.fill();
                 
-                this.ctx.fillStyle = gradient;
-                this.ctx.beginPath();
-                this.ctx.arc(sunX, sunY, 30, 0, Math.PI * 2);
-                this.ctx.fill();
-
-                // Sun core
-                this.ctx.fillStyle = '#ffff00';
-                this.ctx.beginPath();
-                this.ctx.arc(sunX, sunY, 15, 0, Math.PI * 2);
-                this.ctx.fill();
-
-                // Label
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = '12px Arial';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Sun', sunX, sunY - 25);
-
-                return { x: sunX, y: sunY };
-            }
-
-            drawMoon(sunPos) {
-                const moonAngle = (this.moonPosition / 29.5) * Math.PI * 2;
-                const moonOrbitRadius = this.earthRadius + this.moonHeight;
-                const moonX = this.centerX + Math.cos(moonAngle) * moonOrbitRadius;
-                const moonY = this.centerY + Math.sin(moonAngle) * moonOrbitRadius;
-
-                // Calculate moon phase (this is problematic on flat earth!)
-                const phaseAngle = (this.moonPosition / 29.5) * Math.PI * 2;
+                // Draw continents (Gleason projection style)
+                ctx.fillStyle = '#4a7c23';
                 
-                // Moon shadow (showing the problem with flat earth lighting)
-                this.ctx.fillStyle = '#333';
-                this.ctx.beginPath();
-                this.ctx.arc(moonX, moonY, 12, 0, Math.PI * 2);
-                this.ctx.fill();
-
-                // Moon illuminated part (artificially created for demonstration)
-                const illuminationAngle = phaseAngle + Math.PI;
-                this.ctx.fillStyle = '#f0f0f0';
-                this.ctx.beginPath();
-                this.ctx.arc(moonX, moonY, 12, illuminationAngle - Math.PI/2, illuminationAngle + Math.PI/2);
-                this.ctx.fill();
-
-                // Draw line showing impossible lighting
-                this.ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
-                this.ctx.lineWidth = 2;
-                this.ctx.setLineDash([5, 5]);
-                this.ctx.beginPath();
-                this.ctx.moveTo(sunPos.x, sunPos.y);
-                this.ctx.lineTo(moonX, moonY);
-                this.ctx.stroke();
-                this.ctx.setLineDash([]);
-
-                // Label
-                this.ctx.fillStyle = 'white';
-                this.ctx.font = '12px Arial';
-                this.ctx.textAlign = 'center';
-                this.ctx.fillText('Moon', moonX, moonY - 20);
-
-                // Problem indicator
-                this.ctx.fillStyle = '#ff6b6b';
-                this.ctx.font = '10px Arial';
-                this.ctx.fillText('Impossible!', moonX, moonY + 25);
+                // North America
+                ctx.beginPath();
+                ctx.arc(this.centerX - 80, this.centerY + 100, 60, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Europe/Africa
+                ctx.beginPath();
+                ctx.arc(this.centerX + 30, this.centerY + 80, 45, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Asia
+                ctx.beginPath();
+                ctx.arc(this.centerX + 120, this.centerY + 50, 70, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Australia (outer edge)
+                ctx.beginPath();
+                ctx.arc(this.centerX + 80, this.centerY - 180, 40, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Antarctica ice wall
+                ctx.strokeStyle = '#e8f4fd';
+                ctx.lineWidth = 12;
+                ctx.beginPath();
+                ctx.arc(this.centerX, this.centerY, this.earthRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                // Draw observer location
+                const observer = this.observerLocations[this.observerLocation];
+                const obsX = this.centerX + observer.x * this.earthRadius;
+                const obsY = this.centerY + observer.y * this.earthRadius;
+                
+                ctx.fillStyle = '#ff4444';
+                ctx.beginPath();
+                ctx.arc(obsX, obsY, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Observer', obsX, obsY - 15);
             }
 
-            drawProblems() {
+            drawSunAndMoon() {
+                const ctx = this.overheadCtx;
+                const sunPos = this.getSunPosition();
+                const moonPos = this.getMoonPosition();
+                
+                // Draw sun
+                const sunGradient = ctx.createRadialGradient(sunPos.x, sunPos.y, 0, sunPos.x, sunPos.y, 25);
+                sunGradient.addColorStop(0, '#ffff00');
+                sunGradient.addColorStop(1, 'rgba(255, 255, 0, 0.3)');
+                ctx.fillStyle = sunGradient;
+                ctx.beginPath();
+                ctx.arc(sunPos.x, sunPos.y, 25, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#ffaa00';
+                ctx.beginPath();
+                ctx.arc(sunPos.x, sunPos.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw moon
+                ctx.fillStyle = '#cccccc';
+                ctx.beginPath();
+                ctx.arc(moonPos.x, moonPos.y, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Moon phase (simplified - shows the problem)
+                const phaseAngle = (this.currentDay / 29.5) * Math.PI * 2;
+                ctx.fillStyle = '#888888';
+                ctx.beginPath();
+                ctx.arc(moonPos.x, moonPos.y, 15, phaseAngle, phaseAngle + Math.PI);
+                ctx.fill();
+                
+                // Labels
+                ctx.fillStyle = 'white';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('☀️ Sun', sunPos.x, sunPos.y - 35);
+                ctx.fillText('🌙 Moon', moonPos.x, moonPos.y - 25);
+                
                 // Draw problem indicators
-                this.ctx.fillStyle = 'rgba(231, 76, 60, 0.3)';
-                this.ctx.font = '14px Arial';
-                this.ctx.textAlign = 'left';
+                ctx.strokeStyle = 'rgba(255, 100, 100, 0.8)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(sunPos.x, sunPos.y);
+                ctx.lineTo(moonPos.x, moonPos.y);
+                ctx.stroke();
+                ctx.setLineDash([]);
                 
-                // Problem 1: Same phase everywhere
-                this.ctx.fillText('❌ Same moon phase visible globally', 20, 30);
+                ctx.fillStyle = '#ff6666';
+                ctx.font = '10px Arial';
+                ctx.fillText('Impossible lighting!', (sunPos.x + moonPos.x) / 2, (sunPos.y + moonPos.y) / 2);
+            }
+
+            drawGroundView() {
+                const ctx = this.groundCtx;
+                const observer = this.observerLocations[this.observerLocation];
+                const sunPos = this.getSunPosition();
+                const moonPos = this.getMoonPosition();
                 
-                // Problem 2: No physical mechanism for orbit
-                this.ctx.fillText('❌ No force to maintain circular orbit', 20, 50);
+                // Clear canvas with sky gradient
+                const gradient = ctx.createLinearGradient(0, 0, 0, this.groundCanvas.height);
+                gradient.addColorStop(0, '#001122');
+                gradient.addColorStop(0.7, '#003366');
+                gradient.addColorStop(1, '#2d5016');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, this.groundCanvas.width, this.groundCanvas.height);
                 
-                // Problem 3: Impossible lighting
-                this.ctx.fillText('❌ Sun angle cannot create realistic phases', 20, 70);
+                // Calculate observer position
+                const obsX = this.centerX + observer.x * this.earthRadius;
+                const obsY = this.centerY + observer.y * this.earthRadius;
+                
+                // Calculate angles to sun and moon from observer
+                const sunAngle = Math.atan2(sunPos.y - obsY, sunPos.x - obsX);
+                const moonAngle = Math.atan2(moonPos.y - obsY, moonPos.x - obsX);
+                const sunDistance = Math.sqrt((sunPos.x - obsX)**2 + (sunPos.y - obsY)**2);
+                const moonDistance = Math.sqrt((moonPos.x - obsX)**2 + (moonPos.y - obsY)**2);
+                
+                // Convert to ground view coordinates
+                const groundWidth = this.groundCanvas.width;
+                const groundHeight = this.groundCanvas.height;
+                const horizon = groundHeight * 0.7;
+                
+                // Sun position in ground view
+                const sunGroundX = groundWidth/2 + (sunAngle / Math.PI) * groundWidth/2;
+                const sunGroundY = horizon - (1000 / sunDistance) * 100; // Perspective effect
+                
+                // Moon position in ground view  
+                const moonGroundX = groundWidth/2 + (moonAngle / Math.PI) * groundWidth/2;
+                const moonGroundY = horizon - (1000 / moonDistance) * 80;
+                
+                // Draw horizon
+                ctx.strokeStyle = '#444';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, horizon);
+                ctx.lineTo(groundWidth, horizon);
+                ctx.stroke();
+                
+                // Draw sun if above horizon
+                if (sunGroundY < horizon) {
+                    const sunSize = Math.max(10, 1000 / sunDistance);
+                    const sunGradient = ctx.createRadialGradient(sunGroundX, sunGroundY, 0, sunGroundX, sunGroundY, sunSize);
+                    sunGradient.addColorStop(0, '#ffff00');
+                    sunGradient.addColorStop(1, 'rgba(255, 255, 0, 0.3)');
+                    ctx.fillStyle = sunGradient;
+                    ctx.beginPath();
+                    ctx.arc(sunGroundX, sunGroundY, sunSize, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Draw moon if above horizon
+                if (moonGroundY < horizon) {
+                    const moonSize = Math.max(8, 800 / moonDistance);
+                    ctx.fillStyle = '#cccccc';
+                    ctx.beginPath();
+                    ctx.arc(moonGroundX, moonGroundY, moonSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Moon phase
+                    const phaseAngle = (this.currentDay / 29.5) * Math.PI * 2;
+                    ctx.fillStyle = '#666666';
+                    ctx.beginPath();
+                    ctx.arc(moonGroundX, moonGroundY, moonSize, phaseAngle, phaseAngle + Math.PI);
+                    ctx.fill();
+                }
+                
+                // Draw ground
+                ctx.fillStyle = '#2d5016';
+                ctx.fillRect(0, horizon, groundWidth, groundHeight - horizon);
+                
+                // Observer info
+                ctx.fillStyle = 'white';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Observer: ${observer.name}`, 10, 25);
+                ctx.fillText(`Time: ${Math.floor(this.currentTime).toString().padStart(2, '0')}:${Math.floor((this.currentTime % 1) * 60).toString().padStart(2, '0')}`, 10, 45);
+                
+                // Problem indicators
+                ctx.fillStyle = '#ff6666';
+                ctx.font = '12px Arial';
+                if (moonGroundY < horizon && sunGroundY < horizon) {
+                    ctx.fillText('❌ Both sun and moon visible - impossible phases!', 10, groundHeight - 60);
+                }
+                ctx.fillText('❌ Moon size changes dramatically with distance', 10, groundHeight - 40);
+                ctx.fillText('❌ Same moon phase visible globally', 10, groundHeight - 20);
             }
 
             animate() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                // Draw overhead view
+                this.drawGleasonMap();
+                this.drawSunAndMoon();
                 
-                // Draw space background
-                this.ctx.fillStyle = '#000';
-                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                // Draw ground view
+                this.drawGroundView();
                 
-                // Draw stars
-                this.ctx.fillStyle = 'white';
-                for (let i = 0; i < 50; i++) {
-                    const x = (i * 37) % this.canvas.width;
-                    const y = (i * 73) % this.canvas.height;
-                    this.ctx.beginPath();
-                    this.ctx.arc(x, y, 1, 0, Math.PI * 2);
-                    this.ctx.fill();
-                }
-
-                this.drawFlatEarth();
-                const sunPos = this.drawSun();
-                this.drawMoon(sunPos);
-                this.drawProblems();
-
                 // Update animation
                 if (this.isPlaying) {
-                    this.moonPosition += 0.02 * this.animSpeed;
-                    if (this.moonPosition > 29.5) {
-                        this.moonPosition = 0;
+                    this.currentTime += 0.1 * this.animSpeed;
+                    if (this.currentTime >= 24) {
+                        this.currentTime = 0;
+                        this.currentDay += 0.1;
+                        if (this.currentDay > 29.5) {
+                            this.currentDay = 1;
+                        }
                     }
                     
-                    document.getElementById('moonPosition').value = this.moonPosition;
-                    document.getElementById('dayDisplay').textContent = `Day ${this.moonPosition.toFixed(1)}`;
+                    document.getElementById('timeSlider').value = this.currentTime;
+                    document.getElementById('daySlider').value = this.currentDay;
+                    
+                    const hours = Math.floor(this.currentTime);
+                    const minutes = Math.floor((this.currentTime - hours) * 60);
+                    document.getElementById('timeDisplay').textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+                    document.getElementById('dayDisplay').textContent = `Day ${this.currentDay.toFixed(1)}`;
                     this.updatePhaseDisplay();
                 }
 
-                this.animationId = requestAnimationFrame(() => this.animate());
+                requestAnimationFrame(() => this.animate());
             }
         }
 
