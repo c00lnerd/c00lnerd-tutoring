@@ -1604,20 +1604,38 @@
                         obsCtx.arc(moonX, moonY, moonRadius, 0, 2 * Math.PI);
                         obsCtx.fill();
                         
-                        // Draw moon phase (shadow)
-                        const phaseAngle = moonPos.lunarPhase * 2 * Math.PI;
+                        // Draw moon phase (shadow) - simplified approach to avoid negative radius
+                        const phaseProgress = moonPos.lunarPhase; // 0 to 1
                         obsCtx.fillStyle = '#696969'; // Dark gray for shadow
-                        obsCtx.beginPath();
-                        if (moonPos.lunarPhase < 0.5) {
-                            // Waxing - shadow on left
-                            obsCtx.arc(moonX, moonY, moonRadius, Math.PI/2, 3*Math.PI/2);
-                            obsCtx.arc(moonX, moonY, moonRadius * Math.cos(phaseAngle), 3*Math.PI/2, Math.PI/2, true);
-                        } else {
-                            // Waning - shadow on right
-                            obsCtx.arc(moonX, moonY, moonRadius, 3*Math.PI/2, Math.PI/2);
-                            obsCtx.arc(moonX, moonY, moonRadius * Math.cos(phaseAngle), Math.PI/2, 3*Math.PI/2, true);
+                        
+                        // Only draw shadow if not at full moon (around 0.5)
+                        if (Math.abs(phaseProgress - 0.5) > 0.05) {
+                            obsCtx.save();
+                            obsCtx.beginPath();
+                            obsCtx.arc(moonX, moonY, moonRadius, 0, 2 * Math.PI);
+                            obsCtx.clip();
+                            
+                            // Calculate shadow width based on phase
+                            let shadowWidth;
+                            if (phaseProgress < 0.5) {
+                                // Waxing - shadow shrinks from left
+                                shadowWidth = moonRadius * 2 * (0.5 - phaseProgress);
+                            } else {
+                                // Waning - shadow grows from right
+                                shadowWidth = moonRadius * 2 * (phaseProgress - 0.5);
+                            }
+                            
+                            // Draw shadow rectangle
+                            if (phaseProgress < 0.5) {
+                                // Shadow on left side
+                                obsCtx.fillRect(moonX - moonRadius, moonY - moonRadius, shadowWidth, moonRadius * 2);
+                            } else {
+                                // Shadow on right side
+                                obsCtx.fillRect(moonX + moonRadius - shadowWidth, moonY - moonRadius, shadowWidth, moonRadius * 2);
+                            }
+                            
+                            obsCtx.restore();
                         }
-                        obsCtx.fill();
                         
                         // Moon outline
                         obsCtx.strokeStyle = '#C0C0C0';
