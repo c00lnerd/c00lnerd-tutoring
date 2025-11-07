@@ -265,6 +265,25 @@
 
                         Flat Earth sun diameter: <span id="sunDiameter">0</span> 
                     </div>
+                    <div id="moonAnalysisText" style="margin-top: 15px; font-size: 0.9em; color: #666; border-top: 1px solid #ccc; padding-top: 10px;">
+                        <strong>Moon Parameters:</strong>
+                        <br>
+                        Moon angle from view: <span id="moonRelativeAngle">0</span>°
+                        <br>
+                        Ground distance to moon: <span id="moonGroundDistance">0</span> 
+                        <br>
+                        3D distance to moon: <span id="moonActualDistance">0</span> 
+                        <br>
+                        Apparent moon size: <span id="moonApparentSize">0</span>°
+                        <br>
+                        Moon elevation: <span id="moonElevation">0</span>°
+                        <br>
+                        Moon azimuth: <span id="moonAzimuth">0</span>° (absolute)
+                        <br>
+                        Lunar phase: <span id="lunarPhase">0</span>% (Day <span id="lunarDay">0</span>)
+                        <br>
+                        Flat Earth moon diameter: <span id="moonDiameter">0</span> 
+                    </div>
                 </div>
             </div>
             <div style="text-align: center;">
@@ -277,6 +296,10 @@
                 <label style="margin-left: 10px;">Sun Height: 
                     <input type="number" id="sunHeight" min="1000" max="10000" value="5000" step="100" style="width: 70px;">
                     <span id="sunHeightUnit">km</span>
+                </label>
+                <label style="margin-left: 10px;">Moon Height: 
+                    <input type="number" id="moonHeight" min="1000" max="10000" value="3000" step="100" style="width: 70px;">
+                    <span id="moonHeightUnit">km</span>
                 </label>
                 <button id="unitToggle" style="margin-left: 10px;">Toggle Units (km/mi)</button>
             </div>
@@ -650,6 +673,8 @@
                 var unitToggle = document.getElementById('unitToggle');
                 var sunHeightUnit = document.getElementById('sunHeightUnit');
                 var sunHeightInput = document.getElementById('sunHeight');
+                var moonHeightUnit = document.getElementById('moonHeightUnit');
+                var moonHeightInput = document.getElementById('moonHeight');
                 var dateInput = document.getElementById('dateInput');
                 var timeHours = document.getElementById('timeHours');
                 var timeMinutes = document.getElementById('timeMinutes');
@@ -687,15 +712,23 @@
                         if (sunHeightUnit) {
                             sunHeightUnit.textContent = this.useMetric ? 'km' : 'mi';
                         }
+                        if (moonHeightUnit) {
+                            moonHeightUnit.textContent = this.useMetric ? 'km' : 'mi';
+                        }
                         
-                        // Update height input value
+                        // Update height input values
                         if (sunHeightInput) {
                             if (this.useMetric) {
-                                // Display the stored km value
                                 sunHeightInput.value = Math.round(this.sunHeight);
                             } else {
-                                // Convert km to miles for display
                                 sunHeightInput.value = Math.round(this.sunHeight / 1.60934);
+                            }
+                        }
+                        if (moonHeightInput) {
+                            if (this.useMetric) {
+                                moonHeightInput.value = Math.round(this.moonHeight);
+                            } else {
+                                moonHeightInput.value = Math.round(this.moonHeight / 1.60934);
                             }
                         }
                         
@@ -739,6 +772,16 @@
                         const inputValue = parseFloat(sunHeightInput.value);
                         // Convert to km if input is in miles
                         this.sunHeight = this.useMetric ? inputValue : inputValue * 1.60934;
+                        this.draw();
+                    });
+                }
+                
+                // Set up moon height input event listener
+                if (moonHeightInput) {
+                    moonHeightInput.addEventListener('change', () => {
+                        const inputValue = parseFloat(moonHeightInput.value);
+                        // Convert to km if input is in miles
+                        this.moonHeight = this.useMetric ? inputValue : inputValue * 1.60934;
                         this.draw();
                     });
                 }
@@ -1232,12 +1275,16 @@
                 // Calculate elevation using flat earth perspective
                 var elevation = Math.atan2(this.moonHeight, groundDistance) * 180/Math.PI;
                 
-                // Calculate moon diameter (about 0.5° like sun in flat earth model)
-                var quarterDegRad = 0.25 * Math.PI/180;
-                var moonDiameter = 2 * this.moonHeight * Math.tan(quarterDegRad);
+                // Calculate moon diameter to maintain same angular size as sun (0.5°)
+                // In flat earth model, moon at different height needs different diameter
+                var targetAngularSize = 0.5; // degrees - same as sun
+                var targetAngularSizeRad = targetAngularSize * Math.PI/180;
                 
-                // Calculate angular size
-                var angularSize = 2 * Math.atan(moonDiameter/(2*groundDistance3D)) * 180/Math.PI;
+                // Calculate required diameter for 0.5° at moon's height and distance
+                var moonDiameter = 2 * groundDistance3D * Math.tan(targetAngularSizeRad/2);
+                
+                // Angular size should always be 0.5° (same as sun)
+                var angularSize = targetAngularSize;
                 
                 return {
                     x: moonX,
@@ -1512,11 +1559,10 @@
                 
                 // Draw the sun only if it's visible in the current view
                 if (sunVisible) {
-                    // Scale sun size based on angular size
-                    // At 0.5 degrees (nominal size at sun height), use base radius of 10px
-                    // Scale proportionally with angular size
-                    const baseRadius = 10; // Radius at 0.5 degrees
-                    const sunRadius = baseRadius * (solarPos.angularSize / 0.5);
+                    // Sun and moon both appear 0.5° - same size in observer view
+                    // Use consistent base radius for both celestial bodies
+                    const baseRadius = 12; // Same as moon - both are 0.5 degrees
+                    const sunRadius = baseRadius; // Sun always 0.5°, so always base radius
                     
                     obsCtx.fillStyle = '#FFD700';  // Yellow color for sun
                     obsCtx.beginPath();
@@ -1571,6 +1617,12 @@
                         relativeMoonAngle = (cross > 0 ? crossSign : -crossSign) * angleRad * 180 / Math.PI;
                     }
                     
+                    // Update moon relative angle display
+                    const moonRelativeAngleEl = document.getElementById('moonRelativeAngle');
+                    if (moonRelativeAngleEl) {
+                        moonRelativeAngleEl.textContent = relativeMoonAngle.toFixed(1);
+                    }
+                    
                     // Check if moon is visible in current view
                     let moonVisible = true;
                     if (this.isZoomedView && (relativeMoonAngle < -90 || relativeMoonAngle > 90)) {
@@ -1594,12 +1646,12 @@
                         const normalizedMoonElevation = clampedMoonElevation / 90;
                         const moonY = horizonY - (skyHeight * normalizedMoonElevation);
                         
-                        // Draw moon with phase
-                        const baseRadius = 8;
-                        const moonRadius = baseRadius * (moonPos.angularSize / 0.5);
+                        // Draw moon with same apparent size as sun (both 0.5°)
+                        const baseRadius = 12; // Same base size as we want for 0.5°
+                        const moonRadius = Math.max(baseRadius, 8); // Moon always same size as sun, minimum 8px
                         
-                        // Draw full moon circle
-                        obsCtx.fillStyle = '#E6E6FA'; // Light gray/lavender
+                        // Draw full moon circle with better visibility
+                        obsCtx.fillStyle = '#F5F5F5'; // Brighter light gray
                         obsCtx.beginPath();
                         obsCtx.arc(moonX, moonY, moonRadius, 0, 2 * Math.PI);
                         obsCtx.fill();
@@ -1637,9 +1689,9 @@
                             obsCtx.restore();
                         }
                         
-                        // Moon outline
-                        obsCtx.strokeStyle = '#C0C0C0';
-                        obsCtx.lineWidth = 1;
+                        // Moon outline - make it more visible
+                        obsCtx.strokeStyle = '#404040'; // Darker outline
+                        obsCtx.lineWidth = 2; // Thicker outline
                         obsCtx.beginPath();
                         obsCtx.arc(moonX, moonY, moonRadius, 0, 2 * Math.PI);
                         obsCtx.stroke();
@@ -1912,12 +1964,12 @@
                 const moonX = this.canvas.width/2 + moonR * Math.cos(moonAngle);
                 const moonY = this.canvas.height/2 + moonR * Math.sin(moonAngle);
                 
-                // Draw moon as gray circle
-                this.ctx.fillStyle = '#C0C0C0'; // Silver/gray
-                this.ctx.strokeStyle = '#808080'; // Dark gray
-                this.ctx.lineWidth = 2;
+                // Draw moon as larger, more visible circle
+                this.ctx.fillStyle = '#F0F0F0'; // Light gray - more visible
+                this.ctx.strokeStyle = '#404040'; // Darker outline for contrast
+                this.ctx.lineWidth = 3;
                 this.ctx.beginPath();
-                this.ctx.arc(moonX, moonY, 6, 0, 2 * Math.PI);
+                this.ctx.arc(moonX, moonY, 10, 0, 2 * Math.PI); // Increased from 6 to 10
                 this.ctx.fill();
                 this.ctx.stroke();
                 
@@ -1981,6 +2033,21 @@
                 updateElement('sunDiameter', `${Math.round(sunPos.sunDiameter * conversion)} ${unit}`);
                 updateElement('sunAzimuth', sunPos.azimuth.toFixed(2));
                 
+                // Update moon parameter displays
+                const moonGroundDistanceDisplay = moonPos.groundDistance * conversion;
+                const moonDistance3DDisplay = moonPos.groundDistance3D * conversion;
+                
+                updateElement('moonGroundDistance', moonGroundDistanceDisplay.toFixed(2) + ' ' + unit);
+                updateElement('moonActualDistance', moonDistance3DDisplay.toFixed(2) + ' ' + unit);
+                updateElement('moonApparentSize', moonPos.angularSize.toFixed(2));
+                updateElement('moonElevation', moonPos.elevation.toFixed(2));
+                updateElement('moonDiameter', `${Math.round(moonPos.moonDiameter * conversion)} ${unit}`);
+                updateElement('moonAzimuth', moonPos.azimuth.toFixed(2));
+                updateElement('lunarPhase', (moonPos.lunarPhase * 100).toFixed(1));
+                
+                // Calculate lunar day (0-29.53)
+                const lunarDay = moonPos.lunarPhase * 29.53;
+                updateElement('lunarDay', lunarDay.toFixed(1));
 
                 
                 // Use calculated azimuth, elevation and sun position for observer view
