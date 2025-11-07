@@ -1231,8 +1231,48 @@
                 while (moonLon <= -180) moonLon += 360;
                 while (moonLon > 180) moonLon -= 360;
                 
-                // Moon latitude (simplified - stays near ecliptic)
-                var moonLat = Math.sin(lunarCycleProgress * 2 * Math.PI) * 5; // ±5° variation
+                // Moon latitude - realistic declination matching globe Earth observations
+                // Moon's declination varies from ~-28.6° to +28.6° due to:
+                // - Moon's orbital inclination (~5.1° to ecliptic)
+                // - Earth's axial tilt (~23.4°)
+                // - These combine: 23.4° ± 5.1° = 18.3° to 28.5°
+                
+                // Calculate moon's declination using realistic astronomical model
+                var daysFromNewMoon = lunarCycleProgress * 29.53;
+                
+                // Moon's orbital inclination relative to ecliptic (5.1°)
+                var moonOrbitalInclination = 5.1;
+                
+                // Earth's obliquity (axial tilt)
+                var earthObliquity = 23.44;
+                
+                // Moon's argument of latitude (simplified - varies over 27.3 days)
+                var argumentOfLatitude = (daysFromNewMoon / 27.3) * 360; // degrees
+                
+                // Calculate moon's ecliptic latitude
+                var moonEclipticLat = moonOrbitalInclination * Math.sin(argumentOfLatitude * Math.PI/180);
+                
+                // Calculate sun's ecliptic longitude for this day of year
+                var sunEclipticLon = (dayOfYear / 365.25) * 360; // degrees
+                
+                // Moon's ecliptic longitude (approximately opposite sun at full moon)
+                var moonEclipticLon = sunEclipticLon + moonPhaseOffset;
+                
+                // Convert from ecliptic to equatorial coordinates (realistic transformation)
+                var moonEclipticLatRad = moonEclipticLat * Math.PI/180;
+                var moonEclipticLonRad = moonEclipticLon * Math.PI/180;
+                var obliquityRad = earthObliquity * Math.PI/180;
+                
+                // Spherical coordinate transformation from ecliptic to equatorial
+                var moonDeclinationRad = Math.asin(
+                    Math.sin(moonEclipticLatRad) * Math.cos(obliquityRad) +
+                    Math.cos(moonEclipticLatRad) * Math.sin(obliquityRad) * Math.sin(moonEclipticLonRad)
+                );
+                
+                var moonLat = moonDeclinationRad * 180/Math.PI; // Convert to degrees
+                
+                // Clamp to realistic range (-28.6° to +28.6°)
+                moonLat = Math.max(-28.6, Math.min(28.6, moonLat));
                 
                 // Get observer position
                 var obsLat = parseFloat(document.getElementById('observerLat').value);
