@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projectile Motion Calculator - Kinematic Equations</title>
+    <title>Projectile Motion Calculator - Kinematic Equations with Air Resistance</title>
     <style>
         * {
             margin: 0;
@@ -234,6 +234,77 @@
             margin-top: 10px;
         }
 
+        .physics-mode {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #2196F3;
+            margin-bottom: 20px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #ccc;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch.active {
+            background: #4CAF50;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(30px);
+        }
+
+        .drag-inputs {
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .drag-inputs.active {
+            display: grid;
+        }
+
+        .mode-indicator {
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .mode-ideal {
+            background: #2196F3;
+        }
+
+        .mode-realistic {
+            background: #FF5722;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -253,13 +324,55 @@
     <div class="container">
         <div class="header">
             <h1>🚀 Projectile Motion Calculator</h1>
-            <p>Master the 4 Kinematic Equations with Interactive Problem Solving</p>
+            <p>Master Kinematic Equations with Interactive Problem Solving - Now with Air Resistance!</p>
         </div>
 
         <div class="main-content">
             <div class="input-section">
                 <h2>📊 Input Variables</h2>
                 <p style="margin-bottom: 20px; color: #666;">Enter any 2 known values to solve for all other variables:</p>
+                
+                <!-- Physics Mode Toggle -->
+                <div class="physics-mode">
+                    <div class="mode-toggle">
+                        <span>Ideal Physics</span>
+                        <div class="toggle-switch" id="physicsToggle" onclick="togglePhysicsMode()">
+                            <div class="toggle-slider"></div>
+                        </div>
+                        <span>With Air Resistance</span>
+                    </div>
+                    <div class="mode-indicator mode-ideal" id="modeIndicator">
+                        🎯 IDEAL PHYSICS MODE - No Air Resistance
+                    </div>
+                    
+                    <!-- Air Resistance Parameters -->
+                    <div class="drag-inputs" id="dragInputs">
+                        <div class="input-group">
+                            <label for="mass">Mass (m) <span class="unit">kg</span></label>
+                            <input type="number" id="mass" step="0.01" value="0.145" placeholder="Object mass">
+                        </div>
+                        <div class="input-group">
+                            <label for="radius">Radius (r) <span class="unit">m</span></label>
+                            <input type="number" id="radius" step="0.001" value="0.037" placeholder="Object radius">
+                        </div>
+                        <div class="input-group">
+                            <label for="dragCoeff">Drag Coefficient (Cd) <span class="unit">dimensionless</span></label>
+                            <input type="number" id="dragCoeff" step="0.01" value="0.47" placeholder="Drag coefficient">
+                        </div>
+                        <div class="input-group">
+                            <label for="airDensity">Air Density (ρ) <span class="unit">kg/m³</span></label>
+                            <input type="number" id="airDensity" step="0.001" value="1.225" placeholder="Air density">
+                        </div>
+                        <div class="input-group">
+                            <label for="temperature">Temperature <span class="unit">°C</span></label>
+                            <input type="number" id="temperature" step="0.1" value="20" placeholder="Air temperature" onchange="updateAirDensity()">
+                        </div>
+                        <div class="input-group">
+                            <label for="altitude">Altitude <span class="unit">m</span></label>
+                            <input type="number" id="altitude" step="1" value="0" placeholder="Altitude above sea level" onchange="updateAirDensity()">
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="input-group">
                     <label for="v0">Initial Velocity (v₀) <span class="unit">m/s</span></label>
@@ -312,14 +425,17 @@
             </div>
 
             <div class="equations-reference">
-                <h3>📚 Kinematic Equations Reference</h3>
-                <div class="equation">v = v₀ + gt</div>
-                <div class="equation">x = v₀t + ½gt²</div>
-                <div class="equation">v² = v₀² + 2gx</div>
-                <div class="equation">x = ½(v₀ + v)t</div>
+                <h3>📚 Physics Equations Reference</h3>
+                <div class="equation">Ideal: v = v₀ + gt</div>
+                <div class="equation">Ideal: x = v₀t + ½gt²</div>
+                <div class="equation">Ideal: v² = v₀² + 2gx</div>
+                <div class="equation">Air Resistance: F_drag = ½ρv²C_dA</div>
+                <div class="equation">Air Resistance: F_net = mg + F_drag</div>
+                <div class="equation">Numerical: Runge-Kutta 4th Order Integration</div>
                 <p style="margin-top: 15px; color: #856404;">
-                    <strong>Where:</strong> v₀ = initial velocity, v = final velocity, g = acceleration due to gravity (9.81 m/s²), 
-                    t = time, x = displacement
+                    <strong>Ideal Physics:</strong> Uses analytical kinematic equations (no air resistance)<br>
+                    <strong>Air Resistance:</strong> ρ = air density, v = velocity, C_d = drag coefficient, A = cross-sectional area<br>
+                    <strong>Default Values:</strong> Baseball (m=0.145kg, r=0.037m, C_d=0.47) at sea level (ρ=1.225 kg/m³)
                 </p>
             </div>
 
@@ -336,6 +452,131 @@
 
     <script>
         const g = 9.81; // acceleration due to gravity (m/s²)
+        let useAirResistance = false; // Toggle for air resistance mode
+
+        function togglePhysicsMode() {
+            useAirResistance = !useAirResistance;
+            const toggle = document.getElementById('physicsToggle');
+            const dragInputs = document.getElementById('dragInputs');
+            const modeIndicator = document.getElementById('modeIndicator');
+            
+            if (useAirResistance) {
+                toggle.classList.add('active');
+                dragInputs.classList.add('active');
+                modeIndicator.className = 'mode-indicator mode-realistic';
+                modeIndicator.textContent = '🌪️ REALISTIC PHYSICS MODE - With Air Resistance';
+            } else {
+                toggle.classList.remove('active');
+                dragInputs.classList.remove('active');
+                modeIndicator.className = 'mode-indicator mode-ideal';
+                modeIndicator.textContent = '🎯 IDEAL PHYSICS MODE - No Air Resistance';
+            }
+        }
+
+        function updateAirDensity() {
+            const temp = parseFloat(document.getElementById('temperature').value) || 20;
+            const altitude = parseFloat(document.getElementById('altitude').value) || 0;
+            
+            // Calculate air density based on temperature and altitude
+            // ρ = ρ₀ * (T₀/T) * exp(-g*M*h/(R*T))
+            // Simplified: ρ = 1.225 * (293.15/(273.15+T)) * exp(-0.0001148*h)
+            const T_kelvin = 273.15 + temp;
+            const rho_temp = 1.225 * (293.15 / T_kelvin);
+            const rho_altitude = rho_temp * Math.exp(-0.0001148 * altitude);
+            
+            document.getElementById('airDensity').value = rho_altitude.toFixed(3);
+        }
+
+        function calculateDragForce(vx, vy, mass, radius, dragCoeff, airDensity) {
+            // Drag force: F_d = 0.5 * ρ * v² * C_d * A
+            // Where A = π * r² (cross-sectional area)
+            const velocity = Math.sqrt(vx * vx + vy * vy);
+            const area = Math.PI * radius * radius;
+            const dragMagnitude = 0.5 * airDensity * velocity * velocity * dragCoeff * area;
+            
+            // Drag force opposes motion
+            const dragX = velocity > 0 ? -dragMagnitude * (vx / velocity) : 0;
+            const dragY = velocity > 0 ? -dragMagnitude * (vy / velocity) : 0;
+            
+            return { dragX, dragY, dragMagnitude };
+        }
+
+        function simulateTrajectoryWithDrag(v0x, v0y, h0, mass, radius, dragCoeff, airDensity) {
+            // Numerical integration using Runge-Kutta 4th order method
+            const dt = 0.01; // time step (seconds)
+            let t = 0;
+            let x = 0;
+            let y = h0;
+            let vx = v0x;
+            let vy = v0y;
+            
+            const trajectory = [];
+            let maxHeight = h0;
+            let timeToPeak = 0;
+            let peakFound = false;
+            
+            while (y >= 0 && t < 100) { // safety limit of 100 seconds
+                trajectory.push({ t, x, y, vx, vy });
+                
+                // Track maximum height and time to peak
+                if (y > maxHeight) {
+                    maxHeight = y;
+                    timeToPeak = t;
+                }
+                if (!peakFound && vy < 0) {
+                    peakFound = true;
+                    timeToPeak = t;
+                }
+                
+                // Calculate drag force
+                const drag = calculateDragForce(vx, vy, mass, radius, dragCoeff, airDensity);
+                
+                // Accelerations
+                const ax = drag.dragX / mass;
+                const ay = -g + (drag.dragY / mass);
+                
+                // Runge-Kutta 4th order integration
+                const k1x = vx;
+                const k1y = vy;
+                const k1vx = ax;
+                const k1vy = ay;
+                
+                const k2x = vx + 0.5 * dt * k1vx;
+                const k2y = vy + 0.5 * dt * k1vy;
+                const drag2 = calculateDragForce(k2x, k2y, mass, radius, dragCoeff, airDensity);
+                const k2vx = drag2.dragX / mass;
+                const k2vy = -g + (drag2.dragY / mass);
+                
+                const k3x = vx + 0.5 * dt * k2vx;
+                const k3y = vy + 0.5 * dt * k2vy;
+                const drag3 = calculateDragForce(k3x, k3y, mass, radius, dragCoeff, airDensity);
+                const k3vx = drag3.dragX / mass;
+                const k3vy = -g + (drag3.dragY / mass);
+                
+                const k4x = vx + dt * k3vx;
+                const k4y = vy + dt * k3vy;
+                const drag4 = calculateDragForce(k4x, k4y, mass, radius, dragCoeff, airDensity);
+                const k4vx = drag4.dragX / mass;
+                const k4vy = -g + (drag4.dragY / mass);
+                
+                // Update position and velocity
+                x += (dt / 6) * (k1x + 2*k2x + 2*k3x + k4x);
+                y += (dt / 6) * (k1y + 2*k2y + 2*k3y + k4y);
+                vx += (dt / 6) * (k1vx + 2*k2vx + 2*k3vx + k4vx);
+                vy += (dt / 6) * (k1vy + 2*k2vy + 2*k3vy + k4vy);
+                
+                t += dt;
+            }
+            
+            return {
+                trajectory,
+                range: x,
+                maxHeight,
+                timeToPeak,
+                timeTotal: t,
+                landingVelocity: Math.sqrt(vx*vx + vy*vy)
+            };
+        }
 
         function calculateProjectile() {
             // Clear previous error messages
@@ -378,12 +619,63 @@
             console.log('height type:', typeof inputs.height, 'value:', inputs.height);
 
             try {
-                const results = solveProjectileMotion(inputs, thetaRad);
+                let results;
+                if (useAirResistance) {
+                    // Get air resistance parameters
+                    const dragParams = {
+                        mass: parseFloat(document.getElementById('mass').value) || 0.145,
+                        radius: parseFloat(document.getElementById('radius').value) || 0.037,
+                        dragCoeff: parseFloat(document.getElementById('dragCoeff').value) || 0.47,
+                        airDensity: parseFloat(document.getElementById('airDensity').value) || 1.225
+                    };
+                    results = solveProjectileMotionWithDrag(inputs, thetaRad, dragParams);
+                } else {
+                    results = solveProjectileMotion(inputs, thetaRad);
+                }
                 displayResults(results);
                 drawTrajectory(results);
             } catch (error) {
                 showError(error.message);
             }
+        }
+
+        function solveProjectileMotionWithDrag(inputs, thetaRad, dragParams) {
+            let v0 = inputs.v0;
+            let theta = inputs.theta;
+            let h0 = inputs.height;
+            
+            // For air resistance mode, we need v0 and theta to simulate
+            if (v0 === null || theta === null) {
+                throw new Error('Air resistance mode requires both initial velocity and launch angle to be specified.');
+            }
+            
+            // Calculate velocity components
+            const v0x = v0 * Math.cos(thetaRad);
+            const v0y = v0 * Math.sin(thetaRad);
+            
+            // Simulate trajectory with air resistance
+            const simulation = simulateTrajectoryWithDrag(v0x, v0y, h0, dragParams.mass, dragParams.radius, dragParams.dragCoeff, dragParams.airDensity);
+            
+            return {
+                v0: v0,
+                theta: theta,
+                v0x: v0x,
+                v0y: v0y,
+                h0: h0,
+                maxHeight: simulation.maxHeight,
+                timeToPeak: simulation.timeToPeak,
+                timeTotal: simulation.timeTotal,
+                range: simulation.range,
+                landingVelocity: simulation.landingVelocity,
+                trajectory: simulation.trajectory,
+                dragParams: dragParams,
+                equations: {
+                    dragForce: `F_drag = 0.5 × ρ × v² × C_d × A = 0.5 × ${dragParams.airDensity} × v² × ${dragParams.dragCoeff} × π×${dragParams.radius}²`,
+                    crossSection: `A = π × r² = π × ${dragParams.radius}² = ${(Math.PI * dragParams.radius * dragParams.radius).toFixed(6)} m²`,
+                    simulation: `Numerical integration using Runge-Kutta 4th order method with dt = 0.01s`,
+                    airResistance: `Air resistance significantly reduces range and maximum height compared to ideal physics`
+                }
+            };
         }
 
         function solveProjectileMotion(inputs, thetaRad) {
@@ -780,6 +1072,25 @@
                     <div class="value">${results.range.toFixed(2)} m</div>
                     <div class="equation">${inputs.range !== null ? 'Given value' : (results.equations.range || 'R = v₀x × t_total')}</div>
                 </div>
+                ${results.landingVelocity ? `
+                <div class="result-item">
+                    <div class="label">Landing Velocity</div>
+                    <div class="value">${results.landingVelocity.toFixed(2)} m/s</div>
+                    <div class="equation">Final velocity magnitude at impact</div>
+                </div>
+                ` : ''}
+                ${results.dragParams ? `
+                <div class="result-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                    <div class="label">🌪️ Air Resistance Effects</div>
+                    <div class="value">Drag Force Applied</div>
+                    <div class="equation">${results.equations.dragForce}</div>
+                </div>
+                <div class="result-item" style="background: #fff3cd; border-left-color: #ffc107;">
+                    <div class="label">Cross-Sectional Area</div>
+                    <div class="value">${(Math.PI * results.dragParams.radius * results.dragParams.radius).toFixed(6)} m²</div>
+                    <div class="equation">${results.equations.crossSection}</div>
+                </div>
+                ` : ''}
             `;
         }
 
@@ -812,28 +1123,82 @@
             ctx.stroke();
             
             // Draw trajectory
-            ctx.strokeStyle = '#FF6B6B';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            
-            const steps = 100;
-            for (let i = 0; i <= steps; i++) {
-                const t = (i / steps) * results.timeTotal;
-                const x = results.v0x * t;
-                const y = results.h0 + results.v0y * t - 0.5 * g * t * t;
+            if (results.trajectory) {
+                // Air resistance trajectory (from simulation data)
+                ctx.strokeStyle = '#FF6B6B';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
                 
-                if (y < 0) break;
-                
-                const canvasX = margin + x * scaleX;
-                const canvasY = canvas.height - margin - y * scaleY;
-                
-                if (i === 0) {
-                    ctx.moveTo(canvasX, canvasY);
-                } else {
-                    ctx.lineTo(canvasX, canvasY);
+                for (let i = 0; i < results.trajectory.length; i++) {
+                    const point = results.trajectory[i];
+                    const canvasX = margin + point.x * scaleX;
+                    const canvasY = canvas.height - margin - point.y * scaleY;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(canvasX, canvasY);
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
                 }
+                ctx.stroke();
+                
+                // Draw ideal trajectory for comparison (dashed line)
+                ctx.strokeStyle = '#4CAF50';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                
+                const steps = 100;
+                for (let i = 0; i <= steps; i++) {
+                    const t = (i / steps) * results.timeTotal;
+                    const x = results.v0x * t;
+                    const y = results.h0 + results.v0y * t - 0.5 * g * t * t;
+                    
+                    if (y < 0) break;
+                    
+                    const canvasX = margin + x * scaleX;
+                    const canvasY = canvas.height - margin - y * scaleY;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(canvasX, canvasY);
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                ctx.stroke();
+                ctx.setLineDash([]); // Reset dash
+                
+                // Add legend
+                ctx.fillStyle = '#333';
+                ctx.font = '12px Arial';
+                ctx.fillText('— With Air Resistance', canvas.width - 180, 30);
+                ctx.fillText('- - Ideal (No Air Resistance)', canvas.width - 180, 50);
+                
+            } else {
+                // Ideal trajectory (analytical solution)
+                ctx.strokeStyle = '#FF6B6B';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                const steps = 100;
+                for (let i = 0; i <= steps; i++) {
+                    const t = (i / steps) * results.timeTotal;
+                    const x = results.v0x * t;
+                    const y = results.h0 + results.v0y * t - 0.5 * g * t * t;
+                    
+                    if (y < 0) break;
+                    
+                    const canvasX = margin + x * scaleX;
+                    const canvasY = canvas.height - margin - y * scaleY;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(canvasX, canvasY);
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                ctx.stroke();
             }
-            ctx.stroke();
             
             // Mark key points
             // Launch point

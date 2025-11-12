@@ -11,6 +11,27 @@
           <a href="/" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-colors">C00lnerd</a>
         </div>
       </div>
+
+      <!-- Search Bar -->
+      <div class="flex-1 max-w-lg mx-8 hidden md:block">
+        <div class="relative">
+          <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <i class="fas fa-search text-gray-400"></i>
+          </div>
+          <input 
+            type="text" 
+            id="siteSearch" 
+            placeholder="Search lessons, simulations, tools..." 
+            class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+          />
+          <!-- Search Results Dropdown -->
+          <div id="searchResults" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg mt-1 max-h-96 overflow-y-auto z-50 hidden">
+            <div id="searchResultsContent" class="py-2">
+              <!-- Search results will be populated here -->
+            </div>
+          </div>
+        </div>
+      </div>
       
       <!-- Desktop Navigation -->
       <div class="hidden lg:block">
@@ -129,6 +150,27 @@
     <!-- Mobile Navigation Menu -->
     <div id="mobile-menu" class="lg:hidden hidden">
       <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+        
+        <!-- Mobile Search Bar -->
+        <div class="px-3 py-2">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <i class="fas fa-search text-gray-400"></i>
+            </div>
+            <input 
+              type="text" 
+              id="mobileSearch" 
+              placeholder="Search lessons, simulations..." 
+              class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            />
+            <!-- Mobile Search Results -->
+            <div id="mobileSearchResults" class="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg mt-1 max-h-64 overflow-y-auto z-50 hidden">
+              <div id="mobileSearchResultsContent" class="py-2">
+                <!-- Mobile search results will be populated here -->
+              </div>
+            </div>
+          </div>
+        </div>
         
         <!-- Mobile Programming Section -->
         <div class="mobile-dropdown">
@@ -982,11 +1024,232 @@
     }, 5000);
   }
 
+  // Search functionality
+  function initializeSearch() {
+    const searchInput = document.getElementById('siteSearch');
+    const searchResults = document.getElementById('searchResults');
+    const searchResultsContent = document.getElementById('searchResultsContent');
+    
+    const mobileSearchInput = document.getElementById('mobileSearch');
+    const mobileSearchResults = document.getElementById('mobileSearchResults');
+    const mobileSearchResultsContent = document.getElementById('mobileSearchResultsContent');
+    
+    if (!searchInput && !mobileSearchInput) return;
+
+    // Search database - comprehensive list of all site content
+    const searchDatabase = [
+      // Python Lessons
+      { title: 'Python Setup Guide', url: './programming/python/setup.html', category: 'Python', description: 'Install Python and Spyder IDE' },
+      { title: 'Mystery Numbers - Python Lesson 1', url: './programming/python/lesson1.html', category: 'Python', description: 'Variables, input, and basic programming' },
+      { title: 'Math Machine - Python Lesson 2', url: './programming/python/lesson2.html', category: 'Python', description: 'Functions and mathematical operations' },
+      { title: 'Pattern Detective - Python Lesson 3', url: './programming/python/lesson3.html', category: 'Python', description: 'Loops, lists, and patterns' },
+      { title: 'Graphics & Shapes - Python Lesson 4', url: './programming/python/lesson4.html', category: 'Python', description: 'Tkinter graphics and 3D bouncing ball' },
+      { title: 'Pong Game - Python Lesson 5', url: './programming/python/lesson5.html', category: 'Python', description: 'Game development with collision detection' },
+      { title: 'Space Invaders - Python Lesson 6', url: './programming/python/lesson6.html', category: 'Python', description: 'Complete arcade shooter game' },
+      { title: 'Physics Games - Python Lesson 7', url: './programming/python/lesson7.html', category: 'Python', description: 'Physics-based platformer games' },
+      { title: 'Advanced Physics - Python Lesson 8', url: './programming/python/lesson8.html', category: 'Python', description: 'Complex physics simulations' },
+      { title: 'Mathematical Art - Python Lesson 9', url: './programming/python/lesson9.html', category: 'Python', description: 'Trigonometry and visual art programming' },
+      { title: 'N-Body Simulation - Python Lesson 10', url: './programming/python/lesson10.html', category: 'Python', description: 'Gravitational physics simulation' },
+      { title: 'Gravitational Destroyer - Python Lesson 11', url: './programming/python/lesson11.html', category: 'Python', description: 'Epic physics-based shooting game' },
+      { title: 'Advanced Projects - Python Lesson 12', url: './programming/python/lesson12.html', category: 'Python', description: 'Earth-Moon-Sun three-body simulation' },
+      { title: 'Orbital Mechanics - Python Lesson 13', url: './programming/python/lesson13.html', category: 'Python', description: 'Simplified orbital mechanics with trigonometry' },
+      
+      // Arduino Courses
+      { title: '16-Week Arduino Course', url: './programming.html#16-week-course', category: 'Arduino', description: 'Complete Arduino robotics curriculum' },
+      { title: '32-Week Arduino Course', url: './programming.html#32-week-course', category: 'Arduino', description: 'Extended Arduino programming course' },
+      
+      // Interactive Simulations
+      { title: 'Earth-Moon-Sun Orbital Simulation', url: './simulations/earth-moon-sun-orbital', category: 'Simulation', description: 'Interactive orbital mechanics visualization' },
+      { title: 'Gravitational Destroyer Game', url: './simulations/gravitational-destroyer.html', category: 'Simulation', description: 'Physics-based space shooter' },
+      { title: '3D Bouncing Ball Simulation', url: './simulations/interactive/3d-bouncing-ball/index.html', category: 'Simulation', description: '3D physics with mouse rotation' },
+      { title: 'Parametric Mathematical Art', url: './simulations/interactive/parametric-art/index.html', category: 'Simulation', description: '3D mathematical art generator' },
+      { title: 'Organic Parametric Art', url: './simulations/interactive/organic-parametric-art/index.html', category: 'Simulation', description: 'Advanced mathematical visualization' },
+      { title: 'Morse Code Decoder', url: './simulations/interactive/morse-decoder/index.html', category: 'Ham Radio', description: 'Real-time CW decoding for ham radio' },
+      { title: 'Morse Code Generator', url: './simulations/interactive/morse-generator/index.html', category: 'Ham Radio', description: 'CW practice generator with backwards text' },
+      { title: 'Chemistry Equation Balancer', url: './simulations/interactive/chemistry-balancer/index.html', category: 'Chemistry', description: 'Interactive chemical equation balancing' },
+      { title: 'Molecule Builder Game', url: './simulations/interactive/molecule-builder/', category: 'Chemistry', description: 'Build ionic compounds with drag-and-drop' },
+      { title: 'Flat Earth Simulator', url: './simulations/interactive/flat-earth-sim/index.html', category: 'Educational', description: 'Debunking flat earth with science' },
+      { title: 'Flat Earth Sundial Comparison', url: './simulations/interactive/flat-earth-sundial/index.html', category: 'Educational', description: 'Sundial physics on flat vs spherical earth' },
+      { title: 'Pendulum Simulator', url: './simulations/interactive/pendulum-simulator.html', category: 'Physics', description: 'Interactive pendulum physics simulation' },
+      { title: 'Interactive Fractal Tree', url: './simulations/interactive/fractal-tree.html', category: 'Math', description: 'Explore recursion and fractals with adjustable parameters' },
+      { title: "Newton's Cradle Simulation", url: './simulations/interactive/newtons-cradle.html', category: 'Physics', description: 'Visualize momentum and energy transfer with interactive physics' },
+      { title: 'Module 7 Quiz - Newton\'s Laws', url: './practice/module7_quiz.html', category: 'Assessment', description: 'Test your knowledge of Newton\'s three laws of motion' },
+      { title: 'Science Quiz with Newton Questions', url: './simulations/science_quiz.html', category: 'Assessment', description: 'Interactive science quiz including Newton\'s laws and physics concepts' },
+      { title: 'Earth Simulation', url: './simulations/interactive/earth.html', category: 'Physics', description: 'Explore Earth\'s physics and orbital mechanics' },
+      { title: 'Collision Simulator', url: './simulations/interactive/collision-sim-v4.html', category: 'Physics', description: 'Study elastic and inelastic collisions' },
+      { title: 'N-Body Simulation', url: './simulations/interactive/N_Body_simulation.html', category: 'Physics', description: 'Observe gravitational interactions between multiple bodies' },
+      { title: 'Magnetic Field Simulator', url: './simulations/interactive/Magnetic-field-sim.html', category: 'Physics', description: 'Visualize magnetic field lines and interactions' },
+      { title: 'Chaos Theory Demo', url: './simulations/interactive/chaos.html', category: 'Physics', description: 'Explore chaos theory and dynamic systems' },
+      { title: 'Electric Charges Simulation', url: './simulations/interactive/charges.html', category: 'Physics', description: 'Experiment with electric charges and fields' },
+      { title: 'FFT Signal Processing', url: './simulations/interactive/FFT_Simulation_full.html', category: 'Engineering', description: 'Explore Fourier transforms and signal processing' },
+      { title: 'FFT Heterodyne Receiver', url: './simulations/interactive/FFT_Heterodyne_Simulation.html', category: 'Ham Radio', description: 'Advanced FFT analyzer with heterodyne mixing' },
+      { title: 'Multi-Tone Generator', url: './simulations/interactive/Tone_Generator.html', category: 'Audio', description: 'Generate audio tones, DTMF signals, and sweep frequencies' },
+      { title: 'Flat Earth Moon Simulation', url: './simulations/interactive/flat-earth-moon/index.html', category: 'Educational', description: 'Demonstrates problems with flat earth lunar mechanics' },
+      { title: 'Flat Earth Sun & Moon Simulator', url: './simulations/interactive/flat-earth-sun-moon/index.html', category: 'Educational', description: 'Interactive flat earth cosmology demonstration' },
+      { title: 'Projectile Motion Calculator', url: './tools/projectile-motion.html', category: 'Physics', description: 'Master kinematic equations with interactive problem solving and trajectory visualization' },
+      
+      // Practice Tools
+      { title: 'Practice Tools Overview', url: './practice.html', category: 'Practice', description: 'Chemistry tools and practice exercises' },
+      { title: 'Chemical Equation Balancer', url: './practice/chemistry/equation-balancer.html', category: 'Chemistry', description: 'Balance chemical equations step-by-step' },
+      { title: 'Game of 24', url: './practice/math/game-of-24.html', category: 'Math', description: 'Mathematical puzzle game' },
+      { title: 'Physical Science Final Exam', url: './practice/final_exam.html', category: 'Assessment', description: 'Comprehensive physical science test' },
+      
+      // Course Pages
+      { title: 'Physical Science Course', url: './physical-science.html', category: 'Course', description: 'Complete physical science curriculum' },
+      { title: 'Programming Courses', url: './programming.html', category: 'Course', description: 'Python and Arduino programming' },
+      { title: 'About Chuck', url: './about.html', category: 'Info', description: 'Tutor background and experience' },
+      { title: 'Class Information', url: './classes.html', category: 'Info', description: 'Scheduling and class details' },
+      { title: 'All Simulations', url: './simulations.html', category: 'Simulation', description: 'Complete catalog of interactive simulations' }
+    ];
+
+    let searchTimeout;
+
+    // Setup search for desktop
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim().toLowerCase();
+        
+        if (query.length < 2) {
+          searchResults.classList.add('hidden');
+          return;
+        }
+
+        // Debounce search to avoid too many rapid searches
+        searchTimeout = setTimeout(() => {
+          performSearch(query, false); // false = desktop
+        }, 150);
+      });
+    }
+
+    // Setup search for mobile
+    if (mobileSearchInput) {
+      mobileSearchInput.addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        const query = this.value.trim().toLowerCase();
+        
+        if (query.length < 2) {
+          mobileSearchResults.classList.add('hidden');
+          return;
+        }
+
+        // Debounce search to avoid too many rapid searches
+        searchTimeout = setTimeout(() => {
+          performSearch(query, true); // true = mobile
+        }, 150);
+      });
+    }
+
+    function performSearch(query, isMobile = false) {
+      const results = searchDatabase.filter(item => {
+        return item.title.toLowerCase().includes(query) ||
+               item.description.toLowerCase().includes(query) ||
+               item.category.toLowerCase().includes(query);
+      });
+
+      displayResults(results, query, isMobile);
+    }
+
+    function displayResults(results, query, isMobile = false) {
+      const resultsContainer = isMobile ? mobileSearchResultsContent : searchResultsContent;
+      const resultsDropdown = isMobile ? mobileSearchResults : searchResults;
+      
+      if (results.length === 0) {
+        resultsContainer.innerHTML = `
+          <div class="px-4 py-3 text-sm text-gray-500">
+            <i class="fas fa-search mr-2"></i>No results found for "${query}"
+          </div>
+        `;
+      } else {
+        const maxResults = isMobile ? 6 : 8; // Show fewer results on mobile
+        const resultsHTML = results.slice(0, maxResults).map(result => `
+          <a href="${result.url}" class="block px-4 py-3 hover:bg-blue-50 border-b border-gray-100 last:border-b-0">
+            <div class="flex items-start">
+              <div class="flex-1">
+                <div class="text-sm font-medium text-gray-900">${highlightMatch(result.title, query)}</div>
+                <div class="text-xs text-gray-500 mt-1">${result.description}</div>
+                <div class="text-xs text-blue-600 mt-1">
+                  <span class="bg-blue-100 px-2 py-1 rounded">${result.category}</span>
+                </div>
+              </div>
+              <i class="fas fa-external-link-alt text-gray-400 text-xs mt-1 ml-2"></i>
+            </div>
+          </a>
+        `).join('');
+
+        if (results.length > maxResults) {
+          resultsContainer.innerHTML = resultsHTML + `
+            <div class="px-4 py-2 text-xs text-gray-500 bg-gray-50">
+              Showing first ${maxResults} of ${results.length} results
+            </div>
+          `;
+        } else {
+          resultsContainer.innerHTML = resultsHTML;
+        }
+      }
+
+      resultsDropdown.classList.remove('hidden');
+    }
+
+    function highlightMatch(text, query) {
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<mark class="bg-yellow-200">$1</mark>');
+    }
+
+    // Hide search results when clicking outside
+    document.addEventListener('click', function(event) {
+      // Check desktop search
+      if (searchInput && searchResults && 
+          !searchInput.contains(event.target) && !searchResults.contains(event.target)) {
+        searchResults.classList.add('hidden');
+      }
+      
+      // Check mobile search
+      if (mobileSearchInput && mobileSearchResults && 
+          !mobileSearchInput.contains(event.target) && !mobileSearchResults.contains(event.target)) {
+        mobileSearchResults.classList.add('hidden');
+      }
+    });
+
+    // Desktop search focus and keyboard events
+    if (searchInput) {
+      searchInput.addEventListener('focus', function() {
+        if (this.value.trim().length >= 2) {
+          performSearch(this.value.trim().toLowerCase(), false);
+        }
+      });
+
+      searchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          searchResults.classList.add('hidden');
+          this.blur();
+        }
+      });
+    }
+
+    // Mobile search focus and keyboard events
+    if (mobileSearchInput) {
+      mobileSearchInput.addEventListener('focus', function() {
+        if (this.value.trim().length >= 2) {
+          performSearch(this.value.trim().toLowerCase(), true);
+        }
+      });
+
+      mobileSearchInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+          mobileSearchResults.classList.add('hidden');
+          this.blur();
+        }
+      });
+    }
+  }
+
   // Initialize when DOM is loaded
   document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing EmailJS contact form...');
     setupContactForm();
+    initializeSearch();
   });
   
-  console.log('EmailJS contact form script loaded');
+  console.log('EmailJS contact form and search functionality loaded');
 </script>
