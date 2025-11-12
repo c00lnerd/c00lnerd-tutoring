@@ -356,8 +356,20 @@
                             <input type="number" id="radius" step="0.001" value="0.037" placeholder="Object radius">
                         </div>
                         <div class="input-group">
-                            <label for="dragCoeff">Drag Coefficient (Cd) <span class="unit">dimensionless</span></label>
-                            <input type="number" id="dragCoeff" step="0.01" value="0.47" placeholder="Drag coefficient">
+                            <label for="projectileType">Projectile Type <span class="unit">preset</span></label>
+                            <select id="projectileType" onchange="updateProjectilePreset()">
+                                <option value="sphere">Sphere (Baseball/Ball)</option>
+                                <option value="apple">Apple/Potato (2" Barrel)</option>
+                                <option value="g1">G1 Standard (Pointed Bullet)</option>
+                                <option value="g7">G7 Standard (Boat-tail Bullet)</option>
+                                <option value="artillery">Artillery Shell (155mm)</option>
+                                <option value="mortar">Mortar Round (81mm)</option>
+                                <option value="custom">Custom Cd Value</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="dragCoeff">Base Drag Coefficient (Cd) <span class="unit">dimensionless</span></label>
+                            <input type="number" id="dragCoeff" step="0.01" value="0.47" placeholder="Base drag coefficient">
                         </div>
                         <div class="input-group">
                             <label for="airDensity">Air Density (ρ) <span class="unit">kg/m³</span></label>
@@ -424,6 +436,14 @@
                 </p>
             </div>
 
+            <div class="visualization">
+                <h2>🌪️ Drag Coefficient vs. Velocity</h2>
+                <canvas id="dragCurveCanvas" width="800" height="300"></canvas>
+                <p style="text-align: center; margin-top: 10px; color: #666;">
+                    Drag coefficient variation with velocity - showing subsonic, transonic, and supersonic regions
+                </p>
+            </div>
+
             <div class="equations-reference">
                 <h3>📚 Physics Equations Reference</h3>
                 <div class="equation">Ideal: v = v₀ + gt</div>
@@ -453,6 +473,7 @@
     <script>
         const g = 9.81; // acceleration due to gravity (m/s²)
         let useAirResistance = false; // Toggle for air resistance mode
+        let currentProjectileType = 'sphere'; // Current projectile type for drag modeling
 
         function togglePhysicsMode() {
             useAirResistance = !useAirResistance;
@@ -487,21 +508,118 @@
             document.getElementById('airDensity').value = rho_altitude.toFixed(3);
         }
 
-        function calculateDragForce(vx, vy, mass, radius, dragCoeff, airDensity) {
+        function updateProjectilePreset() {
+            const type = document.getElementById('projectileType').value;
+            currentProjectileType = type;
+            
+            const presets = {
+                sphere: { mass: 0.145, radius: 0.037, dragCoeff: 0.47, name: 'Baseball' },
+                apple: { mass: 0.35, radius: 0.0508, dragCoeff: 0.55, name: 'Apple/Potato (2" dia)' },
+                g1: { mass: 0.010, radius: 0.004, dragCoeff: 0.295, name: 'G1 Bullet' },
+                g7: { mass: 0.012, radius: 0.004, dragCoeff: 0.200, name: 'G7 Bullet' },
+                artillery: { mass: 43.0, radius: 0.0775, dragCoeff: 0.15, name: '155mm Shell' },
+                mortar: { mass: 4.2, radius: 0.0405, dragCoeff: 0.18, name: '81mm Mortar' },
+                custom: { mass: 0.145, radius: 0.037, dragCoeff: 0.47, name: 'Custom' }
+            };
+            
+            if (presets[type]) {
+                const preset = presets[type];
+                document.getElementById('mass').value = preset.mass;
+                document.getElementById('radius').value = preset.radius;
+                document.getElementById('dragCoeff').value = preset.dragCoeff;
+            }
+            
+            // Redraw drag curve with new projectile type
+            if (useAirResistance) {
+                drawDragCurve();
+            }
+        }
+
+        function getSpeedOfSound(temperature) {
+            // Speed of sound in air: v = 331.3 * sqrt(1 + T/273.15)
+            return 331.3 * Math.sqrt(1 + temperature / 273.15);
+        }
+
+        function getSupersonicDragCoeff(velocity, baseCd, temperature, projectileType) {
+            const speedOfSound = getSpeedOfSound(temperature);
+            const machNumber = velocity / speedOfSound;
+            
+            // Different drag curves for different projectile types
+            switch (projectileType) {
+                case 'sphere':
+                    // Sphere drag curve (like baseball)
+                    if (machNumber < 0.8) {
+                        return baseCd; // Subsonic
+                    } else if (machNumber < 1.2) {
+                        // Transonic spike
+                        return baseCd + (machNumber - 0.8) * 1.5;
+                    } else {
+                        // Supersonic decrease
+                        return baseCd + 0.6 - (machNumber - 1.2) * 0.1;
+                    }
+                    
+                case 'apple':
+                    // Apple/Potato - irregular shape, higher drag, larger transonic spike
+                    if (machNumber < 0.7) {
+                        return baseCd; // Subsonic
+                    } else if (machNumber < 1.3) {
+                        // Large transonic spike due to irregular shape
+                        return baseCd + (machNumber - 0.7) * 2.0;
+                    } else {
+                        // Poor supersonic performance due to non-aerodynamic shape
+                        return baseCd + 1.2 - (machNumber - 1.3) * 0.05;
+                    }
+                    
+                case 'g1':
+                case 'g7':
+                    // Military bullet drag curves (more streamlined)
+                    if (machNumber < 0.9) {
+                        return baseCd; // Subsonic
+                    } else if (machNumber < 1.1) {
+                        // Smaller transonic spike
+                        return baseCd + (machNumber - 0.9) * 0.8;
+                    } else {
+                        // Gradual supersonic decrease
+                        return baseCd + 0.16 - (machNumber - 1.1) * 0.02;
+                    }
+                    
+                case 'artillery':
+                case 'mortar':
+                    // Artillery shell drag curves
+                    if (machNumber < 0.85) {
+                        return baseCd; // Subsonic
+                    } else if (machNumber < 1.15) {
+                        // Moderate transonic spike
+                        return baseCd + (machNumber - 0.85) * 1.0;
+                    } else {
+                        // Supersonic efficiency
+                        return baseCd + 0.3 - (machNumber - 1.15) * 0.05;
+                    }
+                    
+                default:
+                    return baseCd; // Constant for unknown types
+            }
+        }
+
+        function calculateDragForce(vx, vy, mass, radius, baseDragCoeff, airDensity, temperature) {
             // Drag force: F_d = 0.5 * ρ * v² * C_d * A
             // Where A = π * r² (cross-sectional area)
             const velocity = Math.sqrt(vx * vx + vy * vy);
             const area = Math.PI * radius * radius;
+            
+            // Get velocity-dependent drag coefficient (supersonic effects)
+            const dragCoeff = getSupersonicDragCoeff(velocity, baseDragCoeff, temperature, currentProjectileType);
+            
             const dragMagnitude = 0.5 * airDensity * velocity * velocity * dragCoeff * area;
             
             // Drag force opposes motion
             const dragX = velocity > 0 ? -dragMagnitude * (vx / velocity) : 0;
             const dragY = velocity > 0 ? -dragMagnitude * (vy / velocity) : 0;
             
-            return { dragX, dragY, dragMagnitude };
+            return { dragX, dragY, dragMagnitude, dragCoeff, velocity };
         }
 
-        function simulateTrajectoryWithDrag(v0x, v0y, h0, mass, radius, dragCoeff, airDensity) {
+        function simulateTrajectoryWithDrag(v0x, v0y, h0, mass, radius, dragCoeff, airDensity, temperature) {
             // Numerical integration using Runge-Kutta 4th order method
             const dt = 0.01; // time step (seconds)
             let t = 0;
@@ -529,7 +647,7 @@
                 }
                 
                 // Calculate drag force
-                const drag = calculateDragForce(vx, vy, mass, radius, dragCoeff, airDensity);
+                const drag = calculateDragForce(vx, vy, mass, radius, dragCoeff, airDensity, temperature);
                 
                 // Accelerations
                 const ax = drag.dragX / mass;
@@ -543,19 +661,19 @@
                 
                 const k2x = vx + 0.5 * dt * k1vx;
                 const k2y = vy + 0.5 * dt * k1vy;
-                const drag2 = calculateDragForce(k2x, k2y, mass, radius, dragCoeff, airDensity);
+                const drag2 = calculateDragForce(k2x, k2y, mass, radius, dragCoeff, airDensity, temperature);
                 const k2vx = drag2.dragX / mass;
                 const k2vy = -g + (drag2.dragY / mass);
                 
                 const k3x = vx + 0.5 * dt * k2vx;
                 const k3y = vy + 0.5 * dt * k2vy;
-                const drag3 = calculateDragForce(k3x, k3y, mass, radius, dragCoeff, airDensity);
+                const drag3 = calculateDragForce(k3x, k3y, mass, radius, dragCoeff, airDensity, temperature);
                 const k3vx = drag3.dragX / mass;
                 const k3vy = -g + (drag3.dragY / mass);
                 
                 const k4x = vx + dt * k3vx;
                 const k4y = vy + dt * k3vy;
-                const drag4 = calculateDragForce(k4x, k4y, mass, radius, dragCoeff, airDensity);
+                const drag4 = calculateDragForce(k4x, k4y, mass, radius, dragCoeff, airDensity, temperature);
                 const k4vx = drag4.dragX / mass;
                 const k4vy = -g + (drag4.dragY / mass);
                 
@@ -634,6 +752,9 @@
                 }
                 displayResults(results);
                 drawTrajectory(results);
+                if (useAirResistance) {
+                    drawDragCurve();
+                }
             } catch (error) {
                 showError(error.message);
             }
@@ -654,7 +775,8 @@
             const v0y = v0 * Math.sin(thetaRad);
             
             // Simulate trajectory with air resistance
-            const simulation = simulateTrajectoryWithDrag(v0x, v0y, h0, dragParams.mass, dragParams.radius, dragParams.dragCoeff, dragParams.airDensity);
+            const temperature = parseFloat(document.getElementById('temperature').value) || 20;
+            const simulation = simulateTrajectoryWithDrag(v0x, v0y, h0, dragParams.mass, dragParams.radius, dragParams.dragCoeff, dragParams.airDensity, temperature);
             
             return {
                 v0: v0,
@@ -1234,6 +1356,126 @@
             ctx.rotate(-Math.PI / 2);
             ctx.fillText('Height (m)', 0, 0);
             ctx.restore();
+        }
+
+        function drawDragCurve() {
+            const canvas = document.getElementById('dragCurveCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Set up coordinate system
+            const margin = 60;
+            const plotWidth = canvas.width - 2 * margin;
+            const plotHeight = canvas.height - 2 * margin;
+            
+            const maxVelocity = 1000; // m/s (up to Mach 3)
+            const maxDragCoeff = 2.0;
+            
+            const scaleX = plotWidth / maxVelocity;
+            const scaleY = plotHeight / maxDragCoeff;
+            
+            // Get current parameters
+            const baseCd = parseFloat(document.getElementById('dragCoeff').value) || 0.47;
+            const temperature = parseFloat(document.getElementById('temperature').value) || 20;
+            const speedOfSound = getSpeedOfSound(temperature);
+            
+            // Draw axes
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, canvas.height - margin);
+            ctx.lineTo(canvas.width - margin, canvas.height - margin);
+            ctx.moveTo(margin, canvas.height - margin);
+            ctx.lineTo(margin, margin);
+            ctx.stroke();
+            
+            // Draw Mach number lines
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([2, 2]);
+            for (let mach = 1; mach <= 3; mach++) {
+                const velocity = mach * speedOfSound;
+                const x = margin + velocity * scaleX;
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, canvas.height - margin);
+                ctx.stroke();
+                
+                // Label
+                ctx.fillStyle = '#666';
+                ctx.font = '12px Arial';
+                ctx.fillText(`Mach ${mach}`, x - 20, canvas.height - margin + 20);
+            }
+            ctx.setLineDash([]);
+            
+            // Draw drag curve
+            ctx.strokeStyle = '#FF6B6B';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            
+            const steps = 500;
+            for (let i = 0; i <= steps; i++) {
+                const velocity = (i / steps) * maxVelocity;
+                const dragCoeff = getSupersonicDragCoeff(velocity, baseCd, temperature, currentProjectileType);
+                
+                const canvasX = margin + velocity * scaleX;
+                const canvasY = canvas.height - margin - dragCoeff * scaleY;
+                
+                if (i === 0) {
+                    ctx.moveTo(canvasX, canvasY);
+                } else {
+                    ctx.lineTo(canvasX, canvasY);
+                }
+            }
+            ctx.stroke();
+            
+            // Mark regions
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.fillText('Subsonic', margin + 50, 30);
+            ctx.fillText('Transonic', margin + speedOfSound * scaleX - 30, 30);
+            ctx.fillText('Supersonic', margin + 2 * speedOfSound * scaleX, 30);
+            
+            // Add axis labels
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.fillText('Velocity (m/s)', canvas.width / 2 - 40, canvas.height - 10);
+            ctx.save();
+            ctx.translate(15, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Drag Coefficient (Cd)', 0, 0);
+            ctx.restore();
+            
+            // Add velocity scale
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            for (let v = 0; v <= maxVelocity; v += 200) {
+                const x = margin + v * scaleX;
+                ctx.fillText(v.toString(), x - 10, canvas.height - margin + 15);
+            }
+            
+            // Add drag coefficient scale
+            for (let cd = 0; cd <= maxDragCoeff; cd += 0.5) {
+                const y = canvas.height - margin - cd * scaleY;
+                ctx.fillText(cd.toFixed(1), margin - 25, y + 3);
+            }
+            
+            // Add projectile type label
+            const presets = {
+                sphere: 'Sphere (Baseball)',
+                apple: 'Apple/Potato (2" diameter)',
+                g1: 'G1 Standard Bullet',
+                g7: 'G7 Standard Bullet', 
+                artillery: '155mm Artillery Shell',
+                mortar: '81mm Mortar Round',
+                custom: 'Custom Projectile'
+            };
+            
+            ctx.fillStyle = '#2196F3';
+            ctx.font = '16px Arial';
+            ctx.fillText(`Projectile: ${presets[currentProjectileType] || 'Unknown'}`, margin + 20, 50);
         }
 
         function loadExample(exampleNum) {
