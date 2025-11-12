@@ -760,14 +760,90 @@
             }
         }
 
+        function solveForInitialVelocityWithDrag(theta, targetTime, h0, dragParams) {
+            // Binary search to find initial velocity that gives target flight time
+            let vMin = 1;    // minimum reasonable velocity
+            let vMax = 200;  // maximum reasonable velocity for potato gun
+            let tolerance = 0.01; // time tolerance in seconds
+            let maxIterations = 50;
+            
+            const thetaRad = theta * Math.PI / 180;
+            const temperature = parseFloat(document.getElementById('temperature').value) || 20;
+            
+            for (let i = 0; i < maxIterations; i++) {
+                const vTry = (vMin + vMax) / 2;
+                const v0x = vTry * Math.cos(thetaRad);
+                const v0y = vTry * Math.sin(thetaRad);
+                
+                const simulation = simulateTrajectoryWithDrag(v0x, v0y, h0, dragParams.mass, dragParams.radius, dragParams.dragCoeff, dragParams.airDensity, temperature);
+                const actualTime = simulation.timeTotal;
+                
+                if (Math.abs(actualTime - targetTime) < tolerance) {
+                    return vTry;
+                }
+                
+                if (actualTime < targetTime) {
+                    vMin = vTry; // need higher velocity
+                } else {
+                    vMax = vTry; // need lower velocity
+                }
+            }
+            
+            throw new Error(`Could not solve for initial velocity. Try adjusting parameters.`);
+        }
+
+        function solveForAngleWithDrag(v0, targetTime, h0, dragParams) {
+            // Binary search to find launch angle that gives target flight time
+            let angleMin = 5;   // minimum reasonable angle
+            let angleMax = 85;  // maximum reasonable angle
+            let tolerance = 0.01; // time tolerance in seconds
+            let maxIterations = 50;
+            
+            const temperature = parseFloat(document.getElementById('temperature').value) || 20;
+            
+            for (let i = 0; i < maxIterations; i++) {
+                const angleTry = (angleMin + angleMax) / 2;
+                const thetaRad = angleTry * Math.PI / 180;
+                const v0x = v0 * Math.cos(thetaRad);
+                const v0y = v0 * Math.sin(thetaRad);
+                
+                const simulation = simulateTrajectoryWithDrag(v0x, v0y, h0, dragParams.mass, dragParams.radius, dragParams.dragCoeff, dragParams.airDensity, temperature);
+                const actualTime = simulation.timeTotal;
+                
+                if (Math.abs(actualTime - targetTime) < tolerance) {
+                    return angleTry;
+                }
+                
+                if (actualTime < targetTime) {
+                    angleMin = angleTry; // need higher angle for longer flight
+                } else {
+                    angleMax = angleTry; // need lower angle for shorter flight
+                }
+            }
+            
+            throw new Error(`Could not solve for launch angle. Try adjusting parameters.`);
+        }
+
         function solveProjectileMotionWithDrag(inputs, thetaRad, dragParams) {
             let v0 = inputs.v0;
             let theta = inputs.theta;
             let h0 = inputs.height;
+            let timeTotal = inputs.timeTotal;
             
-            // For air resistance mode, we need v0 and theta to simulate
-            if (v0 === null || theta === null) {
-                throw new Error('Air resistance mode requires both initial velocity and launch angle to be specified.');
+            // Check if we need to solve for v0 given time and angle
+            if (v0 === null && theta !== null && timeTotal !== null) {
+                v0 = solveForInitialVelocityWithDrag(theta, timeTotal, h0, dragParams);
+                console.log(`Solved for initial velocity: ${v0.toFixed(2)} m/s`);
+            }
+            // Check if we need to solve for angle given v0 and time
+            else if (theta === null && v0 !== null && timeTotal !== null) {
+                theta = solveForAngleWithDrag(v0, timeTotal, h0, dragParams);
+                thetaRad = theta * Math.PI / 180;
+                console.log(`Solved for launch angle: ${theta.toFixed(2)}°`);
+            }
+            // For air resistance mode, we need at least v0 and theta, or one of them plus time
+            else if (v0 === null || theta === null) {
+                throw new Error('Air resistance mode requires: (1) velocity + angle, (2) angle + flight time, or (3) velocity + flight time.');
             }
             
             // Calculate velocity components
