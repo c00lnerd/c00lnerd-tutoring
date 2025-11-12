@@ -60,13 +60,17 @@
             position: relative;
             background: white;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 2px solid #e2e8f0;
             margin-bottom: 20px;
+            overflow: hidden;
         }
 
         #pendulumCanvas {
             display: block;
-            border-radius: 8px;
+            border-radius: 6px;
+            width: 100%;
+            height: auto;
+            max-width: 800px;
         }
 
         .plot-container {
@@ -88,6 +92,9 @@
             display: block;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
+            width: 100%;
+            height: auto;
+            max-width: 800px;
         }
 
         .controls-panel {
@@ -484,7 +491,8 @@
                 this.crossingCount = 0;
                 this.simulationTime = 0;
                 
-                // Canvas setup
+                // Canvas setup - adjust for mobile
+                this.setupCanvas();
                 this.centerX = this.canvas.width / 2;
                 this.centerY = 100;
                 
@@ -503,6 +511,34 @@
                 setTimeout(() => {
                     this.updateDisplay();
                 }, 100);
+            }
+            
+            setupCanvas() {
+                // Adjust canvas size for mobile devices
+                const isMobile = window.innerWidth <= 768;
+                if (isMobile) {
+                    // Set smaller canvas size for mobile
+                    const maxWidth = Math.min(window.innerWidth - 40, 600);
+                    this.canvas.width = maxWidth;
+                    this.canvas.height = Math.round(maxWidth * 0.75); // 4:3 aspect ratio
+                    
+                    this.plotCanvas.width = maxWidth;
+                    this.plotCanvas.height = 150; // Smaller plot height on mobile
+                    
+                    // Adjust scale for smaller canvas
+                    this.scale = Math.min(150, maxWidth / 6);
+                } else {
+                    // Desktop size
+                    this.canvas.width = 800;
+                    this.canvas.height = 600;
+                    this.plotCanvas.width = 800;
+                    this.plotCanvas.height = 200;
+                    this.scale = 150;
+                }
+                
+                // Update plot scales after canvas resize
+                this.plotTimeScale = this.plotCanvas.width / this.maxPlotTime;
+                this.plotAngleScale = this.plotCanvas.height / (2 * Math.PI);
             }
             
             initializeControls() {
