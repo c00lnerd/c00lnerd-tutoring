@@ -713,10 +713,10 @@
             // Convert angle to radians if provided
             const thetaRad = inputs.theta !== null ? inputs.theta * Math.PI / 180 : null;
 
-            // Count non-null inputs (height counts if it's not zero, theta counts even if zero)
+            // Count non-null inputs (height always counts when specified, theta counts even if zero)
             const nonNullInputs = Object.entries(inputs).filter(([key, value]) => {
                 if (key === 'height') {
-                    return value !== null && value !== 0; // Height counts only if non-zero
+                    return value !== null; // Height always counts when specified (including 0)
                 }
                 if (key === 'theta') {
                     return value !== null; // Theta counts even if it's 0 degrees
@@ -724,8 +724,13 @@
                 return value !== null && value !== '';
             }).length;
 
-            if (nonNullInputs < 2) {
-                showError('Please enter at least 2 known variables. Initial height counts as a known variable when non-zero.');
+            // Special case: if we have theta and timeTotal, that's sufficient for solving
+            const hasAngleAndTime = inputs.theta !== null && inputs.timeTotal !== null;
+            const hasVelocityAndTime = inputs.v0 !== null && inputs.timeTotal !== null;
+            const hasVelocityAndAngle = inputs.v0 !== null && inputs.theta !== null;
+
+            if (nonNullInputs < 2 && !hasAngleAndTime && !hasVelocityAndTime && !hasVelocityAndAngle) {
+                showError('Please enter at least 2 known variables. You can solve with: (1) angle + time, (2) velocity + angle, (3) velocity + time, or other combinations.');
                 return;
             }
 
@@ -895,6 +900,66 @@
             }
 
             // Solve based on available inputs
+            // Case 0: Time and angle known, solve for v0 (analytical solution for ideal physics)
+            if (v0 === null && theta !== null && timeTotal !== null) {
+                console.log('Using Case 0: timeTotal and theta known, solving for v0');
+                
+                // For projectile motion: t_total = (v0y + sqrt(v0y² + 2gh0))/g
+                // Where v0y = v0 * sin(θ)
+                // This gives us a quadratic equation in v0y
+                
+                const sinTheta = Math.sin(thetaRad);
+                const cosTheta = Math.cos(thetaRad);
+                
+                if (Math.abs(sinTheta) < 0.001) {
+                    // Horizontal launch case: t = sqrt(2*h0/g), v0 can be anything
+                    // We'll use the time equation: t = sqrt(2*h0/g)
+                    const expectedTime = Math.sqrt(2 * h0 / g);
+                    if (Math.abs(timeTotal - expectedTime) > 0.1) {
+                        throw new Error(`For horizontal launch from height ${h0}m, flight time should be ${expectedTime.toFixed(2)}s, not ${timeTotal}s`);
+                    }
+                    // For horizontal launch, we can't determine v0 from time alone
+                    throw new Error('For horizontal launch, initial velocity cannot be determined from flight time alone. Please specify velocity or range.');
+                } else {
+                    // Solve quadratic equation: g*t² - 2*v0y*t - 2*h0 = 0
+                    // Rearranged from: h0 + v0y*t - 0.5*g*t² = 0 (final height = 0)
+                    // This gives: v0y = (g*t² + 2*h0)/(2*t)
+                    const v0y = (g * timeTotal * timeTotal + 2 * h0) / (2 * timeTotal);
+                    const v0_calc = v0y / sinTheta;
+                    
+                    if (v0_calc < 0) {
+                        throw new Error('No physical solution: calculated velocity is negative. Check your inputs.');
+                    }
+                    
+                    v0 = v0_calc;
+                    v0x = v0 * cosTheta;
+                    
+                    // Calculate other parameters
+                    const timeToPeak = v0y / g;
+                    const maxH = h0 + (v0y * v0y) / (2 * g);
+                    const rangeCalc = v0x * timeTotal;
+                    
+                    return {
+                        v0: v0,
+                        theta: theta,
+                        v0x: v0x,
+                        v0y: v0y,
+                        h0: h0,
+                        maxHeight: maxH,
+                        timeToPeak: timeToPeak,
+                        timeTotal: timeTotal,
+                        range: rangeCalc,
+                        equations: {
+                            v0y: `v₀y = (gt² + 2h₀)/(2t) = (${g}×${timeTotal}² + 2×${h0})/(2×${timeTotal}) = ${v0y.toFixed(2)} m/s`,
+                            v0: `v₀ = v₀y/sin(θ) = ${v0y.toFixed(2)}/sin(${theta}°) = ${v0.toFixed(2)} m/s`,
+                            timeToPeak: `t_peak = v₀y/g = ${v0y.toFixed(2)}/${g} = ${timeToPeak.toFixed(2)} s`,
+                            maxHeight: `H = h₀ + v₀y²/(2g) = ${h0} + ${v0y.toFixed(2)}²/(2×${g}) = ${maxH.toFixed(2)} m`,
+                            range: `R = v₀x × t_total = ${v0x.toFixed(2)} × ${timeTotal} = ${rangeCalc.toFixed(2)} m`
+                        }
+                    };
+                }
+            }
+            
             if (v0 !== null && theta !== null) {
                 console.log('Using Case 1: v0 and theta known');
                 // Case 1: v0 and theta known
@@ -1398,35 +1463,82 @@
                 ctx.stroke();
             }
             
-            // Mark key points
+            // Mark key points with labels
+            ctx.font = '12px Arial';
+            
             // Launch point
             ctx.fillStyle = '#4CAF50';
             ctx.beginPath();
             ctx.arc(margin, canvas.height - margin - results.h0 * scaleY, 8, 0, 2 * Math.PI);
             ctx.fill();
+            ctx.fillText(`Launch: (0, ${results.h0.toFixed(1)}m)`, margin + 10, canvas.height - margin - results.h0 * scaleY - 10);
             
             // Peak point
             const peakX = results.v0x * results.timeToPeak;
+            const peakY = results.maxHeight;
+            const peakCanvasX = margin + peakX * scaleX;
+            const peakCanvasY = canvas.height - margin - peakY * scaleY;
+            
             ctx.fillStyle = '#FF9800';
             ctx.beginPath();
-            ctx.arc(margin + peakX * scaleX, canvas.height - margin - results.maxHeight * scaleY, 8, 0, 2 * Math.PI);
+            ctx.arc(peakCanvasX, peakCanvasY, 8, 0, 2 * Math.PI);
             ctx.fill();
+            
+            // Peak label with values
+            ctx.fillStyle = '#FF9800';
+            const peakLabel = `Peak: (${peakX.toFixed(1)}m, ${peakY.toFixed(1)}m)`;
+            const peakLabelWidth = ctx.measureText(peakLabel).width;
+            const peakLabelX = peakCanvasX - peakLabelWidth / 2;
+            const peakLabelY = peakCanvasY - 15;
+            
+            // Background for peak label
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(peakLabelX - 5, peakLabelY - 15, peakLabelWidth + 10, 20);
+            ctx.fillStyle = '#FF9800';
+            ctx.fillText(peakLabel, peakLabelX, peakLabelY);
+            
+            // Time at peak
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.fillText(`t = ${results.timeToPeak.toFixed(2)}s`, peakLabelX, peakLabelY + 12);
             
             // Landing point
+            const landingCanvasX = margin + results.range * scaleX;
+            const landingCanvasY = canvas.height - margin;
+            
             ctx.fillStyle = '#F44336';
             ctx.beginPath();
-            ctx.arc(margin + results.range * scaleX, canvas.height - margin, 8, 0, 2 * Math.PI);
+            ctx.arc(landingCanvasX, landingCanvasY, 8, 0, 2 * Math.PI);
             ctx.fill();
             
-            // Add labels
-            ctx.fillStyle = '#333';
+            // Landing label with values
             ctx.font = '12px Arial';
-            ctx.fillText('Launch', margin - 20, canvas.height - margin + 20);
-            ctx.fillText('Peak', margin + peakX * scaleX - 15, canvas.height - margin - results.maxHeight * scaleY - 15);
-            ctx.fillText('Landing', margin + results.range * scaleX - 20, canvas.height - margin + 20);
+            const landingLabel = `Landing: (${results.range.toFixed(1)}m, 0m)`;
+            const landingLabelWidth = ctx.measureText(landingLabel).width;
+            const landingLabelX = landingCanvasX - landingLabelWidth / 2;
+            const landingLabelY = landingCanvasY + 25;
+            
+            // Background for landing label
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.fillRect(landingLabelX - 5, landingLabelY - 15, landingLabelWidth + 10, 20);
+            ctx.fillStyle = '#F44336';
+            ctx.fillText(landingLabel, landingLabelX, landingLabelY);
+            
+            // Time at landing
+            ctx.fillStyle = '#666';
+            ctx.font = '10px Arial';
+            ctx.fillText(`t = ${results.timeTotal.toFixed(2)}s`, landingLabelX, landingLabelY + 12);
+            
+            // Landing velocity (if available)
+            if (results.landingVelocity) {
+                ctx.fillText(`v = ${results.landingVelocity.toFixed(1)} m/s`, landingLabelX, landingLabelY + 24);
+            }
+            
             
             // Add axis labels
-            ctx.fillText('Distance (m)', canvas.width / 2 - 30, canvas.height - 10);
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.fillText('Distance (m)', canvas.width / 2 - 40, canvas.height - 10);
             ctx.save();
             ctx.translate(15, canvas.height / 2);
             ctx.rotate(-Math.PI / 2);
