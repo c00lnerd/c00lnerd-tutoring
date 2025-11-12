@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pendulum Simulator - C00lnerd</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 10px 0 0 0;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .simulation-area {
+            flex: 1;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .canvas-container {
+            position: relative;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #pendulumCanvas {
+            display: block;
+            border-radius: 8px;
+        }
+
+        .plot-container {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .plot-container h3 {
+            margin: 0 0 10px 0;
+            color: #4f46e5;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        #plotCanvas {
+            display: block;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+        }
+
+        .controls-panel {
+            background: #f8fafc;
+            border-radius: 6px;
+            padding: 8px;
+            border: 2px solid #e2e8f0;
+            width: 250px;
+            flex-shrink: 0;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group h3 {
+            margin: 0 0 8px 0;
+            color: #4f46e5;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .input-group input[type="number"], .input-group input[type="range"] {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input[type="number"]:focus, .input-group input[type="range"]:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .input-group input[type="range"] {
+            padding: 0;
+            height: 6px;
+            background: #d1d5db;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        .input-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+        }
+
+        .input-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #4f46e5;
+            cursor: pointer;
+            border: none;
+        }
+
+        .range-display {
+            text-align: center;
+            font-weight: 600;
+            color: #4f46e5;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .info-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            margin-top: 20px;
+            overflow: visible;
+            width: 100%;
+        }
+
+        .info-panel h4 {
+            margin: 0 0 10px 0;
+            color: #4f46e5;
+            font-size: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .info-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-weight: 700 !important;
+            color: #111827 !important;
+            font-size: 18px !important;
+            background-color: #f0f9ff !important;
+            padding: 8px 12px !important;
+            border-radius: 6px !important;
+            border: 2px solid #3b82f6 !important;
+            display: block !important;
+            text-align: center !important;
+            min-height: 30px !important;
+            line-height: 1.2 !important;
+            overflow: visible !important;
+            white-space: nowrap !important;
+            position: relative !important;
+        }
+
+        .physics-info {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 6px;
+            padding: 8px;
+            margin-top: 12px;
+        }
+
+        .physics-info h4 {
+            margin: 0 0 6px 0;
+            color: #92400e;
+            font-size: 0.85rem;
+        }
+
+        .physics-info p {
+            margin: 0 0 6px 0;
+            font-size: 10px;
+            line-height: 1.2;
+            color: #78350f;
+            word-wrap: break-word;
+        }
+
+        .equation {
+            background: #f3f4f6;
+            padding: 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            margin: 6px 0;
+            text-align: center;
+            color: #374151;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        @media (max-width: 1000px) {
+            .controls-panel {
+                width: 230px;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .controls-panel {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .controls-panel {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 Pendulum Simulator</h1>
+            <p>Explore pendulum motion using real differential equations (no small angle approximation)</p>
+        </div>
+
+        <div class="main-content">
+            <div class="simulation-area">
+                <div class="canvas-container">
+                    <canvas id="pendulumCanvas" width="800" height="600"></canvas>
+                </div>
+                
+                <div class="plot-container">
+                    <h3>📈 Angle vs Time Plot</h3>
+                    <canvas id="plotCanvas" width="800" height="200"></canvas>
+                </div>
+                
+                <div class="button-group">
+                    <button id="startBtn" class="btn btn-primary">▶️ Start</button>
+                    <button id="pauseBtn" class="btn btn-secondary">⏸️ Pause</button>
+                    <button id="resetBtn" class="btn btn-danger">🔄 Reset</button>
+                    <button id="clearTrailBtn" class="btn btn-secondary">🧹 Clear Trail</button>
+                </div>
+                
+                <div class="button-group">
+                    <button id="clearPlotBtn" class="btn btn-secondary">📊 Clear Plot</button>
+                </div>
+            </div>
+
+            <div class="controls-panel">
+                <div class="control-group">
+                    <h3>📏 Pendulum Parameters</h3>
+                    
+                    <div class="input-group">
+                        <label for="lengthInput">Length (m)</label>
+                        <input type="number" id="lengthInput" min="0.1" max="5" step="0.1" value="1.0">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="angleSlider">Initial Angle: <span id="angleDisplay">45°</span></label>
+                        <input type="range" id="angleSlider" min="5" max="179" value="45">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="dampingSlider">Air Resistance: <span id="dampingDisplay">0.02</span></label>
+                        <input type="range" id="dampingSlider" min="0" max="0.1" step="0.001" value="0.02">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>⚙️ Simulation Settings</h3>
+                    
+                    <div class="input-group">
+                        <label for="speedSlider">Speed: <span id="speedDisplay">1.0x</span></label>
+                        <input type="range" id="speedSlider" min="0.1" max="3" step="0.1" value="1.0">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="showTrail" checked> Show Trail
+                        </label>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" id="showVectors" checked> Show Velocity Vector
+                        </label>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h4>📊 Real-time Data</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">Angle:</div>
+                            <div class="info-value" id="currentAngle">INITIAL 45.0°</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Angular Velocity:</div>
+                            <div class="info-value" id="currentVelocity">INITIAL 0.000 rad/s</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Period:</div>
+                            <div class="info-value" id="currentPeriod">INITIAL -- s</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Energy:</div>
+                            <div class="info-value" id="currentEnergy">INITIAL 2.873 J</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="physics-info">
+                    <h4>🧮 Physics Behind the Simulation</h4>
+                    <p>This simulation uses the exact differential equation for pendulum motion:</p>
+                    <div class="equation">
+                        d²θ/dt² = -(g/L)sin(θ) - b(dθ/dt)
+                    </div>
+                    <p>Where θ is angle, g is gravity (9.81 m/s²), L is length, and b is damping coefficient. No small angle approximation!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class PendulumSimulator {
+            constructor() {
+                this.canvas = document.getElementById('pendulumCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                
+                // Plot canvas
+                this.plotCanvas = document.getElementById('plotCanvas');
+                this.plotCtx = this.plotCanvas.getContext('2d');
+                
+                // Physics constants
+                this.g = 9.81; // gravity
+                this.scale = 150; // pixels per meter
+                
+                // Pendulum state
+                this.length = 1.0; // meters
+                this.angle = Math.PI / 4; // radians (45 degrees)
+                this.angularVelocity = 0;
+                this.damping = 0.02;
+                this.timeStep = 0.016; // Standard 60 FPS time step
+                this.timeSpeed = 1.0;
+                
+                // Animation
+                this.isRunning = false;
+                this.animationId = null;
+                this.trail = [];
+                this.maxTrailLength = 200;
+                this.showTrail = true;
+                this.showVectors = true;
+                
+                // Period calculation
+                this.lastZeroCrossing = 0;
+                this.period = 0;
+                this.crossingCount = 0;
+                this.simulationTime = 0;
+                
+                // Canvas setup
+                this.centerX = this.canvas.width / 2;
+                this.centerY = 100;
+                
+                // Plot data
+                this.plotData = [];
+                this.plotStartTime = 0;
+                this.maxPlotTime = 20; // seconds
+                this.plotTimeScale = this.plotCanvas.width / this.maxPlotTime;
+                this.plotAngleScale = this.plotCanvas.height / (2 * Math.PI); // scale for ±π radians
+                
+                this.initializeControls();
+                this.draw();
+                this.drawPlot();
+                
+                // Initial display update
+                setTimeout(() => {
+                    this.updateDisplay();
+                }, 100);
+            }
+            
+            initializeControls() {
+                // Control elements
+                const lengthInput = document.getElementById('lengthInput');
+                const angleSlider = document.getElementById('angleSlider');
+                const dampingSlider = document.getElementById('dampingSlider');
+                const speedSlider = document.getElementById('speedSlider');
+                const showTrail = document.getElementById('showTrail');
+                const showVectors = document.getElementById('showVectors');
+                
+                const startBtn = document.getElementById('startBtn');
+                const pauseBtn = document.getElementById('pauseBtn');
+                const resetBtn = document.getElementById('resetBtn');
+                const clearTrailBtn = document.getElementById('clearTrailBtn');
+                const clearPlotBtn = document.getElementById('clearPlotBtn');
+                
+                // Event listeners
+                lengthInput.addEventListener('input', (e) => {
+                    this.length = parseFloat(e.target.value);
+                    if (!this.isRunning) {
+                        this.draw();
+                        this.updateDisplay();
+                    }
+                });
+                
+                angleSlider.addEventListener('input', (e) => {
+                    const degrees = parseInt(e.target.value);
+                    this.angle = degrees * Math.PI / 180;
+                    document.getElementById('angleDisplay').textContent = degrees + '°';
+                    if (!this.isRunning) {
+                        this.draw();
+                        this.updateDisplay();
+                    }
+                });
+                
+                dampingSlider.addEventListener('input', (e) => {
+                    this.damping = parseFloat(e.target.value);
+                    document.getElementById('dampingDisplay').textContent = this.damping.toFixed(3);
+                });
+                
+                speedSlider.addEventListener('input', (e) => {
+                    this.timeSpeed = parseFloat(e.target.value);
+                    document.getElementById('speedDisplay').textContent = this.timeSpeed.toFixed(1) + 'x';
+                });
+                
+                showTrail.addEventListener('change', (e) => {
+                    this.showTrail = e.target.checked;
+                });
+                
+                showVectors.addEventListener('change', (e) => {
+                    this.showVectors = e.target.checked;
+                });
+                
+                startBtn.addEventListener('click', () => this.start());
+                pauseBtn.addEventListener('click', () => this.pause());
+                resetBtn.addEventListener('click', () => this.reset());
+                clearTrailBtn.addEventListener('click', () => this.clearTrail());
+                clearPlotBtn.addEventListener('click', () => this.clearPlot());
+            }
+            
+            start() {
+                if (!this.isRunning) {
+                    this.isRunning = true;
+                    this.animate();
+                }
+            }
+            
+            pause() {
+                this.isRunning = false;
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+            }
+            
+            reset() {
+                this.pause();
+                this.angle = parseInt(document.getElementById('angleSlider').value) * Math.PI / 180;
+                this.angularVelocity = 0;
+                this.trail = [];
+                this.lastZeroCrossing = 0;
+                this.period = 0;
+                this.crossingCount = 0;
+                this.simulationTime = 0;
+                this.plotData = [];
+                this.plotStartTime = performance.now() / 1000;
+                this.draw();
+                this.drawPlot();
+                this.updateDisplay();
+            }
+            
+            clearTrail() {
+                this.trail = [];
+            }
+            
+            clearPlot() {
+                this.plotData = [];
+                this.plotStartTime = performance.now() / 1000;
+                this.drawPlot();
+            }
+            
+            updatePhysics() {
+                const dt = this.timeStep * this.timeSpeed;
+                
+                // Update simulation time
+                this.simulationTime += dt;
+                
+                // Store previous angle for period calculation
+                const prevAngle = this.angle;
+                
+                // Differential equation: d²θ/dt² = -(g/L)sin(θ) - b(dθ/dt)
+                const angularAcceleration = -(this.g / this.length) * Math.sin(this.angle) - this.damping * this.angularVelocity;
+                
+                // Improved numerical integration (Velocity Verlet method)
+                const newAngle = this.angle + this.angularVelocity * dt + 0.5 * angularAcceleration * dt * dt;
+                const newAngularAcceleration = -(this.g / this.length) * Math.sin(newAngle) - this.damping * (this.angularVelocity + angularAcceleration * dt);
+                const newAngularVelocity = this.angularVelocity + 0.5 * (angularAcceleration + newAngularAcceleration) * dt;
+                
+                this.angle = newAngle;
+                this.angularVelocity = newAngularVelocity;
+                
+                // Period calculation (detect ALL zero crossings using simulation time)
+                if ((prevAngle < 0 && this.angle >= 0) || (prevAngle > 0 && this.angle <= 0)) {
+                    if (this.crossingCount > 0) {
+                        // Every other crossing is a full period
+                        if (this.crossingCount % 2 === 1) {
+                            this.period = this.simulationTime - this.lastZeroCrossing;
+                            this.lastZeroCrossing = this.simulationTime; // Update for next period measurement
+                        }
+                    } else {
+                        // First crossing - start timing
+                        this.lastZeroCrossing = this.simulationTime;
+                    }
+                    this.crossingCount++;
+                }
+                
+                // Add to trail
+                if (this.showTrail) {
+                    const x = this.centerX + this.length * this.scale * Math.sin(this.angle);
+                    const y = this.centerY + this.length * this.scale * Math.cos(this.angle);
+                    this.trail.push({ x, y });
+                    
+                    if (this.trail.length > this.maxTrailLength) {
+                        this.trail.shift();
+                    }
+                }
+                
+                // Add to plot data
+                const currentTime = performance.now() / 1000;
+                if (this.plotStartTime === 0) {
+                    this.plotStartTime = currentTime;
+                }
+                const elapsedTime = currentTime - this.plotStartTime;
+                this.plotData.push({ time: elapsedTime, angle: this.angle });
+                
+                // Keep only recent data (sliding window)
+                this.plotData = this.plotData.filter(point => point.time >= elapsedTime - this.maxPlotTime);
+            }
+            
+            draw() {
+                // Clear canvas
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw trail
+                if (this.showTrail && this.trail.length > 1) {
+                    this.ctx.strokeStyle = 'rgba(79, 70, 229, 0.3)';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                    for (let i = 1; i < this.trail.length; i++) {
+                        this.ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                    }
+                    this.ctx.stroke();
+                }
+                
+                // Calculate pendulum position
+                const bobX = this.centerX + this.length * this.scale * Math.sin(this.angle);
+                const bobY = this.centerY + this.length * this.scale * Math.cos(this.angle);
+                
+                // Draw pivot point
+                this.ctx.fillStyle = '#374151';
+                this.ctx.beginPath();
+                this.ctx.arc(this.centerX, this.centerY, 8, 0, 2 * Math.PI);
+                this.ctx.fill();
+                
+                // Draw string
+                this.ctx.strokeStyle = '#6b7280';
+                this.ctx.lineWidth = 3;
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.centerX, this.centerY);
+                this.ctx.lineTo(bobX, bobY);
+                this.ctx.stroke();
+                
+                // Draw pendulum bob
+                this.ctx.fillStyle = '#ef4444';
+                this.ctx.beginPath();
+                this.ctx.arc(bobX, bobY, 15, 0, 2 * Math.PI);
+                this.ctx.fill();
+                
+                // Draw velocity vector
+                if (this.showVectors && Math.abs(this.angularVelocity) > 0.01) {
+                    const velocityScale = 50;
+                    const velocityX = -this.angularVelocity * this.length * velocityScale * Math.cos(this.angle);
+                    const velocityY = this.angularVelocity * this.length * velocityScale * Math.sin(this.angle);
+                    
+                    this.ctx.strokeStyle = '#10b981';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(bobX, bobY);
+                    this.ctx.lineTo(bobX + velocityX, bobY + velocityY);
+                    this.ctx.stroke();
+                    
+                    // Arrow head
+                    const arrowLength = 10;
+                    const arrowAngle = Math.atan2(velocityY, velocityX);
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(bobX + velocityX, bobY + velocityY);
+                    this.ctx.lineTo(
+                        bobX + velocityX - arrowLength * Math.cos(arrowAngle - 0.3),
+                        bobY + velocityY - arrowLength * Math.sin(arrowAngle - 0.3)
+                    );
+                    this.ctx.moveTo(bobX + velocityX, bobY + velocityY);
+                    this.ctx.lineTo(
+                        bobX + velocityX - arrowLength * Math.cos(arrowAngle + 0.3),
+                        bobY + velocityY - arrowLength * Math.sin(arrowAngle + 0.3)
+                    );
+                    this.ctx.stroke();
+                }
+                
+                // Draw reference arc
+                this.ctx.strokeStyle = 'rgba(107, 114, 128, 0.3)';
+                this.ctx.lineWidth = 1;
+                this.ctx.setLineDash([5, 5]);
+                this.ctx.beginPath();
+                this.ctx.arc(this.centerX, this.centerY, this.length * this.scale, 0, 2 * Math.PI);
+                this.ctx.stroke();
+                this.ctx.setLineDash([]);
+            }
+            
+            drawPlot() {
+                // Clear plot canvas
+                this.plotCtx.fillStyle = '#ffffff';
+                this.plotCtx.fillRect(0, 0, this.plotCanvas.width, this.plotCanvas.height);
+                
+                // Draw grid lines
+                this.plotCtx.strokeStyle = '#e5e7eb';
+                this.plotCtx.lineWidth = 1;
+                
+                // Horizontal grid lines (angle markers)
+                const angleMarks = [-Math.PI, -Math.PI/2, 0, Math.PI/2, Math.PI];
+                const plotCenterY = this.plotCanvas.height / 2;
+                
+                for (let angle of angleMarks) {
+                    const y = plotCenterY - angle * (this.plotCanvas.height / (2 * Math.PI));
+                    this.plotCtx.beginPath();
+                    this.plotCtx.moveTo(0, y);
+                    this.plotCtx.lineTo(this.plotCanvas.width, y);
+                    this.plotCtx.stroke();
+                }
+                
+                // Vertical grid lines (time markers)
+                for (let t = 0; t <= this.maxPlotTime; t += 2) {
+                    const x = t * this.plotTimeScale;
+                    this.plotCtx.beginPath();
+                    this.plotCtx.moveTo(x, 0);
+                    this.plotCtx.lineTo(x, this.plotCanvas.height);
+                    this.plotCtx.stroke();
+                }
+                
+                // Draw axes
+                this.plotCtx.strokeStyle = '#374151';
+                this.plotCtx.lineWidth = 2;
+                
+                // X-axis (time)
+                this.plotCtx.beginPath();
+                this.plotCtx.moveTo(0, plotCenterY);
+                this.plotCtx.lineTo(this.plotCanvas.width, plotCenterY);
+                this.plotCtx.stroke();
+                
+                // Y-axis (angle)
+                this.plotCtx.beginPath();
+                this.plotCtx.moveTo(0, 0);
+                this.plotCtx.lineTo(0, this.plotCanvas.height);
+                this.plotCtx.stroke();
+                
+                // Draw axis labels
+                this.plotCtx.fillStyle = '#374151';
+                this.plotCtx.font = '12px Arial';
+                this.plotCtx.textAlign = 'center';
+                
+                // Angle labels
+                this.plotCtx.textAlign = 'right';
+                this.plotCtx.fillText('π', -5, plotCenterY - Math.PI * (this.plotCanvas.height / (2 * Math.PI)) + 4);
+                this.plotCtx.fillText('π/2', -5, plotCenterY - (Math.PI/2) * (this.plotCanvas.height / (2 * Math.PI)) + 4);
+                this.plotCtx.fillText('0', -5, plotCenterY + 4);
+                this.plotCtx.fillText('-π/2', -5, plotCenterY + (Math.PI/2) * (this.plotCanvas.height / (2 * Math.PI)) + 4);
+                this.plotCtx.fillText('-π', -5, plotCenterY + Math.PI * (this.plotCanvas.height / (2 * Math.PI)) + 4);
+                
+                // Time labels
+                this.plotCtx.textAlign = 'center';
+                for (let t = 0; t <= this.maxPlotTime; t += 5) {
+                    const x = t * this.plotTimeScale;
+                    this.plotCtx.fillText(t + 's', x, this.plotCanvas.height - 5);
+                }
+                
+                // Draw the angle data
+                if (this.plotData.length > 1) {
+                    this.plotCtx.strokeStyle = '#ef4444';
+                    this.plotCtx.lineWidth = 2;
+                    this.plotCtx.beginPath();
+                    
+                    // Get the current time window
+                    const currentTime = performance.now() / 1000;
+                    const elapsedTime = currentTime - this.plotStartTime;
+                    const windowStart = Math.max(0, elapsedTime - this.maxPlotTime);
+                    
+                    let firstPoint = true;
+                    for (let point of this.plotData) {
+                        if (point.time >= windowStart) {
+                            const x = (point.time - windowStart) * this.plotTimeScale;
+                            const y = plotCenterY - point.angle * (this.plotCanvas.height / (2 * Math.PI));
+                            
+                            if (firstPoint) {
+                                this.plotCtx.moveTo(x, y);
+                                firstPoint = false;
+                            } else {
+                                this.plotCtx.lineTo(x, y);
+                            }
+                        }
+                    }
+                    this.plotCtx.stroke();
+                    
+                    // Draw current position marker
+                    if (this.plotData.length > 0) {
+                        const lastPoint = this.plotData[this.plotData.length - 1];
+                        const x = (lastPoint.time - windowStart) * this.plotTimeScale;
+                        const y = plotCenterY - lastPoint.angle * (this.plotCanvas.height / (2 * Math.PI));
+                        
+                        this.plotCtx.fillStyle = '#ef4444';
+                        this.plotCtx.beginPath();
+                        this.plotCtx.arc(x, y, 4, 0, 2 * Math.PI);
+                        this.plotCtx.fill();
+                    }
+                }
+                
+                // Add axis labels
+                this.plotCtx.fillStyle = '#6b7280';
+                this.plotCtx.font = '12px Arial';
+                this.plotCtx.textAlign = 'center';
+                this.plotCtx.fillText('Time (seconds)', this.plotCanvas.width / 2, this.plotCanvas.height - 5);
+                
+                this.plotCtx.save();
+                this.plotCtx.translate(15, this.plotCanvas.height / 2);
+                this.plotCtx.rotate(-Math.PI / 2);
+                this.plotCtx.fillText('Angle (radians)', 0, 0);
+                this.plotCtx.restore();
+            }
+            
+            updateDisplay() {
+                const angleDegrees = (this.angle * 180 / Math.PI).toFixed(1);
+                const velocity = this.angularVelocity.toFixed(3);
+                const periodDisplay = this.period > 0 ? this.period.toFixed(2) + ' s' : '-- s';
+                
+                // Calculate energy (simplified)
+                const kineticEnergy = 0.5 * this.length * this.length * this.angularVelocity * this.angularVelocity;
+                const potentialEnergy = this.g * this.length * (1 - Math.cos(this.angle));
+                const totalEnergy = (kineticEnergy + potentialEnergy).toFixed(3);
+                
+                // Update display elements
+                const angleElement = document.getElementById('currentAngle');
+                const velocityElement = document.getElementById('currentVelocity');
+                const periodElement = document.getElementById('currentPeriod');
+                const energyElement = document.getElementById('currentEnergy');
+                
+                if (angleElement) angleElement.textContent = angleDegrees + '°';
+                if (velocityElement) velocityElement.textContent = velocity + ' rad/s';
+                if (periodElement) periodElement.textContent = periodDisplay;
+                if (energyElement) energyElement.textContent = totalEnergy + ' J';
+            }
+            
+            animate() {
+                if (this.isRunning) {
+                    this.updatePhysics();
+                    this.draw();
+                    this.drawPlot();
+                    this.updateDisplay();
+                    this.animationId = requestAnimationFrame(() => this.animate());
+                }
+            }
+        }
+        
+        // Initialize the simulator when the DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            new PendulumSimulator();
+        });
+    </script>
+</body>
+</html>

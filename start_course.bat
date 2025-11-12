@@ -6,7 +6,12 @@ echo ========================================
 echo.
 
 REM Set up Python paths for WPy64-312101
-set WINPY_DIR=%~dp0WPy64-312101
+REM Check if WinPython is on D: drive (USB/external) or local directory
+if exist "D:\WPy64-312101\Spyder.exe" (
+    set WINPY_DIR=D:\WPy64-312101
+) else (
+    set WINPY_DIR=%~dp0WPy64-312101
+)
 set PYTHON_PATH=%WINPY_DIR%\python\python.exe
 set SPYDER_PATH=%WINPY_DIR%\Spyder.exe
 
@@ -25,13 +30,20 @@ cd /d "%~dp0Python_Course"
 start /min cmd /c ""%PYTHON_PATH%" -m http.server 8000"
 
 echo Starting Spyder IDE...
+echo Spyder path: %SPYDER_PATH%
 timeout /t 2 /nobreak >nul
 
 if exist "%SPYDER_PATH%" (
+    echo Found Spyder at: %SPYDER_PATH%
+    echo Attempting to launch Spyder...
     start "" "%SPYDER_PATH%"
-    echo Spyder launched successfully!
+    timeout /t 3 /nobreak >nul
+    echo Spyder launch command executed!
+    echo If Spyder doesn't appear, try running it manually from:
+    echo %SPYDER_PATH%
 ) else (
-    echo Launching Python IDLE...
+    echo Spyder not found at: %SPYDER_PATH%
+    echo Launching Python IDLE instead...
     start "" cmd /c ""%PYTHON_PATH%" -m idlelib.idle"
 )
 
