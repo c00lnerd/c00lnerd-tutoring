@@ -440,6 +440,10 @@
                             <div class="info-label">Energy:</div>
                             <div class="info-value" id="currentEnergy">INITIAL 2.873 J</div>
                         </div>
+                        <div class="info-item">
+                            <div class="info-label">Display Scale:</div>
+                            <div class="info-value" id="currentScale">150x</div>
+                        </div>
                     </div>
                 </div>
 
@@ -467,7 +471,8 @@
                 
                 // Physics constants
                 this.g = 9.81; // gravity
-                this.scale = 150; // pixels per meter
+                this.baseScale = 150; // base pixels per meter
+                this.scale = 150; // current display scale (will be auto-adjusted)
                 
                 // Pendulum state
                 this.length = 1.0; // meters
@@ -525,20 +530,44 @@
                     this.plotCanvas.width = maxWidth;
                     this.plotCanvas.height = 150; // Smaller plot height on mobile
                     
-                    // Adjust scale for smaller canvas
-                    this.scale = Math.min(150, maxWidth / 6);
+                    // Set base scale for mobile
+                    this.baseScale = Math.min(150, maxWidth / 6);
                 } else {
                     // Desktop size
                     this.canvas.width = 800;
                     this.canvas.height = 600;
                     this.plotCanvas.width = 800;
                     this.plotCanvas.height = 200;
-                    this.scale = 150;
+                    this.baseScale = 150;
                 }
+                
+                // Update display scale based on pendulum length
+                this.updateDisplayScale();
                 
                 // Update plot scales after canvas resize
                 this.plotTimeScale = this.plotCanvas.width / this.maxPlotTime;
                 this.plotAngleScale = this.plotCanvas.height / (2 * Math.PI);
+            }
+            
+            updateDisplayScale() {
+                // Auto-scale to keep pendulum visible
+                // Target: pendulum should be at least 100 pixels long for visibility
+                const minDisplayLength = 100; // minimum pixels
+                const maxDisplayLength = Math.min(this.canvas.width, this.canvas.height) * 0.4; // max 40% of canvas
+                
+                // Calculate scale needed for good visibility
+                const neededScale = minDisplayLength / this.length;
+                const maxAllowedScale = maxDisplayLength / this.length;
+                
+                // Use the needed scale, but cap it at reasonable limits
+                this.scale = Math.min(Math.max(neededScale, this.baseScale * 0.1), maxAllowedScale);
+                
+                // Ensure pendulum fits in canvas with some margin
+                const pendulumHeight = this.length * this.scale;
+                const availableHeight = this.canvas.height - 150; // leave room for pivot and margin
+                if (pendulumHeight > availableHeight) {
+                    this.scale = availableHeight / this.length;
+                }
             }
             
             initializeControls() {
@@ -559,6 +588,7 @@
                 // Event listeners
                 lengthInput.addEventListener('input', (e) => {
                     this.length = parseFloat(e.target.value);
+                    this.updateDisplayScale(); // Auto-scale for new length
                     if (!this.isRunning) {
                         this.draw();
                         this.updateDisplay();
@@ -913,11 +943,16 @@
                 const velocityElement = document.getElementById('currentVelocity');
                 const periodElement = document.getElementById('currentPeriod');
                 const energyElement = document.getElementById('currentEnergy');
+                const scaleElement = document.getElementById('currentScale');
                 
                 if (angleElement) angleElement.textContent = angleDegrees + '°';
                 if (velocityElement) velocityElement.textContent = velocity + ' rad/s';
                 if (periodElement) periodElement.textContent = periodDisplay;
                 if (energyElement) energyElement.textContent = totalEnergy + ' J';
+                if (scaleElement) {
+                    const scaleFactor = (this.scale / this.baseScale).toFixed(1);
+                    scaleElement.textContent = scaleFactor + 'x';
+                }
             }
             
             animate() {
