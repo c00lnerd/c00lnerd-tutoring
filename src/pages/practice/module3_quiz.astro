@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from '../../layouts/Layout.astro';
 ---
 
@@ -13,6 +13,17 @@ import Layout from '../../layouts/Layout.astro';
                 <input type="checkbox" id="save-results" checked>
                 <label for="save-results">Save results and send to instructor</label>
             </div>
+            
+            <!-- Anti-Spam CAPTCHA -->
+            <div class="captcha-section">
+                <label for="captcha">🔒 Security Check: What is <span id="captcha-question"></span>?</label>
+                <input type="number" id="captcha" placeholder="Enter the answer" required>
+                <div id="captcha-error" class="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
+            </div>
+            
+            <!-- Honeypot field (hidden from users, visible to bots) -->
+            <input type="text" id="website" name="website" style="display: none;" tabindex="-1" autocomplete="off">
+            
             <button class="control-button" id="start-quiz">Start Quiz</button>
         </div>
 

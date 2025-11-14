@@ -1,4 +1,4 @@
----
+﻿---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -7,7 +7,33 @@ import Layout from '../../../layouts/Layout.astro';
         .hidden {
             display: none;
         }
-    </style>
+        .captcha-section {
+        margin: 15px 0;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+    }
+    .captcha-section label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #495057;
+    }
+    .captcha-section input[type="number"] {
+        width: 100px;
+        padding: 8px;
+        border: 1px solid #ced4da;
+        border-radius: 3px;
+        font-size: 16px;
+    }
+    .captcha-error {
+        color: #dc3545;
+        font-size: 0.9em;
+        margin-top: 5px;
+        font-weight: bold;
+    }
+</style>
     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
@@ -229,6 +255,80 @@ import Layout from '../../../layouts/Layout.astro';
     </div>
 
     <script is:inline>
+window.onload = function() { generateCaptcha(); };
+    // CAPTCHA variables
+    let captchaAnswer = 0;
+    
+    function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        captchaAnswer = num1 + num2;
+        const questionElement = document.getElementById('captcha-question');
+        if (questionElement) {
+            questionElement.textContent = num1 + " + " + num2 + ;
+        }
+    }
+    
+    function validateCaptcha() {
+        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const errorDiv = document.getElementById('captcha-error');
+        
+        if (userAnswer !== captchaAnswer) {
+            if (errorDiv) errorDiv.style.display = 'block';
+            generateCaptcha(); // Generate new question
+            document.getElementById('captcha').value = '';
+            return false;
+        }
+        
+        if (errorDiv) errorDiv.style.display = 'none';
+        return true;
+    }
+    
+    // Security validation function
+    function validateSecurity() {
+        // Check honeypot field (should be empty)
+        const honeypot = document.getElementById('website');
+        if (honeypot && honeypot.value) {
+            console.log('Spam bot detected via honeypot');
+            alert('Security check failed. Please try again.');
+            return false;
+        }
+        
+        // Rate limiting check
+        const lastSubmission = localStorage.getItem('lastQuizStart');
+        const now = Date.now();
+        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
+            alert('Please wait 30 seconds between quiz attempts.');
+            return false;
+        }
+        localStorage.setItem('lastQuizStart', now.toString());
+        
+        // Validate CAPTCHA
+        if (!validateCaptcha()) {
+            return false;
+        }
+        
+        // Email validation and domain filtering
+        const emailInput = document.getElementById('email');
+        if (emailInput && emailInput.value) {
+            const email = emailInput.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return false;
+            }
+            
+            // Block common spam domains
+            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+            const domain = email.split('@')[1].toLowerCase();
+            if (spamDomains.includes(domain)) {
+                alert('Please use a permanent email address.');
+                return false;
+            }
+        }
+        
+        return true;
+    }
         document.getElementById('submitBtn').addEventListener('click', function() {
             const studentName = document.getElementById('quiz25StudentName').value.trim();
             const studentEmail = document.getElementById('quiz25StudentEmail').value.trim();
@@ -430,5 +530,79 @@ Please review the short answer responses and provide feedback to the student.`;
     </script>
 
     <!-- EmailJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
+window.onload = function() { generateCaptcha(); };
+    // CAPTCHA variables
+    let captchaAnswer = 0;
+    
+    function generateCaptcha() {
+        const num1 = Math.floor(Math.random() * 10) + 1;
+        const num2 = Math.floor(Math.random() * 10) + 1;
+        captchaAnswer = num1 + num2;
+        const questionElement = document.getElementById('captcha-question');
+        if (questionElement) {
+            questionElement.textContent = num1 + " + " + num2 + ;
+        }
+    }
+    
+    function validateCaptcha() {
+        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const errorDiv = document.getElementById('captcha-error');
+        
+        if (userAnswer !== captchaAnswer) {
+            if (errorDiv) errorDiv.style.display = 'block';
+            generateCaptcha(); // Generate new question
+            document.getElementById('captcha').value = '';
+            return false;
+        }
+        
+        if (errorDiv) errorDiv.style.display = 'none';
+        return true;
+    }
+    
+    // Security validation function
+    function validateSecurity() {
+        // Check honeypot field (should be empty)
+        const honeypot = document.getElementById('website');
+        if (honeypot && honeypot.value) {
+            console.log('Spam bot detected via honeypot');
+            alert('Security check failed. Please try again.');
+            return false;
+        }
+        
+        // Rate limiting check
+        const lastSubmission = localStorage.getItem('lastQuizStart');
+        const now = Date.now();
+        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
+            alert('Please wait 30 seconds between quiz attempts.');
+            return false;
+        }
+        localStorage.setItem('lastQuizStart', now.toString());
+        
+        // Validate CAPTCHA
+        if (!validateCaptcha()) {
+            return false;
+        }
+        
+        // Email validation and domain filtering
+        const emailInput = document.getElementById('email');
+        if (emailInput && emailInput.value) {
+            const email = emailInput.value;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return false;
+            }
+            
+            // Block common spam domains
+            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+            const domain = email.split('@')[1].toLowerCase();
+            if (spamDomains.includes(domain)) {
+                alert('Please use a permanent email address.');
+                return false;
+            }
+        }
+        
+        return true;
+    }</script>
 </Layout>
