@@ -198,7 +198,7 @@ import Layout from '../../../layouts/Layout.astro';
         </div>
     </main>
 
-    <script>
+    <script is:inline>
 window.onload = function() { generateCaptcha(); };
     // CAPTCHA variables
     let captchaAnswer = 0;
@@ -209,7 +209,7 @@ window.onload = function() { generateCaptcha(); };
         captchaAnswer = num1 + num2;
         const questionElement = document.getElementById('captcha-question');
         if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2 + ;
+            questionElement.textContent = num1 + " + " + num2;
         }
     }
     

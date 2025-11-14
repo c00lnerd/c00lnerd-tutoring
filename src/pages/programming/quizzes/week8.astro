@@ -162,7 +162,7 @@ import Layout from '../../../layouts/Layout.astro';
 
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js">
 window.onload = function() { generateCaptcha(); };</script>
-    <script>
+    <script is:inline>
 window.onload = function() { generateCaptcha(); };
         // Quiz answers and scoring
         const correctAnswers = {
@@ -311,7 +311,7 @@ ${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong under
         captchaAnswer = num1 + num2;
         const questionElement = document.getElementById('captcha-question');
         if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2 + ;
+            questionElement.textContent = num1 + " + " + num2;
         }
     }
     
