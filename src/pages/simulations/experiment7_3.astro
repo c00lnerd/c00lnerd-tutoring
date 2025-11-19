@@ -269,13 +269,12 @@ import Layout from '../../layouts/Layout.astro';
     </main>
 </Layout>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
-
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize EmailJS
+        emailjs.init('ct_s19oZHppLy9BlW');
+
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
@@ -302,6 +301,12 @@ import Layout from '../../layouts/Layout.astro';
         teacherEmailInput.addEventListener('change', function() {
             localStorage.setItem('teacherEmail', this.value);
         });
+
+        // Simple email validation helper (same pattern as other experiments)
+        function isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
 
         // Handle form submission
         const submitBtn = document.getElementById('submitBtn');

@@ -202,13 +202,11 @@ import Layout from '../../layouts/Layout.astro';
     </main>
 </Layout>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
-
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialize EmailJS (same key used in other experiments)
+        emailjs.init('ct_s19oZHppLy9BlW');
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
