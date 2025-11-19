@@ -681,6 +681,12 @@ import Layout from '../../layouts/Layout.astro';
         // Initialize the simulation
         setupCanvas();
         
+        // Simple email validation helper (matches other experiment forms)
+        function isValidEmail(email) {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailPattern.test(email);
+        }
+
         // Handle form submission
         const submitBtn = document.getElementById('submitBtn');
         const submissionMessage = document.getElementById('submissionMessage');
