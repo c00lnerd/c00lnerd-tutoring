@@ -199,13 +199,11 @@ import Layout from '../../layouts/Layout.astro';
     </main>
 </Layout>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <script is:inline>
-    // Load EmailJS
-    (function() {
-        emailjs.init("ct_s19oZHppLy9BlW");
-    })();
-
     document.addEventListener('DOMContentLoaded', function() {
+        // Load EmailJS
+        emailjs.init('ct_s19oZHppLy9BlW');
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
@@ -311,7 +309,7 @@ ${conclusion}`;
                 student_email: studentEmail,
                 experiment_title: 'Experiment 6.1: The Importance of Direction in Velocity',
                 hypothesis: 'Exploring how direction affects velocity measurements',
-                missing_elements: `Distance: ${distance ? '✓' : '✗'} | Time: ${time ? '✓' : '✗'} | Velocity: ${velocity ? '✓' : '✗'} | Conclusion: ${conclusion ? '✓' : '✗'}`,
+                missing_elements: `Student Info: ${studentName ? '✓' : '✗'}, Email: ${studentEmail ? '✓' : '✗'}, Results: ${experimentData ? '✓' : '✗'}`,
                 conclusion: experimentData,
                 subject: `Physical Science Experiment 6.1 Results - ${studentName}`
             };
