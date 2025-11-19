@@ -305,6 +305,21 @@
             background: #FF5722;
         }
 
+        .drag-visualization {
+            display: none;
+        }
+
+        .drag-visualization.active {
+            display: block;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px 20px;
+            margin-top: 10px;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -317,6 +332,10 @@
             .header p {
                 font-size: 1rem;
             }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -325,6 +344,19 @@
         <div class="header">
             <h1>🚀 Projectile Motion Calculator</h1>
             <p>Master Kinematic Equations with Interactive Problem Solving - Now with Air Resistance!</p>
+        </div>
+
+        <div class="visualization">
+            <h2>📈 Trajectory Visualization</h2>
+            <canvas id="trajectoryCanvas" width="800" height="400"></canvas>
+            <p style="text-align: center; margin-top: 10px; color: #666;">
+                Interactive trajectory plot showing the projectile's path
+            </p>
+        </div>
+
+        <div style="max-width: 800px; margin: 15px auto 0 auto;">
+            <button class="calculate-btn" onclick="calculateProjectile()">🧮 Calculate All Variables</button>
+            <div id="errorMessage" class="error" style="display: none;"></div>
         </div>
 
         <div class="main-content">
@@ -385,40 +417,38 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="input-group">
-                    <label for="v0">Initial Velocity (v₀) <span class="unit">m/s</span></label>
-                    <input type="number" id="v0" step="0.1" placeholder="Enter initial velocity">
-                </div>
 
-                <div class="input-group">
-                    <label for="theta">Launch Angle (θ) <span class="unit">degrees</span></label>
-                    <input type="number" id="theta" step="0.1" min="0" max="90" placeholder="Enter launch angle">
-                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="v0">Initial Velocity (v₀) <span class="unit">m/s</span></label>
+                        <input type="number" id="v0" step="0.1" placeholder="Enter initial velocity">
+                    </div>
 
-                <div class="input-group">
-                    <label for="height">Initial Height (h₀) <span class="unit">m</span></label>
-                    <input type="number" id="height" step="0.1" value="0" placeholder="Enter initial height">
-                </div>
+                    <div class="input-group">
+                        <label for="theta">Launch Angle (θ) <span class="unit">degrees</span></label>
+                        <input type="number" id="theta" step="0.1" min="0" max="90" placeholder="Enter launch angle">
+                    </div>
 
-                <div class="input-group">
-                    <label for="range">Horizontal Range (R) <span class="unit">m</span></label>
-                    <input type="number" id="range" step="0.1" placeholder="Enter horizontal range">
-                </div>
+                    <div class="input-group">
+                        <label for="height">Initial Height (h₀) <span class="unit">m</span></label>
+                        <input type="number" id="height" step="0.1" value="0" placeholder="Enter initial height">
+                    </div>
 
-                <div class="input-group">
-                    <label for="maxHeight">Maximum Height (H) <span class="unit">m</span></label>
-                    <input type="number" id="maxHeight" step="0.1" placeholder="Enter maximum height">
-                </div>
+                    <div class="input-group">
+                        <label for="range">Horizontal Range (R) <span class="unit">m</span></label>
+                        <input type="number" id="range" step="0.1" placeholder="Enter horizontal range">
+                    </div>
 
-                <div class="input-group">
-                    <label for="timeTotal">Total Flight Time (t) <span class="unit">s</span></label>
-                    <input type="number" id="timeTotal" step="0.1" placeholder="Enter total flight time">
-                </div>
+                    <div class="input-group">
+                        <label for="maxHeight">Maximum Height (H) <span class="unit">m</span></label>
+                        <input type="number" id="maxHeight" step="0.1" placeholder="Enter maximum height">
+                    </div>
 
-                <button class="calculate-btn" onclick="calculateProjectile()">🧮 Calculate All Variables</button>
-                
-                <div id="errorMessage" class="error" style="display: none;"></div>
+                    <div class="input-group">
+                        <label for="timeTotal">Total Flight Time (t) <span class="unit">s</span></label>
+                        <input type="number" id="timeTotal" step="0.1" placeholder="Enter total flight time">
+                    </div>
+                </div>
             </div>
 
             <div class="results-section">
@@ -428,15 +458,7 @@
                 </div>
             </div>
 
-            <div class="visualization">
-                <h2>📈 Trajectory Visualization</h2>
-                <canvas id="trajectoryCanvas" width="800" height="400"></canvas>
-                <p style="text-align: center; margin-top: 10px; color: #666;">
-                    Interactive trajectory plot showing the projectile's path
-                </p>
-            </div>
-
-            <div class="visualization">
+            <div class="visualization drag-visualization" id="dragVisualization">
                 <h2>🌪️ Drag Coefficient vs. Velocity</h2>
                 <canvas id="dragCurveCanvas" width="800" height="300"></canvas>
                 <p style="text-align: center; margin-top: 10px; color: #666;">
@@ -480,17 +502,24 @@
             const toggle = document.getElementById('physicsToggle');
             const dragInputs = document.getElementById('dragInputs');
             const modeIndicator = document.getElementById('modeIndicator');
+            const dragVisualization = document.getElementById('dragVisualization');
             
             if (useAirResistance) {
                 toggle.classList.add('active');
                 dragInputs.classList.add('active');
                 modeIndicator.className = 'mode-indicator mode-realistic';
                 modeIndicator.textContent = '🌪️ REALISTIC PHYSICS MODE - With Air Resistance';
+                if (dragVisualization) {
+                    dragVisualization.classList.add('active');
+                }
             } else {
                 toggle.classList.remove('active');
                 dragInputs.classList.remove('active');
                 modeIndicator.className = 'mode-indicator mode-ideal';
                 modeIndicator.textContent = '🎯 IDEAL PHYSICS MODE - No Air Resistance';
+                if (dragVisualization) {
+                    dragVisualization.classList.remove('active');
+                }
             }
         }
 
