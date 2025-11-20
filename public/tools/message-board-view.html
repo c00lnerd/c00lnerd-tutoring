@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Message Board - Viewer</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #ffffff;
+            color: #111111;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            padding: 12px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fafafa;
+            font-size: 1rem;
+            color: #f10a0a;
+        }
+        .header span.label {
+            font-weight: 600;
+            color: #333;
+        }
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .message {
+            margin-bottom: 18px;
+            font-size: 5.0rem; /* large for bedside viewing */
+            line-height: 1.4;
+            color:#f10a0a
+        }
+        .timestamp {
+            font-size: 0.9rem;
+            color: #888;
+            margin-top: 4px;
+        }
+        .empty-state {
+            margin-top: 40px;
+            font-size: 1.5rem;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="header">
+        <span class="label">Message Board</span>
+        &nbsp;&middot;&nbsp;
+        This page can stay open on the Chromebook.
+    </div>
+    <div class="messages" id="messages"></div>
+
+    <script>
+        // TODO: Replace with your Firebase config from the Firebase console
+        // const firebaseConfig = { ... };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDeBCfq-UEwYUYEvzE2_8_ZuWGTiJQmOyg",
+            authDomain: "home-messsaging.firebaseapp.com",
+            projectId: "home-messsaging",
+            storageBucket: "home-messsaging.firebasestorage.app",
+            messagingSenderId: "497404009360",
+            appId: "1:497404009360:web:ef9c7c6cb01476d4077115",
+  measurementId: "G-ZXBF9KZM6P"
+};
+        if (!window.firebaseConfig) {
+            console.warn('Remember to define firebaseConfig in this file.');
+        }
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(window.firebaseConfig || firebaseConfig);
+        const db = firebase.firestore();
+
+        const messagesDiv = document.getElementById('messages');
+
+        function renderEmptyState() {
+            messagesDiv.innerHTML = '<div class="empty-state">Waiting for messages...</div>';
+        }
+
+        function formatTimestamp(ts) {
+            if (!ts) return '';
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        }
+
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+        }
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.type = 'sine';
+                o.frequency.value = 880;     // pitch
+                o.connect(g);
+        g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.1, ctx.currentTime);  // volume
+        o.start();
+        o.stop(ctx.currentTime + 0.2);                // 0.2 second beep
+    } catch (e) {
+        console.warn('Audio not available:', e);
+    }
+}
+        // Listen for new messages in real time
+        db.collection('messageBoard')
+          .orderBy('createdAt', 'asc')
+          .onSnapshot((snapshot) => {
+              if (snapshot.empty) {
+                  renderEmptyState();
+                  return;
+              }
+              messagesDiv.innerHTML = '';
+              snapshot.forEach((doc) => {
+                  const data = doc.data();
+                  const msgEl = document.createElement('div');
+                  msgEl.className = 'message';
+                  msgEl.textContent = data.text || '';
+
+                  const tsEl = document.createElement('div');
+                  tsEl.className = 'timestamp';
+                  tsEl.textContent = formatTimestamp(data.createdAt);
+
+                  msgEl.appendChild(tsEl);
+                  messagesDiv.appendChild(msgEl);
+              });
+              scrollToBottom();
+          }, (err) => {
+              console.error('Error listening for messages:', err);
+              messagesDiv.innerHTML = '<div class="empty-state">Error loading messages.</div>';
+          });
+    </script>
+</body>
+</html>
