@@ -66,6 +66,10 @@
         <span class="label">Message Board</span>
         &nbsp;&middot;&nbsp;
         This page can stay open on the Chromebook.
+        &nbsp;&middot;&nbsp;
+        <button id="muteToggle" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #f10a0a; background: #000; color: #f10a0a;">
+            🔊 Auto Read: ON
+        </button>
     </div>
     <div id="newBanner" class="new-banner">NEW MESSAGE</div>
     <div class="messages" id="messages"></div>
@@ -92,7 +96,27 @@
 
         const messagesDiv = document.getElementById('messages');
         const newBanner = document.getElementById('newBanner');
+        const muteToggle = document.getElementById('muteToggle');
         let newBannerTimeout = null;
+
+        // Track whether automatic reading is enabled
+        let isMuted = false;
+
+        if (muteToggle) {
+            muteToggle.addEventListener('click', () => {
+                isMuted = !isMuted;
+                muteToggle.textContent = isMuted ? '🔇 Auto Read: OFF' : '🔊 Auto Read: ON';
+
+                // Stop any current speech when muting
+                if (isMuted && window.speechSynthesis) {
+                    try {
+                        window.speechSynthesis.cancel();
+                    } catch (e) {
+                        console.warn('Unable to cancel speech synthesis:', e);
+                    }
+                }
+            });
+        }
 
         function renderEmptyState() {
             messagesDiv.innerHTML = '<div class="empty-state">Waiting for messages...</div>';
@@ -136,6 +160,32 @@
         console.warn('Audio not available:', e);
     }
 }
+
+        // Speak a given message text out loud (if not muted and supported)
+        function speakMessage(text) {
+            if (!text || isMuted) return;
+            if (!('speechSynthesis' in window) || typeof window.SpeechSynthesisUtterance === 'undefined') {
+                return; // Speech not supported on this browser/device
+            }
+
+            try {
+                // Cancel any ongoing speech so the latest message is clear
+                window.speechSynthesis.cancel();
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;   // speed
+                utterance.pitch = 1.0;  // voice pitch
+                utterance.lang = 'en-US';
+
+                window.speechSynthesis.speak(utterance);
+            } catch (e) {
+                console.warn('Speech synthesis failed:', e);
+            }
+        }
+
+        // Keep track of messages that have already been spoken so we only
+        // auto-read newly added messages, not the full history every time.
+        const spokenMessageIds = new Set();
         // Listen for new messages in real time
         db.collection('messageBoard')
           .orderBy('createdAt', 'asc')
@@ -144,7 +194,10 @@
                   renderEmptyState();
                   return;
               }
+
               messagesDiv.innerHTML = '';
+
+              // Rebuild the list of messages in order
               snapshot.forEach((doc) => {
                   const data = doc.data();
                   const msgEl = document.createElement('div');
@@ -158,8 +211,26 @@
                   msgEl.appendChild(tsEl);
                   messagesDiv.appendChild(msgEl);
               });
+
               scrollToBottom();
-              playBeep();
+
+              // Only play the beep when auto-read is OFF (muted)
+              if (isMuted) {
+                  playBeep();
+              }
+
+              // Auto-read only newly added messages since the last snapshot
+              snapshot.docChanges().forEach((change) => {
+                  if (change.type === 'added') {
+                      const doc = change.doc;
+                      const data = doc.data();
+                      const id = doc.id;
+                      if (!spokenMessageIds.has(id)) {
+                          spokenMessageIds.add(id);
+                          speakMessage(data.text || '');
+                      }
+                  }
+              });
 
               if (newBanner) {
                   newBanner.style.display = 'block';
