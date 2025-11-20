@@ -47,6 +47,15 @@
             color: #999;
             text-align: center;
         }
+        .new-banner {
+            text-align: center;
+            padding: 6px 0;
+            background: #f10a0a;
+            color: #000000;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: none;
+        }
     </style>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -58,6 +67,7 @@
         &nbsp;&middot;&nbsp;
         This page can stay open on the Chromebook.
     </div>
+    <div id="newBanner" class="new-banner">NEW MESSAGE</div>
     <div class="messages" id="messages"></div>
 
     <script>
@@ -81,6 +91,8 @@
         const db = firebase.firestore();
 
         const messagesDiv = document.getElementById('messages');
+        const newBanner = document.getElementById('newBanner');
+        let newBannerTimeout = null;
 
         function renderEmptyState() {
             messagesDiv.innerHTML = '<div class="empty-state">Waiting for messages...</div>';
@@ -148,6 +160,16 @@
               });
               scrollToBottom();
               playBeep();
+
+              if (newBanner) {
+                  newBanner.style.display = 'block';
+                  if (newBannerTimeout) {
+                      clearTimeout(newBannerTimeout);
+                  }
+                  newBannerTimeout = setTimeout(() => {
+                      newBanner.style.display = 'none';
+                  }, 3000);
+              }
           }, (err) => {
               console.error('Error listening for messages:', err);
               messagesDiv.innerHTML = '<div class="empty-state">Error loading messages.</div>';
