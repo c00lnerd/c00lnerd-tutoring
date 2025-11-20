@@ -72,6 +72,10 @@
         }
         .status.ok { color: #16a34a; }
         .status.error { color: #dc2626; }
+        .secondary {
+            margin-top: 8px;
+            background: #6b7280;
+        }
     </style>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -89,6 +93,7 @@
         <textarea id="message" placeholder="Type your message here..."></textarea>
 
         <button id="sendBtn" disabled>Unlock with Password</button>
+        <button id="clearBtn" class="secondary" disabled>Clear All Messages</button>
         <div id="status" class="status"></div>
     </div>
 
@@ -118,6 +123,7 @@
         const passwordInput = document.getElementById('password');
         const messageInput = document.getElementById('message');
         const sendBtn = document.getElementById('sendBtn');
+        const clearBtn = document.getElementById('clearBtn');
         const statusEl = document.getElementById('status');
 
         let unlocked = false;
@@ -132,11 +138,13 @@
                 unlocked = true;
                 sendBtn.textContent = 'Send Message';
                 sendBtn.disabled = false;
+                clearBtn.disabled = false;
                 setStatus('Unlocked. You can now send messages.', 'ok');
                 passwordInput.disabled = true;
             } else {
                 setStatus('Incorrect password.', 'error');
                 sendBtn.disabled = true;
+                clearBtn.disabled = true;
             }
         }
 
@@ -144,6 +152,7 @@
             if (passwordInput.value.length === 0) {
                 sendBtn.textContent = 'Unlock with Password';
                 sendBtn.disabled = true;
+                clearBtn.disabled = true;
                 unlocked = false;
                 setStatus('', '');
                 return;
@@ -180,6 +189,35 @@
                 setStatus('Error sending message.', 'error');
             } finally {
                 sendBtn.disabled = false;
+            }
+        });
+
+        clearBtn.addEventListener('click', async () => {
+            if (!unlocked) {
+                tryUnlock();
+                return;
+            }
+
+            if (!confirm('Clear all messages from the board?')) {
+                return;
+            }
+
+            clearBtn.disabled = true;
+            sendBtn.disabled = true;
+            setStatus('Clearing all messages...', '');
+
+            try {
+                const snapshot = await db.collection('messageBoard').get();
+                const batch = db.batch();
+                snapshot.forEach((doc) => batch.delete(doc.ref));
+                await batch.commit();
+                setStatus('All messages cleared.', 'ok');
+            } catch (err) {
+                console.error('Error clearing messages:', err);
+                setStatus('Error clearing messages.', 'error');
+            } finally {
+                sendBtn.disabled = false;
+                clearBtn.disabled = false;
             }
         });
     </script>
