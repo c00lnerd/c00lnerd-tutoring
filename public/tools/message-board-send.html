@@ -92,6 +92,12 @@
         <label for="message">Message</label>
         <textarea id="message" placeholder="Type your message here..."></textarea>
 
+        <label for="voicePreference">Voice</label>
+        <select id="voicePreference" style="width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 1rem; font-family: inherit;">
+            <option value="female_us">Female (US)</option>
+            <option value="male_us">Male (US)</option>
+        </select>
+
         <button id="sendBtn" disabled>Unlock with Password</button>
         <button id="clearBtn" class="secondary" disabled>Clear All Messages</button>
         <div id="status" class="status"></div>
@@ -122,6 +128,7 @@
 
         const passwordInput = document.getElementById('password');
         const messageInput = document.getElementById('message');
+        const voicePreferenceSelect = document.getElementById('voicePreference');
         const sendBtn = document.getElementById('sendBtn');
         const clearBtn = document.getElementById('clearBtn');
         const statusEl = document.getElementById('status');
@@ -180,6 +187,7 @@
             try {
                 await db.collection('messageBoard').add({
                     text,
+                    voicePreference: voicePreferenceSelect ? voicePreferenceSelect.value : 'female_us',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 });
                 messageInput.value = '';

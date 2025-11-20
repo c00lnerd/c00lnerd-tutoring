@@ -161,11 +161,43 @@
     }
 }
 
+        // Choose a voice based on preference ("female_us" / "male_us")
+        function getPreferredVoice(preference) {
+            if (!('speechSynthesis' in window)) return null;
+            const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+            if (!voices || voices.length === 0) return null;
+
+            const wantFemale = preference === 'female_us';
+            const wantMale = preference === 'male_us';
+
+            // Filter to English (US) voices first
+            const usVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en-us'));
+            const pool = usVoices.length ? usVoices : voices;
+
+            // Try to pick a voice whose name hints at gender, if requested
+            const genderMatch = pool.find(v => {
+                const name = (v.name || '').toLowerCase();
+                if (wantFemale) return name.includes('female') || name.includes('woman') || name.includes('girl');
+                if (wantMale) return name.includes('male') || name.includes('man') || name.includes('boy');
+                return false;
+            });
+
+            if (genderMatch) return genderMatch;
+
+            // Fallback: just return the first US (or first overall) voice
+            return pool[0] || null;
+        }
+
         // Speak a given message text out loud (if not muted and supported)
-        function speakMessage(text) {
+        function speakMessage(text, voicePreference) {
             if (!text || isMuted) return;
+
+            // If speech is not supported, fall back to the beep so we still
+            // have an audio alert when Auto Read is ON.
             if (!('speechSynthesis' in window) || typeof window.SpeechSynthesisUtterance === 'undefined') {
-                return; // Speech not supported on this browser/device
+                console.warn('Speech synthesis not supported on this device. Using beep fallback.');
+                playBeep();
+                return;
             }
 
             try {
@@ -177,9 +209,16 @@
                 utterance.pitch = 1.0;  // voice pitch
                 utterance.lang = 'en-US';
 
+                const preferredVoice = getPreferredVoice(voicePreference || 'female_us');
+                if (preferredVoice) {
+                    utterance.voice = preferredVoice;
+                }
+
                 window.speechSynthesis.speak(utterance);
             } catch (e) {
-                console.warn('Speech synthesis failed:', e);
+                console.warn('Speech synthesis failed, using beep fallback:', e);
+                // If something goes wrong starting TTS, at least play the beep.
+                playBeep();
             }
         }
 
@@ -227,7 +266,7 @@
                       const id = doc.id;
                       if (!spokenMessageIds.has(id)) {
                           spokenMessageIds.add(id);
-                          speakMessage(data.text || '');
+                          speakMessage(data.text || '', data.voicePreference || 'female_us');
                       }
                   }
               });
