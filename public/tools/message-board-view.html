@@ -167,24 +167,28 @@
             const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
             if (!voices || voices.length === 0) return null;
 
-            const wantFemale = preference === 'female_us';
-            const wantMale = preference === 'male_us';
-
             // Filter to English (US) voices first
             const usVoices = voices.filter(v => v.lang && v.lang.toLowerCase().startsWith('en-us'));
             const pool = usVoices.length ? usVoices : voices;
 
-            // Try to pick a voice whose name hints at gender, if requested
-            const genderMatch = pool.find(v => {
-                const name = (v.name || '').toLowerCase();
-                if (wantFemale) return name.includes('female') || name.includes('woman') || name.includes('girl');
-                if (wantMale) return name.includes('male') || name.includes('man') || name.includes('boy');
-                return false;
-            });
+            // Debug: log voices once so we can see what's available on this device
+            if (!window.__messageBoardVoicesLogged) {
+                window.__messageBoardVoicesLogged = true;
+                console.log('[MessageBoard] Available speechSynthesis voices:', voices.map(v => ({ name: v.name, lang: v.lang })));
+                console.log('[MessageBoard] Using pool for selection:', pool.map(v => ({ name: v.name, lang: v.lang })));
+            }
 
-            if (genderMatch) return genderMatch;
+            // Simple index-based choice so we get two consistently different voices
+            if (preference === 'female_us') {
+                // Use the first available US (or overall) voice
+                return pool[0] || null;
+            }
+            if (preference === 'male_us') {
+                // Use the second available US (or overall) voice, if it exists
+                return pool[1] || pool[0] || null;
+            }
 
-            // Fallback: just return the first US (or first overall) voice
+            // Default fallback
             return pool[0] || null;
         }
 
@@ -209,9 +213,13 @@
                 utterance.pitch = 1.0;  // voice pitch
                 utterance.lang = 'en-US';
 
-                const preferredVoice = getPreferredVoice(voicePreference || 'female_us');
+                const pref = voicePreference || 'female_us';
+                const preferredVoice = getPreferredVoice(pref);
                 if (preferredVoice) {
                     utterance.voice = preferredVoice;
+                    console.log('[MessageBoard] Speaking with voice', { preference: pref, name: preferredVoice.name, lang: preferredVoice.lang });
+                } else {
+                    console.log('[MessageBoard] No preferred voice found, using default for preference', pref);
                 }
 
                 window.speechSynthesis.speak(utterance);
