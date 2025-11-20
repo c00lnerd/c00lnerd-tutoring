@@ -32,7 +32,7 @@
         }
         .message {
             margin-bottom: 18px;
-            font-size: 5.0rem; /* large for bedside viewing */
+            font-size: 4.5rem; /* large for bedside viewing */
             line-height: 1.4;
             color:#f10a0a
         }
@@ -89,9 +89,20 @@
         function formatTimestamp(ts) {
             if (!ts) return '';
             const d = ts.toDate ? ts.toDate() : new Date(ts);
-            return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-        }
 
+            const datePart = d.toLocaleDateString([], {
+                year: 'numeric',
+                month: 'short',   // e.g. Nov
+                day: 'numeric'    // e.g. 19
+            });
+
+            const timePart = d.toLocaleTimeString([], {
+                hour: 'numeric',
+                minute: '2-digit'
+            });
+
+    return `${datePart} ${timePart}`;   // e.g. Nov 19, 7:12 PM
+}
         function scrollToBottom() {
             requestAnimationFrame(() => {
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
