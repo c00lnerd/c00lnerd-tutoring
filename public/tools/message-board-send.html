@@ -95,6 +95,11 @@
         <button id="sendBtn" disabled>Unlock with Password</button>
         <button id="clearBtn" class="secondary" disabled>Clear All Messages</button>
         <div id="status" class="status"></div>
+
+        <div style="margin-top: 18px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+            <label>Her Responses (speech-to-text)</label>
+            <div id="replies" style="max-height: 200px; overflow-y: auto; font-size: 0.9rem; color: #374151; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; background: #f9fafb;"></div>
+        </div>
     </div>
 
     <script>
@@ -125,12 +130,19 @@
         const sendBtn = document.getElementById('sendBtn');
         const clearBtn = document.getElementById('clearBtn');
         const statusEl = document.getElementById('status');
+        const repliesDiv = document.getElementById('replies');
 
         let unlocked = false;
 
         function setStatus(msg, type) {
             statusEl.textContent = msg || '';
             statusEl.className = 'status ' + (type || '');
+        }
+
+        function formatTimestamp(ts) {
+            if (!ts) return '';
+            const d = ts.toDate ? ts.toDate() : new Date(ts);
+            return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         }
 
         function tryUnlock() {
@@ -220,6 +232,44 @@
                 clearBtn.disabled = false;
             }
         });
+
+        // Listen for her transcribed replies in real time
+        db.collection('messageBoardReplies')
+          .orderBy('createdAt', 'asc')
+          .onSnapshot((snapshot) => {
+              if (!repliesDiv) return;
+              if (snapshot.empty) {
+                  repliesDiv.textContent = 'No responses yet.';
+                  return;
+              }
+
+              repliesDiv.innerHTML = '';
+              snapshot.forEach((doc) => {
+                  const data = doc.data();
+                  const wrapper = document.createElement('div');
+                  wrapper.style.marginBottom = '6px';
+
+                  const textEl = document.createElement('div');
+                  textEl.textContent = data.text || '';
+
+                  const tsEl = document.createElement('div');
+                  tsEl.style.fontSize = '0.8rem';
+                  tsEl.style.color = '#6b7280';
+                  tsEl.textContent = formatTimestamp(data.createdAt);
+
+                  wrapper.appendChild(textEl);
+                  wrapper.appendChild(tsEl);
+                  repliesDiv.appendChild(wrapper);
+              });
+
+              // Scroll to bottom so latest reply is visible
+              repliesDiv.scrollTop = repliesDiv.scrollHeight;
+          }, (err) => {
+              console.error('Error loading replies:', err);
+              if (repliesDiv) {
+                  repliesDiv.textContent = 'Error loading responses.';
+              }
+          });
     </script>
 </body>
 </html>

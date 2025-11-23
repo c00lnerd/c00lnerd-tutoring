@@ -208,6 +208,71 @@
         // Keep track of messages that have already been spoken so we only
         // auto-read newly added messages, not the full history every time.
         const spokenMessageIds = new Set();
+
+        // ------------------------------------------------------------
+        // Speech recognition: capture her spoken replies and send them
+        // back as text to Firestore (messageBoardReplies collection).
+        // ------------------------------------------------------------
+
+        (function setupSpeechRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                console.warn('SpeechRecognition API not available in this browser. Reply transcription disabled.');
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            let shouldKeepListening = true;
+
+            recognition.onresult = async (event) => {
+                try {
+                    const result = event.results[event.resultIndex];
+                    if (!result || result.length === 0) return;
+                    const transcript = (result[0].transcript || '').trim();
+                    if (!transcript) return;
+
+                    // Send her spoken reply as a separate document
+                    await db.collection('messageBoardReplies').add({
+                        text: transcript,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    });
+                } catch (err) {
+                    console.warn('Error saving speech recognition result:', err);
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.warn('SpeechRecognition error:', event.error);
+                // If the user denied permission or the service is unavailable,
+                // stop trying to restart.
+                if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+                    shouldKeepListening = false;
+                }
+            };
+
+            recognition.onend = () => {
+                // Auto-restart if we still want to listen (tab still open,
+                // permission granted, etc.)
+                if (shouldKeepListening) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.warn('Failed to restart SpeechRecognition:', e);
+                    }
+                }
+            };
+
+            // Initial start - will trigger a one-time permission prompt
+            try {
+                recognition.start();
+            } catch (e) {
+                console.warn('Unable to start SpeechRecognition:', e);
+            }
+        })();
         // Listen for new messages in real time
         db.collection('messageBoard')
           .orderBy('createdAt', 'asc')
