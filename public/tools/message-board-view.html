@@ -227,6 +227,9 @@
             recognition.lang = 'en-US';
 
             let shouldKeepListening = true;
+            let restartDelayMs = 1000; // start with 1s delay between restarts
+            const maxRestartDelayMs = 10000; // cap backoff at 10s
+            let lastErrorTime = 0;
 
             recognition.onresult = async (event) => {
                 try {
@@ -247,22 +250,35 @@
 
             recognition.onerror = (event) => {
                 console.warn('SpeechRecognition error:', event.error);
+                const now = Date.now();
+                lastErrorTime = now;
+
                 // If the user denied permission or the service is unavailable,
                 // stop trying to restart.
                 if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                     shouldKeepListening = false;
+                    return;
+                }
+
+                // For transient errors (no-speech, audio-capture, network),
+                // increase the restart delay a bit to avoid rapid toggling.
+                if (event.error === 'no-speech' || event.error === 'audio-capture' || event.error === 'network') {
+                    restartDelayMs = Math.min(maxRestartDelayMs, restartDelayMs + 1000);
                 }
             };
 
             recognition.onend = () => {
                 // Auto-restart if we still want to listen (tab still open,
-                // permission granted, etc.)
+                // permission granted, etc.), but with a small delay so the
+                // mic indicator doesn't flicker rapidly.
                 if (shouldKeepListening) {
-                    try {
-                        recognition.start();
-                    } catch (e) {
-                        console.warn('Failed to restart SpeechRecognition:', e);
-                    }
+                    setTimeout(() => {
+                        try {
+                            recognition.start();
+                        } catch (e) {
+                            console.warn('Failed to restart SpeechRecognition:', e);
+                        }
+                    }, restartDelayMs);
                 }
             };
 
