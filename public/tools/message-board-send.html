@@ -99,6 +99,9 @@
         <div style="margin-top: 18px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
             <label>Her Responses (speech-to-text)</label>
             <div id="replies" style="max-height: 200px; overflow-y: auto; font-size: 0.9rem; color: #374151; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; background: #f9fafb;"></div>
+            <button id="clearRepliesBtn" class="secondary" style="margin-top: 8px; width: 100%; background: #4b5563;">
+                Clear Responses
+            </button>
         </div>
     </div>
 
@@ -131,6 +134,7 @@
         const clearBtn = document.getElementById('clearBtn');
         const statusEl = document.getElementById('status');
         const repliesDiv = document.getElementById('replies');
+        const clearRepliesBtn = document.getElementById('clearRepliesBtn');
 
         let unlocked = false;
 
@@ -230,6 +234,33 @@
             } finally {
                 sendBtn.disabled = false;
                 clearBtn.disabled = false;
+            }
+        });
+
+        clearRepliesBtn.addEventListener('click', async () => {
+            if (!unlocked) {
+                tryUnlock();
+                if (!unlocked) return;
+            }
+
+            if (!confirm('Clear all transcribed responses?')) {
+                return;
+            }
+
+            clearRepliesBtn.disabled = true;
+            setStatus('Clearing responses...', '');
+
+            try {
+                const snapshot = await db.collection('messageBoardReplies').get();
+                const batch = db.batch();
+                snapshot.forEach((doc) => batch.delete(doc.ref));
+                await batch.commit();
+                setStatus('Responses cleared.', 'ok');
+            } catch (err) {
+                console.error('Error clearing responses:', err);
+                setStatus('Error clearing responses.', 'error');
+            } finally {
+                clearRepliesBtn.disabled = false;
             }
         });
 
