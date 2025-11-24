@@ -70,6 +70,10 @@
         <button id="muteToggle" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #f10a0a; background: #000; color: #f10a0a;">
             🔊 Auto Read: ON
         </button>
+        &nbsp;&middot;&nbsp;
+        <button id="repliesToggle" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #4ade80; background: #000; color: #4ade80;">
+            🎤 Voice Replies: OFF
+        </button>
     </div>
     <div id="newBanner" class="new-banner">NEW MESSAGE</div>
     <div class="messages" id="messages"></div>
@@ -97,6 +101,7 @@
         const messagesDiv = document.getElementById('messages');
         const newBanner = document.getElementById('newBanner');
         const muteToggle = document.getElementById('muteToggle');
+        const repliesToggle = document.getElementById('repliesToggle');
         let newBannerTimeout = null;
 
         // Track whether automatic reading is enabled
@@ -212,16 +217,25 @@
         // ------------------------------------------------------------
         // Speech recognition: capture her spoken replies and send them
         // back as text to Firestore (messageBoardReplies collection).
+        // Activated manually via the Voice Replies toggle so other devices
+        // (like Ubuntu laptop) don't use the mic unless explicitly enabled.
         // ------------------------------------------------------------
 
-        (function setupSpeechRecognition() {
+        let recognition = null;
+        let recognitionActive = false;
+
+        function setupSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRecognition) {
                 console.warn('SpeechRecognition API not available in this browser. Reply transcription disabled.');
                 return;
             }
+            if (recognition) {
+                // Already set up
+                return;
+            }
 
-            const recognition = new SpeechRecognition();
+            recognition = new SpeechRecognition();
             recognition.continuous = true;
             recognition.interimResults = false;
             recognition.lang = 'en-US';
@@ -257,6 +271,7 @@
                 // stop trying to restart.
                 if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
                     shouldKeepListening = false;
+                    recognitionActive = false;
                     return;
                 }
 
@@ -275,6 +290,7 @@
                     setTimeout(() => {
                         try {
                             recognition.start();
+                            recognitionActive = true;
                         } catch (e) {
                             console.warn('Failed to restart SpeechRecognition:', e);
                         }
@@ -282,13 +298,42 @@
                 }
             };
 
-            // Initial start - will trigger a one-time permission prompt
+        }
+
+        function startVoiceReplies() {
+            setupSpeechRecognition();
+            if (!recognition || recognitionActive === true) return;
             try {
                 recognition.start();
+                recognitionActive = true;
             } catch (e) {
                 console.warn('Unable to start SpeechRecognition:', e);
             }
-        })();
+        }
+
+        function stopVoiceReplies() {
+            if (recognition && recognitionActive) {
+                try {
+                    recognition.stop();
+                } catch (e) {
+                    console.warn('Unable to stop SpeechRecognition:', e);
+                }
+            }
+            recognitionActive = false;
+        }
+        if (repliesToggle) {
+            repliesToggle.addEventListener('click', () => {
+                recognitionActive = !recognitionActive;
+                if (recognitionActive) {
+                    repliesToggle.textContent = '🎤 Voice Replies: ON';
+                    startVoiceReplies();
+                } else {
+                    repliesToggle.textContent = '🎤 Voice Replies: OFF';
+                    stopVoiceReplies();
+                }
+            });
+        }
+
         // Listen for new messages in real time
         db.collection('messageBoard')
           .orderBy('createdAt', 'asc')
