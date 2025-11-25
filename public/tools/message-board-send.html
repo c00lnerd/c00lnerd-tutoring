@@ -97,6 +97,20 @@
         <div id="status" class="status"></div>
 
         <div style="margin-top: 18px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
+            <label>Tasks</label>
+            <div style="display: flex; gap: 6px; margin-top: 4px; margin-bottom: 8px;">
+                <input id="taskInput" type="text" placeholder="New task..." style="flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #d1d5db; font-size: 0.9rem;" />
+                <button id="addTaskBtn" class="secondary" style="width: auto; padding-inline: 10px; background: #16a34a;">
+                    Add
+                </button>
+            </div>
+            <div id="tasksList" style="max-height: 160px; overflow-y: auto; font-size: 0.9rem; color: #374151; border: 1px solid #e5e7eb; border-radius: 8px; padding: 6px 8px; background: #f9fafb; margin-bottom: 10px;"></div>
+            <button id="clearTasksBtn" class="secondary" style="width: 100%; background: #6b7280;">
+                Clear All Tasks
+            </button>
+        </div>
+
+        <div style="margin-top: 12px; padding-top: 10px; border-top: 1px solid #e5e7eb;">
             <label>Her Responses (speech-to-text)</label>
             <div id="replies" style="max-height: 200px; overflow-y: auto; font-size: 0.9rem; color: #374151; border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; background: #f9fafb;"></div>
             <button id="clearRepliesBtn" class="secondary" style="margin-top: 8px; width: 100%; background: #4b5563;">
@@ -135,6 +149,10 @@
         const statusEl = document.getElementById('status');
         const repliesDiv = document.getElementById('replies');
         const clearRepliesBtn = document.getElementById('clearRepliesBtn');
+        const taskInput = document.getElementById('taskInput');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const tasksList = document.getElementById('tasksList');
+        const clearTasksBtn = document.getElementById('clearTasksBtn');
 
         let unlocked = false;
 
@@ -147,6 +165,71 @@
             if (!ts) return '';
             const d = ts.toDate ? ts.toDate() : new Date(ts);
             return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        }
+
+        // ------------------------
+        // Tasks helpers
+        // ------------------------
+
+        async function addTask() {
+            if (!taskInput) return;
+            const text = taskInput.value.trim();
+            if (!text) return;
+            try {
+                await db.collection('messageBoardTasks').add({
+                    text,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+                taskInput.value = '';
+            } catch (e) {
+                console.error('Error adding task:', e);
+                setStatus('Error adding task.', 'error');
+            }
+        }
+
+        function renderTasks(snapshot) {
+            if (!tasksList) return;
+            if (snapshot.empty) {
+                tasksList.textContent = 'No tasks yet.';
+                return;
+            }
+
+            tasksList.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const wrapper = document.createElement('div');
+                wrapper.style.display = 'flex';
+                wrapper.style.justifyContent = 'space-between';
+                wrapper.style.alignItems = 'flex-start';
+                wrapper.style.gap = '6px';
+                wrapper.style.marginBottom = '4px';
+
+                const textEl = document.createElement('div');
+                textEl.textContent = data.text || '';
+                textEl.style.flex = '1';
+
+                const delBtn = document.createElement('button');
+                delBtn.textContent = 'Delete';
+                delBtn.style.fontSize = '0.75rem';
+                delBtn.style.padding = '2px 6px';
+                delBtn.style.borderRadius = '999px';
+                delBtn.style.border = '1px solid #dc2626';
+                delBtn.style.background = '#fee2e2';
+                delBtn.style.color = '#991b1b';
+                delBtn.style.cursor = 'pointer';
+                delBtn.addEventListener('click', async () => {
+                    try {
+                        await doc.ref.delete();
+                    } catch (e) {
+                        console.error('Error deleting task:', e);
+                        setStatus('Error deleting task.', 'error');
+                    }
+                });
+
+                wrapper.appendChild(textEl);
+                wrapper.appendChild(delBtn);
+                tasksList.appendChild(wrapper);
+            });
         }
 
         function tryUnlock() {
@@ -263,6 +346,66 @@
                 clearRepliesBtn.disabled = false;
             }
         });
+
+        if (addTaskBtn) {
+            addTaskBtn.addEventListener('click', addTask);
+        }
+        if (taskInput) {
+            taskInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTask();
+                }
+            });
+        }
+
+        if (clearTasksBtn) {
+            clearTasksBtn.addEventListener('click', async () => {
+                if (!unlocked) {
+                    tryUnlock();
+                    if (!unlocked) return;
+                }
+
+                if (!confirm('Clear all tasks?')) {
+                    return;
+                }
+
+                clearTasksBtn.disabled = true;
+                setStatus('Clearing tasks...', '');
+
+                try {
+                    const snapshot = await db.collection('messageBoardTasks').get();
+                    const batch = db.batch();
+                    snapshot.forEach((doc) => batch.delete(doc.ref));
+                    await batch.commit();
+                    setStatus('Tasks cleared.', 'ok');
+                } catch (err) {
+                    console.error('Error clearing tasks:', err);
+                    setStatus('Error clearing tasks.', 'error');
+                } finally {
+                    clearTasksBtn.disabled = false;
+                }
+            });
+        }
+
+        // Listen for tasks in real time
+        db.collection('messageBoardTasks')
+          .orderBy('createdAt', 'asc')
+          .onSnapshot((snapshot) => {
+              try {
+                  renderTasks(snapshot);
+              } catch (e) {
+                  console.error('Error rendering tasks:', e);
+                  if (tasksList) {
+                      tasksList.textContent = 'Error displaying tasks.';
+                  }
+              }
+          }, (err) => {
+              console.error('Error loading tasks:', err);
+              if (tasksList) {
+                  tasksList.textContent = 'Error loading tasks.';
+              }
+          });
 
         // Listen for her transcribed replies in real time
         db.collection('messageBoardReplies')
