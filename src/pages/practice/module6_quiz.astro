@@ -138,10 +138,6 @@ import Layout from '../../layouts/Layout.astro';
         
         return true;
     }
-        } catch (error) {
-            console.error('Failed to initialize EmailJS:', error);
-        }
-    }
 </script>
 
 <style>
@@ -359,12 +355,19 @@ import Layout from '../../layouts/Layout.astro';
     }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
-<script type="text/javascript" is:inline>
-    // Wait for EmailJS to load before initializing
+<script is:inline>
+
+    // Utility function to shuffle array and track original indices
+    function shuffleAnswers(question) {
+        const originalOptions = [...question.options];
+
+    // ... (rest of the code remains the same)
+
+    // Initialize CAPTCHA on page load
     window.onload = function() {
-        try {
-            emailjs.init("ct_s19oZHppLy9BlW");
+        generateCaptcha();
+    }
+
     // CAPTCHA variables
     let captchaAnswer = 0;
     
@@ -392,62 +395,7 @@ import Layout from '../../layouts/Layout.astro';
         if (errorDiv) errorDiv.style.display = 'none';
         return true;
     }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }
-        } catch (error) {
-            console.error('Failed to initialize EmailJS:', error);
-        }
-    }
 </script>
-<script is:inline>
-
-    // Utility function to shuffle array and track original indices
-    function shuffleAnswers(question) {
-        const originalOptions = [...question.options];
         const correctAnswerIndex = question.correctAnswer;
         
         // Create array of indices
