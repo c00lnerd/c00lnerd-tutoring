@@ -360,42 +360,6 @@ import Layout from '../../layouts/Layout.astro';
     // Utility function to shuffle array and track original indices
     function shuffleAnswers(question) {
         const originalOptions = [...question.options];
-
-    // ... (rest of the code remains the same)
-
-    // Initialize CAPTCHA on page load
-    window.onload = function() {
-        generateCaptcha();
-    }
-
-    // CAPTCHA variables
-    let captchaAnswer = 0;
-    
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2;
-        }
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-</script>
         const correctAnswerIndex = question.correctAnswer;
         
         // Create array of indices
@@ -604,7 +568,7 @@ import Layout from '../../layouts/Layout.astro';
     // Initialize quiz state after questions are defined
     window.currentQuestion = 0;
     window.userAnswers = new Array(originalQuestions.length).fill(null);
-    window.questionAttempts = new Array(questions.length).fill(0);
+    window.questionAttempts = new Array(originalQuestions.length).fill(0);
 
     function startQuiz() {
 if (!validateSecurity()) return;
