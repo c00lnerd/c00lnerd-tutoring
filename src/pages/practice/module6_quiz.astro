@@ -22,6 +22,7 @@ import Layout from '../../layouts/Layout.astro';
             
             <!-- Honeypot field (hidden from users, visible to bots) -->
             <input type="text" id="website" name="website" style="display: none;" tabindex="-1" autocomplete="off">
+            <div id="cooldown-timer" class="cooldown-timer" style="display: none;"></div>
             <button class="control-button" id="start-quiz">Start Quiz</button>
         </div>
 
@@ -94,6 +95,39 @@ import Layout from '../../layouts/Layout.astro';
     }
     
     // Security validation function
+    let cooldownInterval = null;
+
+    function startCooldown(remainingMs) {
+        const cooldownDiv = document.getElementById('cooldown-timer');
+        const startButton = document.getElementById('start-quiz');
+        if (!cooldownDiv || !startButton) return;
+
+        // Clear any existing countdown
+        if (cooldownInterval) {
+            clearInterval(cooldownInterval);
+            cooldownInterval = null;
+        }
+
+        let remainingSeconds = Math.ceil(remainingMs / 1000);
+        cooldownDiv.style.display = 'block';
+        startButton.disabled = true;
+
+        const updateText = () => {
+            if (remainingSeconds <= 0) {
+                clearInterval(cooldownInterval);
+                cooldownInterval = null;
+                cooldownDiv.style.display = 'none';
+                startButton.disabled = false;
+                return;
+            }
+            cooldownDiv.textContent = `Please wait ${remainingSeconds} second${remainingSeconds === 1 ? '' : 's'} before starting another quiz attempt.`;
+            remainingSeconds--;
+        };
+
+        updateText();
+        cooldownInterval = setInterval(updateText, 1000);
+    }
+
     function validateSecurity() {
         // Check honeypot field (should be empty)
         const honeypot = document.getElementById('website');
@@ -106,10 +140,16 @@ import Layout from '../../layouts/Layout.astro';
         // Rate limiting check
         const lastSubmission = localStorage.getItem('lastQuizStart');
         const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
+        if (lastSubmission) {
+            const elapsed = now - parseInt(lastSubmission);
+            if (elapsed < 30000) { // 30 second cooldown
+                const remaining = 30000 - elapsed;
+                startCooldown(remaining);
+                alert('Please wait 30 seconds between quiz attempts.');
+                return false;
+            }
         }
+        
         localStorage.setItem('lastQuizStart', now.toString());
         
         // Validate CAPTCHA
@@ -354,6 +394,15 @@ import Layout from '../../layouts/Layout.astro';
         font-size: 0.9em;
         margin-top: 5px;
         font-weight: bold;
+    }
+    .cooldown-timer {
+        margin-top: 10px;
+        font-size: 0.95em;
+        color: #856404;
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+        padding: 8px 12px;
     }
 </style>
 
@@ -1063,77 +1112,55 @@ if (!validateSecurity()) return;
                 const emailStatus = document.getElementById('email-status');
                 emailStatus.style.display = 'block';
                 emailStatus.innerHTML = 'Sending results...';
-                
-                // Format email message
+
+                // Format email message (same style as Module 5, but for Module 6)
                 let emailMessage = `Physical Science Module 6 Quiz Results\n\n`;
                 emailMessage += `Student: ${emailInput.value}\n`;
                 emailMessage += `Quiz: Motion and Forces\n`;
                 emailMessage += `Score: ${score}/${questions.length} (${percentage}%)\n`;
                 emailMessage += `Percentage: ${percentage}%\n`;
                 emailMessage += `Date: ${new Date().toLocaleString()}\n\n`;
-                
+
                 // Add incorrect answers details
-                const incorrectAnswers = [];
-                questions.forEach((q, i) => {
-                    if (window.userAnswers[i] !== q.correctAnswer) {
-                        let userAnswerText = window.userAnswers[i] || 'Not answered';
-                        incorrectAnswers.push({
-                            question: q.question,
-                            userAnswer: userAnswerText,
-                            correctAnswer: q.correctAnswer
-                        });
+                const incorrectAnswers = window.userAnswers.reduce((list, answer, index) => {
+                    if (answer !== questions[index].correctAnswer) {
+                        const userAnswerText =
+                            answer === null || answer === undefined
+                                ? 'Not answered'
+                                : questions[index].options[answer];
+                        list.push(
+                            `Question: ${questions[index].question}\nYour Answer: ${userAnswerText}\nCorrect Answer: ${questions[index].options[questions[index].correctAnswer]}\nExplanation: ${questions[index].explanation}`
+                        );
                     }
-                });
-                
+                    return list;
+                }, []);
+
                 if (incorrectAnswers.length > 0) {
-                    emailMessage += "Incorrect Answers:\n\n";
-                    incorrectAnswers.forEach((item, index) => {
-                        emailMessage += `${index + 1}. ${item.question}\n`;
-                        emailMessage += `   Your answer: ${item.userAnswer}\n`;
-                        emailMessage += `   Correct answer: ${item.correctAnswer}\n\n`;
-                    });
+                    emailMessage += 'Incorrect Answers:\n\n' + incorrectAnswers.join('\n\n');
                 } else {
-                    emailMessage += "Perfect score! All answers were correct.\n";
+                    emailMessage += 'Perfect score! All answers were correct.\n';
                 }
-                
-                // Post to Google Sheets
-                const sheetsData = {
-                    timestamp: new Date().toISOString(),
+
+                // Send email via EmailJS using the same parameter structure as Module 5
+                const updatedTemplateParams = {
+                    from_name: 'Physical Science Quiz System',
                     student_email: emailInput.value,
-                    quiz_title: 'Physical Science Module 6: Motion and Forces',
-                    score: score,
-                    total_questions: questions.length,
-                    percentage: percentage
-                };
-                
-                const sheetsResponse = await fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(sheetsData)
-                });
-                
-                // Send email via EmailJS
-                const templateParams = {
-                    to_email: 'chuck@c00lnerd.com',
-                    student_email: emailInput.value,
+                    to_name: 'Instructor',
                     subject: 'Physical Science Module 6 Quiz Results',
-                    quiz_title: 'Physical Science Module 6: Motion and Forces',
-                    score: `${score}/${questions.length}`,
-                    percentage: `${percentage}%`,
-                    message: emailMessage
+                    submission_date: new Date().toLocaleString(),
+                    message: emailMessage,
+                    reply_to: emailInput.value
                 };
-                
-                await emailjs.send('service_ot1jg6s', 'template_0nxqbk8', templateParams);
-                
+
+                await emailjs.send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams);
+
                 emailStatus.innerHTML = '<span style="color: green;">✓ Results sent successfully to instructor!</span>';
-                
+                emailStatus.className = 'email-status success';
             } catch (error) {
                 console.error('Error sending results:', error);
                 const emailStatus = document.getElementById('email-status');
-                emailStatus.innerHTML = '<span style="color: red;">✗ Failed to send results. Please try again.</span>';
+                emailStatus.className = 'email-status error';
+                emailStatus.innerHTML = `<span style="color: red;">✗ Failed to send results via EmailJS. (${error && error.text ? error.text : 'See console for details'})</span>`;
             }
         }
     }
