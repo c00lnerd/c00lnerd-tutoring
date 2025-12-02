@@ -698,23 +698,12 @@
                                 return;
                             }
 
-                            const textParts = [];
-                            if (data.fromName) {
-                                textParts.push(`[From: ${data.fromName}]`);
-                            } else if (data.fromStation) {
-                                textParts.push(`[From: ${data.fromStation}]`);
-                            }
-                            if (toStation === 'all') {
-                                textParts.push('[To: all]');
-                            } else if (toStation) {
-                                textParts.push(`[To: ${toStation}]`);
-                            }
-
+                            const senderName = (data.fromName || data.fromStation || 'Unknown').trim();
                             const mainText = data.text || '';
 
                             const msgEl = document.createElement('div');
                             msgEl.className = 'message';
-                            msgEl.textContent = textParts.join(' ') + (textParts.length ? ' ' : '') + mainText;
+                            msgEl.textContent = senderName ? `${senderName}: ${mainText}` : mainText;
 
                             const tsEl = document.createElement('div');
                             tsEl.className = 'timestamp';
