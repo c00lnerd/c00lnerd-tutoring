@@ -169,6 +169,36 @@
             font-size: 0.8rem;
             cursor: pointer;
         }
+
+        .stations-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 4px 12px 8px 12px;
+            background: #050505;
+            border-bottom: 1px solid #1f2937;
+            font-size: 0.8rem;
+            align-items: center;
+            color: #9ca3af;
+        }
+        .stations-bar-label {
+            font-weight: 500;
+            margin-right: 4px;
+            color: #e5e7eb;
+        }
+        .station-chip {
+            padding: 2px 8px;
+            border-radius: 9999px;
+            border: 1px solid #4b5563;
+            background: #030712;
+            color: #e5e7eb;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+        .station-chip:hover {
+            border-color: #22c55e;
+            background: #022c22;
+        }
     </style>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -200,6 +230,10 @@
         <input id="toStation" type="text" placeholder="all or station id" />
         <input id="messageInput" type="text" placeholder="Type message..." style="flex:1; min-width:160px;" />
         <button id="sendMessageBtn">Send</button>
+    </div>
+    <div id="stationsBar" class="stations-bar">
+        <span class="stations-bar-label">Known stations:</span>
+        <span id="stationsEmpty" style="font-size:0.75rem; color:#6b7280;">(none yet)</span>
     </div>
     <div id="newBanner" class="new-banner">NEW MESSAGE</div>
     <div class="main-layout">
@@ -248,6 +282,8 @@
         const toStationInput = document.getElementById('toStation');
         const messageInputEl = document.getElementById('messageInput');
         const sendMessageBtn = document.getElementById('sendMessageBtn');
+        const stationsBar = document.getElementById('stationsBar');
+        const stationsEmpty = document.getElementById('stationsEmpty');
         let newBannerTimeout = null;
 
         // Track whether automatic reading is enabled
@@ -258,6 +294,7 @@
         let currentStationId = '';
         let currentDisplayName = '';
         let intercomUnsubscribe = null;
+        const knownStations = new Set();
 
         if (muteToggle) {
             muteToggle.addEventListener('click', () => {
@@ -626,6 +663,10 @@
             messagesDiv.innerHTML = '';
             renderEmptyState();
 
+            // Reset known stations when switching households
+            knownStations.clear();
+            renderKnownStations();
+
             try {
                 intercomUnsubscribe = db.collection('intercomMessages')
                     .where('householdId', '==', currentHouseholdId)
@@ -640,6 +681,16 @@
 
                         snapshot.forEach((doc) => {
                             const data = doc.data();
+
+                            // Track known stations from fromStation and toStation
+                            const fromStation = (data.fromStation || '').trim();
+                            const toStationRaw = (data.toStation || '').trim();
+                            if (fromStation && fromStation !== currentStationId) {
+                                knownStations.add(fromStation);
+                            }
+                            if (toStationRaw && toStationRaw.toLowerCase() !== 'all' && toStationRaw !== currentStationId) {
+                                knownStations.add(toStationRaw);
+                            }
 
                             // Only show messages for this station or broadcasts
                             const toStation = (data.toStation || 'all').trim();
@@ -672,6 +723,8 @@
                             msgEl.appendChild(tsEl);
                             messagesDiv.appendChild(msgEl);
                         });
+
+                        renderKnownStations();
 
                         scrollToBottom();
 
@@ -758,6 +811,45 @@
                     e.preventDefault();
                     sendIntercomMessage();
                 }
+            });
+        }
+
+        function renderKnownStations() {
+            if (!stationsBar) return;
+
+            // Remove previous chips but keep the label element
+            const chips = stationsBar.querySelectorAll('.station-chip');
+            chips.forEach(chip => chip.remove());
+
+            const stations = Array.from(knownStations).sort();
+
+            if (stationsEmpty) {
+                stationsEmpty.style.display = stations.length === 0 ? 'inline' : 'none';
+            }
+
+            // Always include an 'all' chip for broadcast
+            const allChip = document.createElement('button');
+            allChip.type = 'button';
+            allChip.className = 'station-chip';
+            allChip.textContent = 'all';
+            allChip.addEventListener('click', () => {
+                if (toStationInput) {
+                    toStationInput.value = 'all';
+                }
+            });
+            stationsBar.appendChild(allChip);
+
+            stations.forEach((stationId) => {
+                const chip = document.createElement('button');
+                chip.type = 'button';
+                chip.className = 'station-chip';
+                chip.textContent = stationId;
+                chip.addEventListener('click', () => {
+                    if (toStationInput) {
+                        toStationInput.value = stationId;
+                    }
+                });
+                stationsBar.appendChild(chip);
             });
         }
 
