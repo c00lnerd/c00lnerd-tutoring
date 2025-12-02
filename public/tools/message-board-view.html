@@ -135,6 +135,40 @@
             cursor: pointer;
             white-space: nowrap;
         }
+
+        /* Intercom controls */
+        .intercom-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #050505;
+            border-bottom: 1px solid #333;
+            font-size: 0.85rem;
+            align-items: center;
+        }
+        .intercom-bar label {
+            color: #e5e7eb;
+            margin-right: 4px;
+            font-weight: 500;
+        }
+        .intercom-bar input {
+            padding: 3px 6px;
+            border-radius: 4px;
+            border: 1px solid #4b5563;
+            background: #020617;
+            color: #e5e7eb;
+            font-size: 0.8rem;
+        }
+        .intercom-bar button {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #22c55e;
+            background: #022c22;
+            color: #bbf7d0;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
     </style>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -153,6 +187,19 @@
         <button id="repliesToggle" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #4ade80; background: #000; color: #4ade80;">
             🎤 Voice Replies: OFF
         </button>
+    </div>
+    <div class="intercom-bar">
+        <label for="householdId">Household:</label>
+        <input id="householdId" type="text" placeholder="smith_home" />
+        <label for="stationId">Station:</label>
+        <input id="stationId" type="text" placeholder="bedside" />
+        <label for="displayName">Name:</label>
+        <input id="displayName" type="text" placeholder="Bedside Chromebook" />
+        <button id="saveIdentityBtn">Save</button>
+        <label for="toStation" style="margin-left:12px;">To:</label>
+        <input id="toStation" type="text" placeholder="all or station id" />
+        <input id="messageInput" type="text" placeholder="Type message..." style="flex:1; min-width:160px;" />
+        <button id="sendMessageBtn">Send</button>
     </div>
     <div id="newBanner" class="new-banner">NEW MESSAGE</div>
     <div class="main-layout">
@@ -194,10 +241,23 @@
         const taskInput = document.getElementById('taskInput');
         const addTaskBtn = document.getElementById('addTaskBtn');
         const tasksList = document.getElementById('tasksList');
+        const householdInput = document.getElementById('householdId');
+        const stationInput = document.getElementById('stationId');
+        const displayNameInput = document.getElementById('displayName');
+        const saveIdentityBtn = document.getElementById('saveIdentityBtn');
+        const toStationInput = document.getElementById('toStation');
+        const messageInputEl = document.getElementById('messageInput');
+        const sendMessageBtn = document.getElementById('sendMessageBtn');
         let newBannerTimeout = null;
 
         // Track whether automatic reading is enabled
         let isMuted = false;
+
+        // Intercom identity state
+        let currentHouseholdId = '';
+        let currentStationId = '';
+        let currentDisplayName = '';
+        let intercomUnsubscribe = null;
 
         if (muteToggle) {
             muteToggle.addEventListener('click', () => {
@@ -213,6 +273,48 @@
                     }
                 }
             });
+        }
+
+        function loadIdentityFromStorage() {
+            try {
+                const stored = JSON.parse(localStorage.getItem('intercomIdentity') || '{}');
+                currentHouseholdId = stored.householdId || '';
+                currentStationId = stored.stationId || '';
+                currentDisplayName = stored.displayName || '';
+
+                if (householdInput) householdInput.value = currentHouseholdId;
+                if (stationInput) stationInput.value = currentStationId;
+                if (displayNameInput) displayNameInput.value = currentDisplayName;
+            } catch (e) {
+                console.warn('Unable to load intercom identity from storage:', e);
+            }
+        }
+
+        function saveIdentity() {
+            currentHouseholdId = (householdInput?.value || '').trim();
+            currentStationId = (stationInput?.value || '').trim();
+            currentDisplayName = (displayNameInput?.value || '').trim();
+
+            if (!currentHouseholdId || !currentStationId) {
+                alert('Please enter both Household and Station.');
+                return;
+            }
+
+            try {
+                localStorage.setItem('intercomIdentity', JSON.stringify({
+                    householdId: currentHouseholdId,
+                    stationId: currentStationId,
+                    displayName: currentDisplayName,
+                }));
+            } catch (e) {
+                console.warn('Unable to save intercom identity to storage:', e);
+            }
+
+            setupIntercomListener();
+        }
+
+        if (saveIdentityBtn) {
+            saveIdentityBtn.addEventListener('click', saveIdentity);
         }
 
         function renderEmptyState() {
@@ -506,65 +608,164 @@
               }
           });
 
-        // Listen for new messages in real time
-        db.collection('messageBoard')
-          .orderBy('createdAt', 'asc')
-          .onSnapshot((snapshot) => {
-              if (snapshot.empty) {
-                  renderEmptyState();
-                  return;
-              }
+        function setupIntercomListener() {
+            if (!currentHouseholdId) {
+                renderEmptyState();
+                return;
+            }
 
-              messagesDiv.innerHTML = '';
+            if (intercomUnsubscribe) {
+                try {
+                    intercomUnsubscribe();
+                } catch (e) {
+                    console.warn('Error unsubscribing previous intercom listener:', e);
+                }
+                intercomUnsubscribe = null;
+            }
 
-              // Rebuild the list of messages in order
-              snapshot.forEach((doc) => {
-                  const data = doc.data();
-                  const msgEl = document.createElement('div');
-                  msgEl.className = 'message';
-                  msgEl.textContent = data.text || '';
+            messagesDiv.innerHTML = '';
+            renderEmptyState();
 
-                  const tsEl = document.createElement('div');
-                  tsEl.className = 'timestamp';
-                  tsEl.textContent = formatTimestamp(data.createdAt);
+            try {
+                intercomUnsubscribe = db.collection('intercomMessages')
+                    .where('householdId', '==', currentHouseholdId)
+                    .orderBy('createdAt', 'asc')
+                    .onSnapshot((snapshot) => {
+                        if (snapshot.empty) {
+                            renderEmptyState();
+                            return;
+                        }
 
-                  msgEl.appendChild(tsEl);
-                  messagesDiv.appendChild(msgEl);
-              });
+                        messagesDiv.innerHTML = '';
 
-              scrollToBottom();
+                        snapshot.forEach((doc) => {
+                            const data = doc.data();
 
-              // Only play the beep when auto-read is OFF (muted)
-              if (isMuted) {
-                  playBeep();
-              }
+                            // Only show messages for this station or broadcasts
+                            const toStation = (data.toStation || 'all').trim();
+                            if (currentStationId && toStation !== 'all' && toStation !== currentStationId) {
+                                return;
+                            }
 
-              // Auto-read only newly added messages since the last snapshot
-              snapshot.docChanges().forEach((change) => {
-                  if (change.type === 'added') {
-                      const doc = change.doc;
-                      const data = doc.data();
-                      const id = doc.id;
-                      if (!spokenMessageIds.has(id)) {
-                          spokenMessageIds.add(id);
-                          speakMessage(data.text || '');
-                      }
-                  }
-              });
+                            const textParts = [];
+                            if (data.fromName) {
+                                textParts.push(`[From: ${data.fromName}]`);
+                            } else if (data.fromStation) {
+                                textParts.push(`[From: ${data.fromStation}]`);
+                            }
+                            if (toStation === 'all') {
+                                textParts.push('[To: all]');
+                            } else if (toStation) {
+                                textParts.push(`[To: ${toStation}]`);
+                            }
 
-              if (newBanner) {
-                  newBanner.style.display = 'block';
-                  if (newBannerTimeout) {
-                      clearTimeout(newBannerTimeout);
-                  }
-                  newBannerTimeout = setTimeout(() => {
-                      newBanner.style.display = 'none';
-                  }, 3000);
-              }
-          }, (err) => {
-              console.error('Error listening for messages:', err);
-              messagesDiv.innerHTML = '<div class="empty-state">Error loading messages.</div>';
-          });
+                            const mainText = data.text || '';
+
+                            const msgEl = document.createElement('div');
+                            msgEl.className = 'message';
+                            msgEl.textContent = textParts.join(' ') + (textParts.length ? ' ' : '') + mainText;
+
+                            const tsEl = document.createElement('div');
+                            tsEl.className = 'timestamp';
+                            tsEl.textContent = formatTimestamp(data.createdAt);
+
+                            msgEl.appendChild(tsEl);
+                            messagesDiv.appendChild(msgEl);
+                        });
+
+                        scrollToBottom();
+
+                        // Only play the beep when auto-read is OFF (muted)
+                        if (isMuted) {
+                            playBeep();
+                        }
+
+                        // Auto-read only newly added messages since the last snapshot
+                        snapshot.docChanges().forEach((change) => {
+                            if (change.type === 'added') {
+                                const doc = change.doc;
+                                const data = doc.data();
+                                const id = doc.id;
+
+                                const toStation = (data.toStation || 'all').trim();
+                                if (currentStationId && toStation !== 'all' && toStation !== currentStationId) {
+                                    return;
+                                }
+
+                                if (!spokenMessageIds.has(id)) {
+                                    spokenMessageIds.add(id);
+                                    speakMessage(data.text || '');
+                                }
+                            }
+                        });
+
+                        if (newBanner) {
+                            newBanner.style.display = 'block';
+                            if (newBannerTimeout) {
+                                clearTimeout(newBannerTimeout);
+                            }
+                            newBannerTimeout = setTimeout(() => {
+                                newBanner.style.display = 'none';
+                            }, 3000);
+                        }
+                    }, (err) => {
+                        console.error('Error listening for intercom messages:', err);
+                        messagesDiv.innerHTML = '<div class="empty-state">Error loading messages.</div>';
+                    });
+            } catch (e) {
+                console.error('Failed to set up intercom listener:', e);
+                messagesDiv.innerHTML = '<div class="empty-state">Error setting up intercom listener.</div>';
+            }
+        }
+
+        async function sendIntercomMessage() {
+            if (!currentHouseholdId || !currentStationId) {
+                alert('Please set and save Household and Station first.');
+                return;
+            }
+
+            const text = (messageInputEl?.value || '').trim();
+            if (!text) return;
+
+            const toStationRaw = (toStationInput?.value || '').trim();
+            const toStation = toStationRaw || 'all';
+
+            try {
+                await db.collection('intercomMessages').add({
+                    householdId: currentHouseholdId,
+                    fromStation: currentStationId,
+                    fromName: currentDisplayName || currentStationId,
+                    toStation,
+                    text,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+
+                if (messageInputEl) {
+                    messageInputEl.value = '';
+                }
+            } catch (e) {
+                console.warn('Error sending intercom message:', e);
+            }
+        }
+
+        if (sendMessageBtn) {
+            sendMessageBtn.addEventListener('click', sendIntercomMessage);
+        }
+
+        if (messageInputEl) {
+            messageInputEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendIntercomMessage();
+                }
+            });
+        }
+
+        // Initial setup: load identity and, if available, start listening
+        loadIdentityFromStorage();
+        if (currentHouseholdId && currentStationId) {
+            setupIntercomListener();
+        }
     </script>
 </body>
 </html>

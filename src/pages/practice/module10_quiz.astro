@@ -22,6 +22,7 @@ import Layout from '../../layouts/Layout.astro';
             
             <!-- Honeypot field (hidden from users, visible to bots) -->
             <input type="text" id="website" name="website" style="display: none;" tabindex="-1" autocomplete="off">
+            <div id="cooldown-timer" class="cooldown-timer" style="display: none;"></div>
             <button class="control-button" id="start-quiz">Start Quiz</button>
         </div>
 
@@ -210,6 +211,15 @@ import Layout from '../../layouts/Layout.astro';
         margin-top: 5px;
         font-weight: bold;
     }
+    .cooldown-timer {
+        margin-top: 10px;
+        font-size: 0.95em;
+        color: #856404;
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        border-radius: 4px;
+        padding: 8px 12px;
+    }
 </style>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
@@ -247,6 +257,38 @@ import Layout from '../../layouts/Layout.astro';
     }
     
     // Security validation function
+    let cooldownInterval = null;
+
+    function startCooldown(remainingMs) {
+        const cooldownDiv = document.getElementById('cooldown-timer');
+        const startButton = document.getElementById('start-quiz');
+        if (!cooldownDiv || !startButton) return;
+
+        if (cooldownInterval) {
+            clearInterval(cooldownInterval);
+            cooldownInterval = null;
+        }
+
+        let remainingSeconds = Math.ceil(remainingMs / 1000);
+        cooldownDiv.style.display = 'block';
+        startButton.disabled = true;
+
+        const updateText = () => {
+            if (remainingSeconds <= 0) {
+                clearInterval(cooldownInterval);
+                cooldownInterval = null;
+                cooldownDiv.style.display = 'none';
+                startButton.disabled = false;
+                return;
+            }
+            cooldownDiv.textContent = `Please wait ${remainingSeconds} second${remainingSeconds === 1 ? '' : 's'} before starting another quiz attempt.`;
+            remainingSeconds--;
+        };
+
+        updateText();
+        cooldownInterval = setInterval(updateText, 1000);
+    }
+
     function validateSecurity() {
         // Check honeypot field (should be empty)
         const honeypot = document.getElementById('website');
@@ -259,9 +301,14 @@ import Layout from '../../layouts/Layout.astro';
         // Rate limiting check
         const lastSubmission = localStorage.getItem('lastQuizStart');
         const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
+        if (lastSubmission) {
+            const elapsed = now - parseInt(lastSubmission);
+            if (elapsed < 30000) { // 30 second cooldown
+                const remaining = 30000 - elapsed;
+                startCooldown(remaining);
+                alert('Please wait 30 seconds between quiz attempts.');
+                return false;
+            }
         }
         localStorage.setItem('lastQuizStart', now.toString());
         
@@ -883,7 +930,7 @@ import Layout from '../../layouts/Layout.astro';
         return true;
     }
             
-            // Prepare results data
+            // Prepare results data and format email message similar to Module 6
             const incorrectQuestions = window.questions
                 .map((question, index) => {
                     const userAnswer = window.userAnswers[index];
@@ -898,8 +945,7 @@ import Layout from '../../layouts/Layout.astro';
                     return null;
                 })
                 .filter(q => q !== null);
-            
-            // Format email message like other working quizzes
+
             let emailMessage = `Physical Science Module 10 Quiz Results\n\n`;
             emailMessage += `Student: ${email}\n`;
             emailMessage += `Quiz: Module 10\n`;
@@ -917,7 +963,7 @@ import Layout from '../../layouts/Layout.astro';
             } else {
                 emailMessage += "Perfect score! All answers were correct.\n";
             }
-            
+
             // Post to Google Sheets first
             const sheetsData = {
                 timestamp: new Date().toISOString(),
@@ -944,25 +990,27 @@ import Layout from '../../layouts/Layout.astro';
             });
 
             // Send EmailJS notification to instructor with standardized format
-            const templateParams = {
+            const updatedTemplateParams = {
                 from_name: 'Physical Science Quiz System',
                 student_email: email,
                 to_name: 'Instructor',
                 subject: 'Physical Science Module 10 Quiz Results',
+                submission_date: new Date().toLocaleString(),
                 message: emailMessage,
                 reply_to: email
             };
 
-            emailjs.send('service_ot1jg6s', 'template_0nxqbk8', templateParams)
-            .then(function(response) {
-                emailStatus.textContent = '✅ Results sent to instructor via email! ✅ Data logged to Google Sheets';
-                emailStatus.className = 'email-status success';
-            })
-            .catch(function(error) {
-                emailStatus.textContent = 'Failed to send results. Please try again or contact your instructor.';
-                emailStatus.className = 'email-status error';
-                console.error('EmailJS error:', error);
-            });
+            emailjs
+                .send('service_ot1jg6s', 'template_0nxqbk8', updatedTemplateParams)
+                .then(() => {
+                    emailStatus.textContent = '✓ Results sent successfully to instructor!';
+                    emailStatus.className = 'email-status success';
+                })
+                .catch(error => {
+                    console.error('Error sending results:', error);
+                    emailStatus.textContent = '✗ Failed to send results via EmailJS. Please try again or contact your instructor.';
+                    emailStatus.className = 'email-status error';
+                });
         } else {
             emailStatus.textContent = 'Email service not available. Please download your results and send them to your instructor.';
             emailStatus.className = 'email-status error';
