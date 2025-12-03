@@ -221,6 +221,10 @@
         <button id="clearMessagesBtn" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #facc15; background: #000; color: #facc15;">
             🧹 Clear Messages
         </button>
+        &nbsp;&middot;&nbsp;
+        <button id="clearRepliesBtn" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #a5b4fc; background: #000; color: #a5b4fc;">
+            🧽 Clear Replies
+        </button>
     </div>
     <div class="intercom-bar">
         <label for="householdId">Household:</label>
@@ -280,6 +284,7 @@
         const muteToggle = document.getElementById('muteToggle');
         const repliesToggle = document.getElementById('repliesToggle');
         const clearMessagesBtn = document.getElementById('clearMessagesBtn');
+        const clearRepliesBtn = document.getElementById('clearRepliesBtn');
         const taskInput = document.getElementById('taskInput');
         const addTaskBtn = document.getElementById('addTaskBtn');
         const tasksList = document.getElementById('tasksList');
@@ -717,6 +722,32 @@
 
         if (clearMessagesBtn) {
             clearMessagesBtn.addEventListener('click', clearIntercomMessages);
+        }
+
+        async function clearTranscribedReplies() {
+            const confirmed = window.confirm('Clear all transcribed replies? This cannot be undone.');
+            if (!confirmed) return;
+
+            try {
+                const snapshot = await db.collection('messageBoardReplies').get();
+                const batch = db.batch();
+                snapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+
+                if (repliesList) {
+                    repliesList.innerHTML = '';
+                    repliesList.textContent = 'No replies yet.';
+                }
+            } catch (e) {
+                console.error('Error clearing replies:', e);
+                alert('Failed to clear replies. See console for details.');
+            }
+        }
+
+        if (clearRepliesBtn) {
+            clearRepliesBtn.addEventListener('click', clearTranscribedReplies);
         }
 
         // Listen for tasks in real time
