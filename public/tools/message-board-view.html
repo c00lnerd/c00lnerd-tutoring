@@ -303,7 +303,9 @@
         let currentStationId = '';
         let currentDisplayName = '';
         let intercomUnsubscribe = null;
+        let stationsUnsubscribe = null;
         const knownStations = new Set();
+        const stationDisplayNames = new Map();
 
         if (muteToggle) {
             muteToggle.addEventListener('click', () => {
@@ -354,6 +356,22 @@
                 }));
             } catch (e) {
                 console.warn('Unable to save intercom identity to storage:', e);
+            }
+            // Also register this station in Firestore so others can see it
+            if (currentHouseholdId && currentStationId) {
+                try {
+                    const stationDocId = `${currentHouseholdId}_${currentStationId}`;
+                    db.collection('intercomStations').doc(stationDocId).set({
+                        householdId: currentHouseholdId,
+                        stationId: currentStationId,
+                        displayName: currentDisplayName || currentStationId,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    }, { merge: true }).catch((e) => {
+                        console.warn('Unable to save intercom station registry entry:', e);
+                    });
+                } catch (e) {
+                    console.warn('Error registering station in intercomStations:', e);
+                }
             }
 
             setupIntercomListener();
@@ -748,12 +766,48 @@
                 intercomUnsubscribe = null;
             }
 
+            if (stationsUnsubscribe) {
+                try {
+                    stationsUnsubscribe();
+                } catch (e) {
+                    console.warn('Error unsubscribing previous stations listener:', e);
+                }
+                stationsUnsubscribe = null;
+            }
+
             messagesDiv.innerHTML = '';
             renderEmptyState();
 
             // Reset known stations when switching households
             knownStations.clear();
+            stationDisplayNames.clear();
             renderKnownStations();
+
+            // Listen for registered stations for this household
+            try {
+                stationsUnsubscribe = db.collection('intercomStations')
+                    .where('householdId', '==', currentHouseholdId)
+                    .orderBy('stationId', 'asc')
+                    .onSnapshot((snapshot) => {
+                        knownStations.clear();
+                        stationDisplayNames.clear();
+                        snapshot.forEach((doc) => {
+                            const data = doc.data();
+                            const sid = (data.stationId || '').trim();
+                            if (sid && sid !== currentStationId) {
+                                knownStations.add(sid);
+                                if (data.displayName) {
+                                    stationDisplayNames.set(sid, data.displayName);
+                                }
+                            }
+                        });
+                        renderKnownStations();
+                    }, (err) => {
+                        console.error('Error listening for stations:', err);
+                    });
+            } catch (e) {
+                console.error('Failed to set up stations listener:', e);
+            }
 
             try {
                 intercomUnsubscribe = db.collection('intercomMessages')
@@ -769,16 +823,6 @@
 
                         snapshot.forEach((doc) => {
                             const data = doc.data();
-
-                            // Track known stations from fromStation and toStation
-                            const fromStation = (data.fromStation || '').trim();
-                            const toStationRaw = (data.toStation || '').trim();
-                            if (fromStation && fromStation !== currentStationId) {
-                                knownStations.add(fromStation);
-                            }
-                            if (toStationRaw && toStationRaw.toLowerCase() !== 'all' && toStationRaw !== currentStationId) {
-                                knownStations.add(toStationRaw);
-                            }
 
                             // Only show messages for this station or broadcasts
                             const toStation = (data.toStation || 'all').trim();
@@ -800,8 +844,6 @@
                             msgEl.appendChild(tsEl);
                             messagesDiv.appendChild(msgEl);
                         });
-
-                        renderKnownStations();
 
                         scrollToBottom();
 
@@ -859,6 +901,11 @@
 
             const toStationRaw = (toStationInput?.value || '').trim();
             const toStation = toStationRaw || 'all';
+
+            if (toStation !== 'all' && !knownStations.has(toStation)) {
+                alert(`Station "${toStation}" does not exist in this household. Please choose a station from the Known stations list or use "all".`);
+                return;
+            }
 
             try {
                 await db.collection('intercomMessages').add({
@@ -920,12 +967,39 @@
                 const chip = document.createElement('button');
                 chip.type = 'button';
                 chip.className = 'station-chip';
-                chip.textContent = stationId;
-                chip.addEventListener('click', () => {
-                    if (toStationInput) {
-                        toStationInput.value = stationId;
+                const displayName = stationDisplayNames.get(stationId) || stationId;
+                chip.title = displayName;
+
+                const labelSpan = document.createElement('span');
+                labelSpan.textContent = stationId;
+                labelSpan.style.marginRight = '4px';
+
+                const deleteSpan = document.createElement('span');
+                deleteSpan.textContent = '×';
+                deleteSpan.style.cursor = 'pointer';
+                deleteSpan.style.color = '#fca5a5';
+
+                chip.appendChild(labelSpan);
+                chip.appendChild(deleteSpan);
+
+                chip.addEventListener('click', (e) => {
+                    // If the delete icon was clicked, handle deletion instead
+                    if (e.target === deleteSpan) {
+                        e.stopPropagation();
+                        if (!currentHouseholdId) return;
+                        const confirmed = window.confirm(`Remove station "${stationId}" from this household?`);
+                        if (!confirmed) return;
+                        const stationDocId = `${currentHouseholdId}_${stationId}`;
+                        db.collection('intercomStations').doc(stationDocId).delete().catch((err) => {
+                            console.warn('Error deleting station from registry:', err);
+                        });
+                    } else {
+                        if (toStationInput) {
+                            toStationInput.value = stationId;
+                        }
                     }
                 });
+
                 stationsBar.appendChild(chip);
             });
         }
