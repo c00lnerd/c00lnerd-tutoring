@@ -249,6 +249,9 @@
                 <button id="addTaskBtn">Add</button>
             </div>
             <div id="tasksList" class="tasks-list"></div>
+
+            <div class="tasks-title" style="margin-top:10px;">Transcribed Replies</div>
+            <div id="repliesList" class="tasks-list" style="margin-top:4px; max-height:40vh;"></div>
         </div>
     </div>
 
@@ -280,6 +283,7 @@
         const taskInput = document.getElementById('taskInput');
         const addTaskBtn = document.getElementById('addTaskBtn');
         const tasksList = document.getElementById('tasksList');
+        const repliesList = document.getElementById('repliesList');
         const householdInput = document.getElementById('householdId');
         const stationInput = document.getElementById('stationId');
         const displayNameInput = document.getElementById('displayName');
@@ -447,6 +451,34 @@
                 wrapper.appendChild(textEl);
                 wrapper.appendChild(deleteBtn);
                 tasksList.appendChild(wrapper);
+            });
+        }
+
+        function renderReplies(snapshot) {
+            if (!repliesList) return;
+            if (snapshot.empty) {
+                repliesList.textContent = 'No replies yet.';
+                return;
+            }
+
+            repliesList.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                const wrapper = document.createElement('div');
+                wrapper.className = 'task-item';
+
+                const textEl = document.createElement('div');
+                textEl.className = 'task-text';
+                textEl.textContent = data.text || '';
+
+                const tsEl = document.createElement('div');
+                tsEl.className = 'timestamp';
+                tsEl.style.fontSize = '0.7rem';
+                tsEl.textContent = formatTimestamp(data.createdAt);
+
+                wrapper.appendChild(textEl);
+                wrapper.appendChild(tsEl);
+                repliesList.appendChild(wrapper);
             });
         }
         function playBeep() {
@@ -682,6 +714,22 @@
               console.error('Error listening for tasks:', err);
               if (tasksList) {
                   tasksList.textContent = 'Error loading tasks.';
+              }
+          });
+
+        // Listen for transcribed replies in real time
+        db.collection('messageBoardReplies')
+          .orderBy('createdAt', 'asc')
+          .onSnapshot((snapshot) => {
+              try {
+                  renderReplies(snapshot);
+              } catch (e) {
+                  console.warn('Error rendering replies:', e);
+              }
+          }, (err) => {
+              console.error('Error listening for replies:', err);
+              if (repliesList) {
+                  repliesList.textContent = 'Error loading replies.';
               }
           });
 
