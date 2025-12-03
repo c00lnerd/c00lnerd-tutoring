@@ -217,6 +217,10 @@
         <button id="repliesToggle" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #4ade80; background: #000; color: #4ade80;">
             🎤 Voice Replies: OFF
         </button>
+        &nbsp;&middot;&nbsp;
+        <button id="clearMessagesBtn" style="margin-left: 12px; padding: 4px 10px; font-size: 0.9rem; cursor: pointer; border-radius: 4px; border: 1px solid #facc15; background: #000; color: #facc15;">
+            🧹 Clear Messages
+        </button>
     </div>
     <div class="intercom-bar">
         <label for="householdId">Household:</label>
@@ -272,6 +276,7 @@
         const newBanner = document.getElementById('newBanner');
         const muteToggle = document.getElementById('muteToggle');
         const repliesToggle = document.getElementById('repliesToggle');
+        const clearMessagesBtn = document.getElementById('clearMessagesBtn');
         const taskInput = document.getElementById('taskInput');
         const addTaskBtn = document.getElementById('addTaskBtn');
         const tasksList = document.getElementById('tasksList');
@@ -627,6 +632,41 @@
                     stopVoiceReplies();
                 }
             });
+        }
+
+        async function clearIntercomMessages() {
+            if (!currentHouseholdId) {
+                alert('Please set and save a Household before clearing messages.');
+                return;
+            }
+
+            const confirmed = window.confirm(`Clear all messages for household "${currentHouseholdId}"? This cannot be undone.`);
+            if (!confirmed) return;
+
+            try {
+                const snapshot = await db.collection('intercomMessages')
+                    .where('householdId', '==', currentHouseholdId)
+                    .get();
+
+                const batch = db.batch();
+                snapshot.forEach((doc) => {
+                    batch.delete(doc.ref);
+                });
+
+                await batch.commit();
+
+                // Local UI cleanup; listener will also see an empty snapshot.
+                messagesDiv.innerHTML = '';
+                renderEmptyState();
+                spokenMessageIds.clear();
+            } catch (e) {
+                console.error('Error clearing intercom messages:', e);
+                alert('Failed to clear messages. See console for details.');
+            }
+        }
+
+        if (clearMessagesBtn) {
+            clearMessagesBtn.addEventListener('click', clearIntercomMessages);
         }
 
         // Listen for tasks in real time
