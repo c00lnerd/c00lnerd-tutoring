@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Gym Workout Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: #ffffff;
+            padding: 28px 24px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: minmax(0, 320px) minmax(0, 1fr);
+            gap: 24px;
+            padding: 24px;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 5px solid #4caf50;
+        }
+
+        .controls h2 {
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            color: #333333;
+        }
+
+        .field {
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #444444;
+        }
+
+        .field small {
+            display: block;
+            font-size: 0.8rem;
+            color: #777777;
+            margin-bottom: 3px;
+        }
+
+        select,
+        input[type="number"] {
+            width: 100%;
+            padding: 9px 11px;
+            border-radius: 8px;
+            border: 2px solid #dddddd;
+            font-size: 0.95rem;
+        }
+
+        select:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+
+        .equipment-list {
+            margin-top: 10px;
+            padding: 10px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px dashed #c8e6c9;
+            font-size: 0.85rem;
+            color: #444444;
+        }
+
+        .btn-primary {
+            width: 100%;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #4caf50, #43a047);
+            color: #ffffff;
+            border: none;
+            padding: 11px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-secondary {
+            margin-top: 8px;
+            width: 100%;
+            background: #ffffff;
+            color: #4caf50;
+            border: 2px solid #c8e6c9;
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .output {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px 22px;
+            border-left: 5px solid #2196f3;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .wod-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e0e0e0;
+        }
+
+        .wod-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .wod-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e88e5;
+        }
+
+        .wod-meta {
+            font-size: 0.85rem;
+            color: #666666;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-top: 10px;
+            margin-bottom: 4px;
+            color: #333333;
+        }
+
+        .wod-list {
+            margin-left: 18px;
+            margin-bottom: 4px;
+        }
+
+        .wod-list li {
+            margin-bottom: 3px;
+        }
+
+        .notes {
+            font-size: 0.85rem;
+            color: #666666;
+            margin-top: 6px;
+        }
+
+        .history {
+            font-size: 0.85rem;
+            color: #555555;
+        }
+
+        .history-item {
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px dashed #cccccc;
+        }
+
+        @media (max-width: 900px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏋️‍♂️ Home Gym Workout Generator</h1>
+            <p>Generate Y-style strength and metcon sessions using only your home equipment.</p>
+        </div>
+
+        <div class="content">
+            <div class="controls">
+                <h2>Plan Todays Session</h2>
+
+                <div class="field">
+                    <label for="type">Workout Type</label>
+                    <small>Strength focuses more on lifting, Metcon on conditioning. "Mix it up" lets the app choose.</small>
+                    <select id="type">
+                        <option value="auto">Mix it up</option>
+                        <option value="strength">Strength</option>
+                        <option value="metcon">Metcon</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="time">Time Available</label>
+                    <select id="time">
+                        <option value="20">~20 minutes</option>
+                        <option value="30" selected>~30 minutes</option>
+                        <option value="45">~45 minutes</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="difficulty">Difficulty</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy / Beginner</option>
+                        <option value="moderate" selected>Moderate</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label>Options</label>
+                    <small>Turn things off if they are not available today.</small>
+                    <div>
+                        <label><input type="checkbox" id="useBike" checked /> Include bike work</label>
+                    </div>
+                    <div>
+                        <label><input type="checkbox" id="allowBurpees" checked /> Allow burpees</label>
+                    </div>
+                </div>
+
+                <div class="equipment-list">
+                    <strong>Assumed Equipment:</strong>
+                    <div>Squat rack + barbell (to ~300 lb)</div>
+                    <div>Bench + extra bar</div>
+                    <div>35 lb kettlebell</div>
+                    <div>2 × 20 lb dumbbells</div>
+                    <div>Bands + pull-up assist band</div>
+                    <div>Pull-up bar, dip bar, bike, floor space</div>
+                </div>
+
+                <button class="btn-primary" onclick="generateWorkout()">Generate Workout</button>
+                <button class="btn-secondary" onclick="generateWorkout(true)">Shuffle / New Idea</button>
+            </div>
+
+            <div class="output">
+                <div id="wodOutput" class="wod-card">
+                    <div style="color:#666; font-style:italic;">Choose options on the left and click "Generate Workout" to create a session.</div>
+                </div>
+
+                <div id="history" class="history"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const movementLibrary = [
+            // Barbell / rack
+            { name: "Back Squat", category: "squat", equipment: ["barbell", "rack"], tags: ["strength"] },
+            { name: "Front Squat", category: "squat", equipment: ["barbell", "rack"], tags: ["strength"] },
+            { name: "Bench Press", category: "horizontal_push", equipment: ["barbell", "bench"], tags: ["strength"] },
+            { name: "Barbell Row", category: "horizontal_pull", equipment: ["barbell"], tags: ["strength"] },
+            { name: "Deadlift", category: "hinge", equipment: ["barbell"], tags: ["strength"] },
+            { name: "Romanian Deadlift", category: "hinge", equipment: ["barbell"], tags: ["strength"] },
+
+            // Dumbbells
+            { name: "DB Chest Press", category: "horizontal_push", equipment: ["db"], tags: ["strength"] },
+            { name: "DB Arnold Press", category: "vertical_push", equipment: ["db"], tags: ["strength"] },
+            { name: "DB Bent Over Row", category: "horizontal_pull", equipment: ["db"], tags: ["strength"] },
+            { name: "DB Bicep Curl", category: "accessory", equipment: ["db"], tags: ["arms"] },
+            { name: "DB Hammer Curl", category: "accessory", equipment: ["db"], tags: ["arms"] },
+            { name: "DB Tricep Kickback", category: "accessory", equipment: ["db"], tags: ["arms"] },
+            { name: "DB Reverse Lunge", category: "lunge", equipment: ["db"], tags: ["strength"] },
+            { name: "DB Walking Lunge", category: "lunge", equipment: ["db"], tags: ["strength", "metcon"] },
+            { name: "DB Romanian Deadlift", category: "hinge", equipment: ["db"], tags: ["strength"] },
+            { name: "DB Thruster", category: "combo", equipment: ["db"], tags: ["metcon"] },
+
+            // Kettlebell
+            { name: "KB Goblet Squat", category: "squat", equipment: ["kb"], tags: ["strength", "metcon"] },
+            { name: "KB Swing", category: "hinge", equipment: ["kb"], tags: ["metcon"] },
+            { name: "KB Deadlift", category: "hinge", equipment: ["kb"], tags: ["strength"] },
+            { name: "KB Turkish Get-Up", category: "core", equipment: ["kb"], tags: ["metcon"] },
+
+            // Bodyweight + bands
+            { name: "Push-up", category: "horizontal_push", equipment: ["bodyweight"], tags: ["metcon"] },
+            { name: "Incline Push-up (bench)", category: "horizontal_push", equipment: ["bodyweight", "bench"], tags: ["easy"] },
+            { name: "Band Row", category: "horizontal_pull", equipment: ["band"], tags: ["strength"] },
+            { name: "Assisted Pull-up (band)", category: "vertical_pull", equipment: ["pullup", "band"], tags: ["strength"] },
+            { name: "Dip (or Bench Dip)", category: "vertical_push", equipment: ["dip", "bench"], tags: ["strength"] },
+            { name: "Air Squat", category: "squat", equipment: ["bodyweight"], tags: ["metcon"] },
+            { name: "Jump Squat", category: "squat", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
+            { name: "Reverse Lunge (bodyweight)", category: "lunge", equipment: ["bodyweight"], tags: ["metcon"] },
+            { name: "Lateral Lunge", category: "lunge", equipment: ["bodyweight"], tags: ["metcon"] },
+            { name: "Mountain Climbers", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon"] },
+            { name: "Burpee", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
+
+            // Core / floor
+            { name: "High Plank", category: "core", equipment: ["bodyweight"], tags: ["core"] },
+            { name: "Low Plank", category: "core", equipment: ["bodyweight"], tags: ["core"] },
+            { name: "Dead Bug", category: "core", equipment: ["bodyweight"], tags: ["core"] },
+            { name: "Bird Dog", category: "core", equipment: ["bodyweight"], tags: ["core"] },
+            { name: "Glute Bridge", category: "core", equipment: ["bodyweight"], tags: ["core"] },
+            { name: "Sit-up / Toe Touch", category: "core", equipment: ["bodyweight"], tags: ["core"] }
+        ];
+
+        const templates = {
+            strength_total: {
+                title: "Strength – Total Body",
+                description: "3 sets of 8–12 reps each movement. Rest 60–90s between sets.",
+                sections: [
+                    {
+                        label: "Main Strength Block",
+                        type: "list",
+                        pick: [
+                            { category: "squat" },
+                            { category: "hinge" },
+                            { category: "horizontal_push" },
+                            { category: "horizontal_pull" },
+                            { category: "vertical_push", optional: true },
+                            { category: "accessory", optional: true }
+                        ]
+                    },
+                    {
+                        label: "Core Finisher",
+                        type: "core",
+                        note: "Pick 2–3 core moves and hold 20–30 seconds or 10–15 reps each for 2–3 rounds."
+                    }
+                ]
+            },
+            strength_ladder: {
+                title: "Strength Ladder AMRAP",
+                description: "Reps per round: 18-15-12-10. Move steadily and rest as needed.",
+                sections: [
+                    {
+                        label: "Ladder Movements",
+                        type: "list",
+                        pick: [
+                            { category: "horizontal_push" },
+                            { category: "squat" },
+                            { category: "horizontal_pull" },
+                            { category: "hinge" },
+                            { category: "accessory" }
+                        ]
+                    },
+                    {
+                        label: "Core – 10×10s",
+                        type: "core",
+                        note: "Rotate through 2–3 core moves. Hold each for 10 seconds, 10 times."
+                    }
+                ]
+            },
+            metcon_circuit: {
+                title: "Metcon – Total Body Circuit",
+                description: "3 rounds. 10 reps total or per side where it makes sense. Rest 60–90s between rounds.",
+                sections: [
+                    {
+                        label: "Circuit Movements",
+                        type: "list",
+                        pick: [
+                            { category: "squat" },
+                            { category: "hinge" },
+                            { category: "lunge" },
+                            { category: "horizontal_push" },
+                            { category: "horizontal_pull" },
+                            { category: "conditioning" },
+                            { category: "core" },
+                            { category: "combo", optional: true }
+                        ]
+                    },
+                    {
+                        label: "Optional Bike",
+                        type: "bike",
+                        note: "After each round, bike easy-moderate for 2–4 minutes if enabled."
+                    }
+                ]
+            },
+            metcon_amrap: {
+                title: "Metcon – 10/20/30/20/10 AMRAP",
+                description: "Set a 15–20 minute timer. Work through 10/20/30/20/10 reps and repeat until time.",
+                sections: [
+                    {
+                        label: "AMRAP Movements",
+                        type: "list",
+                        pick: [
+                            { category: "horizontal_push" },
+                            { category: "core" },
+                            { category: "squat" },
+                            { category: "conditioning" },
+                            { category: "conditioning" }
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function pickRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function filterMovements(criteria, options) {
+            const { allowBurpees } = options;
+            return movementLibrary.filter(m => {
+                if (criteria.category && m.category !== criteria.category) return false;
+                if (!allowBurpees && m.name.toLowerCase().includes("burpee")) return false;
+                return true;
+            });
+        }
+
+        function buildSection(section, options) {
+            if (section.type === "core") {
+                const cores = movementLibrary.filter(m => m.category === "core");
+                const chosen = [];
+                for (let i = 0; i < 3 && cores.length > 0; i++) {
+                    const idx = Math.floor(Math.random() * cores.length);
+                    chosen.push(cores.splice(idx, 1)[0].name);
+                }
+                return {
+                    label: section.label,
+                    items: chosen,
+                    note: section.note || null
+                };
+            }
+
+            if (section.type === "bike") {
+                if (!options.useBike) {
+                    return null;
+                }
+                return {
+                    label: section.label,
+                    items: ["Easy-moderate pace on bike"],
+                    note: section.note || null
+                };
+            }
+
+            const items = [];
+            const used = new Set();
+
+            section.pick.forEach(criteria => {
+                const pool = filterMovements(criteria, options).filter(m => !used.has(m.name));
+                if (pool.length === 0) {
+                    if (!criteria.optional) {
+                        const any = movementLibrary.filter(m => !used.has(m.name));
+                        if (any.length > 0) {
+                            const chosen = pickRandom(any);
+                            used.add(chosen.name);
+                            items.push(chosen.name);
+                        }
+                    }
+                    return;
+                }
+                const chosen = pickRandom(pool);
+                used.add(chosen.name);
+                items.push(chosen.name);
+            });
+
+            return {
+                label: section.label,
+                items,
+                note: section.note || null
+            };
+        }
+
+        function chooseTemplate(typeChoice, timeChoice) {
+            if (typeChoice === "strength") {
+                return Math.random() < 0.5 ? templates.strength_total : templates.strength_ladder;
+            }
+            if (typeChoice === "metcon") {
+                return Math.random() < 0.5 ? templates.metcon_circuit : templates.metcon_amrap;
+            }
+
+            if (timeChoice === "20") {
+                return Math.random() < 0.5 ? templates.metcon_amrap : templates.metcon_circuit;
+            }
+            if (timeChoice === "45") {
+                return Math.random() < 0.5 ? templates.strength_total : templates.metcon_circuit;
+            }
+            const all = [templates.strength_total, templates.strength_ladder, templates.metcon_circuit, templates.metcon_amrap];
+            return pickRandom(all);
+        }
+
+        function generateWorkout(isShuffle) {
+            const type = document.getElementById("type").value;
+            const time = document.getElementById("time").value;
+            const difficulty = document.getElementById("difficulty").value;
+            const useBike = document.getElementById("useBike").checked;
+            const allowBurpees = document.getElementById("allowBurpees").checked;
+
+            const template = chooseTemplate(type, time);
+            const options = { useBike, allowBurpees };
+
+            const builtSections = template.sections
+                .map(sec => buildSection(sec, options))
+                .filter(Boolean);
+
+            const wod = {
+                date: new Date().toISOString().slice(0, 10),
+                title: template.title,
+                description: template.description,
+                time,
+                difficulty,
+                sections: builtSections
+            };
+
+            renderWorkout(wod);
+            saveWorkout(wod, isShuffle);
+            renderHistory();
+        }
+
+        function renderWorkout(wod) {
+            const container = document.getElementById("wodOutput");
+            const diffLabel = wod.difficulty === "easy" ? "Easy" : wod.difficulty === "hard" ? "Hard" : "Moderate";
+
+            let html = "";
+            html += '<div class="wod-header">';
+            html += `<div class="wod-title">${wod.title}</div>`;
+            html += `<div class="wod-meta">${wod.date} · ${wod.time} min · ${diffLabel}</div>`;
+            html += "</div>";
+            html += `<div style="margin-bottom:8px; color:#555;">${wod.description}</div>`;
+
+            wod.sections.forEach(section => {
+                html += `<div class="section-title">${section.label}</div>`;
+                html += '<ul class="wod-list">';
+                section.items.forEach(item => {
+                    html += `<li>${item}</li>`;
+                });
+                html += "</ul>";
+                if (section.note) {
+                    html += `<div class="notes">${section.note}</div>`;
+                }
+            });
+
+            html += '<div class="notes" style="margin-top:10px;">Adjust loads so the last few reps feel challenging but smooth. Scale movements as needed for you and your training partner.</div>';
+
+            container.innerHTML = html;
+        }
+
+        function saveWorkout(wod, isShuffle) {
+            let history = [];
+            try {
+                const raw = localStorage.getItem("homeWodHistory");
+                if (raw) history = JSON.parse(raw) || [];
+            } catch (e) {
+                history = [];
+            }
+
+            if (!isShuffle) {
+                history = history.filter(entry => entry.date !== wod.date);
+            }
+
+            history.unshift(wod);
+            history = history.slice(0, 7);
+
+            try {
+                localStorage.setItem("homeWodHistory", JSON.stringify(history));
+            } catch (e) {
+                console.warn("Unable to save workout history", e);
+            }
+        }
+
+        function renderHistory() {
+            let history = [];
+            try {
+                const raw = localStorage.getItem("homeWodHistory");
+                if (raw) history = JSON.parse(raw) || [];
+            } catch (e) {
+                history = [];
+            }
+
+            const container = document.getElementById("history");
+            if (!history.length) {
+                container.innerHTML = "";
+                return;
+            }
+
+            let html = "<strong>Recent Sessions (this browser only)</strong>";
+            history.slice(0, 3).forEach((w, idx) => {
+                html += '<div class="history-item">';
+                html += `${idx === 0 ? "Today" : w.date}: <em>${w.title}</em>`;
+                html += "</div>";
+            });
+
+            container.innerHTML = html;
+        }
+
+        renderHistory();
+    </script>
+</body>
+</html>
