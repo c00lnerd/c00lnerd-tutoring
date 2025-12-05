@@ -255,7 +255,23 @@
             <div id="tasksList" class="tasks-list"></div>
 
             <div class="tasks-title" style="margin-top:10px;">Transcribed Replies</div>
-            <div id="repliesList" class="tasks-list" style="margin-top:4px; max-height:40vh;"></div>
+            <div id="repliesList" class="tasks-list" style="margin-top:4px; max-height:24vh;"></div>
+
+            <div class="tasks-title" style="margin-top:10px;">Medication Log (last 24 hours)</div>
+            <div class="tasks-input-row" style="margin-bottom:6px;">
+                <select id="medNameSelect" style="flex:1; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;">
+                    <option value="Acetaminophen">Acetaminophen</option>
+                    <option value="Oxycodone 5mg">Oxycodone 5mg</option>
+                    <option value="Pregabalin 75mg">Pregabalin 75mg</option>
+                    <option value="Ondansetron 8mg ODT">Ondansetron 8mg ODT</option>
+                    <option value="Other">Other</option>
+                </select>
+                <input id="medTabletsInput" type="number" min="1" step="1" value="1" style="width:60px; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;" />
+                <button id="addMedDoseBtn" style="padding:4px 8px; border-radius:4px; border:1px solid #22c55e; background:#022c22; color:#bbf7d0; font-size:0.8rem; cursor:pointer;">Add</button>
+            </div>
+            <input id="medNotesInput" type="text" placeholder="Notes (optional)" style="margin-bottom:6px; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;" />
+            <div id="medStatus" style="font-size:0.8rem; margin-bottom:6px; color:#e5e7eb;"></div>
+            <div id="medsList" class="tasks-list" style="max-height:24vh;"></div>
         </div>
     </div>
 
@@ -289,6 +305,12 @@
         const addTaskBtn = document.getElementById('addTaskBtn');
         const tasksList = document.getElementById('tasksList');
         const repliesList = document.getElementById('repliesList');
+        const medNameSelect = document.getElementById('medNameSelect');
+        const medTabletsInput = document.getElementById('medTabletsInput');
+        const medNotesInput = document.getElementById('medNotesInput');
+        const addMedDoseBtn = document.getElementById('addMedDoseBtn');
+        const medStatus = document.getElementById('medStatus');
+        const medsList = document.getElementById('medsList');
         const householdInput = document.getElementById('householdId');
         const stationInput = document.getElementById('stationId');
         const displayNameInput = document.getElementById('displayName');
@@ -504,6 +526,152 @@
                 repliesList.appendChild(wrapper);
             });
         }
+
+        // ------------------------------------------------------------
+        // Medication log: track doses in Firestore and compute last-24h
+        // tablet totals for key meds.
+        // ------------------------------------------------------------
+
+        const ACETAMINOPHEN_NAME = 'Acetaminophen';
+        const ACETAMINOPHEN_MAX_TABS = 6; // in 24 hours
+        const OXYCODONE_NAME = 'Oxycodone 5mg';
+        const OXYCODONE_MAX_TABS = 2;     // in 24 hours
+
+        async function addMedDose() {
+            if (!currentHouseholdId) {
+                alert('Please set and save a Household before logging medication.');
+                return;
+            }
+
+            const medName = (medNameSelect?.value || '').trim() || ACETAMINOPHEN_NAME;
+            let tablets = parseInt(medTabletsInput?.value || '1', 10);
+            if (!Number.isFinite(tablets) || tablets <= 0) {
+                alert('Please enter a valid tablet count (at least 1).');
+                return;
+            }
+
+            const notes = (medNotesInput?.value || '').trim();
+
+            try {
+                await db.collection('medsLog').add({
+                    householdId: currentHouseholdId,
+                    stationId: currentStationId || null,
+                    medName,
+                    tablets,
+                    notes,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+
+                if (medNotesInput) medNotesInput.value = '';
+                if (medTabletsInput) medTabletsInput.value = '1';
+            } catch (e) {
+                console.warn('Error logging medication dose:', e);
+                alert('Failed to save medication dose. See console for details.');
+            }
+        }
+
+        if (addMedDoseBtn) {
+            addMedDoseBtn.addEventListener('click', addMedDose);
+        }
+
+        if (medNotesInput) {
+            medNotesInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addMedDose();
+                }
+            });
+        }
+        function renderMeds(snapshot) {
+            if (!medStatus || !medsList) return;
+
+            const now = Date.now();
+            const windowMs = 24 * 60 * 60 * 1000; // 24 hours
+
+            let acetTabs = 0;
+            let oxyTabs = 0;
+            const recentDocs = [];
+
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                if (!data) return;
+
+                if (data.householdId && currentHouseholdId && data.householdId !== currentHouseholdId) {
+                    return;
+                }
+
+                const ts = data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null;
+                if (!ts) return;
+                const ageMs = now - ts.getTime();
+                if (ageMs < 0 || ageMs > windowMs) {
+                    return;
+                }
+
+                const medName = data.medName || '';
+                const tablets = Number(data.tablets || 0) || 0;
+
+                if (medName === ACETAMINOPHEN_NAME) {
+                    acetTabs += tablets;
+                } else if (medName === OXYCODONE_NAME) {
+                    oxyTabs += tablets;
+                }
+
+                recentDocs.push({ ts, medName, tablets, notes: data.notes || '' });
+            });
+
+            const lines = [];
+
+            // Acetaminophen status
+            const acetRatio = ACETAMINOPHEN_MAX_TABS > 0 ? acetTabs / ACETAMINOPHEN_MAX_TABS : 0;
+            let acetText = `Acetaminophen: ${acetTabs} of ${ACETAMINOPHEN_MAX_TABS} tablets in last 24h.`;
+
+            // Oxycodone status
+            const oxyRatio = OXYCODONE_MAX_TABS > 0 ? oxyTabs / OXYCODONE_MAX_TABS : 0;
+            let oxyText = `Oxycodone 5mg: ${oxyTabs} of ${OXYCODONE_MAX_TABS} tablets in last 24h.`;
+
+            let color = '#bbf7d0'; // default green-ish
+            if (acetRatio > 1 || oxyRatio > 1) {
+                color = '#f97373';
+                acetText += ' (Over limit - check dosing!)';
+                oxyText += ' (Over limit - check dosing!)';
+            } else if (acetRatio >= 0.9 || oxyRatio >= 0.9) {
+                color = '#fde68a';
+                acetText += ' (Near limit)';
+                oxyText += ' (Near limit)';
+            } else if (acetRatio >= 0.5 || oxyRatio >= 0.5) {
+                color = '#facc15';
+            }
+
+            lines.push(acetText);
+            lines.push(oxyText);
+
+            medStatus.textContent = lines.join('  |  ');
+            medStatus.style.color = color;
+
+            // Render recent doses list (most recent first)
+            medsList.innerHTML = '';
+            if (recentDocs.length === 0) {
+                medsList.textContent = 'No doses in the last 24 hours.';
+                return;
+            }
+
+            recentDocs.sort((a, b) => b.ts.getTime() - a.ts.getTime());
+
+            recentDocs.forEach((entry) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'task-item';
+
+                const textEl = document.createElement('div');
+                textEl.className = 'task-text';
+                const when = entry.ts.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                const notesPart = entry.notes ? ` – ${entry.notes}` : '';
+                textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
+
+                wrapper.appendChild(textEl);
+                medsList.appendChild(wrapper);
+            });
+        }
+
         function playBeep() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -779,6 +947,26 @@
               console.error('Error listening for replies:', err);
               if (repliesList) {
                   repliesList.textContent = 'Error loading replies.';
+              }
+          });
+
+        // Listen for medication log entries in real time
+        db.collection('medsLog')
+          .orderBy('createdAt', 'asc')
+          .onSnapshot((snapshot) => {
+              try {
+                  renderMeds(snapshot);
+              } catch (e) {
+                  console.warn('Error rendering meds log:', e);
+              }
+          }, (err) => {
+              console.error('Error listening for meds log:', err);
+              if (medStatus) {
+                  medStatus.textContent = 'Error loading medication log.';
+                  medStatus.style.color = '#f97373';
+              }
+              if (medsList) {
+                  medsList.textContent = '';
               }
           });
 
