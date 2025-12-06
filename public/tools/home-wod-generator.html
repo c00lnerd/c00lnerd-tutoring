@@ -208,6 +208,91 @@
             border-top: 1px dashed #cccccc;
         }
 
+        .timer-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e0e0e0;
+        }
+
+        .timer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+        }
+
+        .timer-title {
+            font-weight: 700;
+            color: #2e7d32;
+        }
+
+        .timer-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 6px;
+            margin-top: 6px;
+        }
+
+        .timer-phase {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555555;
+        }
+
+        .timer-movement {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #333333;
+        }
+
+        .timer-time {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e88e5;
+            margin-top: 2px;
+        }
+
+        .timer-round {
+            font-size: 0.85rem;
+            color: #666666;
+        }
+
+        .timer-controls {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            padding: 7px 14px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .timer-btn.start {
+            background: #43a047;
+            color: #ffffff;
+        }
+
+        .timer-btn.pause {
+            background: #ffb300;
+            color: #ffffff;
+        }
+
+        .timer-btn.reset {
+            background: #eeeeee;
+            color: #424242;
+        }
+
         @media (max-width: 900px) {
             .content {
                 grid-template-columns: 1fr;
@@ -263,6 +348,21 @@
                     <div>
                         <label><input type="checkbox" id="allowBurpees" checked /> Allow burpees</label>
                     </div>
+                    <div>
+                        <label><input type="checkbox" id="allowBoxJumps" checked /> Include box jumps</label>
+                    </div>
+                    <div>
+                        <label><input type="checkbox" id="allowWallBall" /> Include wall ball (outside)</label>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label for="restBetween">Rest Between Movements</label>
+                    <small>Used by the guided timer below.</small>
+                    <select id="restBetween">
+                        <option value="15">15 seconds</option>
+                        <option value="30" selected>30 seconds</option>
+                    </select>
                 </div>
 
                 <div class="equipment-list">
@@ -284,12 +384,37 @@
                     <div style="color:#666; font-style:italic;">Choose options on the left and click "Generate Workout" to create a session.</div>
                 </div>
 
+                <div id="timer" class="timer-card">
+                    <div class="timer-header">
+                        <div class="timer-title">⏱ Guided Timer</div>
+                        <div class="timer-round" id="timerRound">No workout loaded</div>
+                    </div>
+                    <div class="timer-main">
+                        <div class="timer-phase" id="timerPhase">Generate a workout to enable the timer.</div>
+                        <div class="timer-movement" id="timerMovement">&nbsp;</div>
+                        <div class="timer-time" id="timerTime">--</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start" id="timerStartBtn" onclick="startTimer()" disabled>Start</button>
+                        <button class="timer-btn pause" id="timerPauseBtn" onclick="togglePause()" disabled>Pause</button>
+                        <button class="timer-btn reset" id="timerResetBtn" onclick="resetTimer()" disabled>Reset</button>
+                    </div>
+                    <div class="notes" style="margin-top:8px;">
+                        3 rounds per movement: <strong>60s</strong> (round 1), <strong>45s</strong> (round 2), <strong>30s</strong> (round 3). Rest is based on the setting in the left panel.
+                    </div>
+                </div>
+
                 <div id="history" class="history"></div>
             </div>
         </div>
     </div>
 
     <script>
+        let currentWod = null;
+        let timerState = null;
+        let timerIntervalId = null;
+        let audioCtx = null;
+
         const movementLibrary = [
             // Barbell / rack
             { name: "Back Squat", category: "squat", equipment: ["barbell", "rack"], tags: ["strength"] },
@@ -330,6 +455,11 @@
             { name: "Mountain Climbers", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Burpee", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
 
+            // Plyometrics / wall ball
+            { name: "18\" Box Jump", category: "conditioning", equipment: ["box"], tags: ["metcon"] },
+            { name: "24\" Box Jump", category: "conditioning", equipment: ["box"], tags: ["metcon"] },
+            { name: "Wall Ball (18 lb)", category: "conditioning", equipment: ["wallball"], tags: ["metcon", "wallball"] },
+
             // Core / floor
             { name: "High Plank", category: "core", equipment: ["bodyweight"], tags: ["core"] },
             { name: "Low Plank", category: "core", equipment: ["bodyweight"], tags: ["core"] },
@@ -342,7 +472,7 @@
         const templates = {
             strength_total: {
                 title: "Strength – Total Body",
-                description: "3 sets of 8–12 reps each movement. Rest 60–90s between sets.",
+                description: "3 sets of 8–12 reps each movement.",
                 sections: [
                     {
                         label: "Main Strength Block",
@@ -387,7 +517,7 @@
             },
             metcon_circuit: {
                 title: "Metcon – Total Body Circuit",
-                description: "3 rounds. 10 reps total or per side where it makes sense. Rest 60–90s between rounds.",
+                description: "3 rounds. Guided timer: 60s work (round 1), 45s (round 2), 30s (round 3). Use 10 reps total or per side as a guideline.",
                 sections: [
                     {
                         label: "Circuit Movements",
@@ -412,7 +542,7 @@
             },
             metcon_amrap: {
                 title: "Metcon – 10/20/30/20/10 AMRAP",
-                description: "Set a 15–20 minute timer. Work through 10/20/30/20/10 reps and repeat until time.",
+                description: "Set a 15–20 minute timer and work through 10/20/30/20/10 reps, repeating until time. You can also follow the guided timer rounds (60s, 45s, 30s) if you prefer intervals.",
                 sections: [
                     {
                         label: "AMRAP Movements",
@@ -434,10 +564,12 @@
         }
 
         function filterMovements(criteria, options) {
-            const { allowBurpees } = options;
+            const { allowBurpees, allowWallBall, allowBoxJumps } = options;
             return movementLibrary.filter(m => {
                 if (criteria.category && m.category !== criteria.category) return false;
                 if (!allowBurpees && m.name.toLowerCase().includes("burpee")) return false;
+                if (!allowBoxJumps && m.equipment && m.equipment.includes("box")) return false;
+                if (!allowWallBall && m.tags && m.tags.includes("wallball")) return false;
                 return true;
             });
         }
@@ -520,24 +652,34 @@
             const difficulty = document.getElementById("difficulty").value;
             const useBike = document.getElementById("useBike").checked;
             const allowBurpees = document.getElementById("allowBurpees").checked;
+            const allowBoxJumps = document.getElementById("allowBoxJumps").checked;
+            const allowWallBall = document.getElementById("allowWallBall").checked;
+            const restSelect = document.getElementById("restBetween");
+            const restSeconds = restSelect ? parseInt(restSelect.value, 10) || null : null;
 
             const template = chooseTemplate(type, time);
-            const options = { useBike, allowBurpees };
+            const options = { useBike, allowBurpees, allowWallBall, allowBoxJumps };
 
             const builtSections = template.sections
                 .map(sec => buildSection(sec, options))
                 .filter(Boolean);
 
+            let description = template.description;
+            if (restSeconds) {
+                description += ` Rest ~${restSeconds}s between movements (guided timer).`;
+            }
+
             const wod = {
                 date: new Date().toISOString().slice(0, 10),
                 title: template.title,
-                description: template.description,
+                description,
                 time,
                 difficulty,
                 sections: builtSections
             };
 
             renderWorkout(wod);
+            prepareTimer(wod);
             saveWorkout(wod, isShuffle);
             renderHistory();
         }
@@ -568,6 +710,22 @@
             html += '<div class="notes" style="margin-top:10px;">Adjust loads so the last few reps feel challenging but smooth. Scale movements as needed for you and your training partner.</div>';
 
             container.innerHTML = html;
+        }
+
+        function prepareTimer(wod) {
+            currentWod = wod;
+            resetTimer(true);
+            const startBtn = document.getElementById("timerStartBtn");
+            const pauseBtn = document.getElementById("timerPauseBtn");
+            const resetBtn = document.getElementById("timerResetBtn");
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            resetBtn.disabled = false;
+
+            document.getElementById("timerPhase").textContent = "Ready when you are. Press Start to begin a 5 second countdown.";
+            document.getElementById("timerMovement").textContent = "";
+            document.getElementById("timerTime").textContent = "5";
+            document.getElementById("timerRound").textContent = "Planned: 3 rounds · 60s / 45s / 30s";
         }
 
         function saveWorkout(wod, isShuffle) {
@@ -619,6 +777,223 @@
         }
 
         renderHistory();
+
+        function buildTimerSequence() {
+            if (!currentWod) return [];
+
+            const movementNames = [];
+            currentWod.sections.forEach(section => {
+                const lower = section.label.toLowerCase();
+                if (lower.includes("core") || lower.includes("bike")) {
+                    return;
+                }
+                section.items.forEach(item => movementNames.push(item));
+            });
+
+            return movementNames;
+        }
+
+        function startTimer() {
+            if (!currentWod) return;
+
+            const movements = buildTimerSequence();
+            if (!movements.length) {
+                document.getElementById("timerPhase").textContent = "No main movements found to time. Try generating another workout.";
+                return;
+            }
+
+            const restSelect = document.getElementById("restBetween");
+            const restSeconds = parseInt(restSelect.value, 10) || 30;
+
+            const workByRound = [60, 45, 30];
+
+            timerState = {
+                movements,
+                restSeconds,
+                workByRound,
+                roundIndex: 0,
+                movementIndex: 0,
+                phase: "get-ready",
+                remaining: 5,
+                paused: false
+            };
+
+            if (audioCtx && audioCtx.state === "suspended") {
+                audioCtx.resume().catch(() => {});
+            }
+
+            updateTimerDisplay();
+            enableTimerButtons(true);
+
+            if (timerIntervalId) clearInterval(timerIntervalId);
+            timerIntervalId = setInterval(tickTimer, 1000);
+        }
+
+        function enableTimerButtons(running) {
+            document.getElementById("timerStartBtn").disabled = running;
+            document.getElementById("timerPauseBtn").disabled = !running;
+            document.getElementById("timerResetBtn").disabled = false;
+        }
+
+        function playBeep() {
+            try {
+                if (!audioCtx) {
+                    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                    if (!AudioContextClass) return;
+                    audioCtx = new AudioContextClass();
+                }
+
+                const duration = 0.15;
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                oscillator.type = "sine";
+                oscillator.frequency.value = 880;
+
+                gainNode.gain.setValueAtTime(0.001, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 0.02);
+                gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.start(audioCtx.currentTime);
+                oscillator.stop(audioCtx.currentTime + duration + 0.02);
+            } catch (e) {
+                console.warn("Beep sound unavailable", e);
+            }
+        }
+
+        function speak(text) {
+            try {
+                if (!("speechSynthesis" in window)) return;
+                const synth = window.speechSynthesis;
+                // Stop any current / queued speech so the cue is always heard
+                try { synth.cancel(); } catch (_) {}
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 1.0;
+                utterance.pitch = 1.0;
+                utterance.volume = 1.0;
+                synth.speak(utterance);
+            } catch (e) {
+                console.warn("Speech synthesis unavailable", e);
+            }
+        }
+
+        function tickTimer() {
+            if (!timerState || timerState.paused) return;
+
+            if (timerState.remaining > 0) {
+                if (timerState.remaining <= 3) {
+                    playBeep();
+                }
+                timerState.remaining -= 1;
+                updateTimerDisplay();
+                return;
+            }
+
+            if (timerState.phase === "get-ready") {
+                timerState.phase = "work";
+                timerState.remaining = timerState.workByRound[timerState.roundIndex];
+                speak("Start workout");
+                updateTimerDisplay();
+                return;
+            }
+
+            if (timerState.phase === "work") {
+                timerState.phase = "rest";
+                timerState.remaining = timerState.restSeconds;
+                speak("Rest");
+                updateTimerDisplay();
+                return;
+            }
+
+            if (timerState.phase === "rest") {
+                const lastMovement = timerState.movementIndex >= timerState.movements.length - 1;
+                const lastRound = timerState.roundIndex >= timerState.workByRound.length - 1;
+
+                if (lastMovement && lastRound) {
+                    timerState.phase = "done";
+                    timerState.remaining = 0;
+                    updateTimerDisplay();
+                    clearInterval(timerIntervalId);
+                    enableTimerButtons(false);
+                    document.getElementById("timerPauseBtn").disabled = true;
+                    speak("Workout complete");
+                    return;
+                }
+
+                if (lastMovement) {
+                    timerState.movementIndex = 0;
+                    timerState.roundIndex += 1;
+                } else {
+                    timerState.movementIndex += 1;
+                }
+
+                timerState.phase = "work";
+                timerState.remaining = timerState.workByRound[timerState.roundIndex];
+                speak("Start workout");
+                updateTimerDisplay();
+                return;
+            }
+        }
+
+        function updateTimerDisplay() {
+            if (!timerState) return;
+
+            const roundText = `Round ${timerState.roundIndex + 1} of ${timerState.workByRound.length}`;
+            document.getElementById("timerRound").textContent = roundText;
+
+            let phaseText = "";
+            if (timerState.phase === "get-ready") phaseText = "Get Ready";
+            else if (timerState.phase === "work") phaseText = "Work";
+            else if (timerState.phase === "rest") phaseText = "Rest";
+            else if (timerState.phase === "done") phaseText = "Done";
+
+            document.getElementById("timerPhase").textContent = phaseText;
+
+            const movementName = timerState.phase === "get-ready" && timerState.movements.length
+                ? timerState.movements[timerState.movementIndex]
+                : timerState.phase === "done"
+                    ? "Great job—workout complete!"
+                    : timerState.movements[timerState.movementIndex];
+
+            document.getElementById("timerMovement").textContent = movementName || "";
+            document.getElementById("timerTime").textContent = timerState.remaining.toString().padStart(2, "0");
+        }
+
+        function togglePause() {
+            if (!timerState) return;
+            timerState.paused = !timerState.paused;
+            document.getElementById("timerPauseBtn").textContent = timerState.paused ? "Resume" : "Pause";
+        }
+
+        function resetTimer(skipButtonDisable) {
+            if (timerIntervalId) {
+                clearInterval(timerIntervalId);
+                timerIntervalId = null;
+            }
+            timerState = null;
+
+            document.getElementById("timerRound").textContent = currentWod
+                ? "Timer reset. Press Start when ready."
+                : "No workout loaded";
+            document.getElementById("timerPhase").textContent = currentWod
+                ? "Ready when you are. Press Start to begin a 5 second countdown."
+                : "Generate a workout to enable the timer.";
+            document.getElementById("timerMovement").textContent = "";
+            document.getElementById("timerTime").textContent = "--";
+
+            if (!skipButtonDisable) {
+                document.getElementById("timerStartBtn").disabled = !currentWod;
+                document.getElementById("timerPauseBtn").disabled = true;
+                document.getElementById("timerResetBtn").disabled = !currentWod;
+                document.getElementById("timerPauseBtn").textContent = "Pause";
+            } else {
+                document.getElementById("timerPauseBtn").textContent = "Pause";
+            }
+        }
     </script>
 </body>
 </html>
