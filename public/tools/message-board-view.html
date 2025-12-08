@@ -336,6 +336,12 @@
             <div id="medStatus" style="font-size:0.8rem; margin-bottom:6px; color:#e5e7eb;"></div>
             <div id="medsList" class="tasks-list" style="max-height:24vh;"></div>
 
+            <div class="tasks-title" style="margin-top:10px;">General Med Comments</div>
+            <div class="tasks-input-row" style="margin-bottom:6px;">
+                <input id="medCommentInput" type="text" placeholder="Log a general comment (e.g., pain level, side effects)" style="flex:1; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;" />
+                <button id="addMedCommentBtn" style="padding:4px 8px; border-radius:4px; border:1px solid #22c55e; background:#022c22; color:#bbf7d0; font-size:0.8rem; cursor:pointer;">Add comment</button>
+            </div>
+
             <div class="tasks-title" style="margin-top:10px;">Daily Med Log</div>
             <div id="dailyMedHeading" style="font-size:0.8rem; margin-bottom:4px; color:#e5e7eb;"></div>
             <div class="tasks-input-row" style="margin-bottom:6px; align-items:center;">
@@ -378,6 +384,8 @@
         const medTabletsInput = document.getElementById('medTabletsInput');
         const medNotesInput = document.getElementById('medNotesInput');
         const addMedDoseBtn = document.getElementById('addMedDoseBtn');
+        const medCommentInput = document.getElementById('medCommentInput');
+        const addMedCommentBtn = document.getElementById('addMedCommentBtn');
         const medStatus = document.getElementById('medStatus');
         const medsList = document.getElementById('medsList');
         const dailyMedHeading = document.getElementById('dailyMedHeading');
@@ -633,6 +641,7 @@
                     medName,
                     tablets,
                     notes,
+                    entryType: 'dose',
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 });
 
@@ -646,6 +655,38 @@
 
         if (addMedDoseBtn) {
             addMedDoseBtn.addEventListener('click', addMedDose);
+        }
+
+        async function addMedComment() {
+            if (!currentHouseholdId) {
+                alert('Please set and save a Household before logging a comment.');
+                return;
+            }
+
+            const text = (medCommentInput?.value || '').trim();
+            if (!text) {
+                alert('Please enter a comment first.');
+                return;
+            }
+
+            try {
+                await db.collection('medsLog').add({
+                    householdId: currentHouseholdId,
+                    stationId: currentStationId || null,
+                    entryType: 'comment',
+                    commentText: text,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                });
+
+                if (medCommentInput) medCommentInput.value = '';
+            } catch (e) {
+                console.warn('Error logging medication comment:', e);
+                alert('Failed to save comment. See console for details.');
+            }
+        }
+
+        if (addMedCommentBtn) {
+            addMedCommentBtn.addEventListener('click', addMedComment);
         }
 
         if (medNotesInput) {
@@ -681,16 +722,37 @@
                     return;
                 }
 
+                const entryType = data.entryType || 'dose';
                 const medName = data.medName || '';
                 const tablets = Number(data.tablets || 0) || 0;
 
-                if (medName === ACETAMINOPHEN_NAME) {
-                    acetTabs += tablets;
-                } else if (medName === OXYCODONE_NAME) {
-                    oxyTabs += tablets;
+                if (entryType === 'dose') {
+                    if (medName === ACETAMINOPHEN_NAME) {
+                        acetTabs += tablets;
+                    } else if (medName === OXYCODONE_NAME) {
+                        oxyTabs += tablets;
+                    }
                 }
 
-                recentDocs.push({ id: doc.id, ts, medName, tablets, notes: data.notes || '' });
+                if (entryType === 'comment') {
+                    recentDocs.push({
+                        id: doc.id,
+                        ts,
+                        entryType: 'comment',
+                        medName: '',
+                        tablets: 0,
+                        notes: data.commentText || '',
+                    });
+                } else {
+                    recentDocs.push({
+                        id: doc.id,
+                        ts,
+                        entryType: 'dose',
+                        medName,
+                        tablets,
+                        notes: data.notes || '',
+                    });
+                }
             });
 
             const lines = [];
@@ -739,7 +801,12 @@
                 textEl.className = 'task-text';
                 const when = entry.ts.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
                 const notesPart = entry.notes ? ` – ${entry.notes}` : '';
-                textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
+
+                if (entry.entryType === 'comment') {
+                    textEl.textContent = `${when} – Comment: ${entry.notes}`;
+                } else {
+                    textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
+                }
 
                 wrapper.appendChild(textEl);
 
@@ -818,12 +885,24 @@
                         return;
                     }
 
-                    entries.push({
-                        ts,
-                        medName: data.medName || '',
-                        tablets: Number(data.tablets || 0) || 0,
-                        notes: data.notes || '',
-                    });
+                    const entryType = data.entryType || 'dose';
+                    if (entryType === 'comment') {
+                        entries.push({
+                            ts,
+                            entryType: 'comment',
+                            medName: '',
+                            tablets: 0,
+                            notes: data.commentText || '',
+                        });
+                    } else {
+                        entries.push({
+                            ts,
+                            entryType: 'dose',
+                            medName: data.medName || '',
+                            tablets: Number(data.tablets || 0) || 0,
+                            notes: data.notes || '',
+                        });
+                    }
                 });
 
                 dailyMedsList.innerHTML = '';
@@ -843,7 +922,11 @@
                     textEl.className = 'task-text';
                     const when = entry.ts.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
                     const notesPart = entry.notes ? ` – ${entry.notes}` : '';
-                    textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
+                    if (entry.entryType === 'comment') {
+                        textEl.textContent = `${when} – Comment: ${entry.notes}`;
+                    } else {
+                        textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
+                    }
 
                     wrapper.appendChild(textEl);
                     dailyMedsList.appendChild(wrapper);
