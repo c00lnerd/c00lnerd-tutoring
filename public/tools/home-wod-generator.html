@@ -208,6 +208,50 @@
             border-top: 1px dashed #cccccc;
         }
 
+        @media print {
+            body {
+                background: #ffffff;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .header {
+                display: none;
+            }
+
+            .content {
+                grid-template-columns: 1fr;
+                padding: 0 16px 16px 16px;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .btn-primary,
+            .btn-secondary,
+            .timer-controls {
+                display: none !important;
+            }
+
+            .output {
+                border-left: none;
+                box-shadow: none;
+            }
+
+            .wod-card {
+                box-shadow: none;
+            }
+
+            .timer-card {
+                display: none !important;
+            }
+        }
+
         .timer-card {
             background: #ffffff;
             border-radius: 12px;
@@ -377,6 +421,7 @@
 
                 <button class="btn-primary" onclick="generateWorkout()">Generate Workout</button>
                 <button class="btn-secondary" onclick="generateWorkout(true)">Shuffle / New Idea</button>
+                <button class="btn-secondary" onclick="printWorkout()">Print Workout</button>
             </div>
 
             <div class="output">
@@ -782,6 +827,10 @@
         }
 
         renderHistory();
+
+        function printWorkout() {
+            window.print();
+        }
 
         function buildTimerSequence() {
             if (!currentWod) return [];
