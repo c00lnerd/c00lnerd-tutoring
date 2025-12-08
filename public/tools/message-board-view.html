@@ -199,6 +199,62 @@
             border-color: #22c55e;
             background: #022c22;
         }
+
+        @media print {
+            body {
+                background: #ffffff;
+                color: #000000;
+            }
+
+            /* Hide header, intercom controls, stations bar, and main message area when printing */
+            .header,
+            .intercom-bar,
+            .stations-bar,
+            #messages,
+            #newBanner {
+                display: none !important;
+            }
+
+            /* Expand the tasks pane to use the full page width */
+            .tasks-pane {
+                max-width: none;
+                min-width: 0;
+                border-left: none;
+                background: #ffffff;
+                color: #000000;
+            }
+
+            /* Hide most interactive controls and non-daily lists when printing */
+            #muteToggle,
+            #repliesToggle,
+            #taskInput,
+            #addTaskBtn,
+            #tasksList,
+            #repliesList,
+            #medNameSelect,
+            #medTabletsInput,
+            #addMedDoseBtn,
+            #medNotesInput,
+            #medStatus,
+            #medsList,
+            #clearMessagesBtn,
+            #clearRepliesBtn,
+            #sendMessageBtn,
+            #toStation,
+            #messageInput,
+            #saveIdentityBtn,
+            .task-delete-btn,
+            #loadDailyMedLogBtn,
+            #printDailyMedLogBtn {
+                display: none !important;
+            }
+
+            /* Keep the Daily Med Log title, date, and list visible */
+            #dailyMedDate,
+            #dailyMedsList {
+                display: block;
+            }
+        }
     </style>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
@@ -264,6 +320,7 @@
                     <option value="Oxycodone 5mg">Oxycodone 5mg</option>
                     <option value="Pregabalin 75mg">Pregabalin 75mg</option>
                     <option value="Ondansetron 8mg ODT">Ondansetron 8mg ODT</option>
+                    <option value="Albuterol nebulizer (hand-held)">Albuterol nebulizer (hand-held)</option>
                     <option value="Other">Other</option>
                 </select>
                 <input id="medTabletsInput" type="number" min="1" step="1" value="1" style="width:60px; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;" />
@@ -272,6 +329,15 @@
             <input id="medNotesInput" type="text" placeholder="Notes (optional)" style="margin-bottom:6px; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;" />
             <div id="medStatus" style="font-size:0.8rem; margin-bottom:6px; color:#e5e7eb;"></div>
             <div id="medsList" class="tasks-list" style="max-height:24vh;"></div>
+
+            <div class="tasks-title" style="margin-top:10px;">Daily Med Log</div>
+            <div id="dailyMedHeading" style="font-size:0.8rem; margin-bottom:4px; color:#e5e7eb;"></div>
+            <div class="tasks-input-row" style="margin-bottom:6px; align-items:center;">
+                <input id="dailyMedDate" type="date" style="flex:1; padding:4px 6px; border-radius:4px; border:1px solid #4b5563; background:#020617; color:#e5e7eb; font-size:0.85rem;" />
+                <button id="loadDailyMedLogBtn" style="margin-left:4px; padding:4px 8px; border-radius:4px; border:1px solid #3b82f6; background:#0b1120; color:#bfdbfe; font-size:0.8rem; cursor:pointer;">Load day</button>
+                <button id="printDailyMedLogBtn" style="margin-left:4px; padding:4px 8px; border-radius:4px; border:1px solid #6b7280; background:#020617; color:#e5e7eb; font-size:0.8rem; cursor:pointer;">Print</button>
+            </div>
+            <div id="dailyMedsList" class="tasks-list" style="max-height:24vh;"></div>
         </div>
     </div>
 
@@ -311,6 +377,11 @@
         const addMedDoseBtn = document.getElementById('addMedDoseBtn');
         const medStatus = document.getElementById('medStatus');
         const medsList = document.getElementById('medsList');
+        const dailyMedHeading = document.getElementById('dailyMedHeading');
+        const dailyMedDate = document.getElementById('dailyMedDate');
+        const loadDailyMedLogBtn = document.getElementById('loadDailyMedLogBtn');
+        const printDailyMedLogBtn = document.getElementById('printDailyMedLogBtn');
+        const dailyMedsList = document.getElementById('dailyMedsList');
         const householdInput = document.getElementById('householdId');
         const stationInput = document.getElementById('stationId');
         const displayNameInput = document.getElementById('displayName');
@@ -616,7 +687,7 @@
                     oxyTabs += tablets;
                 }
 
-                recentDocs.push({ ts, medName, tablets, notes: data.notes || '' });
+                recentDocs.push({ id: doc.id, ts, medName, tablets, notes: data.notes || '' });
             });
 
             const lines = [];
@@ -668,8 +739,125 @@
                 textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
 
                 wrapper.appendChild(textEl);
+
+                // Only allow deletions from the Control station
+                if (currentStationId === 'Control') {
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'task-delete-btn';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.addEventListener('click', async () => {
+                        const confirmed = window.confirm('Delete this medication entry?');
+                        if (!confirmed) return;
+                        try {
+                            await db.collection('medsLog').doc(entry.id).delete();
+                        } catch (e) {
+                            console.warn('Error deleting medication entry:', e);
+                            alert('Failed to delete medication entry. See console for details.');
+                        }
+                    });
+                    wrapper.appendChild(deleteBtn);
+                }
+
                 medsList.appendChild(wrapper);
             });
+        }
+
+        async function loadDailyMedLog() {
+            if (!dailyMedsList) return;
+
+            if (!currentHouseholdId) {
+                alert('Please set and save a Household before loading the daily med log.');
+                if (dailyMedHeading) dailyMedHeading.textContent = '';
+                return;
+            }
+
+            const dateStr = dailyMedDate?.value || '';
+            if (!dateStr) {
+                alert('Please pick a date first.');
+                if (dailyMedHeading) dailyMedHeading.textContent = '';
+                return;
+            }
+
+            // Compute local start/end of the selected day
+            const [year, month, day] = dateStr.split('-').map((part) => parseInt(part, 10));
+            if (!year || !month || !day) {
+                alert('Invalid date selected.');
+                if (dailyMedHeading) dailyMedHeading.textContent = '';
+                return;
+            }
+
+            const start = new Date(year, month - 1, day, 0, 0, 0, 0);
+            const end = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+            if (dailyMedHeading) {
+                const formatted = `${year.toString().padStart(4, '0')}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+                dailyMedHeading.textContent = `Medication Log for ${formatted} (Household ${currentHouseholdId})`;
+            }
+
+            dailyMedsList.innerHTML = 'Loading...';
+
+            try {
+                const snapshot = await db.collection('medsLog')
+                    .where('householdId', '==', currentHouseholdId)
+                    .orderBy('createdAt', 'asc')
+                    .get();
+
+                const entries = [];
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (!data) return;
+
+                    const ts = data.createdAt && data.createdAt.toDate ? data.createdAt.toDate() : null;
+                    if (!ts) return;
+
+                    if (ts < start || ts > end) {
+                        return;
+                    }
+
+                    entries.push({
+                        ts,
+                        medName: data.medName || '',
+                        tablets: Number(data.tablets || 0) || 0,
+                        notes: data.notes || '',
+                    });
+                });
+
+                dailyMedsList.innerHTML = '';
+
+                if (entries.length === 0) {
+                    dailyMedsList.textContent = 'No medication entries for this date.';
+                    return;
+                }
+
+                entries.sort((a, b) => a.ts.getTime() - b.ts.getTime());
+
+                entries.forEach((entry) => {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'task-item';
+
+                    const textEl = document.createElement('div');
+                    textEl.className = 'task-text';
+                    const when = entry.ts.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                    const notesPart = entry.notes ? ` – ${entry.notes}` : '';
+                    textEl.textContent = `${when} – ${entry.tablets} tab(s) ${entry.medName}${notesPart}`;
+
+                    wrapper.appendChild(textEl);
+                    dailyMedsList.appendChild(wrapper);
+                });
+            } catch (e) {
+                console.warn('Error loading daily med log:', e);
+                dailyMedsList.textContent = 'Error loading daily med log. See console for details.';
+                if (dailyMedHeading) dailyMedHeading.textContent = '';
+            }
+        }
+
+        function printDailyMedLog() {
+            try {
+                window.print();
+            } catch (e) {
+                console.warn('Unable to open print dialog:', e);
+            }
         }
 
         function playBeep() {
@@ -680,14 +868,14 @@
                 o.type = 'sine';
                 o.frequency.value = 880;     // pitch
                 o.connect(g);
-        g.connect(ctx.destination);
-        g.gain.setValueAtTime(0.5, ctx.currentTime);  // volume
-        o.start();
-        o.stop(ctx.currentTime + 0.5);                // 0.2 second beep
-    } catch (e) {
-        console.warn('Audio not available:', e);
-    }
-}
+                g.connect(ctx.destination);
+                g.gain.setValueAtTime(0.5, ctx.currentTime);  // volume
+                o.start();
+                o.stop(ctx.currentTime + 0.5);                // 0.5 second beep
+            } catch (e) {
+                console.warn('Audio not available:', e);
+            }
+        }
 
         // Choose a default English (US) voice if available
         function getDefaultVoice() {
