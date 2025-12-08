@@ -722,10 +722,15 @@
             pauseBtn.disabled = true;
             resetBtn.disabled = false;
 
-            document.getElementById("timerPhase").textContent = "Ready when you are. Press Start to begin a 5 second countdown.";
-            document.getElementById("timerMovement").textContent = "";
-            document.getElementById("timerTime").textContent = "5";
-            document.getElementById("timerRound").textContent = "Planned: 3 rounds · 60s / 45s / 30s";
+            const isAmrap = wod.title && wod.title.toLowerCase().includes("amrap");
+            document.getElementById("timerPhase").textContent = isAmrap
+                ? "Ready when you are. Press Start to begin the AMRAP timer."
+                : "Ready when you are. Press Start to begin a 5 second countdown.";
+            document.getElementById("timerMovement").textContent = isAmrap ? wod.title : "";
+            document.getElementById("timerTime").textContent = isAmrap ? "--:--" : "5";
+            document.getElementById("timerRound").textContent = isAmrap
+                ? "AMRAP timer (20–30 minutes)"
+                : "Planned: 3 rounds · 60s / 45s / 30s";
         }
 
         function saveWorkout(wod, isShuffle) {
@@ -796,27 +801,47 @@
         function startTimer() {
             if (!currentWod) return;
 
-            const movements = buildTimerSequence();
-            if (!movements.length) {
-                document.getElementById("timerPhase").textContent = "No main movements found to time. Try generating another workout.";
-                return;
+            const isAmrap = currentWod.title && currentWod.title.toLowerCase().includes("amrap");
+
+            if (isAmrap) {
+                const timeSelect = document.getElementById("time");
+                const timeVal = timeSelect ? timeSelect.value : "20";
+                const totalMinutes = timeVal === "20" ? 20 : 30; // 20 or 30 minutes
+                const totalSeconds = totalMinutes * 60;
+
+                timerState = {
+                    mode: "amrap",
+                    phase: "work",
+                    remaining: totalSeconds,
+                    totalSeconds,
+                    halfway: Math.floor(totalSeconds / 2),
+                    halfwayCalled: false,
+                    paused: false
+                };
+            } else {
+                const movements = buildTimerSequence();
+                if (!movements.length) {
+                    document.getElementById("timerPhase").textContent = "No main movements found to time. Try generating another workout.";
+                    return;
+                }
+
+                const restSelect = document.getElementById("restBetween");
+                const restSeconds = parseInt(restSelect.value, 10) || 30;
+
+                const workByRound = [60, 45, 30];
+
+                timerState = {
+                    mode: "interval",
+                    movements,
+                    restSeconds,
+                    workByRound,
+                    roundIndex: 0,
+                    movementIndex: 0,
+                    phase: "get-ready",
+                    remaining: 5,
+                    paused: false
+                };
             }
-
-            const restSelect = document.getElementById("restBetween");
-            const restSeconds = parseInt(restSelect.value, 10) || 30;
-
-            const workByRound = [60, 45, 30];
-
-            timerState = {
-                movements,
-                restSeconds,
-                workByRound,
-                roundIndex: 0,
-                movementIndex: 0,
-                phase: "get-ready",
-                remaining: 5,
-                paused: false
-            };
 
             if (audioCtx && audioCtx.state === "suspended") {
                 audioCtx.resume().catch(() => {});
@@ -884,6 +909,30 @@
         function tickTimer() {
             if (!timerState || timerState.paused) return;
 
+            // AMRAP overall timer mode
+            if (timerState.mode === "amrap") {
+                if (timerState.remaining > 0) {
+                    timerState.remaining -= 1;
+                    if (timerState.remaining <= 3 && timerState.remaining >= 1) {
+                        playBeep();
+                    }
+                    if (!timerState.halfwayCalled && timerState.remaining === timerState.halfway) {
+                        speak("Halfway");
+                        timerState.halfwayCalled = true;
+                    }
+                    updateTimerDisplay();
+                    return;
+                }
+
+                timerState.phase = "done";
+                updateTimerDisplay();
+                clearInterval(timerIntervalId);
+                enableTimerButtons(false);
+                document.getElementById("timerPauseBtn").disabled = true;
+                speak("Workout complete");
+                return;
+            }
+
             if (timerState.remaining > 0) {
                 if (timerState.remaining <= 3) {
                     playBeep();
@@ -941,9 +990,28 @@
 
         function updateTimerDisplay() {
             if (!timerState) return;
+            const roundElem = document.getElementById("timerRound");
+            const phaseElem = document.getElementById("timerPhase");
+            const movementElem = document.getElementById("timerMovement");
+            const timeElem = document.getElementById("timerTime");
+
+            if (timerState.mode === "amrap") {
+                roundElem.textContent = "AMRAP timer";
+                phaseElem.textContent = timerState.phase === "done" ? "Done" : "Work";
+
+                const movementName = currentWod && currentWod.title
+                    ? currentWod.title
+                    : "AMRAP";
+                movementElem.textContent = movementName;
+
+                const minutes = Math.floor(Math.max(timerState.remaining, 0) / 60);
+                const seconds = Math.max(timerState.remaining, 0) % 60;
+                timeElem.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+                return;
+            }
 
             const roundText = `Round ${timerState.roundIndex + 1} of ${timerState.workByRound.length}`;
-            document.getElementById("timerRound").textContent = roundText;
+            roundElem.textContent = roundText;
 
             let phaseText = "";
             if (timerState.phase === "get-ready") phaseText = "Get Ready";
@@ -951,7 +1019,7 @@
             else if (timerState.phase === "rest") phaseText = "Rest";
             else if (timerState.phase === "done") phaseText = "Done";
 
-            document.getElementById("timerPhase").textContent = phaseText;
+            phaseElem.textContent = phaseText;
 
             const movementName = timerState.phase === "get-ready" && timerState.movements.length
                 ? timerState.movements[timerState.movementIndex]
@@ -959,8 +1027,8 @@
                     ? "Great job—workout complete!"
                     : timerState.movements[timerState.movementIndex];
 
-            document.getElementById("timerMovement").textContent = movementName || "";
-            document.getElementById("timerTime").textContent = timerState.remaining.toString().padStart(2, "0");
+            movementElem.textContent = movementName || "";
+            timeElem.textContent = timerState.remaining.toString().padStart(2, "0");
         }
 
         function togglePause() {
