@@ -249,6 +249,12 @@
                 display: none !important;
             }
 
+            /* Hide headings for Tasks and Transcribed Replies in print */
+            #tasksTitle,
+            #repliesTitle {
+                display: none !important;
+            }
+
             /* Keep the Daily Med Log title, date, and list visible */
             #dailyMedDate,
             #dailyMedsList {
@@ -303,14 +309,14 @@
     <div class="main-layout">
         <div class="messages" id="messages"></div>
         <div class="tasks-pane">
-            <div class="tasks-title">Tasks</div>
+            <div id="tasksTitle" class="tasks-title">Tasks</div>
             <div class="tasks-input-row">
                 <input id="taskInput" type="text" placeholder="New task..." />
                 <button id="addTaskBtn">Add</button>
             </div>
             <div id="tasksList" class="tasks-list"></div>
 
-            <div class="tasks-title" style="margin-top:10px;">Transcribed Replies</div>
+            <div id="repliesTitle" class="tasks-title" style="margin-top:10px;">Transcribed Replies</div>
             <div id="repliesList" class="tasks-list" style="margin-top:4px; max-height:24vh;"></div>
 
             <div class="tasks-title" style="margin-top:10px;">Medication Log (last 24 hours)</div>
