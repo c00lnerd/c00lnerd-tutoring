@@ -351,11 +351,8 @@
             storageBucket: "home-messsaging.firebasestorage.app",
             messagingSenderId: "497404009360",
             appId: "1:497404009360:web:ef9c7c6cb01476d4077115",
-  measurementId: "G-ZXBF9KZM6P"
-};
-        if (!window.firebaseConfig) {
-            console.warn('Remember to define firebaseConfig in this file.');
-        }
+            measurementId: "G-ZXBF9KZM6P"
+        };
 
         // Initialize Firebase
         const app = firebase.initializeApp(window.firebaseConfig || firebaseConfig);
@@ -858,6 +855,14 @@
             } catch (e) {
                 console.warn('Unable to open print dialog:', e);
             }
+        }
+
+        if (loadDailyMedLogBtn) {
+            loadDailyMedLogBtn.addEventListener('click', loadDailyMedLog);
+        }
+
+        if (printDailyMedLogBtn) {
+            printDailyMedLogBtn.addEventListener('click', printDailyMedLog);
         }
 
         function playBeep() {
