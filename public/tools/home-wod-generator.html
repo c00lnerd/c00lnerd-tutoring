@@ -107,6 +107,10 @@
             color: #444444;
         }
 
+        .equipment-list.hidden {
+            display: none;
+        }
+
         .btn-primary {
             width: 100%;
             margin-top: 10px;
@@ -359,6 +363,15 @@
                 </div>
 
                 <div class="field">
+                    <label for="workoutMode">Workout Mode</label>
+                    <small>Travel mode generates bodyweight workouts that can be done with just floor space and a chair.</small>
+                    <select id="workoutMode" onchange="onWorkoutModeChange()">
+                        <option value="home" selected>Home gym</option>
+                        <option value="travel">Travel (bodyweight + chair)</option>
+                    </select>
+                </div>
+
+                <div class="field">
                     <label for="time">Time Available</label>
                     <select id="time">
                         <option value="20">~20 minutes</option>
@@ -410,6 +423,12 @@
                     <div>2 × 20 lb dumbbells</div>
                     <div>Bands + pull-up assist band</div>
                     <div>Pull-up bar, dip bar, bike, floor space</div>
+                </div>
+
+                <div class="equipment-list hidden" id="travelEquipment">
+                    <strong>Travel Setup:</strong>
+                    <div>Bodyweight + floor space</div>
+                    <div>Sturdy chair</div>
                 </div>
 
                 <button class="btn-primary" onclick="generateWorkout()">Generate Workout</button>
@@ -483,15 +502,25 @@
             // Bodyweight + bands
             { name: "Push-up", category: "horizontal_push", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Incline Push-up (bench)", category: "horizontal_push", equipment: ["bodyweight", "bench"], tags: ["easy"] },
+            { name: "Incline Push-up (chair)", category: "horizontal_push", equipment: ["bodyweight", "chair"], tags: ["easy", "travel"] },
             { name: "Band Row", category: "horizontal_pull", equipment: ["band"], tags: ["strength"] },
             { name: "Assisted Pull-up (band)", category: "vertical_pull", equipment: ["pullup", "band"], tags: ["strength"] },
             { name: "Dip (or Bench Dip)", category: "vertical_push", equipment: ["dip", "bench"], tags: ["strength"] },
+            { name: "Chair Dip", category: "vertical_push", equipment: ["bodyweight", "chair"], tags: ["travel"] },
             { name: "Air Squat", category: "squat", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Jump Squat", category: "squat", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
             { name: "Reverse Lunge (bodyweight)", category: "lunge", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Lateral Lunge", category: "lunge", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Mountain Climbers", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Burpee", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
+
+            // Travel-friendly strength / pull substitutes (no equipment)
+            { name: "Superman Pull", category: "horizontal_pull", equipment: ["bodyweight"], tags: ["travel"] },
+            { name: "Prone Y-T-W Raises", category: "horizontal_pull", equipment: ["bodyweight"], tags: ["travel"] },
+            { name: "Chair Step-up", category: "lunge", equipment: ["bodyweight", "chair"], tags: ["travel", "metcon"] },
+            { name: "Chair Squat (Sit-to-Stand)", category: "squat", equipment: ["bodyweight", "chair"], tags: ["travel", "easy"] },
+            { name: "Single-Leg Hip Hinge", category: "hinge", equipment: ["bodyweight"], tags: ["travel"] },
+            { name: "Glute Bridge March", category: "core", equipment: ["bodyweight"], tags: ["travel", "core"] },
 
             // Plyometrics / wall ball
             { name: "18\" Box Jump", category: "conditioning", equipment: ["box"], tags: ["metcon"] },
@@ -602,12 +631,17 @@
         }
 
         function filterMovements(criteria, options) {
-            const { allowBurpees, allowWallBall, allowBoxJumps } = options;
+            const { allowBurpees, allowWallBall, allowBoxJumps, workoutMode } = options;
             return movementLibrary.filter(m => {
                 if (criteria.category && m.category !== criteria.category) return false;
                 if (!allowBurpees && m.name.toLowerCase().includes("burpee")) return false;
                 if (!allowBoxJumps && m.equipment && m.equipment.includes("box")) return false;
                 if (!allowWallBall && m.tags && m.tags.includes("wallball")) return false;
+                if (workoutMode === "travel") {
+                    const allowed = ["bodyweight", "chair"];
+                    const eq = Array.isArray(m.equipment) ? m.equipment : [];
+                    if (eq.some(e => !allowed.includes(e))) return false;
+                }
                 return true;
             });
         }
@@ -685,6 +719,7 @@
         }
 
         function generateWorkout(isShuffle) {
+            const workoutMode = document.getElementById("workoutMode").value;
             const type = document.getElementById("type").value;
             const time = document.getElementById("time").value;
             const difficulty = document.getElementById("difficulty").value;
@@ -696,7 +731,7 @@
             const restSeconds = restSelect ? parseInt(restSelect.value, 10) || null : null;
 
             const template = chooseTemplate(type, time);
-            const options = { useBike, allowBurpees, allowWallBall, allowBoxJumps };
+            const options = { useBike, allowBurpees, allowWallBall, allowBoxJumps, workoutMode };
 
             const builtSections = template.sections
                 .map(sec => buildSection(sec, options))
@@ -721,6 +756,40 @@
             saveWorkout(wod, isShuffle);
             renderHistory();
         }
+
+        function onWorkoutModeChange() {
+            const mode = document.getElementById("workoutMode").value;
+            const travelEq = document.getElementById("travelEquipment");
+            const equipmentLists = document.querySelectorAll(".equipment-list");
+
+            if (equipmentLists.length >= 2) {
+                // First equipment list is home, second is travel.
+                const homeEq = equipmentLists[0];
+                if (mode === "travel") {
+                    homeEq.classList.add("hidden");
+                    if (travelEq) travelEq.classList.remove("hidden");
+                } else {
+                    homeEq.classList.remove("hidden");
+                    if (travelEq) travelEq.classList.add("hidden");
+                }
+            }
+
+            const useBike = document.getElementById("useBike");
+            const allowBoxJumps = document.getElementById("allowBoxJumps");
+            const allowWallBall = document.getElementById("allowWallBall");
+
+            if (mode === "travel") {
+                if (useBike) { useBike.checked = false; useBike.disabled = true; }
+                if (allowBoxJumps) { allowBoxJumps.checked = false; allowBoxJumps.disabled = true; }
+                if (allowWallBall) { allowWallBall.checked = false; allowWallBall.disabled = true; }
+            } else {
+                if (useBike) { useBike.disabled = false; }
+                if (allowBoxJumps) { allowBoxJumps.disabled = false; }
+                if (allowWallBall) { allowWallBall.disabled = false; }
+            }
+        }
+
+        onWorkoutModeChange();
 
         function renderWorkout(wod) {
             const container = document.getElementById("wodOutput");
