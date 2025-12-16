@@ -2,12 +2,12 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 20: Wireless Communication and Remote Control">
+<Layout title="Lesson 20: Color Tracking (Hiwonder 7.5)">
     <div style="max-width: 900px; margin: 0 auto; padding: 2rem;">
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
             <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0;">Lesson 20</h1>
-            <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; opacity: 0.9;">Wireless Communication and Remote Control</p>
+            <p style="font-size: 1.2rem; margin: 0.5rem 0 0 0; opacity: 0.9;">Color Tracking (Hiwonder 7.5)</p>
         </div>
 
         <!-- Learning Objectives -->
@@ -18,348 +18,120 @@ import Layout from '../../../layouts/Layout.astro';
             <ul style="list-style-type: none; padding: 0;">
                 <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
                     <span style="position: absolute; left: 0; color: #667eea;">•</span>
-                    Understand different types of wireless communication (WiFi, Bluetooth, radio)
+                    Understand how the ESP32-S3 vision module reports the position of a detected target (red block)
                 </li>
                 <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
                     <span style="position: absolute; left: 0; color: #667eea;">•</span>
-                    Learn how to send and receive data wirelessly with Arduino
+                    Learn the idea of “center point tracking” (keep target centered in the camera view)
                 </li>
                 <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
                     <span style="position: absolute; left: 0; color: #667eea;">•</span>
-                    Build a remote control system for your miniAuto robot
+                    Use steering angle + speed to rotate/drive toward the tracked object
                 </li>
                 <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
                     <span style="position: absolute; left: 0; color: #667eea;">•</span>
-                    Understand signal strength, range, and interference
+                    Learn why timing loops / periodic updates (e.g., ~20ms) help tracking feel smooth
                 </li>
                 <li style="margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative;">
                     <span style="position: absolute; left: 0; color: #667eea;">•</span>
-                    Create a smartphone app interface for robot control
+                    Apply safe testing habits: clear floor space, low speed, quick STOP access
                 </li>
             </ul>
         </div>
 
-        <!-- Section 1: Introduction to Wireless Communication -->
+        <!-- Section 1: What Color Tracking Does -->
         <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
-                <span style="margin-right: 0.5rem;">📡</span> Introduction to Wireless Communication
+                <span style="margin-right: 0.5rem;">🎯</span> What Color Tracking Does
             </h2>
             
             <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">What is Wireless Communication?</h3>
+                <h3 style="color: #495057; margin-bottom: 1rem;">Goal</h3>
                 <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Wireless communication allows devices to send information to each other without physical wires. 
-                    Instead of cables, they use invisible signals that travel through the air at the speed of light!
+                    The robot uses the ESP32-S3 vision module to detect a <strong>red</strong> target and then adjusts its
+                    movement so it stays facing the target.
                 </p>
                 <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Think about how your phone connects to WiFi, or how a TV remote controls your television. 
-                    These are all examples of wireless communication that we use every day.
+                    If you move a red ball or block left/right in front of the camera, the robot rotates in place to follow it.
                 </p>
-            </div>
-
-            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Types of Wireless Communication</h3>
-                <ul style="margin-bottom: 1rem; line-height: 1.8;">
-                    <li><strong>WiFi:</strong> High-speed internet connection, long range (100+ feet)</li>
-                    <li><strong>Bluetooth:</strong> Short-range connection for nearby devices (30 feet)</li>
-                    <li><strong>Radio Waves:</strong> Simple signals that can travel very far</li>
-                    <li><strong>Infrared:</strong> Light signals that need direct line of sight (like TV remotes)</li>
-                </ul>
             </div>
 
             <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">How Wireless Signals Work</h3>
+                <h3 style="color: #495057; margin-bottom: 1rem;">Expected Outcome (Hiwonder 7.5.4)</h3>
                 <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Wireless signals are like invisible waves that carry information. Just like throwing a ball to a friend, 
-                    one device "throws" a signal, and another device "catches" it. The information is encoded in the 
-                    pattern of these waves.
-                </p>
-                <p style="line-height: 1.6;">
-                    The strength of the signal depends on distance - the farther away you are, the weaker the signal becomes. 
-                    Walls, metal objects, and other electronics can also interfere with or block signals.
+                    Power on the robot. The buzzer beeps once and the RGB light turns white.
+                    When a red ball is placed in front of the ESP32-S3 vision module and moved, the robot rotates to follow the ball.
                 </p>
             </div>
         </div>
 
-        <!-- Section 2: Arduino Wireless Modules -->
+        <!-- Section 2: The Tracking Idea (Centering) -->
         <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
-                <span style="margin-right: 0.5rem;">🔧</span> Arduino Wireless Modules
+                <span style="margin-right: 0.5rem;">📐</span> The Tracking Idea (Centering)
             </h2>
             
             <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">ESP32 WiFi Module</h3>
+                <h3 style="color: #495057; margin-bottom: 1rem;">Center Point Tracking</h3>
                 <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    The ESP32 is a powerful module that can connect to WiFi networks and communicate over the internet. 
-                    It's like giving your robot a smartphone brain that can connect to WiFi!
+                    The vision module returns a detected block location (often something like <strong>x</strong>, <strong>y</strong>, and size).
+                    Your controller compares the detected center to the desired center of the image.
                 </p>
                 
                 <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
-                    <pre style="margin: 0; white-space: pre-wrap;">{`#include <WiFi.h>
+                    <pre style="margin: 0; white-space: pre-wrap;">{`// Conceptual control loop
+// error = targetCenterX - detectedCenterX
+// angle = kP * error
+// speed can be small or zero (rotate-in-place tracking)
 
-const char* ssid = "YourWiFiName";
-const char* password = "YourPassword";
-
-void setup() {
-  Serial.begin(115200);
-  
-  // Connect to WiFi
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-  
-  Serial.println("Connected to WiFi!");
-  Serial.print("IP Address: ");
-  Serial.println(WiFi.localIP());
-}
-
-void loop() {
-  // Your robot code here
-}`}</pre>
-                </div>
-            </div>
-
-            <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Bluetooth Module (HC-05)</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Bluetooth is perfect for connecting your robot to a smartphone or tablet. It's easy to use and 
-                    doesn't require internet - just pair the devices like connecting wireless headphones!
-                </p>
-                
-                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
-                    <pre style="margin: 0; white-space: pre-wrap;">{`#include <SoftwareSerial.h>
-
-SoftwareSerial bluetooth(2, 3); // RX, TX pins
-
-void setup() {
-  Serial.begin(9600);
-  bluetooth.begin(9600);
-  Serial.println("Bluetooth Ready!");
-}
-
-void loop() {
-  // Check for commands from phone
-  if (bluetooth.available()) {
-    String command = bluetooth.readString();
-    command.trim(); // Remove extra spaces
-    
-    if (command == "FORWARD") {
-      moveForward();
-    } else if (command == "BACKWARD") {
-      moveBackward();
-    } else if (command == "LEFT") {
-      turnLeft();
-    } else if (command == "RIGHT") {
-      turnRight();
-    } else if (command == "STOP") {
-      stopMotors();
-    }
-  }
-}`}</pre>
+errorX = targetX - detectedX;
+set_angle = mapErrorToAngle(errorX);
+set_speed = chooseSpeed();
+Velocity_Controller(set_angle, set_speed, 0, SIMULATE_PWM_CONTROL);`}</pre>
                 </div>
             </div>
 
             <div style="background: #fef7e0; padding: 1.5rem; border-radius: 8px;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Radio Frequency (RF) Modules</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    RF modules are simple and reliable for basic remote control. They work like walkie-talkies - 
-                    one module transmits, and another receives. Great for long-distance control!
+                <h3 style="color: #495057; margin-bottom: 1rem;">Timing Matters</h3>
+                <p style="margin-bottom: 0; line-height: 1.6;">
+                    In the Hiwonder example, the control update runs on a timer (periodic callback) so the robot keeps adjusting smoothly.
                 </p>
-                <ul style="line-height: 1.8;">
-                    <li><strong>Range:</strong> Can work from 100+ feet away</li>
-                    <li><strong>Simple:</strong> Just send basic commands (forward, back, left, right)</li>
-                    <li><strong>Reliable:</strong> Less interference than WiFi or Bluetooth</li>
-                    <li><strong>Battery Friendly:</strong> Uses very little power</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Section 3: Building a Remote Control System -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
-                <span style="margin-right: 0.5rem;">🎮</span> Building a Remote Control System
-            </h2>
-            
-            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Step 1: Choose Your Control Method</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    First, decide how you want to control your robot. Each method has advantages:
-                </p>
-                <ul style="margin-bottom: 1rem; line-height: 1.8;">
-                    <li><strong>Smartphone App:</strong> Touch buttons, tilt controls, voice commands</li>
-                    <li><strong>Computer/Laptop:</strong> Keyboard controls, mouse steering</li>
-                    <li><strong>Game Controller:</strong> Joysticks and buttons for precise control</li>
-                    <li><strong>Custom Remote:</strong> Build your own with buttons and joysticks</li>
-                </ul>
-            </div>
-
-            <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Step 2: Design Your Commands</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Plan what commands your robot should understand. Keep it simple at first:
-                </p>
-                
-                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
-                    <pre style="margin: 0; white-space: pre-wrap;">{`// Basic movement commands
-void processCommand(String cmd) {
-  if (cmd == "F") {
-    moveForward();
-  } else if (cmd == "B") {
-    moveBackward();
-  } else if (cmd == "L") {
-    turnLeft();
-  } else if (cmd == "R") {
-    turnRight();
-  } else if (cmd == "S") {
-    stopMotors();
-  } else if (cmd == "BEEP") {
-    playBeep();
-  } else if (cmd == "LIGHTS") {
-    toggleLights();
-  }
-  
-  // Send confirmation back
-  bluetooth.println("Command received: " + cmd);
-}`}</pre>
-                </div>
-            </div>
-
-            <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Step 3: Add Safety Features</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Always include safety features in your remote control system:
-                </p>
-                <ul style="line-height: 1.8;">
-                    <li><strong>Connection Check:</strong> Stop the robot if connection is lost</li>
-                    <li><strong>Emergency Stop:</strong> Always have a way to stop immediately</li>
-                    <li><strong>Speed Limits:</strong> Don't let the robot go too fast</li>
-                    <li><strong>Boundary Detection:</strong> Stop at edges or obstacles</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Section 4: Smartphone App Control -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
-                <span style="margin-right: 0.5rem;">📱</span> Smartphone App Control
-            </h2>
-            
-            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Using Existing Apps</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    The easiest way to start is using apps that are already available:
-                </p>
-                <ul style="margin-bottom: 1rem; line-height: 1.8;">
-                    <li><strong>Arduino Bluetooth Controller:</strong> Simple button interface</li>
-                    <li><strong>Bluetooth Terminal:</strong> Send text commands directly</li>
-                    <li><strong>MIT App Inventor:</strong> Create your own custom app</li>
-                </ul>
-            </div>
-
-            <div style="background: #f0f4f8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Creating a Simple Web Interface</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    With WiFi, you can create a web page that controls your robot from any device with a browser:
-                </p>
-                
-                <div style="background: #1a1a1a; color: #f8f8f2; padding: 1rem; border-radius: 6px; font-family: 'Courier New', monospace; margin: 1rem 0; overflow-x: auto;">
-                    <pre style="margin: 0; white-space: pre-wrap;">{`// Simple web server for robot control
-#include <WiFi.h>
-#include <WebServer.h>
-
-WebServer server(80);
-
-void setup() {
-  // Connect to WiFi (code from earlier)
-  
-  // Define web pages
-  server.on("/", handleRoot);
-  server.on("/forward", handleForward);
-  server.on("/backward", handleBackward);
-  server.on("/left", handleLeft);
-  server.on("/right", handleRight);
-  server.on("/stop", handleStop);
-  
-  server.begin();
-  Serial.println("Web server started!");
-}
-
-void handleRoot() {
-  String html = "<html><body>";
-  html += "<h1>Robot Control</h1>";
-  html += "<button onclick='fetch(\"/forward\")'>Forward</button><br>";
-  html += "<button onclick='fetch(\"/backward\")'>Backward</button><br>";
-  html += "<button onclick='fetch(\"/left\")'>Left</button>";
-  html += "<button onclick='fetch(\"/right\")'>Right</button><br>";
-  html += "<button onclick='fetch(\"/stop\")'>STOP</button>";
-  html += "</body></html>";
-  
-  server.send(200, "text/html", html);
-}`}</pre>
-                </div>
-            </div>
-
-            <div style="background: #fef7e0; padding: 1.5rem; border-radius: 8px;">
-                <h3 style="color: #495057; margin-bottom: 1rem;">Advanced Control Features</h3>
-                <p style="margin-bottom: 1rem; line-height: 1.6;">
-                    Once you have basic control working, you can add exciting features:
-                </p>
-                <ul style="line-height: 1.8;">
-                    <li><strong>Tilt Control:</strong> Tilt your phone to steer the robot</li>
-                    <li><strong>Voice Commands:</strong> Say "go forward" to control the robot</li>
-                    <li><strong>Camera View:</strong> See what your robot sees on your phone</li>
-                    <li><strong>Sensor Data:</strong> Display distance, temperature, and other readings</li>
-                    <li><strong>Path Recording:</strong> Record a path and replay it automatically</li>
-                </ul>
             </div>
         </div>
 
         <!-- Hands-On Activity -->
         <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; margin-bottom: 1rem; display: flex; align-items: center;">
-                <span style="margin-right: 0.5rem;">🔬</span> Hands-On Activity: Build a Bluetooth Remote Control
+                <span style="margin-right: 0.5rem;">🔬</span> Hands-On Activity: Track a Red Target
             </h2>
             
             <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <h3 style="color: #495057; margin-bottom: 1rem;">Materials Needed</h3>
                 <ul style="line-height: 1.8;">
-                    <li>miniAuto robot with Arduino</li>
-                    <li>HC-05 Bluetooth module</li>
-                    <li>Jumper wires</li>
-                    <li>Smartphone with Bluetooth</li>
-                    <li>Arduino Bluetooth Controller app (free download)</li>
+                    <li>miniAuto with ESP32-S3 vision module installed</li>
+                    <li>Red ball or red block</li>
+                    <li>Open floor space</li>
                 </ul>
             </div>
 
             <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <h3 style="color: #495057; margin-bottom: 1rem;">Step-by-Step Instructions</h3>
                 <ol style="line-height: 1.8;">
-                    <li><strong>Wire the Bluetooth Module:</strong>
-                        <ul style="margin-top: 0.5rem;">
-                            <li>VCC → 5V on Arduino</li>
-                            <li>GND → GND on Arduino</li>
-                            <li>RX → Pin 2 on Arduino</li>
-                            <li>TX → Pin 3 on Arduino</li>
-                        </ul>
-                    </li>
-                    <li><strong>Upload the Control Code:</strong> Use the Bluetooth code example from Section 2</li>
-                    <li><strong>Pair Your Phone:</strong> Find "HC-05" in Bluetooth settings and connect</li>
-                    <li><strong>Download Controller App:</strong> Install "Arduino Bluetooth Controller" from app store</li>
-                    <li><strong>Configure the App:</strong> Set up buttons to send F, B, L, R, S commands</li>
-                    <li><strong>Test the Connection:</strong> Try each button and watch your robot respond</li>
-                    <li><strong>Add Features:</strong> Program additional commands like lights or sounds</li>
+                    <li><strong>Upload programs:</strong> Flash the ESP32-S3 color tracking program, then upload the UNO tracking program</li>
+                    <li><strong>Power on:</strong> Confirm the RGB is white and the buzzer beeps once</li>
+                    <li><strong>Present target:</strong> Hold a red ball/block in front of the camera</li>
+                    <li><strong>Move target:</strong> Move the target left/right and confirm robot rotates to follow</li>
+                    <li><strong>Experiment:</strong> Try different distances and lighting; note stability changes</li>
                 </ol>
             </div>
 
             <div style="background: #fff3cd; padding: 1.5rem; border-radius: 8px;">
                 <h3 style="color: #495057; margin-bottom: 1rem;">Testing and Troubleshooting</h3>
                 <ul style="line-height: 1.8;">
-                    <li><strong>No Connection:</strong> Check wiring and make sure Bluetooth is paired</li>
-                    <li><strong>Robot Not Moving:</strong> Verify motor connections and battery charge</li>
-                    <li><strong>Delayed Response:</strong> Normal with Bluetooth - expect small delays</li>
-                    <li><strong>Connection Drops:</strong> Stay within 30 feet and avoid interference</li>
+                    <li><strong>No tracking:</strong> Make sure the ESP32-S3 tracking firmware is flashed correctly</li>
+                    <li><strong>Wrong color:</strong> Use a solid red object; reduce background clutter</li>
+                    <li><strong>Jitter:</strong> Increase distance slightly and improve lighting</li>
+                    <li><strong>Too fast:</strong> Reduce speed in the controller code (safer for indoor testing)</li>
                 </ul>
             </div>
         </div>
@@ -373,31 +145,28 @@ void handleRoot() {
             <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <h3 style="color: #495057; margin-bottom: 1rem;">Practice Exercises</h3>
                 <ol style="line-height: 1.8;">
-                    <li>Successfully connect and control your robot via Bluetooth</li>
-                    <li>Add a "horn" command that makes your robot beep</li>
-                    <li>Program an emergency stop that works from any state</li>
-                    <li>Test the maximum range of your Bluetooth connection</li>
-                    <li>Create a simple obstacle course and navigate it remotely</li>
+                    <li>Demonstrate stable tracking at 3 different distances</li>
+                    <li>Record how lighting/background changes affect the tracking quality</li>
+                    <li>Add a “dead zone” so tiny errors don’t cause constant turning</li>
+                    <li>Try adding speed control based on target size (closer = larger)</li>
                 </ol>
             </div>
 
             <div style="background: #e8f5e8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <h3 style="color: #495057; margin-bottom: 1rem;">Challenge Projects</h3>
                 <ul style="line-height: 1.8;">
-                    <li><strong>Voice Control:</strong> Use phone's voice recognition to control robot</li>
-                    <li><strong>Gesture Control:</strong> Control robot by tilting your phone</li>
-                    <li><strong>Two-Way Communication:</strong> Have robot send sensor data back to phone</li>
-                    <li><strong>Multiple Robots:</strong> Control several robots from one phone</li>
+                    <li><strong>Pan Follow:</strong> Make the robot steer so the target stays centered while driving forward slowly</li>
+                    <li><strong>Lost Target:</strong> If target disappears, rotate slowly until it is found again</li>
+                    <li><strong>Safety:</strong> Add a STOP button (or timeout) you can trigger instantly</li>
                 </ul>
             </div>
 
             <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
                 <h3 style="color: #495057; margin-bottom: 1rem;">Reflection Questions</h3>
                 <ol style="line-height: 1.8;">
-                    <li>What are the advantages and disadvantages of wireless vs. wired control?</li>
-                    <li>Why might Bluetooth be better than WiFi for robot control in some situations?</li>
-                    <li>How could you improve the safety of your remote control system?</li>
-                    <li>What real-world applications use similar wireless control systems?</li>
+                    <li>Why does a periodic update loop make tracking smoother?</li>
+                    <li>What happens if the background contains “red” too?</li>
+                    <li>How could you make tracking more stable without adding heavy computation?</li>
                 </ol>
             </div>
         </div>
@@ -405,15 +174,15 @@ void handleRoot() {
         <!-- Navigation -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
             <a href="/programming/lessons32/Lesson19" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                ← Lesson 19: Machine Learning
+                ← Lesson 19: Color Recognition
             </a>
             
             <a href="/programming/semester2" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
                 📚 Semester Overview
             </a>
             
-            <a href="/programming/quizzes32/Lesson20" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #28a745; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                Take Quiz →
+            <a href="/programming/lessons32/Lesson21" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #667eea; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
+                Next: Lesson 21 →
             </a>
         </div>
     </div>
