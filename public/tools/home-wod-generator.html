@@ -290,6 +290,13 @@
             color: #333333;
         }
 
+        .timer-movement-tip {
+            font-size: 1rem;
+            color: #666666;
+            margin-top: -2px;
+            max-width: 760px;
+        }
+
         .timer-time {
             font-size: 2rem;
             font-weight: 700;
@@ -449,6 +456,7 @@
                     <div class="timer-main">
                         <div class="timer-phase" id="timerPhase">Generate a workout to enable the timer.</div>
                         <div class="timer-movement" id="timerMovement">&nbsp;</div>
+                        <div class="timer-movement-tip" id="timerMovementTip">&nbsp;</div>
                         <div class="timer-time" id="timerTime">--</div>
                     </div>
                     <div class="timer-controls">
@@ -471,6 +479,31 @@
         let timerState = null;
         let timerIntervalId = null;
         let audioCtx = null;
+
+        const movementTips = {
+            "prone y t w raises": "Lie face-down and raise arms in Y, T, then W shapes; focus on squeezing shoulder blades (upper back/posture).",
+            "superman pull": "Lie face-down, lift chest slightly, pull elbows down toward ribs like a lat pulldown—squeeze upper back.",
+            "single leg hip hinge": "Stand tall and hinge at the hips on one leg (RDL pattern); keep a flat back and hips square.",
+            "single leg hip lunge": "Stand tall and hinge at the hips on one leg (RDL pattern); keep a flat back and hips square.",
+            "single leg hip": "Stand tall and hinge at the hips on one leg (RDL pattern); keep a flat back and hips square.",
+            "glute bridge march": "In a glute bridge, alternate lifting one knee toward chest while keeping hips level.",
+            "chair step up": "Step onto a sturdy chair with control; drive through the whole foot and stand tall before stepping down.",
+            "chair squat sit to stand": "Sit to the chair then stand—control down, stand up without bouncing."
+        };
+
+        function normalizeMovementName(name) {
+            return (name || "")
+                .toLowerCase()
+                .replace(/[^a-z0-9]+/g, " ")
+                .trim()
+                .replace(/\s+/g, " ");
+        }
+
+        function getMovementTip(movementName) {
+            const key = normalizeMovementName(movementName);
+            if (!key) return "";
+            return movementTips[key] || "";
+        }
 
         const movementLibrary = [
             // Barbell / rack
@@ -820,8 +853,8 @@
         }
 
         function prepareTimer(wod) {
-            currentWod = wod;
             resetTimer(true);
+            if (!wod) return;
             const startBtn = document.getElementById("timerStartBtn");
             const pauseBtn = document.getElementById("timerPauseBtn");
             const resetBtn = document.getElementById("timerResetBtn");
@@ -834,10 +867,11 @@
                 ? "Ready when you are. Press Start to begin the AMRAP timer."
                 : "Ready when you are. Press Start to begin a 5 second countdown.";
             document.getElementById("timerMovement").textContent = isAmrap ? wod.title : "";
+            document.getElementById("timerMovementTip").textContent = "";
             document.getElementById("timerTime").textContent = isAmrap ? "--:--" : "5";
             document.getElementById("timerRound").textContent = isAmrap
                 ? "AMRAP timer (20–30 minutes)"
-                : "Planned: 3 rounds · 60s / 45s / 30s";
+                : "Ready";
         }
 
         function saveWorkout(wod, isShuffle) {
@@ -1104,6 +1138,7 @@
             const roundElem = document.getElementById("timerRound");
             const phaseElem = document.getElementById("timerPhase");
             const movementElem = document.getElementById("timerMovement");
+            const tipElem = document.getElementById("timerMovementTip");
             const timeElem = document.getElementById("timerTime");
 
             if (timerState.mode === "amrap") {
@@ -1114,6 +1149,7 @@
                     ? currentWod.title
                     : "AMRAP";
                 movementElem.textContent = movementName;
+                tipElem.textContent = "";
 
                 const minutes = Math.floor(Math.max(timerState.remaining, 0) / 60);
                 const seconds = Math.max(timerState.remaining, 0) % 60;
@@ -1139,6 +1175,9 @@
                     : timerState.movements[timerState.movementIndex];
 
             movementElem.textContent = movementName || "";
+            tipElem.textContent = timerState.phase === "work" || timerState.phase === "get-ready"
+                ? getMovementTip(movementName)
+                : "";
             timeElem.textContent = timerState.remaining.toString().padStart(2, "0");
         }
 
@@ -1162,6 +1201,7 @@
                 ? "Ready when you are. Press Start to begin a 5 second countdown."
                 : "Generate a workout to enable the timer.";
             document.getElementById("timerMovement").textContent = "";
+            document.getElementById("timerMovementTip").textContent = "";
             document.getElementById("timerTime").textContent = "--";
 
             if (!skipButtonDisable) {
