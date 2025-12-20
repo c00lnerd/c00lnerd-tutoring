@@ -357,7 +357,7 @@
 
         <div class="content">
             <div class="controls">
-                <h2>Plan Todays Session</h2>
+                <h2>Plan Today's Session</h2>
 
                 <div class="field">
                     <label for="type">Workout Type</label>
@@ -418,10 +418,24 @@
                 <div class="field">
                     <label for="rotationDays">Rotation</label>
                     <small>3-day rotation repeats A/B/C. 4-day repeats A/B/C/D.</small>
-                    <select id="rotationDays">
+                    <select id="rotationDays" onchange="onRotationSettingsChange()">
                         <option value="3">3-day rotation</option>
                         <option value="4" selected>4-day rotation</option>
                     </select>
+                </div>
+
+                <div class="field">
+                    <label for="rotationDay">Rotation Day</label>
+                    <small>Use this to keep the Main Strength Block aligned: A=squat, B=upper, C=hinge, D=full-body/volume.</small>
+                    <div style="display:flex; gap:8px; align-items:center;">
+                        <select id="rotationDay" onchange="saveRotationDay()" style="flex:1;">
+                            <option value="A" selected>A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                        </select>
+                        <button class="btn-secondary" type="button" onclick="advanceRotationDay()" style="white-space:nowrap;">Advance</button>
+                    </div>
                 </div>
 
                 <div class="field">
@@ -752,7 +766,95 @@
             });
         }
 
+        function getAllowedRotationDays(rotationDays) {
+            const r = parseInt(rotationDays, 10) || 4;
+            return r === 3 ? ["A", "B", "C"] : ["A", "B", "C", "D"];
+        }
+
+        function saveRotationDay() {
+            const el = document.getElementById("rotationDay");
+            if (!el) return;
+            try {
+                localStorage.setItem("homeWodRotationDay", el.value);
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        function onRotationSettingsChange() {
+            const rotationDaysEl = document.getElementById("rotationDays");
+            const rotationDayEl = document.getElementById("rotationDay");
+            if (!rotationDaysEl || !rotationDayEl) return;
+
+            const allowed = getAllowedRotationDays(rotationDaysEl.value);
+            Array.from(rotationDayEl.options).forEach(opt => {
+                opt.disabled = !allowed.includes(opt.value);
+            });
+
+            if (!allowed.includes(rotationDayEl.value)) {
+                rotationDayEl.value = allowed[0];
+            }
+
+            saveRotationDay();
+        }
+
+        function loadRotationDay() {
+            const rotationDaysEl = document.getElementById("rotationDays");
+            const rotationDayEl = document.getElementById("rotationDay");
+            if (!rotationDaysEl || !rotationDayEl) return;
+
+            let stored = null;
+            try {
+                stored = localStorage.getItem("homeWodRotationDay");
+            } catch (e) {
+                stored = null;
+            }
+
+            if (stored) rotationDayEl.value = stored;
+            onRotationSettingsChange();
+        }
+
+        function advanceRotationDay() {
+            const rotationDaysEl = document.getElementById("rotationDays");
+            const rotationDayEl = document.getElementById("rotationDay");
+            if (!rotationDaysEl || !rotationDayEl) return;
+
+            const allowed = getAllowedRotationDays(rotationDaysEl.value);
+            const idx = Math.max(0, allowed.indexOf(rotationDayEl.value));
+            rotationDayEl.value = allowed[(idx + 1) % allowed.length];
+            saveRotationDay();
+        }
+
         function buildSection(section, options) {
+            if (options && options.goal === "fat_loss_muscle_strong" && options.rotationDay && section && section.label === "Main Strength Block" && Array.isArray(section.pick)) {
+                const d = String(options.rotationDay || "A").toUpperCase();
+                const base = section.pick.slice();
+
+                const want = d === "A"
+                    ? "squat"
+                    : d === "B"
+                        ? "horizontal_push"
+                        : d === "C"
+                            ? "hinge"
+                            : "squat";
+
+                const hasWant = base.some(p => p && p.category === want);
+                if (hasWant) {
+                    const reordered = [base.find(p => p && p.category === want)].concat(base.filter(p => !(p && p.category === want)));
+
+                    // Day D: emphasize full-body/volume by including a lunge earlier if available.
+                    if (d === "D") {
+                        const hasLunge = reordered.some(p => p && p.category === "lunge");
+                        if (!hasLunge) {
+                            // Insert a lunge pick after the first movement; it will be satisfied by bodyweight if needed.
+                            reordered.splice(1, 0, { category: "lunge" });
+                        }
+                    }
+
+                    section = Object.assign({}, section, { pick: reordered });
+                }
+            }
+
             if (section.type === "core") {
                 const cores = movementLibrary.filter(m => m.category === "core");
                 const chosen = [];
@@ -879,6 +981,7 @@
             const goal = document.getElementById("goal").value;
             const trainingDays = document.getElementById("trainingDays").value;
             const rotationDays = document.getElementById("rotationDays").value;
+            const rotationDay = document.getElementById("rotationDay").value;
             const useBike = document.getElementById("useBike").checked;
             const useDipMachine = document.getElementById("useDipMachine").checked;
             const allowBurpees = document.getElementById("allowBurpees").checked;
@@ -888,7 +991,7 @@
             const restSeconds = restSelect ? parseInt(restSelect.value, 10) || null : null;
 
             const template = chooseTemplate(type, time, goal);
-            const options = { useBike, useDipMachine, allowBurpees, allowWallBall, allowBoxJumps, workoutMode, goal };
+            const options = { useBike, useDipMachine, allowBurpees, allowWallBall, allowBoxJumps, workoutMode, goal, rotationDay };
 
             const builtSections = template.sections
                 .map(sec => buildSection(sec, options))
@@ -957,6 +1060,7 @@
         }
 
         onWorkoutModeChange();
+        loadRotationDay();
 
         function renderWorkout(wod) {
             const container = document.getElementById("wodOutput");
