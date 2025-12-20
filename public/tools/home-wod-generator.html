@@ -397,10 +397,41 @@
                 </div>
 
                 <div class="field">
+                    <label for="goal">Training Goal</label>
+                    <small>Use this to bias the workout selection toward your goal while keeping the same time and type.</small>
+                    <select id="goal">
+                        <option value="general" selected>General fitness</option>
+                        <option value="fat_loss_muscle_strong">Fat loss + muscle (strong trainee)</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="trainingDays">Training Days / Week</label>
+                    <small>Used to generate a suggested weekly schedule (does not change the single-session workout).</small>
+                    <select id="trainingDays">
+                        <option value="3">3 days/week</option>
+                        <option value="4" selected>4 days/week</option>
+                        <option value="5">5 days/week</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="rotationDays">Rotation</label>
+                    <small>3-day rotation repeats A/B/C. 4-day repeats A/B/C/D.</small>
+                    <select id="rotationDays">
+                        <option value="3">3-day rotation</option>
+                        <option value="4" selected>4-day rotation</option>
+                    </select>
+                </div>
+
+                <div class="field">
                     <label>Options</label>
                     <small>Turn things off if they are not available today.</small>
                     <div>
                         <label><input type="checkbox" id="useBike" checked /> Include bike work</label>
+                    </div>
+                    <div>
+                        <label><input type="checkbox" id="useDipMachine" /> Include dip machine</label>
                     </div>
                     <div>
                         <label><input type="checkbox" id="allowBurpees" checked /> Allow burpees</label>
@@ -488,7 +519,9 @@
             "single leg hip": "Stand tall and hinge at the hips on one leg (RDL pattern); keep a flat back and hips square.",
             "glute bridge march": "In a glute bridge, alternate lifting one knee toward chest while keeping hips level.",
             "chair step up": "Step onto a sturdy chair with control; drive through the whole foot and stand tall before stepping down.",
-            "chair squat sit to stand": "Sit to the chair then stand—control down, stand up without bouncing."
+            "chair squat sit to stand": "Sit to the chair then stand—control down, stand up without bouncing.",
+            "dip machine dips": "Use the assisted/weighted dip machine. Keep shoulders down, elbows track back, full range with control.",
+            "bike sprint": "Hard effort on the bike (roughly 10–20 seconds) then easy pedal to recover—repeat."
         };
 
         function normalizeMovementName(name) {
@@ -540,12 +573,14 @@
             { name: "Assisted Pull-up (band)", category: "vertical_pull", equipment: ["pullup", "band"], tags: ["strength"] },
             { name: "Dip (or Bench Dip)", category: "vertical_push", equipment: ["dip", "bench"], tags: ["strength"] },
             { name: "Chair Dip", category: "vertical_push", equipment: ["bodyweight", "chair"], tags: ["travel"] },
+            { name: "Dip Machine Dips", category: "vertical_push", equipment: ["dip_machine"], tags: ["strength"] },
             { name: "Air Squat", category: "squat", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Jump Squat", category: "squat", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
             { name: "Reverse Lunge (bodyweight)", category: "lunge", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Lateral Lunge", category: "lunge", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Mountain Climbers", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon"] },
             { name: "Burpee", category: "conditioning", equipment: ["bodyweight"], tags: ["metcon", "hard"] },
+            { name: "Bike Sprint", category: "conditioning", equipment: ["bike"], tags: ["metcon"] },
 
             // Travel-friendly strength / pull substitutes (no equipment)
             { name: "Superman Pull", category: "horizontal_pull", equipment: ["bodyweight"], tags: ["travel"] },
@@ -663,13 +698,51 @@
             return arr[Math.floor(Math.random() * arr.length)];
         }
 
+        function pickWeighted(arr, weights) {
+            if (!arr.length) return null;
+            let total = 0;
+            for (let i = 0; i < weights.length; i++) total += Math.max(0, weights[i] || 0);
+            if (total <= 0) return pickRandom(arr);
+            let r = Math.random() * total;
+            for (let i = 0; i < arr.length; i++) {
+                r -= Math.max(0, weights[i] || 0);
+                if (r <= 0) return arr[i];
+            }
+            return arr[arr.length - 1];
+        }
+
+        function scoreMovementForGoal(movement, goal, criteria) {
+            if (!movement) return 1;
+            if (goal !== "fat_loss_muscle_strong") return 1;
+
+            let score = 1;
+            const eq = Array.isArray(movement.equipment) ? movement.equipment : [];
+            const tags = Array.isArray(movement.tags) ? movement.tags : [];
+
+            if (criteria && (criteria.category === "squat" || criteria.category === "hinge" || criteria.category === "horizontal_push" || criteria.category === "horizontal_pull" || criteria.category === "vertical_pull")) {
+                if (eq.includes("barbell")) score += 4;
+                if (eq.includes("rack")) score += 1;
+                if (eq.includes("dip_machine")) score += 2;
+                if (tags.includes("strength")) score += 2;
+            }
+
+            if (criteria && criteria.category === "conditioning") {
+                if (eq.includes("bike")) score += 3;
+                if (tags.includes("metcon")) score += 2;
+            }
+
+            return score;
+        }
+
         function filterMovements(criteria, options) {
-            const { allowBurpees, allowWallBall, allowBoxJumps, workoutMode } = options;
+            const { allowBurpees, allowWallBall, allowBoxJumps, workoutMode, useBike, useDipMachine } = options;
             return movementLibrary.filter(m => {
                 if (criteria.category && m.category !== criteria.category) return false;
                 if (!allowBurpees && m.name.toLowerCase().includes("burpee")) return false;
                 if (!allowBoxJumps && m.equipment && m.equipment.includes("box")) return false;
                 if (!allowWallBall && m.tags && m.tags.includes("wallball")) return false;
+                if (!useBike && m.equipment && m.equipment.includes("bike")) return false;
+                if (!useDipMachine && m.equipment && m.equipment.includes("dip_machine")) return false;
                 if (workoutMode === "travel") {
                     const allowed = ["bodyweight", "chair"];
                     const eq = Array.isArray(m.equipment) ? m.equipment : [];
@@ -721,7 +794,10 @@
                     }
                     return;
                 }
-                const chosen = pickRandom(pool);
+
+                const goal = options.goal || "general";
+                const weights = pool.map(m => scoreMovementForGoal(m, goal, criteria));
+                const chosen = pickWeighted(pool, weights) || pickRandom(pool);
                 used.add(chosen.name);
                 items.push(chosen.name);
             });
@@ -733,7 +809,16 @@
             };
         }
 
-        function chooseTemplate(typeChoice, timeChoice) {
+        function chooseTemplate(typeChoice, timeChoice, goal) {
+            if (goal === "fat_loss_muscle_strong") {
+                if (typeChoice === "strength") return templates.strength_total;
+                if (typeChoice === "metcon") return Math.random() < 0.65 ? templates.metcon_circuit : templates.metcon_amrap;
+
+                if (timeChoice === "20") return templates.metcon_circuit;
+                if (timeChoice === "30") return Math.random() < 0.5 ? templates.strength_total : templates.metcon_circuit;
+                if (timeChoice === "45") return Math.random() < 0.65 ? templates.strength_total : templates.metcon_circuit;
+            }
+
             if (typeChoice === "strength") {
                 return Math.random() < 0.5 ? templates.strength_total : templates.strength_ladder;
             }
@@ -751,20 +836,59 @@
             return pickRandom(all);
         }
 
+        function buildStrongGoalScheduleHtml(daysPerWeek, rotationDays) {
+            const d = parseInt(daysPerWeek, 10) || 4;
+            const r = parseInt(rotationDays, 10) || 4;
+
+            const lines = [];
+            lines.push(`<strong>Suggested plan (24, 5'11\" , 230 lb):</strong> Train ${d} day${d === 1 ? "" : "s"}/week on a ${r}-day rotation.`);
+
+            if (r === 3) {
+                lines.push("Rotation A: Squat-focused strength + short finisher intervals (6–10 min).");
+                lines.push("Rotation B: Upper strength (press/pull) + hypertrophy accessories (shoulders/arms/upper back).");
+                lines.push("Rotation C: Hinge-focused strength + conditioning intervals (bike sprints if available).");
+            } else {
+                lines.push("Rotation A: Squat-focused strength + short finisher intervals (6–10 min).");
+                lines.push("Rotation B: Upper strength (press/pull) + hypertrophy accessories (shoulders/arms/upper back).");
+                lines.push("Rotation C: Hinge-focused strength + intervals (bike sprints if available).");
+                lines.push("Rotation D: Full-body hypertrophy + longer conditioning (10–20 min steady/moderate or intervals).");
+            }
+
+            if (d === 3) {
+                lines.push("Weekly example: Mon Rotation A · Wed Rotation B · Fri Rotation C. (Next week pick up where you left off.)");
+            } else if (d === 4) {
+                lines.push(r === 3
+                    ? "Weekly example: Mon A · Tue B · Thu C · Fri A (keep the rotation moving)."
+                    : "Weekly example: Mon A · Tue B · Thu C · Fri D.");
+            } else {
+                lines.push(r === 3
+                    ? "Weekly example: Mon A · Tue B · Wed C · Thu A · Fri B (keep Sat/Sun easy activity/rest)."
+                    : "Weekly example: Mon A · Tue B · Wed C · Thu D · Fri: conditioning + core/mobility (optional)." );
+            }
+
+            lines.push("Progression: keep 1–3 reps in reserve on most sets; push hard on final set/finisher. If performance tanks, reduce conditioning volume before reducing strength.");
+
+            return lines.join("<br>");
+        }
+
         function generateWorkout(isShuffle) {
             const workoutMode = document.getElementById("workoutMode").value;
             const type = document.getElementById("type").value;
             const time = document.getElementById("time").value;
             const difficulty = document.getElementById("difficulty").value;
+            const goal = document.getElementById("goal").value;
+            const trainingDays = document.getElementById("trainingDays").value;
+            const rotationDays = document.getElementById("rotationDays").value;
             const useBike = document.getElementById("useBike").checked;
+            const useDipMachine = document.getElementById("useDipMachine").checked;
             const allowBurpees = document.getElementById("allowBurpees").checked;
             const allowBoxJumps = document.getElementById("allowBoxJumps").checked;
             const allowWallBall = document.getElementById("allowWallBall").checked;
             const restSelect = document.getElementById("restBetween");
             const restSeconds = restSelect ? parseInt(restSelect.value, 10) || null : null;
 
-            const template = chooseTemplate(type, time);
-            const options = { useBike, allowBurpees, allowWallBall, allowBoxJumps, workoutMode };
+            const template = chooseTemplate(type, time, goal);
+            const options = { useBike, useDipMachine, allowBurpees, allowWallBall, allowBoxJumps, workoutMode, goal };
 
             const builtSections = template.sections
                 .map(sec => buildSection(sec, options))
@@ -773,6 +897,11 @@
             let description = template.description;
             if (restSeconds) {
                 description += ` Rest ~${restSeconds}s between movements (guided timer).`;
+            }
+
+            if (goal === "fat_loss_muscle_strong") {
+                description += " Goal bias: heavy compound lifts + conditioning—use challenging loads and keep transitions honest.";
+                description += `<br><br>${buildStrongGoalScheduleHtml(trainingDays, rotationDays)}`;
             }
 
             const wod = {
@@ -810,15 +939,18 @@
             }
 
             const useBike = document.getElementById("useBike");
+            const useDipMachine = document.getElementById("useDipMachine");
             const allowBoxJumps = document.getElementById("allowBoxJumps");
             const allowWallBall = document.getElementById("allowWallBall");
 
             if (mode === "travel") {
                 if (useBike) { useBike.checked = false; useBike.disabled = true; }
+                if (useDipMachine) { useDipMachine.checked = false; useDipMachine.disabled = true; }
                 if (allowBoxJumps) { allowBoxJumps.checked = false; allowBoxJumps.disabled = true; }
                 if (allowWallBall) { allowWallBall.checked = false; allowWallBall.disabled = true; }
             } else {
                 if (useBike) { useBike.disabled = false; }
+                if (useDipMachine) { useDipMachine.disabled = false; }
                 if (allowBoxJumps) { allowBoxJumps.disabled = false; }
                 if (allowWallBall) { allowWallBall.disabled = false; }
             }
