@@ -1,0 +1,243 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const pacing = [
+	{
+		module: 'Module 8: Physics - Energy',
+		days: [
+			{ day: 71, text: 'Begin Module 8 on p. 271 and stop at Potential Energy on p. 275.' },
+			{ day: 72, text: 'Begin at Potential Energy on p. 275, continue through Experiment 8.1 on pp. 279-280, and stop at Forms of Energy on p. 281.' },
+			{ day: 74, text: 'Begin at Forms of Energy on p. 281 and stop at Energy and Work on p. 289. Begin at Energy and Work on p. 289 and stop before Experiment 8.2 on p. 294.' },
+			{ day: 75, text: 'Begin at Experiment 8.2 on p. 294 and stop at Mechanical Advantage on p. 298.' },
+			{ day: 76, text: "Begin at Mechanical Advantage on p. 298 and finish the module, which ends on p. 304." },
+			{ day: 77, text: 'Do Study Guide questions 1-10 on pp. 308-309 and have them checked. Begin studying for the test.' },
+			{ day: 78, text: 'Do Study Guide questions 11-20 on pp. 309-310 and have them checked. Continue studying for the test.' },
+			{ day: 79, text: 'Study for the test, which will be administered during the next class.' },
+			{ day: 80, text: 'Take Module 8 test. Make sure you have the supplies for Module 9, which are listed on p. 538 of your textbook.' },
+		],
+	},
+	{
+		module: 'Module 9: Physics - Waves and Sound',
+		days: [
+			{ day: 81, text: 'Begin Module 9 on p. 311 and stop at Properties of Waves on p. 316.' },
+			{ day: 82, text: 'Begin at Properties of Waves on p. 316, continue through Experiment 9.1 on pp. 320-322, and stop at Hearing on p. 323.' },
+			{ day: 83, text: 'Begin at Hearing on p. 323, continue through Experiment 9.2 on pp. 324-326, and stop at The Speed of Sound in Other Substances on p. 329.' },
+			{ day: 84, text: 'Begin at The Speed of Sound in Other Substances on p. 329, continue through Experiment 9.3 on pp. 331-332, and stop at Wavelength, Frequency, and Pitch on p. 334.' },
+			{ day: 85, text: 'Begin at Wavelength, Frequency, and Pitch on p. 334, continue through Experiment 9.4 on pp. 335-336, and stop at The Doppler Effect on p. 338.' },
+			{ day: 86, text: 'Begin at The Doppler Effect on p. 338 and finish the module, which ends on p. 342.' },
+			{ day: 87, text: 'Do Study Guide questions 1-10 on pp. 347-348 and have them checked. Begin studying for the test.' },
+			{ day: 88, text: 'Do Study Guide questions 11-19 on p. 348 and have them checked. Continue studying for the test.' },
+			{ day: 89, text: 'Study for the test, which will be administered during the next class.' },
+			{ day: 90, text: 'Take Module 9 test. Make sure you have the supplies for Module 10, which are listed on pp. 538-539 of your textbook.' },
+		],
+	},
+	{
+		module: 'Module 10: Physics - Light',
+		days: [
+			{ day: 91, text: 'Begin Module 10 on p. 349 and stop at Evidence for the Wave Model on p. 354.' },
+			{ day: 92, text: 'Begin with Evidence for the Wave Model on p. 354 and stop at The Electromagnetic Spectrum on p. 358.' },
+			{ day: 93, text: 'Begin at The Electromagnetic Spectrum on p. 358 and stop after completing Experiment 10.1 on pp. 361-362.' },
+			{ day: 94, text: 'Begin after Experiment 10.1 on p. 362 and stop at The Behavior of Light on p. 367.' },
+			{ day: 95, text: 'Begin at The Behavior of Light on p. 367, continue through Experiment 10.2 on pp. 368-370, and stop at Refraction on p. 371.' },
+			{ day: 96, text: 'Begin at Refraction on p. 371 and stop after Experiment 10.3 on pp. 371-372.' },
+			{ day: 97, text: 'Begin after Experiment 10.3 on p. 372 and stop at Polarization on p. 377.' },
+			{ day: 98, text: 'Begin at Polarization on p. 377 and stop at The Human Eye on p. 382.' },
+			{ day: 99, text: 'Begin at The Human Eye on p. 382 and stop at How We Perceive Color on p. 384.' },
+			{ day: 100, text: 'Begin at How We Perceive Color on p. 384, continue through Experiment 10.4 on p. 384, and stop at Primary Colors of Pigment on p. 386.' },
+			{ day: 101, text: 'Begin at Primary Colors of Pigment on p. 386 and finish the module, which ends on p. 388.' },
+			{ day: 102, text: 'Do Study Guide questions 1-11 on p. 391 and have them checked. Begin studying for the test.' },
+			{ day: 103, text: 'Do Study Guide questions 12-23 on p. 392 and have them checked. Continue studying for the test.' },
+			{ day: 104, text: 'Study for the test, which will be administered during the next class.' },
+			{ day: 105, text: 'Take Module 10 test. Make sure you have the supplies for Module 11, which are on p. 539 of your textbook.' },
+		],
+	},
+	{
+		module: 'Module 11: Physics - Electricity and Magnetism',
+		days: [
+			{ day: 106, text: 'Begin Module 11 on p. 393 and stop at The Electromagnetic Force on p. 395.' },
+			{ day: 107, text: 'Begin at The Electromagnetic Force on p. 395, continue through Experiment 11.1 on pp. 395-396 and stop at Science and Math on p. 398.' },
+			{ day: 108, text: 'Begin at Science and Math on p. 398 and stop at Electric Charge on p. 402.' },
+			{ day: 109, text: 'Begin at Electric Charge on p. 402 and stop after completing Experiment 11.2 on pp. 404-406.' },
+			{ day: 110, text: 'Begin after Experiment 11.2 on p. 406 and stop at How Current Flows on p. 411.' },
+			{ day: 111, text: 'Begin at How Current Flows on p. 411 and stop before Experiment 11.3 on p. 414.' },
+			{ day: 112, text: 'Begin at Experiment 11.3 on p. 414 and stop at Switches and Circuits on p. 416.' },
+			{ day: 113, text: 'Begin at Switches and Circuits on p. 416 and stop at Magnetism on p. 419.' },
+			{ day: 114, text: 'Begin at Magnetism on p. 419, continue through Experiment 11.4 on pp. 419-420, and stop at Magnetic Materials on p. 420.' },
+			{ day: 115, text: 'Begin at Magnetic Materials on p. 420 and stop at More About Magnetic Fields on p. 423.' },
+			{ day: 116, text: 'Begin at More About Magnetic Fields on p. 423 and finish the module, which ends on p. 427.' },
+			{ day: 117, text: 'Do Study Guide questions 1-10 on pp. 430-431 and have them checked. Begin studying for the test.' },
+			{ day: 118, text: 'Do Study Guide questions 11-20 on pp. 431-432 and have them checked. Continue studying for the test.' },
+			{ day: 119, text: 'Study for the test, which will be administered during the next class.' },
+			{ day: 120, text: 'Take Module 11 test. Make sure you have the supplies for Module 12, which are listed on pp. 539-540 of your textbook.' },
+		],
+	},
+	{
+		module: 'Module 12: Earth Science - Our Earth',
+		days: [
+			{ day: 121, text: 'Begin Module 12 on p. 433, continue through Experiment 12.1 on pp. 437-438, and stop at The Core on p. 438.' },
+			{ day: 122, text: 'Begin at The Core on p. 438 and stop at Processes of the Lithosphere on p. 444.' },
+			{ day: 123, text: 'Begin at Processes of the Lithosphere on p. 444 and stop before Experiment 12.2 on p. 448.' },
+			{ day: 124, text: 'Begin at Experiment 12.2 on p. 448 and stop at Weathering on p. 451.' },
+			{ day: 125, text: 'Begin at Weathering on p. 451 and stop at Features Formed By Sediment Disposition on p. 458.' },
+			{ day: 126, text: 'Begin at Features Formed By Sediment Disposition on p. 458 and finish the module, which ends on p. 462.' },
+			{ day: 127, text: 'Do Study Guide questions 1-11 on pp. 465-466 and have them checked. Begin studying for the test.' },
+			{ day: 128, text: 'Do Study Guide questions 12-22 on p. 466 and have them checked. Continue studying for the test.' },
+			{ day: 129, text: 'Study for the test, which will be administered during the next class.' },
+			{ day: 130, text: 'Take Module 12 test. Make sure you have the supplies for Module 13, which are listed on p. 540 of your textbook.' },
+			{ day: null, text: 'Spring Break: No class (buffer week).' },
+		],
+	},
+	{
+		module: 'Module 13: Earth Science - Our Atmosphere and Beyond',
+		days: [
+			{ day: 131, text: 'Begin Module 13 on p. 467 and stop before Experiment 13.1 on p. 470.' },
+			{ day: 132, text: 'Begin at Experiment 13.1 on p. 470 and stop at Atmospheric Pressure on p. 472.' },
+			{ day: 133, text: 'Begin at Atmospheric Pressure on p. 472, continue through Experiment 13.2 on pp. 473-474, and stop at Energy and Atmosphere on p. 479.' },
+			{ day: 134, text: 'Begin at Energy and Atmosphere on p. 479, continue through Experiment 13.3 on pp. 481-482, and stop at Layers of the Atmosphere on p. 484.' },
+			{ day: 135, text: 'Begin at Layers of the Atmosphere on p. 484 and stop at Beyond Our Atmosphere on p. 488.' },
+			{ day: 136, text: 'Begin at Beyond Our Atmosphere and finish the module, which ends on p. 490.' },
+			{ day: 137, text: 'Do Study Guide questions 1-7 on p. 493 and have them checked. Begin studying for the test.' },
+			{ day: 138, text: 'Do Study Guide questions 8-14 on p. 494 and have them checked. Continue studying for the test.' },
+			{ day: 139, text: 'Study for the test, which will be administered during the next class.' },
+			{ day: 140, text: 'Take Module 13 test.' },
+		],
+	},
+	{
+		module: 'Module 14: Chemistry and Physics in the Life Sciences',
+		days: [
+			{ day: 141, text: 'Begin Module 14 on p. 495 and stop at Carbon Chemistry on p. 496.' },
+			{ day: 142, text: 'Begin at Carbon Chemistry on p. 496 and stop at Saturated Hydrocarbons on p. 498.' },
+			{ day: 143, text: 'Begin at Saturated Hydrocarbons on p. 498 and stop at Fossil Fuels on p. 502.' },
+			{ day: 144, text: 'Begin at Fossil Fuels on p. 502 and stop at Biochemistry on p. 504.' },
+			{ day: 145, text: 'Begin at Biochemistry on p. 504 and stop before Experiment 14.1 on p. 508.' },
+			{ day: 146, text: 'Begin at Experiment 14.1 on p. 508 and stop at Physics and Life on p. 509.' },
+			{ day: 147, text: 'Begin at Physics and Life on p. 509 and stop at Transportation and Physics on p. 511.' },
+			{ day: 148, text: 'Begin at Transportation and Physics on p. 511 and stop at Physics and Forensics on p. 513.' },
+			{ day: 149, text: 'Begin at Physics and Forensics on p. 513 and finish the module, which ends on p. 514.' },
+			{ day: 150, text: 'Do Study Guide questions 1-7 on p. 516 and have them checked. Begin studying for the test.' },
+			{ day: 151, text: 'Do Study Guide questions 8-15 on p. 516 and have them checked. Continue studying for the test.' },
+			{ day: 152, text: 'Take Module 14 test.' },
+		],
+	},
+	{
+		module: 'Module 15: Physical Science Research',
+		days: [
+			{ day: 154, text: 'Begin Module 15 on p. 517 and stop at Your Turn to Research on p. 522.' },
+			{ day: 155, text: 'Read Your Turn to Research on pp. 522-523. Have fun! Congratulations!' },
+		],
+	},
+];
+---
+
+<Layout title="Physical Science Semester 2 - Pacing Guide">
+	<div class="container">
+		<div class="header">
+			<h1>Physical Science Semester 2</h1>
+			<p class="subtitle">Pacing guide using day numbers (no dates). Modules 8-15.</p>
+		</div>
+
+		<div class="modules">
+			{pacing.map((m) => (
+				<section class="module" aria-label={m.module}>
+					<h2>{m.module}</h2>
+					<div class="table-wrap">
+						<table>
+							<thead>
+								<tr>
+									<th class="day-col">Day</th>
+									<th>Assignment</th>
+								</tr>
+							</thead>
+							<tbody>
+								{m.days.map((d) => (
+									<tr>
+										<td class="day">{d.day ?? '—'}</td>
+										<td class="task">{d.text}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			))}
+		</div>
+	</div>
+
+	<style>
+		.container {
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		h1 {
+			margin: 0 0 0.75rem 0;
+		}
+
+		.subtitle {
+			margin: 0;
+			color: var(--gray);
+		}
+
+		.modules {
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		.module {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+		}
+
+		.module h2 {
+			margin: 0 0 1rem 0;
+			font-size: 1.4rem;
+		}
+
+		.table-wrap {
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			min-width: 700px;
+		}
+
+		th,
+		td {
+			text-align: left;
+			padding: 0.75rem 0.75rem;
+			border-bottom: 1px solid #e5e7eb;
+			vertical-align: top;
+		}
+
+		th {
+			font-weight: 700;
+			color: var(--black);
+			background: #f8fafc;
+		}
+
+		.day-col {
+			width: 90px;
+		}
+
+		.day {
+			font-weight: 700;
+			color: var(--accent);
+			white-space: nowrap;
+		}
+
+		.task {
+			color: var(--gray);
+			line-height: 1.5;
+		}
+	</style>
+</Layout>
