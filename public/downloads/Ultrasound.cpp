@@ -1,6 +1,9 @@
 #include <Wire.h>
 #include "Ultrasound.h"
 
+#define FILTER_N 3                //递推平均滤波法(Recursive averaging filter)
+int filter_buf[FILTER_N + 1];
+
 Ultrasound::Ultrasound()
 {
   Wire.begin();
@@ -93,4 +96,15 @@ u16 Ultrasound::GetDistance()
   u16 distance;
   wireReadDataArray(ULTRASOUND_I2C_ADDR, 0,(uint8_t *)&distance,2);
   return distance;
+}
+
+int Ultrasound::Filter() {
+  int i;
+  int filter_sum = 0;
+  filter_buf[FILTER_N] = GetDistance();/* 读取超声波测值(Read ultrasonic ranging value) */
+  for(i = 0; i < FILTER_N; i++) {
+    filter_buf[i] = filter_buf[i + 1];/* 所有数据左移，低位仍掉(Shift all data to the left, dropping the low bits) */
+    filter_sum += filter_buf[i];
+  }
+  return (int)(filter_sum / FILTER_N);
 }

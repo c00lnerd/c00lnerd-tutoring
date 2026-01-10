@@ -3,6 +3,8 @@
 
 #include <Arduino.h>
 
+typedef uint16_t u16;
+
 #define ULTRASOUND_I2C_ADDR 0x77 
 
 //寄存器
@@ -43,5 +45,6 @@ class Ultrasound {
     void Breathing(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2);
     void Color(uint8_t r1, uint8_t g1, uint8_t b1, uint8_t r2, uint8_t g2, uint8_t b2);
     u16 GetDistance();
+    int Filter();
 };
 #endif

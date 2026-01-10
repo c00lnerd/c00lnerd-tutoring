@@ -116,6 +116,30 @@ import Layout from '../../../layouts/Layout.astro';
             </ul>
         </div>
 
+        <!-- Section 2.5: Install the Hiwonder App (Wonderbot) -->
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">📲 Section 2.5: Install the Hiwonder Control App</h2>
+
+            <p style="margin-bottom: 1rem; line-height: 1.6;">
+                In the Google Play Store, search for <span class="highlight">Hiwonder</span>. Install the app named
+                <span class="highlight">Wonderbot</span> (Publisher: Hiwonder).
+            </p>
+
+            <ol style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
+                <li>Open the <strong>Google Play Store</strong></li>
+                <li>Search <strong>Hiwonder</strong></li>
+                <li>Install <strong>Wonderbot</strong> (Hiwonder • Tools)</li>
+                <li>Turn on Bluetooth on your phone/tablet</li>
+                <li>Power on the robot and connect inside the app</li>
+            </ol>
+
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107; margin-bottom: 1rem;">
+                <strong style="color: #856404;">Official Instructions:</strong>
+                <span style="color: #856404;"> Instructions for how to use the app are in the Hiwonder PDF here:</span>
+                <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/docs/6.secondary_development_lesson.html#app-remote-control" target="_blank" rel="noopener noreferrer" style="color: #1d4ed8; text-decoration: underline; margin-left: 0.25rem;">App Remote Control (Hiwonder Docs)</a>
+            </div>
+        </div>
+
         <!-- Section 3: Arduino Side - Reading Commands Safely -->
         <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; margin-bottom: 1rem;">🧯 Section 3: Arduino Side - Reading Commands Safely</h2>
@@ -152,6 +176,50 @@ void handleCommand(char cmd) {
     case 'S': stopMotors(); break;
   }
 }`}</pre>
+            </div>
+        </div>
+
+        <!-- Section 4: Required Code Files -->
+        <div class="section-card">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">📦 Section 4: Required Code Files</h2>
+
+            <p style="margin-bottom: 1rem; line-height: 1.6;">
+                The official Hiwonder app control program uses <strong>three files</strong>. Download them below and/or copy the code.
+            </p>
+
+            <div style="margin-top: 1rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                <a href="/downloads/app_control.ino" download style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">📄 Download app_control.ino</a>
+                <a href="/downloads/Ultrasound.h" download style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">📄 Download Ultrasound.h</a>
+                <a href="/downloads/Ultrasound.cpp" download style="background-color: #dc2626; color: white; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; font-size: 0.9rem;">📄 Download Ultrasound.cpp</a>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107; margin: 1.5rem 0;">
+                <strong style="color: #856404;">Upload Tip:</strong>
+                <span style="color: #856404;"> Remove the Bluetooth module before uploading sketches to avoid serial conflicts. Re-install it after upload.</span>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="color: #667eea; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📄 app_control.ino</h3>
+                <div style="position: relative;">
+                    <button onclick="copyCodeFromId('code_app_control', this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code id="code_app_control" data-src="/downloads/app_control.ino">Loading...</code></pre>
+                </div>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="color: #667eea; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📄 Ultrasound.h</h3>
+                <div style="position: relative;">
+                    <button onclick="copyCodeFromId('code_ultrasound_h', this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code id="code_ultrasound_h" data-src="/downloads/Ultrasound.h">Loading...</code></pre>
+                </div>
+            </div>
+
+            <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+                <h3 style="color: #667eea; font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">📄 Ultrasound.cpp</h3>
+                <div style="position: relative;">
+                    <button onclick="copyCodeFromId('code_ultrasound_cpp', this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 0; font-size: 0.85rem;"><code id="code_ultrasound_cpp" data-src="/downloads/Ultrasound.cpp">Loading...</code></pre>
+                </div>
             </div>
         </div>
 
@@ -219,3 +287,89 @@ void handleCommand(char cmd) {
         </div>
     </div>
 </Layout>
+
+<script>
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+window.copyCodeFromId = function(codeId, button) {
+    try {
+        const codeElement = document.getElementById(codeId);
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+
+        const codeText = codeElement.textContent || codeElement.innerText;
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+async function loadCodeBlocks() {
+    const codeBlocks = document.querySelectorAll('code[data-src]');
+    await Promise.all(Array.from(codeBlocks).map(async (el) => {
+        const src = el.getAttribute('data-src');
+        if (!src) return;
+        try {
+            const res = await fetch(src, { cache: 'no-cache' });
+            if (!res.ok) {
+                el.textContent = `Failed to load: ${src}`;
+                return;
+            }
+            el.textContent = await res.text();
+        } catch (e) {
+            el.textContent = `Failed to load: ${src}`;
+        }
+    }));
+}
+
+loadCodeBlocks();
+</script>
