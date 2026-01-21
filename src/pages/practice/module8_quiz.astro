@@ -222,10 +222,6 @@ import Layout from '../../layouts/Layout.astro';
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
 <script is:inline>
-    // Wait for EmailJS to load before initializing
-    window.onload = function() {
-        try {
-            emailjs.init("ct_s19oZHppLy9BlW");
     // CAPTCHA variables
     let captchaAnswer = 0;
     
@@ -336,6 +332,13 @@ import Layout from '../../layouts/Layout.astro';
         
         return true;
     }
+
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            if (window.emailjs) {
+                emailjs.init("ct_s19oZHppLy9BlW");
+            }
         } catch (err) {
             console.error('Error initializing EmailJS:', err);
         }
@@ -716,7 +719,7 @@ import Layout from '../../layouts/Layout.astro';
     // Quiz state
     window.currentQuestion = 0;
     window.userAnswers = new Array(originalQuestions.length).fill(null);
-    window.questionAttempts = new Array(window.questions.length).fill(0);
+    window.questionAttempts = new Array(originalQuestions.length).fill(0);
     window.userEmail = '';
     window.saveResults = true;
 
