@@ -385,6 +385,12 @@ import Layout from '../../layouts/Layout.astro';
     initializeEmailJS();
 
     document.addEventListener('DOMContentLoaded', function() {
+        function isValidEmail(email) {
+            const value = String(email || '').trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(value);
+        }
+
         // Store student information in local storage
         const studentNameInput = document.getElementById('studentName');
         const studentEmailInput = document.getElementById('studentEmail');
