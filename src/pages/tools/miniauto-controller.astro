@@ -51,21 +51,44 @@ import Layout from '../../layouts/Layout.astro';
 
 				<h3 class="sub-title">Controls</h3>
 				<p class="hint">W/A/S/D on keyboard, or use buttons below.</p>
+				<div id="char-details" class="status"></div>
+				<div id="ble-log" class="log"></div>
 
 				<div class="controls">
-					<button class="btn control" data-cmd="F">Forward</button>
+					<button class="btn control" data-cmd="A|2|&">Forward</button>
 					<div class="row">
-						<button class="btn control" data-cmd="L">Left</button>
-						<button class="btn control danger" data-cmd="S">Stop</button>
-						<button class="btn control" data-cmd="R">Right</button>
+						<button class="btn control" id="btn-left" type="button">Left</button>
+						<button class="btn control danger" id="btn-stop" type="button">Stop</button>
+						<button class="btn control" id="btn-right" type="button">Right</button>
 					</div>
-					<button class="btn control" data-cmd="B">Back</button>
+					<button class="btn control" id="btn-back" type="button">Back</button>
+				</div>
+
+				<label class="label mt" for="drive-codes">Drive sub-codes (function A)</label>
+				<div class="row" id="drive-codes">
+					<input id="code-left" class="input" type="text" value="3" />
+					<input id="code-stop" class="input" type="text" value="0" />
+					<input id="code-right" class="input" type="text" value="4" />
+					<input id="code-back" class="input" type="text" value="1" />
 				</div>
 
 				<label class="label mt" for="custom-cmd">Custom Command</label>
 				<div class="row">
 					<input id="custom-cmd" class="input" type="text" placeholder="Command text (sent as UTF-8)" />
 					<button id="send-custom" class="btn">Send</button>
+				</div>
+				<div class="row mt">
+					<label class="hint" style="margin:0;">Mode</label>
+					<select id="cmd-mode" class="input">
+						<option value="text" selected>Text (UTF-8)</option>
+						<option value="hex">Hex bytes (e.g. 01 FF 0A)</option>
+					</select>
+					<label class="hint" style="margin:0;">Append</label>
+					<select id="cmd-append" class="input">
+						<option value="none">Nothing</option>
+						<option value="lf" selected>LF (\n)</option>
+						<option value="crlf">CRLF (\r\n)</option>
+					</select>
 				</div>
 			</section>
 		</div>
@@ -175,6 +198,18 @@ import Layout from '../../layouts/Layout.astro';
 		.control {
 			width: 100%;
 		}
+		.log {
+			margin-top: 0.75rem;
+			padding: 0.75rem;
+			border: 1px solid #e5e7eb;
+			border-radius: 0.75rem;
+			background: #0b1220;
+			color: #e5e7eb;
+			font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+			font-size: 0.85rem;
+			max-height: 10rem;
+			overflow: auto;
+		}
 	</style>
 </Layout>
 
@@ -186,6 +221,8 @@ import Layout from '../../layouts/Layout.astro';
 
 	const bleStatus = document.getElementById('ble-status');
 	const videoStatus = document.getElementById('video-status');
+	const charDetails = document.getElementById('char-details');
+	const bleLog = document.getElementById('ble-log');
 
 	function setBleStatus(text) {
 		bleStatus.textContent = text;
@@ -193,6 +230,17 @@ import Layout from '../../layouts/Layout.astro';
 
 	function setVideoStatus(text) {
 		videoStatus.textContent = text;
+	}
+
+	function setCharDetails(text) {
+		charDetails.textContent = text;
+	}
+
+	function logBle(line) {
+		const ts = new Date().toLocaleTimeString();
+		const entry = document.createElement('div');
+		entry.textContent = `[${ts}] ${line}`;
+		bleLog.prepend(entry);
 	}
 
 	function normalizeUuid(value) {
@@ -232,12 +280,23 @@ import Layout from '../../layouts/Layout.astro';
 		}
 
 		document.getElementById('char-uuid').value = selectedUuid;
+		const selected = detectedChars.find(c => c.uuid === selectedUuid) || null;
+		if (selected) {
+			writeChar = selected;
+			const flags = [];
+			if (selected.properties?.write) flags.push('write');
+			if (selected.properties?.writeWithoutResponse) flags.push('writeWithoutResponse');
+			if (selected.properties?.notify) flags.push('notify');
+			if (selected.properties?.read) flags.push('read');
+			setCharDetails(`Active characteristic: ${selected.uuid}${flags.length ? ` (${flags.join(', ')})` : ''}`);
+			logBle(`Active characteristic set to ${selected.uuid}`);
+		}
 		try {
 			localStorage.setItem('miniauto_charUuid', selectedUuid);
 		} catch {
 			// ignore
 		}
-		setBleStatus('Characteristic selected. Click Connect again.');
+		setBleStatus('Characteristic selected.');
 	}
 
 	async function connectBle() {
@@ -313,6 +372,16 @@ import Layout from '../../layouts/Layout.astro';
 				}
 			}
 
+			if (writeChar) {
+				const flags = [];
+				if (writeChar.properties?.write) flags.push('write');
+				if (writeChar.properties?.writeWithoutResponse) flags.push('writeWithoutResponse');
+				if (writeChar.properties?.notify) flags.push('notify');
+				if (writeChar.properties?.read) flags.push('read');
+				setCharDetails(`Active characteristic: ${writeChar.uuid}${flags.length ? ` (${flags.join(', ')})` : ''}`);
+				logBle(`Connected. Active characteristic: ${writeChar.uuid}`);
+			}
+
 			document.getElementById('ble-connect').disabled = true;
 			document.getElementById('ble-disconnect').disabled = false;
 			setBleStatus(`Connected to ${bleDevice.name || 'BLE device'}`);
@@ -324,6 +393,9 @@ import Layout from '../../layouts/Layout.astro';
 	function onDisconnected() {
 		writeChar = null;
 		bleServer = null;
+		detectedChars = [];
+		setCharDetails('');
+		bleLog.innerHTML = '';
 		document.getElementById('ble-connect').disabled = false;
 		document.getElementById('ble-disconnect').disabled = true;
 		setBleStatus('Disconnected');
@@ -344,12 +416,35 @@ import Layout from '../../layouts/Layout.astro';
 			setBleStatus('Not connected.');
 			return;
 		}
-
+		const mode = document.getElementById('cmd-mode').value;
+		const appendMode = document.getElementById('cmd-append').value;
+		let payload = null;
 		try {
-			const payload = new TextEncoder().encode(String(cmd));
-			await writeChar.writeValue(payload);
+			let value = String(cmd ?? '');
+			if (appendMode === 'lf') value += '\n';
+			if (appendMode === 'crlf') value += '\r\n';
+
+			if (mode === 'hex') {
+				const cleaned = value.replace(/[^0-9a-fA-F]/g, ' ').trim();
+				const parts = cleaned ? cleaned.split(/\s+/) : [];
+				const bytes = parts.map(p => parseInt(p, 16)).filter(n => Number.isFinite(n));
+				payload = new Uint8Array(bytes);
+			} else {
+				payload = new TextEncoder().encode(value);
+			}
+
+			const supportsWNR = typeof writeChar.writeValueWithoutResponse === 'function';
+			const canWNR = !!writeChar.properties?.writeWithoutResponse;
+			if (supportsWNR && canWNR) {
+				await writeChar.writeValueWithoutResponse(payload);
+				logBle(`Wrote (without response) ${payload.length} byte(s)`);
+			} else {
+				await writeChar.writeValue(payload);
+				logBle(`Wrote ${payload.length} byte(s)`);
+			}
 		} catch (err) {
 			setBleStatus(`Send failed: ${err && err.message ? err.message : err}`);
+			logBle(`Send failed: ${err && err.message ? err.message : err}`);
 		}
 	}
 
@@ -414,20 +509,47 @@ import Layout from '../../layouts/Layout.astro';
 		btn.addEventListener('click', () => sendCommand(btn.getAttribute('data-cmd')));
 	}
 
-	const keyMap = {
-		KeyW: 'F',
-		KeyA: 'L',
-		KeyS: 'B',
-		KeyD: 'R',
-		Space: 'S'
-	};
+	function sendDriveSubCode(inputId) {
+		const code = String(document.getElementById(inputId)?.value || '').trim();
+		if (!code) {
+			setBleStatus('Drive sub-code is empty.');
+			return;
+		}
+		sendCommand(`A|${code}|&`);
+	}
+
+	document.getElementById('btn-left').addEventListener('click', () => sendDriveSubCode('code-left'));
+	document.getElementById('btn-stop').addEventListener('click', () => sendDriveSubCode('code-stop'));
+	document.getElementById('btn-right').addEventListener('click', () => sendDriveSubCode('code-right'));
+	document.getElementById('btn-back').addEventListener('click', () => sendDriveSubCode('code-back'));
 
 	document.addEventListener('keydown', (e) => {
 		if (e.repeat) return;
-		const cmd = keyMap[e.code];
-		if (!cmd) return;
-		e.preventDefault();
-		sendCommand(cmd);
+		if (e.code === 'KeyW') {
+			e.preventDefault();
+			sendCommand('A|2|&');
+			return;
+		}
+		if (e.code === 'KeyA') {
+			e.preventDefault();
+			sendDriveSubCode('code-left');
+			return;
+		}
+		if (e.code === 'KeyS') {
+			e.preventDefault();
+			sendDriveSubCode('code-back');
+			return;
+		}
+		if (e.code === 'KeyD') {
+			e.preventDefault();
+			sendDriveSubCode('code-right');
+			return;
+		}
+		if (e.code === 'Space') {
+			e.preventDefault();
+			sendDriveSubCode('code-stop');
+			return;
+		}
 	});
 
 	try {
