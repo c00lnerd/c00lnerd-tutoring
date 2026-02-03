@@ -25,11 +25,14 @@ import Layout from '../../layouts/Layout.astro';
 				<h2 class="card-title">Bluetooth (BLE)</h2>
 				<p class="hint">Use Chrome/Edge. Bluetooth usually requires HTTPS (or localhost).</p>
 
+				<label class="label" for="name-prefix">Device name starts with</label>
+				<input id="name-prefix" class="input" type="text" value="Hiwonder" />
+
 				<label class="label" for="service-uuid">Service UUID</label>
-				<input id="service-uuid" class="input" type="text" placeholder="e.g. 0000ffe0-0000-1000-8000-00805f9b34fb" />
+				<input id="service-uuid" class="input" type="text" value="0000fff0-0000-1000-8000-00805f9b34fb" />
 
 				<label class="label" for="char-uuid">Write Characteristic UUID</label>
-				<input id="char-uuid" class="input" type="text" placeholder="e.g. 0000ffe1-0000-1000-8000-00805f9b34fb" />
+				<input id="char-uuid" class="input" type="text" value="0000fff1-0000-1000-8000-00805f9b34fb" />
 
 				<div class="row mt">
 					<button id="ble-connect" class="btn">Connect</button>
@@ -190,25 +193,42 @@ import Layout from '../../layouts/Layout.astro';
 	}
 
 	async function connectBle() {
+		const namePrefix = normalizeUuid(document.getElementById('name-prefix').value);
 		const serviceUuid = normalizeUuid(document.getElementById('service-uuid').value);
 		const charUuid = normalizeUuid(document.getElementById('char-uuid').value);
-
-		if (!serviceUuid || !charUuid) {
-			setBleStatus('Enter Service UUID and Write Characteristic UUID.');
-			return;
-		}
 
 		if (!navigator.bluetooth) {
 			setBleStatus('Web Bluetooth is not available in this browser.');
 			return;
 		}
 
+		if (!serviceUuid || !charUuid) {
+			setBleStatus('Enter Service UUID and Write Characteristic UUID.');
+			return;
+		}
+
+		try {
+			localStorage.setItem('miniauto_namePrefix', namePrefix);
+			localStorage.setItem('miniauto_serviceUuid', serviceUuid);
+			localStorage.setItem('miniauto_charUuid', charUuid);
+		} catch {
+			// ignore
+		}
+
 		setBleStatus('Requesting device...');
 		try {
-			bleDevice = await navigator.bluetooth.requestDevice({
-				acceptAllDevices: true,
-				optionalServices: [serviceUuid]
-			});
+			const hasNameFilter = !!namePrefix;
+			bleDevice = await navigator.bluetooth.requestDevice(
+				hasNameFilter
+					? {
+						filters: [{ namePrefix }],
+						optionalServices: [serviceUuid]
+					}
+					: {
+						acceptAllDevices: true,
+						optionalServices: [serviceUuid]
+					}
+			);
 
 			bleDevice.addEventListener('gattserverdisconnected', onDisconnected);
 			setBleStatus('Connecting...');
@@ -261,6 +281,12 @@ import Layout from '../../layouts/Layout.astro';
 		const url = String(document.getElementById('video-url').value || '').trim();
 		const img = document.getElementById('video');
 		const openUi = document.getElementById('open-camera-ui');
+
+		try {
+			localStorage.setItem('miniauto_videoUrl', url);
+		} catch {
+			// ignore
+		}
 
 		if (!url) {
 			setVideoStatus('Enter a camera URL.');
@@ -326,6 +352,20 @@ import Layout from '../../layouts/Layout.astro';
 		e.preventDefault();
 		sendCommand(cmd);
 	});
+
+	try {
+		const savedVideo = localStorage.getItem('miniauto_videoUrl');
+		const savedService = localStorage.getItem('miniauto_serviceUuid');
+		const savedChar = localStorage.getItem('miniauto_charUuid');
+		const savedPrefix = localStorage.getItem('miniauto_namePrefix');
+
+		if (savedVideo) document.getElementById('video-url').value = savedVideo;
+		if (savedService) document.getElementById('service-uuid').value = savedService;
+		if (savedChar) document.getElementById('char-uuid').value = savedChar;
+		if (savedPrefix) document.getElementById('name-prefix').value = savedPrefix;
+	} catch {
+		// ignore
+	}
 
 	applyVideoUrl();
 </script>
