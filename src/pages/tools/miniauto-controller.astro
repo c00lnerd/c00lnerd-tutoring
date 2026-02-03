@@ -34,6 +34,12 @@ import Layout from '../../layouts/Layout.astro';
 				<label class="label" for="char-uuid">Write Characteristic UUID</label>
 				<input id="char-uuid" class="input" type="text" value="0000fff1-0000-1000-8000-00805f9b34fb" />
 
+				<label class="label" for="char-picker">Detected writable characteristics</label>
+				<div class="row">
+					<select id="char-picker" class="input"></select>
+					<button id="use-selected-char" class="btn secondary" type="button">Use Selected</button>
+				</div>
+
 				<div class="row mt">
 					<button id="ble-connect" class="btn">Connect</button>
 					<button id="ble-disconnect" class="btn secondary" disabled>Disconnect</button>
@@ -176,6 +182,7 @@ import Layout from '../../layouts/Layout.astro';
 	let bleDevice = null;
 	let bleServer = null;
 	let writeChar = null;
+	let detectedChars = [];
 
 	const bleStatus = document.getElementById('ble-status');
 	const videoStatus = document.getElementById('video-status');
@@ -190,6 +197,47 @@ import Layout from '../../layouts/Layout.astro';
 
 	function normalizeUuid(value) {
 		return String(value || '').trim();
+	}
+
+	function isWritableCharacteristic(ch) {
+		return !!(
+			ch &&
+			ch.properties &&
+			(ch.properties.write || ch.properties.writeWithoutResponse)
+		);
+	}
+
+	function renderCharacteristicPicker() {
+		const picker = document.getElementById('char-picker');
+		picker.innerHTML = '';
+		for (const ch of detectedChars) {
+			const opt = document.createElement('option');
+			opt.value = ch.uuid;
+			const flags = [];
+			if (ch.properties?.write) flags.push('write');
+			if (ch.properties?.writeWithoutResponse) flags.push('writeWithoutResponse');
+			if (ch.properties?.notify) flags.push('notify');
+			if (ch.properties?.read) flags.push('read');
+			opt.textContent = `${ch.uuid}${flags.length ? ` (${flags.join(', ')})` : ''}`;
+			picker.appendChild(opt);
+		}
+	}
+
+	function chooseWritableCharacteristic() {
+		const picker = document.getElementById('char-picker');
+		const selectedUuid = picker.value;
+		if (!selectedUuid) {
+			setBleStatus('No writable characteristic selected.');
+			return;
+		}
+
+		document.getElementById('char-uuid').value = selectedUuid;
+		try {
+			localStorage.setItem('miniauto_charUuid', selectedUuid);
+		} catch {
+			// ignore
+		}
+		setBleStatus('Characteristic selected. Click Connect again.');
 	}
 
 	async function connectBle() {
@@ -235,7 +283,35 @@ import Layout from '../../layouts/Layout.astro';
 			bleServer = await bleDevice.gatt.connect();
 
 			const service = await bleServer.getPrimaryService(serviceUuid);
-			writeChar = await service.getCharacteristic(charUuid);
+			let selectedChar = null;
+			try {
+				selectedChar = await service.getCharacteristic(charUuid);
+			} catch {
+				selectedChar = null;
+			}
+
+			detectedChars = await service.getCharacteristics();
+			renderCharacteristicPicker();
+
+			if (selectedChar && isWritableCharacteristic(selectedChar)) {
+				writeChar = selectedChar;
+			} else {
+				const firstWritable = detectedChars.find(isWritableCharacteristic);
+				if (firstWritable) {
+					writeChar = firstWritable;
+					document.getElementById('char-uuid').value = firstWritable.uuid;
+					try {
+						localStorage.setItem('miniauto_charUuid', firstWritable.uuid);
+					} catch {
+						// ignore
+					}
+				} else {
+					setBleStatus('Connected, but no writable characteristic was found in this service.');
+					document.getElementById('ble-connect').disabled = false;
+					document.getElementById('ble-disconnect').disabled = false;
+					return;
+				}
+			}
 
 			document.getElementById('ble-connect').disabled = true;
 			document.getElementById('ble-disconnect').disabled = false;
@@ -327,6 +403,7 @@ import Layout from '../../layouts/Layout.astro';
 	document.getElementById('ble-connect').addEventListener('click', connectBle);
 	document.getElementById('ble-disconnect').addEventListener('click', disconnectBle);
 	document.getElementById('video-apply').addEventListener('click', applyVideoUrl);
+	document.getElementById('use-selected-char').addEventListener('click', chooseWritableCharacteristic);
 
 	document.getElementById('send-custom').addEventListener('click', () => {
 		const cmd = document.getElementById('custom-cmd').value;
