@@ -1,0 +1,331 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="MiniAuto Web Controller | C00lnerd">
+	<main class="container mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold mb-6">MiniAuto Web Controller</h1>
+
+		<div class="grid">
+			<section class="card">
+				<h2 class="card-title">Video Feed</h2>
+				<label class="label" for="video-url">Camera URL</label>
+				<div class="row">
+					<input id="video-url" class="input" type="text" value="http://192.168.5.1" />
+					<button id="video-apply" class="btn">Load</button>
+					<a id="open-camera-ui" class="btn secondary" href="http://192.168.5.1" target="_blank" rel="noreferrer">Open Camera UI</a>
+				</div>
+				<div class="video-wrap">
+					<img id="video" class="video" alt="Camera feed" />
+				</div>
+				<div id="video-status" class="status"></div>
+			</section>
+
+			<section class="card">
+				<h2 class="card-title">Bluetooth (BLE)</h2>
+				<p class="hint">Use Chrome/Edge. Bluetooth usually requires HTTPS (or localhost).</p>
+
+				<label class="label" for="service-uuid">Service UUID</label>
+				<input id="service-uuid" class="input" type="text" placeholder="e.g. 0000ffe0-0000-1000-8000-00805f9b34fb" />
+
+				<label class="label" for="char-uuid">Write Characteristic UUID</label>
+				<input id="char-uuid" class="input" type="text" placeholder="e.g. 0000ffe1-0000-1000-8000-00805f9b34fb" />
+
+				<div class="row mt">
+					<button id="ble-connect" class="btn">Connect</button>
+					<button id="ble-disconnect" class="btn secondary" disabled>Disconnect</button>
+				</div>
+
+				<div id="ble-status" class="status"></div>
+
+				<hr class="divider" />
+
+				<h3 class="sub-title">Controls</h3>
+				<p class="hint">W/A/S/D on keyboard, or use buttons below.</p>
+
+				<div class="controls">
+					<button class="btn control" data-cmd="F">Forward</button>
+					<div class="row">
+						<button class="btn control" data-cmd="L">Left</button>
+						<button class="btn control danger" data-cmd="S">Stop</button>
+						<button class="btn control" data-cmd="R">Right</button>
+					</div>
+					<button class="btn control" data-cmd="B">Back</button>
+				</div>
+
+				<label class="label mt" for="custom-cmd">Custom Command</label>
+				<div class="row">
+					<input id="custom-cmd" class="input" type="text" placeholder="Command text (sent as UTF-8)" />
+					<button id="send-custom" class="btn">Send</button>
+				</div>
+			</section>
+		</div>
+	</main>
+
+	<style>
+		.grid {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+		@media (min-width: 1024px) {
+			.grid {
+				grid-template-columns: 1.2fr 1fr;
+			}
+		}
+		.card {
+			background: white;
+			border-radius: 0.75rem;
+			padding: 1rem;
+			box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+		}
+		.card-title {
+			font-size: 1.25rem;
+			font-weight: 700;
+			margin-bottom: 0.75rem;
+		}
+		.sub-title {
+			font-size: 1.05rem;
+			font-weight: 700;
+			margin: 0 0 0.25rem 0;
+		}
+		.label {
+			display: block;
+			font-weight: 600;
+			margin-top: 0.75rem;
+			margin-bottom: 0.25rem;
+		}
+		.input {
+			width: 100%;
+			padding: 0.6rem 0.75rem;
+			border: 1px solid #d1d5db;
+			border-radius: 0.5rem;
+			font-size: 0.95rem;
+		}
+		.row {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+		}
+		.mt {
+			margin-top: 0.75rem;
+		}
+		.btn {
+			background: #2563eb;
+			color: white;
+			border: none;
+			padding: 0.6rem 0.9rem;
+			border-radius: 0.5rem;
+			font-weight: 600;
+			cursor: pointer;
+			white-space: nowrap;
+		}
+		.btn.secondary {
+			background: #374151;
+		}
+		.btn.danger {
+			background: #dc2626;
+		}
+		.btn:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+		.status {
+			margin-top: 0.75rem;
+			font-size: 0.95rem;
+			color: #374151;
+			min-height: 1.25rem;
+		}
+		.hint {
+			color: #6b7280;
+			font-size: 0.95rem;
+			margin: 0.25rem 0 0.75rem 0;
+		}
+		.divider {
+			border: none;
+			border-top: 1px solid #e5e7eb;
+			margin: 1rem 0;
+		}
+		.video-wrap {
+			margin-top: 0.75rem;
+			border: 1px solid #e5e7eb;
+			border-radius: 0.75rem;
+			overflow: hidden;
+			background: #0b1220;
+		}
+		.video {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+		.controls {
+			display: grid;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+		}
+		.control {
+			width: 100%;
+		}
+	</style>
+</Layout>
+
+<script is:inline>
+	let bleDevice = null;
+	let bleServer = null;
+	let writeChar = null;
+
+	const bleStatus = document.getElementById('ble-status');
+	const videoStatus = document.getElementById('video-status');
+
+	function setBleStatus(text) {
+		bleStatus.textContent = text;
+	}
+
+	function setVideoStatus(text) {
+		videoStatus.textContent = text;
+	}
+
+	function normalizeUuid(value) {
+		return String(value || '').trim();
+	}
+
+	async function connectBle() {
+		const serviceUuid = normalizeUuid(document.getElementById('service-uuid').value);
+		const charUuid = normalizeUuid(document.getElementById('char-uuid').value);
+
+		if (!serviceUuid || !charUuid) {
+			setBleStatus('Enter Service UUID and Write Characteristic UUID.');
+			return;
+		}
+
+		if (!navigator.bluetooth) {
+			setBleStatus('Web Bluetooth is not available in this browser.');
+			return;
+		}
+
+		setBleStatus('Requesting device...');
+		try {
+			bleDevice = await navigator.bluetooth.requestDevice({
+				acceptAllDevices: true,
+				optionalServices: [serviceUuid]
+			});
+
+			bleDevice.addEventListener('gattserverdisconnected', onDisconnected);
+			setBleStatus('Connecting...');
+			bleServer = await bleDevice.gatt.connect();
+
+			const service = await bleServer.getPrimaryService(serviceUuid);
+			writeChar = await service.getCharacteristic(charUuid);
+
+			document.getElementById('ble-connect').disabled = true;
+			document.getElementById('ble-disconnect').disabled = false;
+			setBleStatus(`Connected to ${bleDevice.name || 'BLE device'}`);
+		} catch (err) {
+			setBleStatus(`Connection failed: ${err && err.message ? err.message : err}`);
+		}
+	}
+
+	function onDisconnected() {
+		writeChar = null;
+		bleServer = null;
+		document.getElementById('ble-connect').disabled = false;
+		document.getElementById('ble-disconnect').disabled = true;
+		setBleStatus('Disconnected');
+	}
+
+	function disconnectBle() {
+		try {
+			if (bleDevice && bleDevice.gatt && bleDevice.gatt.connected) {
+				bleDevice.gatt.disconnect();
+			}
+		} catch (err) {
+			setBleStatus(`Disconnect failed: ${err && err.message ? err.message : err}`);
+		}
+	}
+
+	async function sendCommand(cmd) {
+		if (!writeChar) {
+			setBleStatus('Not connected.');
+			return;
+		}
+
+		try {
+			const payload = new TextEncoder().encode(String(cmd));
+			await writeChar.writeValue(payload);
+		} catch (err) {
+			setBleStatus(`Send failed: ${err && err.message ? err.message : err}`);
+		}
+	}
+
+	function applyVideoUrl() {
+		const url = String(document.getElementById('video-url').value || '').trim();
+		const img = document.getElementById('video');
+		const openUi = document.getElementById('open-camera-ui');
+
+		if (!url) {
+			setVideoStatus('Enter a camera URL.');
+			img.removeAttribute('src');
+			return;
+		}
+
+		const normalized = url.endsWith('/') ? url.slice(0, -1) : url;
+		openUi.href = normalized;
+		const tryUrls = [
+			`${normalized}:81/stream`,
+			`${normalized}/stream`,
+			`${normalized}`
+		];
+
+		let idx = 0;
+		setVideoStatus('Loading video...');
+
+		function tryNext() {
+			if (idx >= tryUrls.length) {
+				setVideoStatus('Could not load video. Try pasting the exact stream URL.');
+				return;
+			}
+			const candidate = tryUrls[idx++];
+			img.src = candidate + (candidate.includes('?') ? '&' : '?') + 't=' + Date.now();
+		}
+
+		img.onload = () => {
+			setVideoStatus(`Loaded: ${img.src}`);
+		};
+		img.onerror = () => {
+			tryNext();
+		};
+
+		tryNext();
+	}
+
+	document.getElementById('ble-connect').addEventListener('click', connectBle);
+	document.getElementById('ble-disconnect').addEventListener('click', disconnectBle);
+	document.getElementById('video-apply').addEventListener('click', applyVideoUrl);
+
+	document.getElementById('send-custom').addEventListener('click', () => {
+		const cmd = document.getElementById('custom-cmd').value;
+		sendCommand(cmd);
+	});
+
+	for (const btn of document.querySelectorAll('[data-cmd]')) {
+		btn.addEventListener('click', () => sendCommand(btn.getAttribute('data-cmd')));
+	}
+
+	const keyMap = {
+		KeyW: 'F',
+		KeyA: 'L',
+		KeyS: 'B',
+		KeyD: 'R',
+		Space: 'S'
+	};
+
+	document.addEventListener('keydown', (e) => {
+		if (e.repeat) return;
+		const cmd = keyMap[e.code];
+		if (!cmd) return;
+		e.preventDefault();
+		sendCommand(cmd);
+	});
+
+	applyVideoUrl();
+</script>
