@@ -35,9 +35,52 @@ import Layout from '../../../layouts/Layout.astro';
                 <li>Connect the ESP32-S3 vision module to your computer and confirm the COM port is recognized</li>
                 <li>Connect to the vision module’s WiFi hotspot <strong>HW_ESP32S3CAM</strong> (AP direct mode)</li>
                 <li>Open the live camera feed page at <strong>http://192.168.5.1</strong> on phone or PC</li>
-                <li>Understand when/why firmware re-flashing is needed to restore image transmission</li>
-                <li>Follow safe workflow notes (avoid COM1, power switch OFF when plugging USB, etc.)</li>
+                <li>Use clear checkpoints to diagnose where things are failing (USB/COM vs WiFi vs browser/stream)</li>
+                <li>Follow a slow, safe workflow (avoid COM1, power switch OFF when plugging USB, etc.)</li>
             </ul>
+
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107; margin-top: 1rem;">
+                <strong style="color: #856404;">Power Requirement (Important):</strong>
+                <span style="color: #856404;"> The ESP32-S3 vision module should be powered by at least <strong>5V 2A</strong>. Low power can cause unstable streaming and visible watermarks.</span>
+            </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem; border-left: 5px solid #28a745;">
+            <h2 style="color: #155724; margin-bottom: 1rem;">✅ What Counts as “Done” for Lesson 18</h2>
+            <ul style="margin-left: 1.5rem; line-height: 1.8; color: #155724;">
+                <li><strong>USB Check:</strong> Device Manager shows a new COM port when the board is plugged in</li>
+                <li><strong>WiFi Check:</strong> Your phone/PC connects to <strong>HW_ESP32S3CAM</strong> and stays connected</li>
+                <li><strong>Browser Check:</strong> <strong>http://192.168.5.1</strong> loads (not a Google search, not a captive portal)</li>
+                <li><strong>Stream Check:</strong> You can start image transmission and see frames update</li>
+            </ul>
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107; margin-top: 1rem;">
+                <strong style="color: #856404;">Pacing Tip:</strong>
+                <span style="color: #856404;"> It’s normal for this to take multiple sessions. Treat it like a lab: pass one checkpoint at a time.</span>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🗓️ Suggested Multi-Week Plan</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                <div style="background: #f8f9fa; padding: 1.25rem; border-radius: 8px;">
+                    <h3 style="color: #495057; margin: 0 0 0.75rem 0;">Week 1 Goal: Reach the Stream Page</h3>
+                    <ul style="margin-left: 1.25rem; line-height: 1.8; margin-bottom: 0;">
+                        <li>COM port visible</li>
+                        <li>Join <strong>HW_ESP32S3CAM</strong></li>
+                        <li>Load <strong>192.168.5.1</strong></li>
+                        <li>At least one successful “start transmission” attempt</li>
+                    </ul>
+                </div>
+                <div style="background: #f8f9fa; padding: 1.25rem; border-radius: 8px;">
+                    <h3 style="color: #495057; margin: 0 0 0.75rem 0;">Week 2 Goal: Make It Reliable</h3>
+                    <ul style="margin-left: 1.25rem; line-height: 1.8; margin-bottom: 0;">
+                        <li>Repeat the full setup from scratch without help</li>
+                        <li>Learn the “recovery” steps when it fails</li>
+                        <li>Test both phone and PC access</li>
+                        <li>Document the exact steps you used</li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <!-- Section 1: Device Connection (USB + Drivers) -->
@@ -54,11 +97,17 @@ import Layout from '../../../layouts/Layout.astro';
                 <span style="color: #856404;"> If the device does not show up under Ports, you may need the CH34x driver from the Hiwonder resources download.</span>
             </div>
 
+            <div style="background: #e7f3ff; padding: 1rem; border-radius: 6px; border-left: 4px solid #0ea5e9; margin-bottom: 1rem;">
+                <strong style="color: #0c4a6e;">Checkpoint 1 (USB/COM):</strong>
+                <span style="color: #0c4a6e;"> You can point to the COM port in Device Manager and say “that’s the board.”</span>
+            </div>
+
             <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Quick Checklist</h4>
             <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
                 <li><strong>Cable:</strong> Must be a data-capable Type-C cable (some are charge-only)</li>
                 <li><strong>Port:</strong> Confirm a COM port appears in Device Manager</li>
                 <li><strong>Driver:</strong> Install CH34x driver if no port appears</li>
+                <li><strong>Port sanity:</strong> Do not use <strong>COM1</strong> (that’s usually not your board)</li>
             </ul>
 
             <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Troubleshooting</h4>
@@ -69,6 +118,20 @@ import Layout from '../../../layouts/Layout.astro';
 3) Install CH34x driver
 4) Reboot and check again`}</pre>
             </div>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🧩 Section 1.5: “Which Part is Failing?” (A Fast Diagnostic)</h2>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">
+                When the live stream doesn’t work, the failure is usually in one of these buckets. Use this list to
+                avoid random guessing.
+            </p>
+            <ul style="font-size: 1.05rem; line-height: 1.8; margin-bottom: 0;">
+                <li><strong>USB/COM failure:</strong> No COM port appears (cable/driver/board power)</li>
+                <li><strong>WiFi failure:</strong> Can’t see or can’t stay connected to <strong>HW_ESP32S3CAM</strong></li>
+                <li><strong>Browser/network failure:</strong> Connected to hotspot, but <strong>192.168.5.1</strong> won’t load</li>
+                <li><strong>Stream failure:</strong> Page loads, but video/frames never show</li>
+            </ul>
         </div>
 
         <!-- Section 2: Connect to the Hotspot (AP Mode) -->
@@ -85,6 +148,16 @@ import Layout from '../../../layouts/Layout.astro';
                 <li><strong>Step 2:</strong> Connect to <strong>HW_ESP32S3CAM</strong></li>
                 <li><strong>Step 3:</strong> Stay connected to that network while viewing the camera</li>
             </ul>
+
+            <div style="background: #e7f3ff; padding: 1rem; border-radius: 6px; border-left: 4px solid #0ea5e9; margin-bottom: 1rem;">
+                <strong style="color: #0c4a6e;">Checkpoint 2 (WiFi):</strong>
+                <span style="color: #0c4a6e;"> Your device shows it is connected to <strong>HW_ESP32S3CAM</strong>.</span>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107;">
+                <strong style="color: #856404;">Common gotcha:</strong>
+                <span style="color: #856404;"> Some phones/PCs try to “help” by switching back to home WiFi if the hotspot has no internet. If it keeps disconnecting, temporarily disable auto-switching/mobile data assist.</span>
+            </div>
         </div>
 
         <!-- Section 3: Start Image Transmission (192.168.5.1) -->
@@ -96,11 +169,27 @@ import Layout from '../../../layouts/Layout.astro';
                 <strong>http://192.168.5.1</strong>
             </p>
 
+            <div style="background: #e7f3ff; padding: 1rem; border-radius: 6px; border-left: 4px solid #0ea5e9; margin-bottom: 1rem;">
+                <strong style="color: #0c4a6e;">Checkpoint 3 (Page loads):</strong>
+                <span style="color: #0c4a6e;"> You see the vision module page at <strong>192.168.5.1</strong> (not an error page).</span>
+            </div>
+
             <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Expected Result</h4>
             <ul style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem;">
                 <li>You should see a page that can start image transmission</li>
                 <li>If the page loads but no image appears, firmware may need to be reflashed</li>
             </ul>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h4 style="color: #495057; margin: 0 0 0.75rem 0;">Slow Step-by-Step (Do Not Skip)</h4>
+                <ol style="margin-left: 1.5rem; line-height: 1.9; margin-bottom: 0;">
+                    <li>Confirm you are connected to <strong>HW_ESP32S3CAM</strong></li>
+                    <li>Type <strong>http://192.168.5.1</strong> exactly (include <strong>http://</strong>)</li>
+                    <li>Wait for the page to fully load (be patient on the first load)</li>
+                    <li>Use the page control to start image transmission</li>
+                    <li>Wait for frames to appear (some modules take a moment to start)</li>
+                </ol>
+            </div>
 
             <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Quick Troubleshooting</h4>
             <div class="code-block">
@@ -110,12 +199,52 @@ import Layout from '../../../layouts/Layout.astro';
 3) Try a different browser
 4) Power-cycle the ESP32-S3 vision module`}</pre>
             </div>
+
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107; margin-top: 1rem;">
+                <strong style="color: #856404;">If the page loads but video is blank:</strong>
+                <span style="color: #856404;"> That’s a different problem than “192.168.5.1 won’t load.” Treat it as a stream/firmware issue, not a WiFi issue.</span>
+            </div>
+        </div>
+
+        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; margin-bottom: 1rem;">🛠️ Section 4: Recovery Checklist (When It Stops Working)</h2>
+            <p style="margin-bottom: 1rem; line-height: 1.6;">
+                If you previously flashed other firmware and the live feed stopped working, you may need to restore the
+                image transmission firmware. Use this checklist to systematically recover.
+            </p>
+            <ol style="margin-left: 1.5rem; line-height: 1.9;">
+                <li><strong>Hard reset:</strong> Power off, wait 10 seconds, power on</li>
+                <li><strong>WiFi reset:</strong> Forget <strong>HW_ESP32S3CAM</strong> network, reconnect</li>
+                <li><strong>Browser reset:</strong> Try another browser, or a private/incognito window</li>
+                <li><strong>Device swap:</strong> Try phone first, then PC (or the other way around)</li>
+                <li><strong>Firmware restore:</strong> If the stream still won’t start, reflash the correct 7.3 image transmission firmware</li>
+            </ol>
+
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                <h3 style="color: #495057; margin: 0 0 0.75rem 0;">Firmware Restore (Detailed)</h3>
+                <p style="margin: 0 0 1rem 0; line-height: 1.7; color: #374151;">
+                    Use this when the hotspot works and the page loads, but the live feed won’t start (or you previously flashed a different vision firmware).
+                </p>
+
+                <ol style="margin-left: 1.5rem; line-height: 1.9; margin-bottom: 0;">
+                    <li><strong>Connect:</strong> Plug the ESP32-S3 vision module into your computer with a data-capable USB-C cable</li>
+                    <li><strong>Open tool:</strong> Run <strong>flash_download_tool_3.9.7</strong> (Hiwonder Firmware Flashing Tools)</li>
+                    <li><strong>Select chip:</strong> Choose <strong>ESP32-S3</strong></li>
+                    <li><strong>Select firmware:</strong> Choose <strong>image_transmit.bin</strong> (the live camera feed / image transmission firmware)</li>
+                    <li><strong>Select COM port:</strong> Pick the COM port that matches Device Manager. <strong>Avoid COM1</strong>.</li>
+                    <li><strong>Erase first:</strong> Click <strong>ERASE</strong> and wait for it to finish</li>
+                    <li><strong>Flash:</strong> Click <strong>START</strong> and wait for <strong>FINISH</strong></li>
+                    <li><strong>Restart:</strong> Disconnect USB and power-cycle the vision module</li>
+                    <li><strong>Re-test:</strong> Connect to <strong>HW_ESP32S3CAM</strong> and load <strong>http://192.168.5.1</strong></li>
+                </ol>
+            </div>
         </div>
 
         <!-- Hands-On Activity -->
         <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem; border-left: 5px solid #28a745;">
             <h2 style="color: #155724; margin-bottom: 1rem;">🔧 Hands-On Activity: Prove the Stream Works</h2>
             <p style="margin-bottom: 1.5rem; color: #155724; font-weight: 500;">Get the camera feed working on both a PC browser and a phone browser.</p>
+
             
             <h3 style="color: #155724; margin-bottom: 1rem;">Activity Checklist</h3>
             <div style="background: white; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
