@@ -40,6 +40,30 @@ import Layout from '../../../layouts/Layout.astro';
             </ul>
         </div>
 
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 2rem; border-radius: 10px; margin-bottom: 2rem; border-left: 5px solid #28a745;">
+            <h2 style="color: #155724; margin-bottom: 1rem;">✅ Before You Start (Plug-and-Play After Lesson 18)</h2>
+            <p style="margin-bottom: 1rem; line-height: 1.7; color: #155724;">
+                Lesson 18 proved the camera and hotspot work. For Lesson 19, you will switch the ESP32-S3 from “live feed” firmware (7.3) to
+                “color recognition” firmware (7.4). After you do this, <strong>the live-stream page behavior may change</strong>—that’s expected.
+            </p>
+
+            <div style="background: white; padding: 1.5rem; border-radius: 8px;">
+                <h3 style="color: #155724; margin: 0 0 0.75rem 0;">Readiness Checklist</h3>
+                <ol style="margin-left: 1.5rem; line-height: 1.9; margin-bottom: 0; color: #155724;">
+                    <li><strong>Hardware:</strong> ESP32-S3 vision module is installed and powered (recommend at least <strong>5V 2A</strong>)</li>
+                    <li><strong>USB/Driver:</strong> Windows shows a USB serial port for the module (often CH34x/CH340)</li>
+                    <li><strong>Firmware switch:</strong> Flash the ESP32-S3 with the <strong>7.4 color recognition</strong> firmware/program</li>
+                    <li><strong>UNO code:</strong> Upload the matching <strong>UNO</strong> program for 7.4 (reads results over I2C)</li>
+                    <li><strong>Test objects:</strong> You have a clear <strong>red</strong> object and a clear <strong>blue</strong> object</li>
+                </ol>
+            </div>
+
+            <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; border-left: 4px solid #ffc107; margin-top: 1rem;">
+                <strong style="color: #856404;">Troubleshooting shortcut:</strong>
+                <span style="color: #856404;"> If the camera feed used to work in Lesson 18 but now doesn’t, you probably changed firmware. That’s normal—continue with the 7.4 setup. If you ever need the live feed again, reflash the 7.3 <strong>image_transmit</strong> firmware.</span>
+            </div>
+        </div>
+
         <!-- Section 1: What This Program Does -->
         <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; margin-bottom: 1rem;">🎨 Section 1: What This Program Does</h2>
@@ -109,7 +133,8 @@ if (buffer[0] == 1) {
 
                 <h4 style="color: #495057; margin: 1.5rem 0 1rem 0;">Step-by-Step Instructions:</h4>
                 <ol style="margin-left: 1.5rem; line-height: 1.8;">
-                    <li><strong>Flash firmware:</strong> Upload the ESP32-S3 color recognition program and the UNO program</li>
+                    <li><strong>ESP32-S3 first:</strong> Flash the <strong>7.4 color recognition</strong> firmware/program to the vision module</li>
+                    <li><strong>UNO second:</strong> Upload the matching <strong>UNO</strong> sketch for 7.4 (I2C reads)</li>
                     <li><strong>Red test:</strong> Place red block in view; confirm red LED + 1 beep + forward/back rock</li>
                     <li><strong>Blue test:</strong> Place blue block in view; confirm blue LED + 2 beeps + left/right rock</li>
                     <li><strong>Nothing test:</strong> Remove blocks; confirm white LED</li>
