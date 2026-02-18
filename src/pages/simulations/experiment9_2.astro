@@ -23,7 +23,7 @@ import Layout from '../../layouts/Layout.astro';
         
         <div class="experiment-intro">
             <h2>How fast does sound travel?</h2>
-            <p>In this experiment, you'll measure the speed of sound in air by timing how long it takes for a sound to travel a known distance.</p>
+            <p>In this experiment, you'll measure the speed of sound in air by timing how long it takes for a sound to travel a known distance. Because the travel time is often less than 1 second, you will use a phone recording (video or audio) to measure the delay more accurately than a handheld stopwatch.</p>
         </div>
 
         <div class="materials-section">
@@ -47,7 +47,7 @@ import Layout from '../../layouts/Layout.astro';
                     <div class="controls">
                         <div class="distance-control">
                             <label for="distance">Distance (meters):</label>
-                            <input type="number" id="distance" min="10" max="100" value="50" step="10">
+                            <input type="number" id="distance" min="50" max="500" value="250" step="50">
                         </div>
                         <div class="environment-controls">
                             <div class="control-group">
@@ -72,7 +72,7 @@ import Layout from '../../layouts/Layout.astro';
                 <div class="measurement-area">
                     <h4>Measurements:</h4>
                     <div class="measurement-display">
-                        <p>Distance: <span id="displayDistance">50</span> meters</p>
+                        <p>Distance: <span id="displayDistance">250</span> meters</p>
                         <p>Time: <span id="displayTime">0.000</span> seconds</p>
                         <p>Speed: <span id="displaySpeed">0</span> m/s</p>
                         <p>Effective Speed: <span id="effectiveSpeed">0</span> m/s</p>
@@ -99,7 +99,7 @@ import Layout from '../../layouts/Layout.astro';
             <ol>
                 <li>
                     <h4>Setup</h4>
-                    <p>Find an open area outdoors. Measure and mark a distance of at least 50 meters.</p>
+                    <p>Find an open area outdoors. Measure and mark a distance of 250 meters (a longer distance gives a larger time delay and is easier to measure).</p>
                     <div class="safety-note">
                         <strong>Safety Note:</strong> Wear safety goggles to protect your eyes from any metal particles when striking the pots.
                     </div>
@@ -110,7 +110,11 @@ import Layout from '../../layouts/Layout.astro';
                 </li>
                 <li>
                     <h4>Measurement</h4>
-                    <p>Your partner will raise the spoon high enough for you to see, then strike their pot. Start your stopwatch when you see the spoon hit and stop it when you hear the sound.</p>
+                    <p>Your partner will raise the spoon high enough for you to see, then strike their pot. Instead of using a handheld stopwatch (reaction time is too slow for small delays), record the event using your phone:</p>
+                    <ul>
+                        <li><strong>Video method:</strong> Record video (60 fps or higher if available). Start counting frames at the moment you see the strike and stop at the first moment you hear the sound in the recording. Convert frames to time.</li>
+                        <li><strong>Audio method:</strong> Record audio. You should see two distinct spikes (the strike/impact sound at the source and the sound arriving at your location). Use the timestamp difference.</li>
+                    </ul>
                 </li>
                 <li>
                     <h4>Calculate</h4>
@@ -137,31 +141,31 @@ import Layout from '../../layouts/Layout.astro';
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="distance-input" value="250"></td>
                         <td><input type="number" class="time-input" step="0.001"></td>
                         <td class="speed-result">0</td>
                     </tr>
                     <tr>
                         <td>2</td>
-                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="distance-input" value="250"></td>
                         <td><input type="number" class="time-input" step="0.001"></td>
                         <td class="speed-result">0</td>
                     </tr>
                     <tr>
                         <td>3</td>
-                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="distance-input" value="250"></td>
                         <td><input type="number" class="time-input" step="0.001"></td>
                         <td class="speed-result">0</td>
                     </tr>
                     <tr>
                         <td>4</td>
-                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="distance-input" value="250"></td>
                         <td><input type="number" class="time-input" step="0.001"></td>
                         <td class="speed-result">0</td>
                     </tr>
                     <tr>
                         <td>5</td>
-                        <td><input type="number" class="distance-input" value="50"></td>
+                        <td><input type="number" class="distance-input" value="250"></td>
                         <td><input type="number" class="time-input" step="0.001"></td>
                         <td class="speed-result">0</td>
                     </tr>
@@ -527,7 +531,7 @@ import Layout from '../../layouts/Layout.astro';
             let isRunning = false;
 
             // Initialize display elements
-            const distanceInput = document.getElementById('distance');
+            const distanceInput = document.getElementById('distance') as HTMLInputElement | null;
             const displayDistance = document.getElementById('displayDistance');
             const displayTime = document.getElementById('displayTime');
             const displaySpeed = document.getElementById('displaySpeed');
@@ -598,7 +602,14 @@ import Layout from '../../layouts/Layout.astro';
                 ctx.fillStyle = '#000';
                 ctx.font = '16px Arial';
                 ctx.textAlign = 'center';
-                ctx.fillText(`${distanceInput.value} meters`, canvas.width / 2, 295);
+                ctx.fillText(`${distanceInput?.value ?? ''} meters`, canvas.width / 2, 295);
+            }
+
+            function syncDistanceDisplay() {
+                if (displayDistance && distanceInput) {
+                    displayDistance.textContent = (distanceInput as HTMLInputElement).value;
+                }
+                drawScene();
             }
 
             function drawPerson(x, y) {
@@ -743,6 +754,12 @@ import Layout from '../../layouts/Layout.astro';
                 // Initial draw
                 drawScene();
                 updateEnvironmentalEffects();
+
+                // Keep the measurement panel distance in sync with the input
+                if (distanceInput) {
+                    distanceInput.addEventListener('input', syncDistanceDisplay);
+                    syncDistanceDisplay();
+                }
 
                 // Email tracking functionality
                 const emailInput = document.getElementById('studentEmail');
