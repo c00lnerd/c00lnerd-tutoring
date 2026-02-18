@@ -48,7 +48,34 @@ import Layout from '../../layouts/Layout.astro';
         </div>
 
         <div class="simulation-section">
-            <h2>Interactive Demonstration</h2>
+            <h2>Part 1: Candle Flame + Sound Waves</h2>
+            <p>Sound waves are moving air pressure changes. When the air pressure near a candle changes rapidly, the flame can flicker.</p>
+
+            <div class="candle-demo">
+                <div class="candle-visual" aria-label="Candle flame visualization">
+                    <div class="candle-body"></div>
+                    <div class="flame" id="flame"></div>
+                </div>
+
+                <div class="candle-instructions">
+                    <h3>What to do (real experiment)</h3>
+                    <ol>
+                        <li>Place a candle on a stable, non-flammable surface and light it.</li>
+                        <li>Stand the large bottle between you and the candle (this helps block your breath from affecting the flame).</li>
+                        <li>From the other side of the bottle, clap, talk loudly, or tap the bottle gently and watch the flame.</li>
+                        <li>Try different distances. Do you see the flicker change?</li>
+                    </ol>
+
+                    <div class="candle-controls">
+                        <button id="toggleTone" class="tone-button">Play Tone</button>
+                        <p class="safety-note"><strong>Safety:</strong> Adult supervision required. Keep hair/sleeves away from flame. Never leave a candle unattended.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="simulation-section">
+            <h2>Part 2: Rice Grains + Vibrations</h2>
             <div class="demo-container">
                 <div class="demo-image">
                     <img id="currentStep" src="/simulations/experiment9_1/empty-bowl.jpg" alt="Current experiment step" />
@@ -611,6 +638,116 @@ import Layout from '../../layouts/Layout.astro';
         border-radius: 8px;
     }
 
+    .candle-demo {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 2rem;
+        align-items: center;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .candle-visual {
+        position: relative;
+        width: 260px;
+        height: 260px;
+        border-radius: 12px;
+        background: radial-gradient(circle at 50% 60%, #1f2937 0%, #0b1220 60%, #05070d 100%);
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 30px;
+        box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 6px 20px rgba(0,0,0,0.15);
+        overflow: hidden;
+    }
+
+    .candle-body {
+        width: 70px;
+        height: 120px;
+        border-radius: 14px;
+        background: linear-gradient(180deg, #f2f2f2 0%, #d9d9d9 100%);
+        position: relative;
+    }
+
+    .candle-body::before {
+        content: "";
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        width: 6px;
+        height: 20px;
+        transform: translateX(-50%);
+        background: #333;
+        border-radius: 999px;
+        opacity: 0.75;
+    }
+
+    .flame {
+        position: absolute;
+        bottom: 140px;
+        left: 50%;
+        width: 34px;
+        height: 58px;
+        transform: translateX(-50%);
+        border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+        background: radial-gradient(circle at 50% 35%, #fff6bf 0%, #ffd35a 35%, #ff8a2a 70%, rgba(255,138,42,0.0) 100%);
+        filter: drop-shadow(0 0 14px rgba(255, 180, 60, 0.55));
+        transform-origin: 50% 90%;
+    }
+
+    .candle-instructions h3 {
+        margin-top: 0;
+    }
+
+    .candle-instructions ol {
+        margin: 0.5rem 0 1rem;
+    }
+
+    .candle-controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .tone-button {
+        width: fit-content;
+        padding: 0.65rem 1rem;
+        border: none;
+        border-radius: 10px;
+        background: #111827;
+        color: white;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    .tone-button:hover {
+        transform: translateY(-1px);
+        background: #0b1220;
+    }
+
+    .safety-note {
+        margin: 0;
+        color: #6b7280;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+
+    @media (max-width: 900px) {
+        .candle-demo {
+            grid-template-columns: 1fr;
+        }
+
+        .candle-visual {
+            width: 100%;
+            max-width: 360px;
+            margin: 0 auto;
+        }
+    }
+
     .volume-control {
         display: flex;
         align-items: center;
@@ -717,6 +854,94 @@ import Layout from '../../layouts/Layout.astro';
 
 <script>
 window.addEventListener('load', function() {
+    const volumeRange = document.getElementById('volume');
+    const volumeDisplay = document.getElementById('volumeDisplay');
+    const flame = document.getElementById('flame');
+    const toggleToneBtn = document.getElementById('toggleTone');
+
+    let audioCtx;
+    let oscillator;
+    let gainNode;
+
+    function getIntensity() {
+        const val = Number(volumeRange?.value || 5);
+        return Math.min(1, Math.max(0, (val - 1) / 9));
+    }
+
+    function updateIntensityUI() {
+        if (volumeDisplay && volumeRange) {
+            volumeDisplay.textContent = volumeRange.value;
+        }
+
+        const intensity = getIntensity();
+        if (flame) {
+            const tilt = (intensity * 10);
+            const wobble = (intensity * 14);
+            flame.style.animation = `flame-flicker 0.12s infinite alternate ease-in-out`;
+            flame.style.setProperty('--flame-tilt', `${tilt}deg`);
+            flame.style.setProperty('--flame-wobble', `${wobble}deg`);
+            flame.style.setProperty('--flame-scale', `${1 + intensity * 0.12}`);
+        }
+
+        if (gainNode) {
+            const targetGain = intensity * 0.15;
+            const now = audioCtx.currentTime;
+            gainNode.gain.cancelScheduledValues(now);
+            gainNode.gain.setTargetAtTime(targetGain, now, 0.02);
+        }
+    }
+
+    function ensureAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        oscillator = audioCtx.createOscillator();
+        gainNode = audioCtx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 440;
+        gainNode.gain.value = 0;
+        oscillator.connect(gainNode).connect(audioCtx.destination);
+        oscillator.start();
+    }
+
+    function isTonePlaying() {
+        return !!(audioCtx && gainNode && gainNode.gain.value > 0.0001);
+    }
+
+    function stopTone() {
+        if (!gainNode || !audioCtx) return;
+        const now = audioCtx.currentTime;
+        gainNode.gain.cancelScheduledValues(now);
+        gainNode.gain.setTargetAtTime(0, now, 0.02);
+        if (toggleToneBtn) toggleToneBtn.textContent = 'Play Tone';
+    }
+
+    function startTone() {
+        ensureAudio();
+        if (!gainNode) return;
+        updateIntensityUI();
+        if (toggleToneBtn) toggleToneBtn.textContent = 'Stop Tone';
+    }
+
+    if (volumeRange) {
+        volumeRange.addEventListener('input', updateIntensityUI);
+        updateIntensityUI();
+    }
+
+    if (toggleToneBtn) {
+        toggleToneBtn.addEventListener('click', function() {
+            if (!audioCtx) {
+                startTone();
+                return;
+            }
+
+            if (isTonePlaying()) {
+                stopTone();
+            } else {
+                startTone();
+            }
+        });
+    }
+
     const video = document.getElementById('experimentVideo');
     const playButton = document.getElementById('playButton');
     const volumeButton = document.getElementById('volumeButton');
@@ -891,6 +1116,19 @@ The student completed the sound wave visualization experiment, observing how sou
     }
 });
 </script>
+
+<style>
+@keyframes flame-flicker {
+    from {
+        transform: translateX(-50%) rotate(calc(var(--flame-tilt, 0deg) * -1)) scale(var(--flame-scale, 1));
+        filter: drop-shadow(0 0 12px rgba(255, 180, 60, 0.45));
+    }
+    to {
+        transform: translateX(-50%) rotate(var(--flame-wobble, 0deg)) scale(var(--flame-scale, 1));
+        filter: drop-shadow(0 0 18px rgba(255, 180, 60, 0.65));
+    }
+}
+</style>
 
 <script client:load>
 // Dynamic EmailJS loading with retry logic
