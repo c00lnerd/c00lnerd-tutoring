@@ -753,7 +753,7 @@ if (!validateSecurity()) return;
         });
 
         // Send results via EmailJS and Google Sheets if enabled
-        if (window.saveResults && window.userEmail) {
+        if (window.saveResults) {
             const emailStatus = document.getElementById('email-status');
             emailStatus.style.display = 'block';
             emailStatus.className = 'email-status';
@@ -763,7 +763,7 @@ if (!validateSecurity()) return;
                 // Post to Google Sheets
                 const sheetsData = {
                     timestamp: new Date().toISOString(),
-                    studentEmail: window.userEmail,
+                    studentEmail: window.userEmail || 'Not provided',
                     quizTitle: 'Physical Science Module 9 Quiz',
                     score: score,
                     totalQuestions: window.questions.length,
@@ -816,12 +816,12 @@ if (!validateSecurity()) return;
                 const updatedTemplateParams = {
                     from_name: 'Physical Science Quiz System',
                     to_email: 'Chuck@c00lnerd.com',
-                    student_email: window.userEmail,
+                    student_email: window.userEmail || 'Not provided',
                     to_name: 'Instructor',
                     subject: 'Physical Science Module 9 Quiz Results',
                     submission_date: new Date().toLocaleString(),
                     message: emailMessage,
-                    reply_to: window.userEmail
+                    reply_to: window.userEmail || 'Chuck@c00lnerd.com'
                 };
 
                 emailjs
