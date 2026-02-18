@@ -15,7 +15,7 @@ import Layout from '../../layouts/Layout.astro';
             </div>            
             <!-- Anti-Spam CAPTCHA -->
             <div class="captcha-section">
-                <label for="captcha">ðŸ”’ Security Check: What is <span id="captcha-question"></span>?</label>
+                <label for="captcha">Security Check: What is <span id="captcha-question"></span>?</label>
                 <input type="number" id="captcha" placeholder="Enter the answer" required>
                 <div id="captcha-error" class="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
             </div>
@@ -222,13 +222,9 @@ import Layout from '../../layouts/Layout.astro';
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
 <script is:inline>
-    // Wait for EmailJS to load before initializing
-    window.onload = function() {
-        try {
-            emailjs.init("ct_s19oZHppLy9BlW");
     // CAPTCHA variables
     let captchaAnswer = 0;
-    
+
     function generateCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
@@ -238,23 +234,23 @@ import Layout from '../../layouts/Layout.astro';
             questionElement.textContent = num1 + " + " + num2;
         }
     }
-    
+
     function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const captchaInput = document.getElementById('captcha');
+        const userAnswer = parseInt(captchaInput ? captchaInput.value : '');
         const errorDiv = document.getElementById('captcha-error');
-        
+
         if (userAnswer !== captchaAnswer) {
             if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
+            generateCaptcha();
+            if (captchaInput) captchaInput.value = '';
             return false;
         }
-        
+
         if (errorDiv) errorDiv.style.display = 'none';
         return true;
     }
-    
-    // Security validation function
+
     let cooldownInterval = null;
 
     function startCooldown(remainingMs) {
@@ -288,20 +284,18 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     function validateSecurity() {
-        // Check honeypot field (should be empty)
         const honeypot = document.getElementById('website');
         if (honeypot && honeypot.value) {
             console.log('Spam bot detected via honeypot');
             alert('Security check failed. Please try again.');
             return false;
         }
-        
-        // Rate limiting check
+
         const lastSubmission = localStorage.getItem('lastQuizStart');
         const now = Date.now();
         if (lastSubmission) {
             const elapsed = now - parseInt(lastSubmission);
-            if (elapsed < 30000) { // 30 second cooldown
+            if (elapsed < 30000) {
                 const remaining = 30000 - elapsed;
                 startCooldown(remaining);
                 alert('Please wait 30 seconds between quiz attempts.');
@@ -309,13 +303,11 @@ import Layout from '../../layouts/Layout.astro';
             }
         }
         localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
+
         if (!validateCaptcha()) {
             return false;
         }
-        
-        // Email validation and domain filtering
+
         const emailInput = document.getElementById('email');
         if (emailInput && emailInput.value) {
             const email = emailInput.value;
@@ -324,8 +316,7 @@ import Layout from '../../layouts/Layout.astro';
                 alert('Please enter a valid email address.');
                 return false;
             }
-            
-            // Block common spam domains
+
             const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
             const domain = email.split('@')[1].toLowerCase();
             if (spamDomains.includes(domain)) {
@@ -333,12 +324,19 @@ import Layout from '../../layouts/Layout.astro';
                 return false;
             }
         }
-        
+
         return true;
     }
+
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
         } catch (err) {
             console.error('Error initializing EmailJS:', err);
         }
+
+        generateCaptcha();
     };
 
     // Utility function to shuffle array and track original indices
@@ -782,7 +780,8 @@ if (!validateSecurity()) return;
                     },
                     body: JSON.stringify(sheetsData)
                 }).then(() => {
-                    console.log('Google Sheets: Data logged successfully');
+                    // With `mode: 'no-cors'`, the response is opaque and we cannot confirm success.
+                    console.log('Google Sheets: Request sent');
                 }).catch(error => {
                     console.error('Google Sheets: Error logging data:', error);
                 });
@@ -816,6 +815,7 @@ if (!validateSecurity()) return;
 
                 const updatedTemplateParams = {
                     from_name: 'Physical Science Quiz System',
+                    to_email: 'Chuck@c00lnerd.com',
                     student_email: window.userEmail,
                     to_name: 'Instructor',
                     subject: 'Physical Science Module 9 Quiz Results',
@@ -874,4 +874,17 @@ if (!validateSecurity()) return;
 
     // Add event listener for start quiz button
     document.getElementById('start-quiz').addEventListener('click', startQuiz);
+
+    const emailEl = document.getElementById('email');
+    const captchaEl = document.getElementById('captcha');
+
+    function handleStartKeydown(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            startQuiz();
+        }
+    }
+
+    if (emailEl) emailEl.addEventListener('keydown', handleStartKeydown);
+    if (captchaEl) captchaEl.addEventListener('keydown', handleStartKeydown);
 </script>
