@@ -15,7 +15,7 @@ import Layout from '../../layouts/Layout.astro';
             </div>            
             <!-- Anti-Spam CAPTCHA -->
             <div class="captcha-section">
-                <label for="captcha">ðŸ”’ Security Check: What is <span id="captcha-question"></span>?</label>
+                <label for="captcha">Security Check: What is <span id="captcha-question"></span>?</label>
                 <input type="number" id="captcha" placeholder="Enter the answer" required>
                 <div id="captcha-error" class="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
             </div>
@@ -224,13 +224,9 @@ import Layout from '../../layouts/Layout.astro';
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
 <script is:inline>
-    // Wait for EmailJS to load before initializing
-    window.onload = function() {
-        try {
-            emailjs.init("ct_s19oZHppLy9BlW");
     // CAPTCHA variables
     let captchaAnswer = 0;
-    
+
     function generateCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
@@ -240,22 +236,25 @@ import Layout from '../../layouts/Layout.astro';
             questionElement.textContent = num1 + " + " + num2;
         }
     }
-    
+
     function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const captchaEl = document.getElementById('captcha');
         const errorDiv = document.getElementById('captcha-error');
-        
+        if (!captchaEl) return false;
+
+        const userAnswer = parseInt(captchaEl.value);
+
         if (userAnswer !== captchaAnswer) {
             if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
+            generateCaptcha();
+            captchaEl.value = '';
             return false;
         }
-        
+
         if (errorDiv) errorDiv.style.display = 'none';
         return true;
     }
-    
+
     // Security validation function
     let cooldownInterval = null;
 
@@ -338,10 +337,16 @@ import Layout from '../../layouts/Layout.astro';
         
         return true;
     }
+
+    // Wait for EmailJS to load before initializing
+    window.onload = function() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
         } catch (err) {
             console.error('Error initializing EmailJS:', err);
         }
     };
+
     // Utility function to shuffle array and track original indices
     function shuffleAnswers(question) {
         const originalOptions = [...question.options];
@@ -663,13 +668,14 @@ import Layout from '../../layouts/Layout.astro';
     // Quiz state
     window.currentQuestion = 0;
     window.userAnswers = new Array(originalQuestions.length).fill(null);
-    window.questionAttempts = new Array(window.questions.length).fill(0);
+    window.questionAttempts = new Array(originalQuestions.length).fill(0);
     window.quizStarted = false;
 
     // Initialize when DOM is loaded
     document.addEventListener('DOMContentLoaded', function() {
         const startButton = document.getElementById('start-quiz');
         const emailInput = document.getElementById('email');
+        const captchaInput = document.getElementById('captcha');
         const downloadButton = document.getElementById('download-results');
         
         // Load saved email if exists
@@ -677,10 +683,18 @@ import Layout from '../../layouts/Layout.astro';
         if (savedEmail) {
             emailInput.value = savedEmail;
         }
+
+        generateCaptcha();
         
         // Start quiz button
         startButton.addEventListener('click', function() {
+            if (!validateSecurity()) return;
+
+            const email = emailInput?.value || '';
             const saveResults = document.getElementById('save-results').checked;
+
+            if (email) localStorage.setItem('studentEmail', email);
+
             window.userEmail = email;
             window.saveResults = saveResults;
             
@@ -693,6 +707,16 @@ import Layout from '../../layouts/Layout.astro';
             showQuestion();
             updateProgressBar();
         });
+
+        function handleStartKeydown(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                startButton.click();
+            }
+        }
+
+        if (emailInput) emailInput.addEventListener('keydown', handleStartKeydown);
+        if (captchaInput) captchaInput.addEventListener('keydown', handleStartKeydown);
         
         // Download results button
         downloadButton.addEventListener('click', function() {
@@ -701,7 +725,7 @@ import Layout from '../../layouts/Layout.astro';
     });
 
     // Show question by index
-    function showQuestion(index) {
+    function showQuestion(index = window.currentQuestion || 0) {
         const question = window.questions[index];
         const questionNumber = document.getElementById('question-number');
         const questionText = document.getElementById('question-text');
@@ -748,6 +772,13 @@ import Layout from '../../layouts/Layout.astro';
         
         // Update current question index
         window.currentQuestion = index;
+    }
+
+    function updateProgressBar() {
+        const progressBar = document.querySelector('.progress-bar .fill');
+        if (!progressBar) return;
+        const index = window.currentQuestion || 0;
+        progressBar.style.width = `${((index + 1) / window.questions.length) * 100}%`;
     }
 
     function selectAnswer(selectedIndex) {
@@ -818,10 +849,9 @@ import Layout from '../../layouts/Layout.astro';
         // Show incorrect answers
         showIncorrectAnswers();
         
-        // Send results if email was provided
-        const email = localStorage.getItem('studentEmail');
-        if (email) {
-            sendResultsEmail(email, score, percentage);
+        // Send results if enabled
+        if (window.saveResults) {
+            sendResultsEmail(window.userEmail || localStorage.getItem('studentEmail') || 'Not provided', score, percentage);
         }
     }
 
@@ -855,81 +885,6 @@ import Layout from '../../layouts/Layout.astro';
         
         // Initialize EmailJS
         if (typeof emailjs !== 'undefined') {
-            emailjs.init("ct_s19oZHppLy9BlW");
-    // CAPTCHA variables
-    let captchaAnswer = 0;
-    
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2 ;
-        }
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }
-            
             // Prepare results data and format email message similar to Module 6
             const incorrectQuestions = window.questions
                 .map((question, index) => {
@@ -976,7 +931,7 @@ import Layout from '../../layouts/Layout.astro';
                 timeCompleted: new Date().toLocaleString()
             };
 
-            fetch('https://script.google.com/macros/s/AKfycbyyLBmUPqcnnH7204B8-FjK8JGXRjF4HFTJaA9LB9gzpHPWf1up45iEjrLik3DiXfsxaA/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbwCTsWga539iU8vd7NrWNyldtB9X70BFPoK2tlTOxwhtIS0jNFOV4j1x1mve1hq-Z_B/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -984,7 +939,7 @@ import Layout from '../../layouts/Layout.astro';
                 },
                 body: JSON.stringify(sheetsData)
             }).then(() => {
-                console.log('Google Sheets: Data logged successfully');
+                console.log('Google Sheets: Request sent');
             }).catch(error => {
                 console.error('Google Sheets: Error logging data:', error);
             });
@@ -992,12 +947,13 @@ import Layout from '../../layouts/Layout.astro';
             // Send EmailJS notification to instructor with standardized format
             const updatedTemplateParams = {
                 from_name: 'Physical Science Quiz System',
-                student_email: email,
+                to_email: 'Chuck@c00lnerd.com',
+                student_email: email || 'Not provided',
                 to_name: 'Instructor',
                 subject: 'Physical Science Module 10 Quiz Results',
                 submission_date: new Date().toLocaleString(),
                 message: emailMessage,
-                reply_to: email
+                reply_to: email || 'Chuck@c00lnerd.com'
             };
 
             emailjs
