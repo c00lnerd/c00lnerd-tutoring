@@ -130,75 +130,115 @@ const pacing = [
 ];
 ---
 
-<Layout title="Physical Science - Semester 2 Pacing Guide">
-	<h1>Physical Science Semester 2 - Pacing Guide</h1>
-	<p class="intro">This page uses day numbers (not dates) so you can align it to your own calendar.</p>
+<Layout title="Physical Science Semester 2 - Pacing Guide">
+	<div class="container">
+		<div class="header">
+			<h1>Physical Science Semester 2</h1>
+			<p class="subtitle">Pacing guide using day numbers (no dates). Modules 8-15.</p>
+		</div>
 
-	{pacing.map((mod) => (
-		<section class="module">
-			<h2>{mod.module}</h2>
-			<div class="table-wrap">
-				<table>
-					<thead>
-						<tr>
-							<th>Day</th>
-							<th>Assignment</th>
-						</tr>
-					</thead>
-					<tbody>
-						{mod.days.map((d) => (
-							<tr>
-								<td class="day">{d.day ?? '—'}</td>
-								<td>{d.text}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			</div>
-		</section>
-	))}
+		<div class="modules">
+			{pacing.map((m) => (
+				<section class="module" aria-label={m.module}>
+					<h2>{m.module}</h2>
+					<div class="table-wrap">
+						<table>
+							<thead>
+								<tr>
+									<th class="day-col">Day</th>
+									<th>Assignment</th>
+								</tr>
+							</thead>
+							<tbody>
+								{m.days.map((d) => (
+									<tr>
+										<td class="day">{d.day ?? '—'}</td>
+										<td class="task">{d.text}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			))}
+		</div>
+	</div>
 
 	<style>
-		h1 {
-			text-align: center;
-			margin: 2rem 0 0.5rem;
+		.container {
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
 		}
-		.intro {
+
+		.header {
 			text-align: center;
-			margin: 0 0 2rem;
+			margin-bottom: 2rem;
+		}
+
+		h1 {
+			margin: 0 0 0.75rem 0;
+		}
+
+		.subtitle {
+			margin: 0;
 			color: var(--gray);
 		}
+
+		.modules {
+			display: grid;
+			gap: 1.5rem;
+		}
+
 		.module {
-			margin: 2.5rem 0;
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
 		}
+
 		.module h2 {
-			margin: 0 0 1rem;
-			color: var(--accent);
+			margin: 0 0 1rem 0;
+			font-size: 1.4rem;
 		}
+
 		.table-wrap {
 			overflow-x: auto;
-			background: var(--gray-light);
-			border-radius: 0.5rem;
-			padding: 1rem;
 		}
+
 		table {
 			width: 100%;
 			border-collapse: collapse;
+			min-width: 700px;
 		}
+
 		th,
 		td {
-			padding: 0.75rem;
-			border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+			text-align: left;
+			padding: 0.75rem 0.75rem;
+			border-bottom: 1px solid #e5e7eb;
 			vertical-align: top;
 		}
+
 		th {
-			text-align: left;
 			font-weight: 700;
+			color: var(--black);
+			background: #f8fafc;
 		}
+
+		.day-col {
+			width: 90px;
+		}
+
 		.day {
-			white-space: nowrap;
 			font-weight: 700;
-			width: 7rem;
+			color: var(--accent);
+			white-space: nowrap;
+		}
+
+		.task {
+			color: var(--gray);
+			line-height: 1.5;
 		}
 	</style>
 </Layout>
