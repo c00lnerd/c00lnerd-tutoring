@@ -1,0 +1,1049 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import targets from '../../data/deep-sky-targets.json';
+
+const monthOptions = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const catalogOptions = [...new Set(targets.map((target) => target.catalog).filter(Boolean))].sort();
+const objectTypeOptions = [...new Set(targets.map((target) => target.objectType).filter(Boolean))].sort();
+const totalTargets = targets.length;
+const tonightTargets = targets.filter((target) => target.tonightUp === 'Yes').length;
+const notImagedTargets = targets.filter((target) => target.imaged !== 'Yes').length;
+const tonightPickTargets = targets.filter((target) => target.tonightsPick).length;
+const serializedTargets = JSON.stringify(targets).replace(/</g, '\\u003c');
+---
+
+<Layout title="Deep Sky Finder">
+	<section class="finder-page">
+		<div class="hero-card">
+			<div>
+				<p class="eyebrow">Astrophotography Planning Tool</p>
+				<h1>Deep Sky Target Finder</h1>
+				<p class="hero-copy">
+					Search your Messier, NGC, and IC targets, then narrow them down by season, type, imaging status,
+					and a dedicated tonight view powered by your spreadsheet.
+				</p>
+			</div>
+			<div class="stats-grid">
+				<div class="stat-card">
+					<span class="stat-value">{totalTargets}</span>
+					<span class="stat-label">Total targets</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-value">{tonightTargets}</span>
+					<span class="stat-label">Up tonight</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-value">{notImagedTargets}</span>
+					<span class="stat-label">Not imaged yet</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-value">{tonightPickTargets}</span>
+					<span class="stat-label">Tonight picks</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="controls-card">
+			<div class="controls-grid">
+				<label class="field field-search">
+					<span>Search</span>
+					<input id="searchInput" type="search" placeholder="Messier, NGC, IC, common name, type..." />
+				</label>
+
+				<label class="field">
+					<span>Catalog</span>
+					<select id="catalogFilter">
+						<option value="">All catalogs</option>
+						{catalogOptions.map((catalog) => <option value={catalog}>{catalog}</option>)}
+					</select>
+				</label>
+
+				<label class="field">
+					<span>Object type</span>
+					<select id="typeFilter">
+						<option value="">All object types</option>
+						{objectTypeOptions.map((objectType) => <option value={objectType}>{objectType}</option>)}
+					</select>
+				</label>
+
+				<label class="field">
+					<span>Best month</span>
+					<select id="monthFilter">
+						<option value="">Any month</option>
+						{monthOptions.map((month) => <option value={month}>{month}</option>)}
+					</select>
+				</label>
+
+				<label class="field">
+					<span>Sort by</span>
+					<select id="sortFilter">
+						<option value="recommended">Recommended first</option>
+						<option value="name">Name A-Z</option>
+						<option value="altitude">Tonight max altitude</option>
+						<option value="smart">Smart suitability</option>
+						<option value="integration">Recommended integration</option>
+					</select>
+				</label>
+			</div>
+
+			<div class="location-card">
+				<div class="location-copy">
+					<h3>Tonight calculation location</h3>
+					<p id="locationSummary">Using the spreadsheet home location for tonight-specific values.</p>
+				</div>
+				<div class="location-grid">
+					<label class="field">
+						<span>Location mode</span>
+						<select id="locationMode">
+							<option value="spreadsheet">Spreadsheet home location</option>
+							<option value="saved">Saved home coordinates</option>
+							<option value="custom">Custom or current coordinates</option>
+						</select>
+					</label>
+
+					<label class="field">
+						<span>Latitude</span>
+						<input id="customLatitude" type="number" step="0.0001" min="-90" max="90" placeholder="40.7128" />
+					</label>
+
+					<label class="field">
+						<span>Longitude</span>
+						<input id="customLongitude" type="number" step="0.0001" min="-180" max="180" placeholder="-74.0060" />
+					</label>
+
+					<button id="detectLocation" class="secondary-btn" type="button">Use my current location</button>
+					<button id="saveHomeLocation" class="secondary-btn" type="button">Save coordinates as home</button>
+				</div>
+			</div>
+
+			<div class="toggle-row">
+				<label class="toggle-pill">
+					<input id="tonightOnly" type="checkbox" checked />
+					<span>Tonight only</span>
+				</label>
+				<label class="toggle-pill">
+					<input id="notImagedOnly" type="checkbox" />
+					<span>Not imaged only</span>
+				</label>
+				<label class="toggle-pill">
+					<input id="picksOnly" type="checkbox" />
+					<span>Tonight picks only</span>
+				</label>
+				<button id="clearImagedOverrides" class="secondary-btn" type="button">Reset saved imaging marks</button>
+				<button id="resetFilters" class="reset-btn" type="button">Reset filters</button>
+			</div>
+		</div>
+
+		<div class="results-header">
+			<div>
+				<h2>Target Results</h2>
+				<p id="resultsSummary">Showing the best matches from your spreadsheet.</p>
+			</div>
+		</div>
+
+		<div id="emptyState" class="empty-state hidden">
+			<h3>No targets match those filters.</h3>
+			<p>Try turning off some filters or widening the month/type selection.</p>
+		</div>
+
+		<div id="resultsGrid" class="results-grid"></div>
+	</section>
+
+	<script id="deep-sky-data" type="application/json" set:html={serializedTargets}></script>
+
+	<script is:inline>
+		const targets = JSON.parse(document.getElementById('deep-sky-data')?.textContent || '[]');
+		const imagedStorageKey = 'deep-sky-finder-imaged-overrides';
+		const locationStorageKey = 'deep-sky-finder-location-settings';
+		const elements = {
+			searchInput: document.getElementById('searchInput'),
+			catalogFilter: document.getElementById('catalogFilter'),
+			typeFilter: document.getElementById('typeFilter'),
+			monthFilter: document.getElementById('monthFilter'),
+			sortFilter: document.getElementById('sortFilter'),
+			locationMode: document.getElementById('locationMode'),
+			customLatitude: document.getElementById('customLatitude'),
+			customLongitude: document.getElementById('customLongitude'),
+			locationSummary: document.getElementById('locationSummary'),
+			detectLocation: document.getElementById('detectLocation'),
+			saveHomeLocation: document.getElementById('saveHomeLocation'),
+			tonightOnly: document.getElementById('tonightOnly'),
+			notImagedOnly: document.getElementById('notImagedOnly'),
+			picksOnly: document.getElementById('picksOnly'),
+			clearImagedOverrides: document.getElementById('clearImagedOverrides'),
+			resetFilters: document.getElementById('resetFilters'),
+			resultsGrid: document.getElementById('resultsGrid'),
+			resultsSummary: document.getElementById('resultsSummary'),
+			emptyState: document.getElementById('emptyState')
+		};
+
+		const readImagedOverrides = () => {
+			try {
+				return JSON.parse(localStorage.getItem(imagedStorageKey) || '{}');
+			} catch {
+				return {};
+			}
+		};
+
+		let imagedOverrides = readImagedOverrides();
+
+		const readLocationSettings = () => {
+			try {
+				return {
+					mode: 'spreadsheet',
+					customLatitude: '',
+					customLongitude: '',
+					homeLatitude: '',
+					homeLongitude: '',
+					...JSON.parse(localStorage.getItem(locationStorageKey) || '{}')
+				};
+			} catch {
+				return {
+					mode: 'spreadsheet',
+					customLatitude: '',
+					customLongitude: '',
+					homeLatitude: '',
+					homeLongitude: ''
+				};
+			}
+		};
+
+		let locationSettings = readLocationSettings();
+		const visibilityCache = new Map();
+
+		const cleanValue = (value) => value === null || value === undefined || value === '' ? '—' : value;
+		const numericValue = (value) => typeof value === 'number' ? value : Number.NEGATIVE_INFINITY;
+		const compareText = (left, right) => String(left || '').localeCompare(String(right || ''));
+		const orderedMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		const degToRad = (value) => value * Math.PI / 180;
+		const radToDeg = (value) => value * 180 / Math.PI;
+		const normalizeHours = (value) => ((value % 24) + 24) % 24;
+		const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+		const roundToTenth = (value) => Math.round(value * 10) / 10;
+		const toNumberOrNull = (value) => {
+			if (value === null || value === undefined || value === '') {
+				return null;
+			}
+			const parsed = Number(value);
+			return Number.isFinite(parsed) ? parsed : null;
+		};
+		const targetKey = (target) => `${target.catalog || 'unknown'}:${target.objectId || target.displayName || 'target'}`;
+		const isImaged = (target) => imagedOverrides[targetKey(target)] ?? (target.imaged === 'Yes');
+		const persistOverrides = () => localStorage.setItem(imagedStorageKey, JSON.stringify(imagedOverrides));
+		const persistLocationSettings = () => localStorage.setItem(locationStorageKey, JSON.stringify(locationSettings));
+
+		targets.forEach((target) => {
+			target.clientKey = targetKey(target);
+		});
+
+		const syncLocationInputs = () => {
+			elements.locationMode.value = locationSettings.mode;
+			elements.customLatitude.value = locationSettings.customLatitude;
+			elements.customLongitude.value = locationSettings.customLongitude;
+		};
+
+		const updateLocationSettingsFromInputs = () => {
+			locationSettings = {
+				...locationSettings,
+				mode: elements.locationMode.value,
+				customLatitude: elements.customLatitude.value.trim(),
+				customLongitude: elements.customLongitude.value.trim()
+			};
+			persistLocationSettings();
+		};
+
+		const getNightWindow = () => {
+			const now = new Date();
+			const start = new Date(now);
+			if (start.getHours() < 6) {
+				start.setDate(start.getDate() - 1);
+			}
+			start.setHours(18, 0, 0, 0);
+			const end = new Date(start);
+			end.setDate(end.getDate() + 1);
+			end.setHours(6, 0, 0, 0);
+			return { start, end, key: `${start.toISOString()}|${end.toISOString()}` };
+		};
+
+		const formatCoordinate = (value, suffixPositive, suffixNegative) => {
+			const numeric = toNumberOrNull(value);
+			if (numeric === null) {
+				return '—';
+			}
+			const suffix = numeric >= 0 ? suffixPositive : suffixNegative;
+			return `${Math.abs(numeric).toFixed(4)}° ${suffix}`;
+		};
+
+		const resolveLocationContext = () => {
+			const homeLatitude = toNumberOrNull(locationSettings.homeLatitude);
+			const homeLongitude = toNumberOrNull(locationSettings.homeLongitude);
+			const customLatitude = toNumberOrNull(locationSettings.customLatitude);
+			const customLongitude = toNumberOrNull(locationSettings.customLongitude);
+
+			if (locationSettings.mode === 'saved') {
+				if (homeLatitude !== null && homeLongitude !== null) {
+					return {
+						mode: 'saved',
+						label: `Using saved home coordinates (${formatCoordinate(homeLatitude, 'N', 'S')}, ${formatCoordinate(homeLongitude, 'E', 'W')}) for tonight-specific values.`,
+						latitude: homeLatitude,
+						longitude: homeLongitude,
+						cacheKey: `saved:${homeLatitude}:${homeLongitude}`,
+						usesCalculatedTonight: true
+					};
+				}
+
+				return {
+					mode: 'spreadsheet',
+					label: 'No saved home coordinates yet, so tonight-specific values are using the spreadsheet home location.',
+					usesCalculatedTonight: false
+				};
+			}
+
+			if (locationSettings.mode === 'custom') {
+				if (customLatitude !== null && customLongitude !== null) {
+					return {
+						mode: 'custom',
+						label: `Using custom/current coordinates (${formatCoordinate(customLatitude, 'N', 'S')}, ${formatCoordinate(customLongitude, 'E', 'W')}) for tonight-specific values.`,
+						latitude: customLatitude,
+						longitude: customLongitude,
+						cacheKey: `custom:${customLatitude}:${customLongitude}`,
+						usesCalculatedTonight: true
+					};
+				}
+
+				return {
+					mode: 'spreadsheet',
+					label: 'Enter custom coordinates or use your current location. Until then, tonight-specific values are using the spreadsheet home location.',
+					usesCalculatedTonight: false
+				};
+			}
+
+			return {
+				mode: 'spreadsheet',
+				label: 'Using the spreadsheet home location for tonight-specific values.',
+				usesCalculatedTonight: false
+			};
+		};
+
+		const julianDate = (date) => (date.getTime() / 86400000) + 2440587.5;
+		const greenwichSiderealHours = (date) => {
+			const jd = julianDate(date);
+			const t = (jd - 2451545.0) / 36525;
+			const gmst = 280.46061837 + (360.98564736629 * (jd - 2451545)) + (0.000387933 * t * t) - ((t * t * t) / 38710000);
+			return normalizeHours(gmst / 15);
+		};
+		const localSiderealHours = (date, longitudeDeg) => normalizeHours(greenwichSiderealHours(date) + (longitudeDeg / 15));
+		const altitudeAtDate = (target, latitudeDeg, longitudeDeg, date) => {
+			const raHours = toNumberOrNull(target.raHours);
+			const decDeg = toNumberOrNull(target.decDeg);
+			if (raHours === null || decDeg === null) {
+				return null;
+			}
+
+			const hourAngleDeg = normalizeHours(localSiderealHours(date, longitudeDeg) - raHours) * 15;
+			const latRad = degToRad(latitudeDeg);
+			const decRad = degToRad(decDeg);
+			const hourAngleRad = degToRad(hourAngleDeg);
+			const altitudeRad = Math.asin(clamp(
+				(Math.sin(decRad) * Math.sin(latRad)) + (Math.cos(decRad) * Math.cos(latRad) * Math.cos(hourAngleRad)),
+				-1,
+				1
+			));
+			return radToDeg(altitudeRad);
+		};
+
+		const computeTonightMetrics = (target, locationContext) => {
+			if (!locationContext.usesCalculatedTonight) {
+				return {
+					tonightUp: target.tonightUp,
+					tonightBestTimeLocal: target.tonightBestTimeLocal,
+					tonightMaxAltDeg: target.tonightMaxAltDeg,
+					tonightsPick: Boolean(target.tonightsPick),
+					tonightSource: 'spreadsheet'
+				};
+			}
+
+			const nightWindow = getNightWindow();
+			const cacheKey = `${locationContext.cacheKey}|${nightWindow.key}|${target.clientKey}`;
+			if (visibilityCache.has(cacheKey)) {
+				return visibilityCache.get(cacheKey);
+			}
+
+			let maxAltitude = Number.NEGATIVE_INFINITY;
+			let bestTime = null;
+			let isUpTonight = false;
+			for (let time = nightWindow.start.getTime(); time <= nightWindow.end.getTime(); time += 10 * 60 * 1000) {
+				const currentDate = new Date(time);
+				const altitude = altitudeAtDate(target, locationContext.latitude, locationContext.longitude, currentDate);
+				if (altitude === null) {
+					continue;
+				}
+				if (altitude > maxAltitude) {
+					maxAltitude = altitude;
+					bestTime = currentDate;
+				}
+				if (altitude > 0) {
+					isUpTonight = true;
+				}
+			}
+
+			const smartSuitability = toNumberOrNull(target.smartSuitability) ?? 0;
+			const result = {
+				tonightUp: isUpTonight ? 'Yes' : 'No',
+				tonightBestTimeLocal: isUpTonight && bestTime ? bestTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : '—',
+				tonightMaxAltDeg: isUpTonight && Number.isFinite(maxAltitude) ? roundToTenth(maxAltitude) : null,
+				tonightsPick: isUpTonight && Number.isFinite(maxAltitude) && maxAltitude >= 40 && smartSuitability >= 7,
+				tonightSource: locationContext.mode
+			};
+
+			visibilityCache.set(cacheKey, result);
+			return result;
+		};
+
+		const formatMonthRanges = (months) => {
+			if (!Array.isArray(months) || months.length === 0) {
+				return [];
+			}
+
+			const indexes = months
+				.map((month) => orderedMonths.indexOf(month))
+				.filter((index) => index >= 0)
+				.sort((left, right) => left - right);
+
+			if (indexes.length === orderedMonths.length) {
+				return ['All Months'];
+			}
+
+			const uniqueIndexes = [...new Set(indexes)];
+			const ranges = [];
+			let start = uniqueIndexes[0];
+			let previous = uniqueIndexes[0];
+
+			for (let index = 1; index < uniqueIndexes.length; index += 1) {
+				const current = uniqueIndexes[index];
+				if (current === previous + 1) {
+					previous = current;
+					continue;
+				}
+
+				ranges.push(start === previous ? orderedMonths[start] : `${orderedMonths[start]}-${orderedMonths[previous]}`);
+				start = current;
+				previous = current;
+			}
+
+			ranges.push(start === previous ? orderedMonths[start] : `${orderedMonths[start]}-${orderedMonths[previous]}`);
+			return ranges;
+		};
+
+		const scoreTarget = (target) => {
+			const tonightBoost = target.tonightUp === 'Yes' ? 1000 : 0;
+			const pickBoost = target.tonightsPick ? 400 : 0;
+			const altitudeBoost = typeof target.tonightMaxAltDeg === 'number' ? target.tonightMaxAltDeg : 0;
+			const smartBoost = typeof target.smartSuitability === 'number' ? target.smartSuitability * 10 : 0;
+			return tonightBoost + pickBoost + altitudeBoost + smartBoost;
+		};
+
+		const sortTargets = (items, sortBy) => {
+			const sorted = [...items];
+			sorted.sort((left, right) => {
+				if (sortBy === 'name') {
+					return compareText(left.displayName, right.displayName);
+				}
+				if (sortBy === 'altitude') {
+					return numericValue(right.tonightMaxAltDeg) - numericValue(left.tonightMaxAltDeg) || compareText(left.displayName, right.displayName);
+				}
+				if (sortBy === 'smart') {
+					return numericValue(right.smartSuitability) - numericValue(left.smartSuitability) || compareText(left.displayName, right.displayName);
+				}
+				if (sortBy === 'integration') {
+					return numericValue(left.recommendedIntegrationMin) - numericValue(right.recommendedIntegrationMin) || compareText(left.displayName, right.displayName);
+				}
+				return scoreTarget(right) - scoreTarget(left) || compareText(left.displayName, right.displayName);
+			});
+			return sorted;
+		};
+
+		const createBadge = (label, variant = 'default') => `<span class="badge badge-${variant}">${label}</span>`;
+
+		const renderCards = (items) => {
+			elements.resultsGrid.innerHTML = items.map((target) => {
+				const targetIsImaged = isImaged(target);
+				const badges = [
+					target.catalog ? createBadge(target.catalog, 'catalog') : '',
+					target.tonightUp === 'Yes' ? createBadge('Tonight', 'success') : createBadge('Not up tonight', 'muted'),
+					targetIsImaged ? createBadge('Imaged', 'info') : createBadge('Not imaged', 'warning'),
+					target.tonightsPick ? createBadge('Pick', 'highlight') : '',
+					target.tonightSource && target.tonightSource !== 'spreadsheet' ? createBadge('Live location', 'default') : ''
+				].filter(Boolean).join(' ');
+
+				const monthChips = formatMonthRanges(target.bestMonths).map((month) => `<span class="month-chip">${month}</span>`).join('');
+				return `
+					<article class="result-card">
+						<div class="card-top">
+							<div>
+								<p class="object-id">${cleanValue(target.objectId)}</p>
+								<h3>${cleanValue(target.displayName)}</h3>
+								<p class="subtitle">${cleanValue(target.objectType)}${target.commonName && target.commonName !== target.objectId ? ` · ${target.objectId}` : ''}</p>
+							</div>
+							<div class="badge-row">${badges}</div>
+						</div>
+						<div class="detail-grid">
+							<div><span>Best visibility </span><strong>${cleanValue(target.bestVisibility)}</strong></div>
+							<div><span>Best time tonight </span><strong>${cleanValue(target.tonightBestTimeLocal)}</strong></div>
+							<div><span>Max altitude </span><strong>${cleanValue(target.tonightMaxAltDeg)}°</strong></div>
+							<div><span>Recommended integration </span><strong>${cleanValue(target.recommendedIntegrationMin)} min</strong></div>
+							<div><span>Smart suitability </span><strong>${cleanValue(target.smartSuitability)}</strong></div>
+							<div><span>Seestar suitability </span><strong>${cleanValue(target.seestarSuitability)}</strong></div>
+							<div><span>Moon tolerance </span><strong>${cleanValue(target.moonTolerance)}</strong></div>
+							<div><span>Mosaic needed </span><strong>${cleanValue(target.mosaicNeeded)}</strong></div>
+						</div>
+						<div class="months-wrap">${monthChips}</div>
+						<div class="notes-block">
+							<p><strong>Coordinates:</strong> RA ${cleanValue(target.raHours)}h · Dec ${cleanValue(target.decDeg)}°</p>
+							<p><strong>Notes:</strong> ${cleanValue(target.notes)}</p>
+						</div>
+						<div class="action-row">
+							<button class="imaged-toggle-btn ${targetIsImaged ? 'is-imaged' : 'not-imaged'}" type="button" data-target-key="${target.clientKey}">
+								${targetIsImaged ? 'Mark as Not Imaged' : 'Mark as Imaged'}
+							</button>
+						</div>
+					</article>
+				`;
+			}).join('');
+		};
+
+		const updateSummary = (items) => {
+			const tonightVisible = items.filter((target) => target.tonightUp === 'Yes').length;
+			const notImaged = items.filter((target) => !isImaged(target)).length;
+			const locationContext = resolveLocationContext();
+			elements.resultsSummary.textContent = `Showing ${items.length} targets · ${tonightVisible} up tonight · ${notImaged} still not imaged · ${locationContext.mode === 'spreadsheet' ? 'Spreadsheet home location' : 'Selected live location'}.`;
+			elements.locationSummary.textContent = locationContext.label;
+		};
+
+		const applyFilters = () => {
+			updateLocationSettingsFromInputs();
+			const locationContext = resolveLocationContext();
+			const searchValue = elements.searchInput.value.trim().toLowerCase();
+			const catalogValue = elements.catalogFilter.value;
+			const typeValue = elements.typeFilter.value;
+			const monthValue = elements.monthFilter.value;
+			const tonightOnly = elements.tonightOnly.checked;
+			const notImagedOnly = elements.notImagedOnly.checked;
+			const picksOnly = elements.picksOnly.checked;
+			const sortValue = elements.sortFilter.value;
+			const enrichedTargets = targets.map((target) => ({
+				...target,
+				...computeTonightMetrics(target, locationContext)
+			}));
+
+			const filtered = enrichedTargets.filter((target) => {
+				if (searchValue && !(target.searchText || '').toLowerCase().includes(searchValue)) {
+					return false;
+				}
+				if (catalogValue && target.catalog !== catalogValue) {
+					return false;
+				}
+				if (typeValue && target.objectType !== typeValue) {
+					return false;
+				}
+				if (monthValue && !(target.bestMonths || []).includes(monthValue)) {
+					return false;
+				}
+				if (tonightOnly && target.tonightUp !== 'Yes') {
+					return false;
+				}
+				if (notImagedOnly && isImaged(target)) {
+					return false;
+				}
+				if (picksOnly && !target.tonightsPick) {
+					return false;
+				}
+				return true;
+			});
+
+			const sorted = sortTargets(filtered, sortValue);
+			renderCards(sorted);
+			updateSummary(sorted);
+			elements.emptyState.classList.toggle('hidden', sorted.length > 0);
+		};
+
+		elements.resetFilters.addEventListener('click', () => {
+			elements.searchInput.value = '';
+			elements.catalogFilter.value = '';
+			elements.typeFilter.value = '';
+			elements.monthFilter.value = '';
+			elements.sortFilter.value = 'recommended';
+			elements.tonightOnly.checked = true;
+			elements.notImagedOnly.checked = false;
+			elements.picksOnly.checked = false;
+			applyFilters();
+		});
+
+		elements.clearImagedOverrides.addEventListener('click', () => {
+			imagedOverrides = {};
+			localStorage.removeItem(imagedStorageKey);
+			applyFilters();
+		});
+
+		elements.detectLocation.addEventListener('click', () => {
+			if (!navigator.geolocation) {
+				elements.locationSummary.textContent = 'Geolocation is not available in this browser, so tonight-specific values are staying on the current mode.';
+				return;
+			}
+
+			navigator.geolocation.getCurrentPosition((position) => {
+				locationSettings = {
+					...locationSettings,
+					mode: 'custom',
+					customLatitude: String(roundToTenth(position.coords.latitude * 10000) / 10000),
+					customLongitude: String(roundToTenth(position.coords.longitude * 10000) / 10000)
+				};
+				persistLocationSettings();
+				syncLocationInputs();
+				applyFilters();
+			}, () => {
+				elements.locationSummary.textContent = 'Current location could not be retrieved, so tonight-specific values are staying on the current mode.';
+			});
+		});
+
+		elements.saveHomeLocation.addEventListener('click', () => {
+			updateLocationSettingsFromInputs();
+			const customLatitude = toNumberOrNull(locationSettings.customLatitude);
+			const customLongitude = toNumberOrNull(locationSettings.customLongitude);
+			if (customLatitude === null || customLongitude === null) {
+				elements.locationSummary.textContent = 'Enter valid latitude and longitude before saving a home location.';
+				return;
+			}
+
+			locationSettings = {
+				...locationSettings,
+				homeLatitude: String(customLatitude),
+				homeLongitude: String(customLongitude),
+				mode: 'saved'
+			};
+			persistLocationSettings();
+			syncLocationInputs();
+			applyFilters();
+		});
+
+		elements.resultsGrid.addEventListener('click', (event) => {
+			const button = event.target.closest('.imaged-toggle-btn');
+			if (!(button instanceof HTMLButtonElement)) {
+				return;
+			}
+
+			const target = targets.find((item) => item.clientKey === button.dataset.targetKey);
+			if (!target) {
+				return;
+			}
+
+			imagedOverrides[target.clientKey] = !isImaged(target);
+			persistOverrides();
+			applyFilters();
+		});
+
+		Object.values(elements).forEach((element) => {
+			if (element instanceof HTMLInputElement || element instanceof HTMLSelectElement) {
+				element.addEventListener('input', applyFilters);
+				element.addEventListener('change', applyFilters);
+			}
+		});
+
+		syncLocationInputs();
+		applyFilters();
+	</script>
+
+	<style>
+		.finder-page {
+			max-width: 1280px;
+			margin: 0 auto;
+			padding: 2rem;
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		.hero-card,
+		.controls-card,
+		.result-card,
+		.empty-state {
+			background: white;
+			border-radius: 1.25rem;
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+		}
+
+		.hero-card {
+			padding: 2rem;
+			display: grid;
+			grid-template-columns: 2fr 1.25fr;
+			gap: 1.5rem;
+			background: linear-gradient(135deg, #0f172a, #1d4ed8);
+			color: white;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			font-size: 0.8rem;
+			opacity: 0.8;
+			margin-bottom: 0.75rem;
+		}
+
+		h1 {
+			font-size: clamp(2rem, 4vw, 3.4rem);
+			line-height: 1.05;
+			margin: 0 0 1rem 0;
+		}
+
+		.hero-copy {
+			font-size: 1.05rem;
+			line-height: 1.7;
+			max-width: 60ch;
+			margin: 0;
+			color: rgba(255, 255, 255, 0.92);
+		}
+
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1rem;
+		}
+
+		.stat-card {
+			padding: 1rem;
+			border-radius: 1rem;
+			background: rgba(255, 255, 255, 0.12);
+			border: 1px solid rgba(255, 255, 255, 0.16);
+			display: grid;
+			gap: 0.25rem;
+		}
+
+		.stat-value {
+			font-size: 1.8rem;
+			font-weight: 700;
+		}
+
+		.stat-label {
+			font-size: 0.95rem;
+			color: rgba(255, 255, 255, 0.85);
+		}
+
+		.controls-card {
+			padding: 1.5rem;
+		}
+
+		.location-card {
+			margin-top: 1.25rem;
+			padding: 1rem;
+			border-radius: 1rem;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+			display: grid;
+			gap: 1rem;
+		}
+
+		.location-copy h3 {
+			margin: 0;
+			font-size: 1rem;
+			color: #0f172a;
+		}
+
+		.location-copy p {
+			margin: 0.35rem 0 0 0;
+			color: #475569;
+		}
+
+		.location-grid {
+			display: grid;
+			grid-template-columns: repeat(5, minmax(0, 1fr));
+			gap: 1rem;
+			align-items: end;
+		}
+
+		.controls-grid {
+			display: grid;
+			grid-template-columns: minmax(260px, 2fr) repeat(4, minmax(150px, 1fr));
+			gap: 1rem;
+		}
+
+		.field {
+			display: grid;
+			gap: 0.45rem;
+			font-weight: 600;
+			color: #1e293b;
+		}
+
+		.field input,
+		.field select {
+			width: 100%;
+			padding: 0.85rem 1rem;
+			border-radius: 0.85rem;
+			border: 1px solid #cbd5e1;
+			background: #f8fafc;
+			font: inherit;
+			color: #0f172a;
+		}
+
+		.toggle-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.9rem;
+			margin-top: 1.25rem;
+			align-items: center;
+		}
+
+		.toggle-pill {
+			display: inline-flex;
+			gap: 0.6rem;
+			align-items: center;
+			padding: 0.8rem 1rem;
+			border-radius: 999px;
+			background: #eff6ff;
+			color: #1d4ed8;
+			font-weight: 600;
+		}
+
+		.reset-btn {
+			padding: 0.8rem 1rem;
+			border-radius: 999px;
+			border: none;
+			background: #0f172a;
+			color: white;
+			font: inherit;
+			font-weight: 600;
+			cursor: pointer;
+		}
+
+		.secondary-btn {
+			padding: 0.8rem 1rem;
+			border-radius: 999px;
+			border: 1px solid #cbd5e1;
+			background: white;
+			color: #0f172a;
+			font: inherit;
+			font-weight: 600;
+			cursor: pointer;
+		}
+
+		.results-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: end;
+			gap: 1rem;
+		}
+
+		.results-header h2 {
+			margin: 0;
+			font-size: 1.6rem;
+			color: #0f172a;
+		}
+
+		.results-header p {
+			margin: 0.35rem 0 0 0;
+			color: #475569;
+		}
+
+		.results-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			gap: 1.25rem;
+		}
+
+		.result-card {
+			padding: 1.4rem;
+			display: grid;
+			gap: 1rem;
+			border: 1px solid #e2e8f0;
+		}
+
+		.card-top {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+		}
+
+		.object-id {
+			margin: 0;
+			font-size: 0.85rem;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+			color: #64748b;
+		}
+
+		.result-card h3 {
+			margin: 0.35rem 0 0.3rem 0;
+			font-size: 1.3rem;
+			color: #0f172a;
+		}
+
+		.subtitle {
+			margin: 0;
+			color: #475569;
+		}
+
+		.badge-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.45rem;
+			justify-content: flex-end;
+		}
+
+		.badge,
+		.month-chip {
+			display: inline-flex;
+			align-items: center;
+			padding: 0.35rem 0.7rem;
+			border-radius: 999px;
+			font-size: 0.8rem;
+			font-weight: 700;
+		}
+
+		.badge-default,
+		.badge-catalog {
+			background: #e2e8f0;
+			color: #0f172a;
+		}
+
+		.badge-success {
+			background: #dcfce7;
+			color: #166534;
+		}
+
+		.badge-muted {
+			background: #f1f5f9;
+			color: #475569;
+		}
+
+		.badge-info {
+			background: #dbeafe;
+			color: #1d4ed8;
+		}
+
+		.badge-warning {
+			background: #fef3c7;
+			color: #92400e;
+		}
+
+		.badge-highlight {
+			background: #ede9fe;
+			color: #6d28d9;
+		}
+
+		.detail-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 0.85rem;
+		}
+
+		.detail-grid div {
+			padding: 0.8rem;
+			background: #f8fafc;
+			border-radius: 0.9rem;
+			display: grid;
+			gap: 0.2rem;
+		}
+
+		.detail-grid span {
+			font-size: 0.8rem;
+			color: #64748b;
+		}
+
+		.detail-grid strong {
+			font-size: 1rem;
+			color: #0f172a;
+		}
+
+		.months-wrap {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.45rem;
+		}
+
+		.month-chip {
+			background: #eff6ff;
+			color: #1d4ed8;
+		}
+
+		.notes-block {
+			padding: 1rem;
+			border-radius: 1rem;
+			background: #f8fafc;
+			color: #334155;
+		}
+
+		.notes-block p {
+			margin: 0;
+			line-height: 1.6;
+		}
+
+		.notes-block p + p {
+			margin-top: 0.45rem;
+		}
+
+		.action-row {
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		.imaged-toggle-btn {
+			padding: 0.75rem 1rem;
+			border-radius: 0.85rem;
+			border: none;
+			font: inherit;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.imaged-toggle-btn.is-imaged {
+			background: #dbeafe;
+			color: #1d4ed8;
+		}
+
+		.imaged-toggle-btn.not-imaged {
+			background: #dcfce7;
+			color: #166534;
+		}
+
+		.empty-state {
+			padding: 2rem;
+			text-align: center;
+		}
+
+		.hidden {
+			display: none;
+		}
+
+		@media (max-width: 960px) {
+			.hero-card,
+			.controls-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.location-grid {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.finder-page {
+				padding: 1rem;
+			}
+
+			.stats-grid,
+			.detail-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.card-top {
+				flex-direction: column;
+			}
+
+			.badge-row {
+				justify-content: flex-start;
+			}
+
+			.location-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</Layout>
