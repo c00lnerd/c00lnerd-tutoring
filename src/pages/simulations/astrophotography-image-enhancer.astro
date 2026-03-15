@@ -1,0 +1,857 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Astrophotography Image Enhancer">
+	<section class="enhancer-page">
+		<div class="hero-card">
+			<div>
+				<p class="eyebrow">Astrophotography Processing Tool</p>
+				<h1>Astrophotography Image Enhancer</h1>
+				<p class="hero-copy">
+					Upload a JPG or PNG and apply a browser-based enhancement workflow inspired by your Python post-processing script.
+					This tool performs percentile stretching, star softening, large-scale structure enhancement, and sharpening.
+				</p>
+			</div>
+			<div class="hero-stats">
+				<div class="stat-card">
+					<span class="stat-value">100%</span>
+					<span class="stat-label">Browser-based</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-value">JPG/PNG</span>
+					<span class="stat-label">Input formats</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-value">Live</span>
+					<span class="stat-label">Adjustable controls</span>
+				</div>
+				<div class="stat-card">
+					<span class="stat-value">PNG</span>
+					<span class="stat-label">Download output</span>
+				</div>
+			</div>
+		</div>
+
+		<div class="tool-layout">
+			<div class="controls-card">
+				<div class="section-header">
+					<h2>Controls</h2>
+					<p>Choose an image, adjust the enhancement settings, then process and download the result.</p>
+				</div>
+
+				<div class="field-group">
+					<label class="field field-upload">
+						<span>Upload image</span>
+						<input id="imageInput" type="file" accept="image/png,image/jpeg" />
+					</label>
+					<div class="status-box" id="statusBox">No image loaded yet.</div>
+				</div>
+
+				<div class="control-section">
+					<h3>Stretch</h3>
+					<label class="field">
+						<span>Low percentile <strong id="lowPercentileValue">1.5</strong></span>
+						<input id="lowPercentile" type="range" min="0" max="10" step="0.1" value="1.5" />
+					</label>
+					<label class="field">
+						<span>High percentile <strong id="highPercentileValue">99.6</strong></span>
+						<input id="highPercentile" type="range" min="90" max="100" step="0.1" value="99.6" />
+					</label>
+				</div>
+
+				<div class="control-section">
+					<h3>Star Reduction Approximation</h3>
+					<label class="field">
+						<span>Small blur radius <strong id="smallBlurValue">0.8</strong></span>
+						<input id="smallBlur" type="range" min="0" max="5" step="0.1" value="0.8" />
+					</label>
+					<label class="field">
+						<span>Blur blend <strong id="starBlendValue">0.2</strong></span>
+						<input id="starBlend" type="range" min="0" max="1" step="0.05" value="0.2" />
+					</label>
+				</div>
+
+				<div class="control-section">
+					<h3>Galaxy / Nebula Structure</h3>
+					<label class="field">
+						<span>Large blur radius <strong id="largeBlurValue">14</strong></span>
+						<input id="largeBlur" type="range" min="1" max="30" step="1" value="14" />
+					</label>
+					<label class="field">
+						<span>Enhancement strength <strong id="enhanceStrengthValue">0.85</strong></span>
+						<input id="enhanceStrength" type="range" min="0" max="3" step="0.05" value="0.85" />
+					</label>
+				</div>
+
+				<div class="control-section">
+					<h3>Tone Mapping</h3>
+					<label class="field">
+						<span>Highlight compression <strong id="toneCompressionValue">0.25</strong></span>
+						<input id="toneCompression" type="range" min="0" max="1.5" step="0.05" value="0.25" />
+					</label>
+				</div>
+
+				<div class="control-section">
+					<h3>Sharpen</h3>
+					<label class="field">
+						<span>Sharpen radius <strong id="sharpenRadiusValue">1</strong></span>
+						<input id="sharpenRadius" type="range" min="0" max="6" step="0.1" value="1" />
+					</label>
+					<label class="field">
+						<span>Sharpen amount <strong id="sharpenAmountValue">0.6</strong></span>
+						<input id="sharpenAmount" type="range" min="0" max="4" step="0.1" value="0.6" />
+					</label>
+					<label class="field">
+						<span>Threshold <strong id="thresholdValue">0.03</strong></span>
+						<input id="threshold" type="range" min="0" max="0.1" step="0.001" value="0.03" />
+					</label>
+				</div>
+
+				<div class="action-row">
+					<button id="processButton" class="primary-btn" type="button">Process Image</button>
+					<button id="resetButton" class="secondary-btn" type="button">Reset Defaults</button>
+					<button id="saveSettingsButton" class="secondary-btn" type="button">Save Settings</button>
+					<button id="restoreSavedButton" class="secondary-btn" type="button">Restore Saved</button>
+					<button id="restoreLastButton" class="secondary-btn" type="button">Restore Last Used</button>
+					<button id="downloadButton" class="secondary-btn" type="button" disabled>Download PNG</button>
+				</div>
+			</div>
+
+			<div class="preview-column">
+				<div class="preview-card">
+					<div class="preview-header">
+						<h2>Preview</h2>
+						<p id="imageMeta">Load an image to begin.</p>
+					</div>
+					<div class="canvas-grid">
+						<div class="canvas-panel">
+							<h3>Original</h3>
+							<canvas id="originalCanvas"></canvas>
+						</div>
+						<div class="canvas-panel">
+							<h3>Enhanced</h3>
+							<canvas id="processedCanvas"></canvas>
+						</div>
+					</div>
+				</div>
+
+				<div class="notes-card">
+					<h2>What this tool does</h2>
+					<ul>
+						<li>Stretches faint detail using low/high percentile clipping.</li>
+						<li>Softens stars slightly by blending the image with a small blur.</li>
+						<li>Boosts larger structures by subtracting a large-scale blur.</li>
+						<li>Applies thresholded sharpening to bring back local detail.</li>
+					</ul>
+					<p class="note-callout">
+						This version is optimized for web-friendly preview workflows. It works best on exported astrophotography images rather than raw FITS or stacked calibration files.
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script is:inline>
+		const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+		const originalCanvas = document.getElementById('originalCanvas');
+		const processedCanvas = document.getElementById('processedCanvas');
+		const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true });
+		const processedCtx = processedCanvas.getContext('2d', { willReadFrequently: true });
+		const supportsDirectorySave = typeof window.showDirectoryPicker === 'function';
+		const imageInput = document.getElementById('imageInput');
+		const processButton = document.getElementById('processButton');
+		const resetButton = document.getElementById('resetButton');
+		const saveSettingsButton = document.getElementById('saveSettingsButton');
+		const restoreSavedButton = document.getElementById('restoreSavedButton');
+		const restoreLastButton = document.getElementById('restoreLastButton');
+		const downloadButton = document.getElementById('downloadButton');
+		const statusBox = document.getElementById('statusBox');
+		const imageMeta = document.getElementById('imageMeta');
+		const storageKeys = {
+			saved: 'astroEnhancerSavedSettings',
+			lastUsed: 'astroEnhancerLastUsedSettings',
+			previousUsed: 'astroEnhancerPreviousUsedSettings'
+		};
+		const controls = {
+			lowPercentile: document.getElementById('lowPercentile'),
+			highPercentile: document.getElementById('highPercentile'),
+			smallBlur: document.getElementById('smallBlur'),
+			starBlend: document.getElementById('starBlend'),
+			largeBlur: document.getElementById('largeBlur'),
+			enhanceStrength: document.getElementById('enhanceStrength'),
+			toneCompression: document.getElementById('toneCompression'),
+			sharpenRadius: document.getElementById('sharpenRadius'),
+			sharpenAmount: document.getElementById('sharpenAmount'),
+			threshold: document.getElementById('threshold')
+		};
+		const valueLabels = {
+			lowPercentile: document.getElementById('lowPercentileValue'),
+			highPercentile: document.getElementById('highPercentileValue'),
+			smallBlur: document.getElementById('smallBlurValue'),
+			starBlend: document.getElementById('starBlendValue'),
+			largeBlur: document.getElementById('largeBlurValue'),
+			enhanceStrength: document.getElementById('enhanceStrengthValue'),
+			toneCompression: document.getElementById('toneCompressionValue'),
+			sharpenRadius: document.getElementById('sharpenRadiusValue'),
+			sharpenAmount: document.getElementById('sharpenAmountValue'),
+			threshold: document.getElementById('thresholdValue')
+		};
+		const defaultValues = {
+			lowPercentile: '1.5',
+			highPercentile: '99.6',
+			smallBlur: '0.8',
+			starBlend: '0.2',
+			largeBlur: '14',
+			enhanceStrength: '0.85',
+			toneCompression: '0.25',
+			sharpenRadius: '1',
+			sharpenAmount: '0.6',
+			threshold: '0.03'
+		};
+
+		let sourceImage = null;
+		let sourcePixels = null;
+		let processedPixels = null;
+		let sourceFileName = null;
+		let outputFileName = 'astrophotography-enhanced.png';
+
+		const setStatus = (text) => {
+			statusBox.textContent = text;
+		};
+
+		const updateLabels = () => {
+			Object.keys(controls).forEach((key) => {
+				valueLabels[key].textContent = controls[key].value;
+			});
+		};
+
+		const applySettings = (settings) => {
+			Object.keys(defaultValues).forEach((key) => {
+				if (settings[key] !== undefined && settings[key] !== null) {
+					controls[key].value = String(settings[key]);
+				}
+			});
+			updateLabels();
+		};
+
+		const getSettings = () => ({
+			lowPercentile: Number(controls.lowPercentile.value),
+			highPercentile: Number(controls.highPercentile.value),
+			smallBlur: Number(controls.smallBlur.value),
+			starBlend: Number(controls.starBlend.value),
+			largeBlur: Number(controls.largeBlur.value),
+			enhanceStrength: Number(controls.enhanceStrength.value),
+			toneCompression: Number(controls.toneCompression.value),
+			sharpenRadius: Number(controls.sharpenRadius.value),
+			sharpenAmount: Number(controls.sharpenAmount.value),
+			threshold: Number(controls.threshold.value)
+		});
+
+		const loadStoredSettings = (key) => {
+			try {
+				const raw = window.localStorage.getItem(key);
+				return raw ? JSON.parse(raw) : null;
+			} catch {
+				return null;
+			}
+		};
+
+		const saveStoredSettings = (key, settings) => {
+			try {
+				window.localStorage.setItem(key, JSON.stringify(settings));
+				return true;
+			} catch {
+				return false;
+			}
+		};
+
+		const getOutputBaseName = () => outputFileName.replace(/\.png$/i, '');
+
+		const buildSettingsPayload = () => ({
+			originalImage: sourceFileName,
+			processedImage: outputFileName,
+			settings: getSettings(),
+			savedAt: new Date().toISOString()
+		});
+
+		const blobFromCanvas = (canvas) => new Promise((resolve, reject) => {
+			canvas.toBlob((blob) => {
+				if (blob) {
+					resolve(blob);
+					return;
+				}
+				reject(new Error('Could not create PNG blob.'));
+			}, 'image/png');
+		});
+
+		const triggerDownload = (blob, fileName) => {
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = fileName;
+			link.click();
+			setTimeout(() => URL.revokeObjectURL(url), 0);
+		};
+
+		const saveWithDirectoryPicker = async (pngBlob, settingsBlob) => {
+			const directoryHandle = await window.showDirectoryPicker();
+			const pngHandle = await directoryHandle.getFileHandle(outputFileName, { create: true });
+			const pngWritable = await pngHandle.createWritable();
+			await pngWritable.write(pngBlob);
+			await pngWritable.close();
+			const settingsFileName = `${getOutputBaseName()}.settings.json`;
+			const settingsHandle = await directoryHandle.getFileHandle(settingsFileName, { create: true });
+			const settingsWritable = await settingsHandle.createWritable();
+			await settingsWritable.write(settingsBlob);
+			await settingsWritable.close();
+		};
+
+		const downloadOutputAndSettings = async () => {
+			if (!processedPixels) {
+				setStatus('Process an image before downloading.');
+				return;
+			}
+			try {
+				const pngBlob = await blobFromCanvas(processedCanvas);
+				const settingsBlob = new Blob([JSON.stringify(buildSettingsPayload(), null, 2)], { type: 'application/json' });
+				if (supportsDirectorySave) {
+					await saveWithDirectoryPicker(pngBlob, settingsBlob);
+					setStatus('Saved PNG and settings JSON to the selected folder.');
+					return;
+				}
+				triggerDownload(pngBlob, outputFileName);
+				triggerDownload(settingsBlob, `${getOutputBaseName()}.settings.json`);
+				setStatus('Downloaded PNG and settings JSON separately. Save them in the same folder if needed.');
+			} catch (error) {
+				if (error && error.name === 'AbortError') {
+					setStatus('Save cancelled.');
+					return;
+				}
+				setStatus('Could not save the PNG and settings JSON.');
+			}
+		};
+
+		const choosePreviewSize = (width, height) => {
+			const maxDimension = 1400;
+			const scale = Math.min(1, maxDimension / Math.max(width, height));
+			return {
+				width: Math.max(1, Math.round(width * scale)),
+				height: Math.max(1, Math.round(height * scale))
+			};
+		};
+
+		const drawArrayToCanvas = (canvas, ctx, pixels, width, height) => {
+			canvas.width = width;
+			canvas.height = height;
+			const imageData = ctx.createImageData(width, height);
+			for (let i = 0; i < pixels.length; i += 1) {
+				imageData.data[i] = Math.round(clamp(pixels[i], 0, 1) * 255);
+			}
+			ctx.putImageData(imageData, 0, 0);
+		};
+
+		const samplePercentile = (pixels, percentile) => {
+			const rgbValues = [];
+			const targetSamples = 250000;
+			const step = Math.max(1, Math.floor((pixels.length / 4) / targetSamples));
+			for (let pixelIndex = 0; pixelIndex < pixels.length / 4; pixelIndex += step) {
+				const offset = pixelIndex * 4;
+				rgbValues.push(pixels[offset], pixels[offset + 1], pixels[offset + 2]);
+			}
+			rgbValues.sort((a, b) => a - b);
+			if (rgbValues.length === 0) {
+				return 0;
+			}
+			const index = clamp(Math.floor((percentile / 100) * (rgbValues.length - 1)), 0, rgbValues.length - 1);
+			return rgbValues[index];
+		};
+
+		const stretchPixels = (pixels, lowPercentile, highPercentile) => {
+			const low = samplePercentile(pixels, lowPercentile);
+			const high = samplePercentile(pixels, highPercentile);
+			const scale = 1 / Math.max(1e-6, high - low);
+			const result = new Float32Array(pixels.length);
+			for (let i = 0; i < pixels.length; i += 4) {
+				result[i] = clamp((pixels[i] - low) * scale, 0, 1);
+				result[i + 1] = clamp((pixels[i + 1] - low) * scale, 0, 1);
+				result[i + 2] = clamp((pixels[i + 2] - low) * scale, 0, 1);
+				result[i + 3] = pixels[i + 3];
+			}
+			return result;
+		};
+
+		const boxBlurPass = (src, width, height, radius, horizontal) => {
+			const result = new Float32Array(src.length);
+			const windowSize = radius * 2 + 1;
+			if (horizontal) {
+				for (let y = 0; y < height; y += 1) {
+					const rowOffset = y * width;
+					for (let channel = 0; channel < 3; channel += 1) {
+						let sum = 0;
+						for (let x = -radius; x <= radius; x += 1) {
+							const clampedX = clamp(x, 0, width - 1);
+							sum += src[(rowOffset + clampedX) * 4 + channel];
+						}
+						for (let x = 0; x < width; x += 1) {
+							const target = (rowOffset + x) * 4 + channel;
+							result[target] = sum / windowSize;
+							const removeX = clamp(x - radius, 0, width - 1);
+							const addX = clamp(x + radius + 1, 0, width - 1);
+							sum += src[(rowOffset + addX) * 4 + channel] - src[(rowOffset + removeX) * 4 + channel];
+						}
+					}
+					for (let x = 0; x < width; x += 1) {
+						result[(rowOffset + x) * 4 + 3] = src[(rowOffset + x) * 4 + 3];
+					}
+				}
+				return result;
+			}
+			for (let x = 0; x < width; x += 1) {
+				for (let channel = 0; channel < 3; channel += 1) {
+					let sum = 0;
+					for (let y = -radius; y <= radius; y += 1) {
+						const clampedY = clamp(y, 0, height - 1);
+						sum += src[(clampedY * width + x) * 4 + channel];
+					}
+					for (let y = 0; y < height; y += 1) {
+						const target = (y * width + x) * 4 + channel;
+						result[target] = sum / windowSize;
+						const removeY = clamp(y - radius, 0, height - 1);
+						const addY = clamp(y + radius + 1, 0, height - 1);
+						sum += src[(addY * width + x) * 4 + channel] - src[(removeY * width + x) * 4 + channel];
+					}
+				}
+			}
+			for (let i = 3; i < src.length; i += 4) {
+				result[i] = src[i];
+			}
+			return result;
+		};
+
+		const blurPixels = (src, width, height, radiusValue) => {
+			const radius = Math.max(0, Math.round(radiusValue));
+			if (radius === 0) {
+				return new Float32Array(src);
+			}
+			const horizontal = boxBlurPass(src, width, height, radius, true);
+			return boxBlurPass(horizontal, width, height, radius, false);
+		};
+
+		const blendPixels = (base, blurred, blendAmount) => {
+			const result = new Float32Array(base.length);
+			const baseWeight = 1 - blendAmount;
+			for (let i = 0; i < base.length; i += 4) {
+				result[i] = clamp(base[i] * baseWeight + blurred[i] * blendAmount, 0, 1);
+				result[i + 1] = clamp(base[i + 1] * baseWeight + blurred[i + 1] * blendAmount, 0, 1);
+				result[i + 2] = clamp(base[i + 2] * baseWeight + blurred[i + 2] * blendAmount, 0, 1);
+				result[i + 3] = base[i + 3];
+			}
+			return result;
+		};
+
+		const enhanceStructure = (src, largeBlurred, strength) => {
+			const result = new Float32Array(src.length);
+			for (let i = 0; i < src.length; i += 4) {
+				result[i] = clamp(src[i] + (src[i] - largeBlurred[i]) * strength, 0, 1);
+				result[i + 1] = clamp(src[i + 1] + (src[i + 1] - largeBlurred[i + 1]) * strength, 0, 1);
+				result[i + 2] = clamp(src[i + 2] + (src[i + 2] - largeBlurred[i + 2]) * strength, 0, 1);
+				result[i + 3] = src[i + 3];
+			}
+			return result;
+		};
+
+		const applyToneCompression = (src, compression) => {
+			if (compression <= 0) {
+				return new Float32Array(src);
+			}
+			const result = new Float32Array(src.length);
+			for (let i = 0; i < src.length; i += 4) {
+				for (let channel = 0; channel < 3; channel += 1) {
+					const value = clamp(src[i + channel], 0, 1);
+					result[i + channel] = Math.log1p(value * compression) / Math.log1p(compression);
+				}
+				result[i + 3] = src[i + 3];
+			}
+			return result;
+		};
+
+		const unsharpMask = (src, width, height, radius, amount, threshold) => {
+			const blurred = blurPixels(src, width, height, radius);
+			const result = new Float32Array(src.length);
+			for (let i = 0; i < src.length; i += 4) {
+				for (let channel = 0; channel < 3; channel += 1) {
+					const difference = src[i + channel] - blurred[i + channel];
+					result[i + channel] = Math.abs(difference) >= threshold
+						? clamp(src[i + channel] + difference * amount, 0, 1)
+						: src[i + channel];
+				}
+				result[i + 3] = src[i + 3];
+			}
+			return result;
+		};
+
+		const processImage = async () => {
+			if (!sourceImage || !sourcePixels) {
+				setStatus('Please upload an image first.');
+				return;
+			}
+			const settings = getSettings();
+			if (settings.highPercentile <= settings.lowPercentile) {
+				setStatus('High percentile must be greater than low percentile.');
+				return;
+			}
+			setStatus('Processing image...');
+			await new Promise((resolve) => requestAnimationFrame(resolve));
+			const stretched = stretchPixels(sourcePixels, settings.lowPercentile, settings.highPercentile);
+			const smallBlurred = blurPixels(stretched, sourceImage.width, sourceImage.height, settings.smallBlur);
+			const starReduced = blendPixels(stretched, smallBlurred, settings.starBlend);
+			const largeBlurred = blurPixels(starReduced, sourceImage.width, sourceImage.height, settings.largeBlur);
+			const enhanced = enhanceStructure(starReduced, largeBlurred, settings.enhanceStrength);
+			const toneMapped = applyToneCompression(enhanced, settings.toneCompression);
+			processedPixels = unsharpMask(toneMapped, sourceImage.width, sourceImage.height, settings.sharpenRadius, settings.sharpenAmount, settings.threshold);
+			const priorLastUsedSettings = loadStoredSettings(storageKeys.lastUsed);
+			if (priorLastUsedSettings) {
+				saveStoredSettings(storageKeys.previousUsed, priorLastUsedSettings);
+			}
+			saveStoredSettings(storageKeys.lastUsed, settings);
+			drawArrayToCanvas(processedCanvas, processedCtx, processedPixels, sourceImage.width, sourceImage.height);
+			downloadButton.disabled = false;
+			setStatus('Processing complete. You can now download the enhanced PNG.');
+		};
+
+		const loadImageFile = (file) => {
+			const image = new Image();
+			const objectUrl = URL.createObjectURL(file);
+			image.onload = () => {
+				const size = choosePreviewSize(image.naturalWidth, image.naturalHeight);
+				originalCanvas.width = size.width;
+				originalCanvas.height = size.height;
+				processedCanvas.width = size.width;
+				processedCanvas.height = size.height;
+				originalCtx.drawImage(image, 0, 0, size.width, size.height);
+				processedCtx.clearRect(0, 0, size.width, size.height);
+				const imageData = originalCtx.getImageData(0, 0, size.width, size.height);
+				const pixels = new Float32Array(imageData.data.length);
+				for (let i = 0; i < imageData.data.length; i += 4) {
+					pixels[i] = imageData.data[i] / 255;
+					pixels[i + 1] = imageData.data[i + 1] / 255;
+					pixels[i + 2] = imageData.data[i + 2] / 255;
+					pixels[i + 3] = imageData.data[i + 3] / 255;
+				}
+				sourceImage = { width: size.width, height: size.height };
+				sourcePixels = pixels;
+				processedPixels = null;
+				sourceFileName = file.name;
+				outputFileName = `${file.name.replace(/\.[^.]+$/, '') || 'astrophotography'}-enhanced.png`;
+				imageMeta.textContent = `${file.name} · ${size.width} × ${size.height} preview`;
+				downloadButton.disabled = true;
+				setStatus('Image loaded. Adjust controls and click Process Image.');
+				URL.revokeObjectURL(objectUrl);
+			};
+			image.onerror = () => {
+				setStatus('That file could not be loaded as an image.');
+				URL.revokeObjectURL(objectUrl);
+			};
+			image.src = objectUrl;
+		};
+
+		imageInput.addEventListener('change', (event) => {
+			const file = event.target.files?.[0];
+			if (!file) {
+				return;
+			}
+			loadImageFile(file);
+		});
+
+		processButton.addEventListener('click', processImage);
+
+		resetButton.addEventListener('click', () => {
+			applySettings(defaultValues);
+			setStatus(sourceImage ? 'Settings reset to defaults.' : 'No image loaded yet.');
+		});
+
+		saveSettingsButton.addEventListener('click', () => {
+			const success = saveStoredSettings(storageKeys.saved, getSettings());
+			setStatus(success ? 'Current settings saved in this browser.' : 'Could not save settings in this browser.');
+		});
+
+		restoreSavedButton.addEventListener('click', () => {
+			const savedSettings = loadStoredSettings(storageKeys.saved);
+			if (!savedSettings) {
+				setStatus('No saved settings found yet.');
+				return;
+			}
+			applySettings(savedSettings);
+			setStatus('Saved settings restored.');
+		});
+
+		restoreLastButton.addEventListener('click', () => {
+			const previousUsedSettings = loadStoredSettings(storageKeys.previousUsed);
+			if (!previousUsedSettings) {
+				setStatus('No previous processed settings found yet. Process at least two different setting combinations first.');
+				return;
+			}
+			applySettings(previousUsedSettings);
+			setStatus('Previous processed settings restored.');
+		});
+
+		downloadButton.addEventListener('click', downloadOutputAndSettings);
+
+		Object.values(controls).forEach((control) => {
+			control.addEventListener('input', updateLabels);
+		});
+
+		updateLabels();
+	</script>
+
+	<style>
+		.enhancer-page {
+			max-width: 1320px;
+			margin: 0 auto;
+			padding: 2rem;
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		.hero-card,
+		.controls-card,
+		.preview-card,
+		.notes-card {
+			background: white;
+			border-radius: 1.25rem;
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+		}
+
+		.hero-card {
+			padding: 2rem;
+			display: grid;
+			grid-template-columns: 1.8fr 1.1fr;
+			gap: 1.5rem;
+			background: linear-gradient(135deg, #020617, #1d4ed8 55%, #7c3aed);
+			color: white;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.12em;
+			font-size: 0.8rem;
+			opacity: 0.85;
+			margin-bottom: 0.75rem;
+		}
+
+		h1 {
+			font-size: clamp(2rem, 4vw, 3.4rem);
+			line-height: 1.05;
+			margin: 0 0 1rem 0;
+		}
+
+		.hero-copy {
+			font-size: 1.05rem;
+			line-height: 1.7;
+			margin: 0;
+			max-width: 62ch;
+			color: rgba(255, 255, 255, 0.92);
+		}
+
+		.hero-stats {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1rem;
+		}
+
+		.stat-card {
+			padding: 1rem;
+			border-radius: 1rem;
+			background: rgba(255, 255, 255, 0.12);
+			border: 1px solid rgba(255, 255, 255, 0.16);
+			display: grid;
+			gap: 0.25rem;
+		}
+
+		.stat-value {
+			font-size: 1.5rem;
+			font-weight: 700;
+		}
+
+		.stat-label {
+			font-size: 0.95rem;
+			color: rgba(255, 255, 255, 0.86);
+		}
+
+		.tool-layout {
+			display: grid;
+			grid-template-columns: minmax(320px, 420px) minmax(0, 1fr);
+			gap: 1.5rem;
+			align-items: start;
+		}
+
+		.controls-card,
+		.preview-card,
+		.notes-card {
+			padding: 1.5rem;
+		}
+
+		.preview-column {
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		.section-header h2,
+		.preview-header h2,
+		.notes-card h2 {
+			margin: 0;
+			font-size: 1.4rem;
+			color: #0f172a;
+		}
+
+		.section-header p,
+		.preview-header p,
+		.notes-card p,
+		.notes-card li {
+			color: #475569;
+			line-height: 1.6;
+		}
+
+		.field-group,
+		.control-section {
+			display: grid;
+			gap: 0.9rem;
+			margin-top: 1.25rem;
+		}
+
+		.control-section h3 {
+			margin: 0;
+			font-size: 1rem;
+			color: #1e293b;
+		}
+
+		.field {
+			display: grid;
+			gap: 0.45rem;
+			font-weight: 600;
+			color: #1e293b;
+		}
+
+		.field input[type='file'],
+		.field input[type='range'] {
+			width: 100%;
+		}
+
+		.status-box {
+			padding: 0.9rem 1rem;
+			border-radius: 1rem;
+			background: #eff6ff;
+			border: 1px solid #bfdbfe;
+			color: #1d4ed8;
+			font-weight: 600;
+		}
+
+		.action-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+			margin-top: 1.5rem;
+		}
+
+		.primary-btn,
+		.secondary-btn {
+			padding: 0.85rem 1.15rem;
+			border-radius: 999px;
+			font: inherit;
+			font-weight: 700;
+			cursor: pointer;
+		}
+
+		.primary-btn {
+			border: none;
+			background: linear-gradient(135deg, #1d4ed8, #7c3aed);
+			color: white;
+		}
+
+		.secondary-btn {
+			border: 1px solid #cbd5e1;
+			background: white;
+			color: #0f172a;
+		}
+
+		.secondary-btn:disabled {
+			opacity: 0.55;
+			cursor: not-allowed;
+		}
+
+		.preview-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: end;
+			gap: 1rem;
+			margin-bottom: 1rem;
+		}
+
+		.canvas-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1rem;
+		}
+
+		.canvas-panel {
+			display: grid;
+			gap: 0.75rem;
+		}
+
+		.canvas-panel h3 {
+			margin: 0;
+			font-size: 1rem;
+			color: #1e293b;
+		}
+
+		canvas {
+			width: 100%;
+			height: auto;
+			background: radial-gradient(circle at top, #1e293b, #020617);
+			border-radius: 1rem;
+			border: 1px solid #cbd5e1;
+		}
+
+		.notes-card ul {
+			margin: 0.75rem 0 0 1.1rem;
+			padding: 0;
+			display: grid;
+			gap: 0.5rem;
+		}
+
+		.note-callout {
+			margin-top: 1rem;
+			padding: 1rem;
+			border-radius: 1rem;
+			background: #f8fafc;
+			border: 1px solid #e2e8f0;
+		}
+
+		@media (max-width: 1080px) {
+			.hero-card,
+			.tool-layout,
+			.canvas-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.enhancer-page {
+				padding: 1rem;
+			}
+
+			.hero-card,
+			.controls-card,
+			.preview-card,
+			.notes-card {
+				padding: 1.25rem;
+			}
+
+			.preview-header {
+				align-items: start;
+				flex-direction: column;
+			}
+		}
+	</style>
+</Layout>
