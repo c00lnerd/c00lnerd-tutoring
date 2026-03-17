@@ -49,6 +49,17 @@ import Layout from '../../layouts/Layout.astro';
 				</div>
 
 				<div class="control-section">
+					<h3>Presets</h3>
+					<p class="preset-copy">Use one of these beginner-friendly starting points, then fine-tune the sliders if needed.</p>
+					<div class="preset-row">
+						<button class="secondary-btn preset-btn" type="button" data-preset="galaxy">Galaxy</button>
+						<button class="secondary-btn preset-btn" type="button" data-preset="emissionNebula">Emission Nebula</button>
+						<button class="secondary-btn preset-btn" type="button" data-preset="brightCoreNebula">Bright-Core Nebula</button>
+						<button class="secondary-btn preset-btn" type="button" data-preset="conservative">Conservative</button>
+					</div>
+				</div>
+
+				<div class="control-section">
 					<h3>Stretch</h3>
 					<label class="field">
 						<span>Low percentile <strong id="lowPercentileValue">1.5</strong></span>
@@ -105,6 +116,22 @@ import Layout from '../../layouts/Layout.astro';
 					<label class="field">
 						<span>Threshold <strong id="thresholdValue">0.03</strong></span>
 						<input id="threshold" type="range" min="0" max="0.1" step="0.001" value="0.03" />
+					</label>
+				</div>
+
+				<div class="control-section">
+					<h3>Finishing</h3>
+					<label class="field">
+						<span>Brightness <strong id="brightnessValue">0</strong></span>
+						<input id="brightness" type="range" min="-0.2" max="0.2" step="0.01" value="0" />
+					</label>
+					<label class="field">
+						<span>Contrast <strong id="contrastValue">1</strong></span>
+						<input id="contrast" type="range" min="0.7" max="1.4" step="0.01" value="1" />
+					</label>
+					<label class="field">
+						<span>Saturation <strong id="saturationValue">1</strong></span>
+						<input id="saturation" type="range" min="0" max="1.8" step="0.05" value="1" />
 					</label>
 				</div>
 
@@ -166,6 +193,7 @@ import Layout from '../../layouts/Layout.astro';
 		const restoreSavedButton = document.getElementById('restoreSavedButton');
 		const restoreLastButton = document.getElementById('restoreLastButton');
 		const downloadButton = document.getElementById('downloadButton');
+		const presetButtons = Array.from(document.querySelectorAll('.preset-btn'));
 		const statusBox = document.getElementById('statusBox');
 		const imageMeta = document.getElementById('imageMeta');
 		const storageKeys = {
@@ -183,7 +211,10 @@ import Layout from '../../layouts/Layout.astro';
 			toneCompression: document.getElementById('toneCompression'),
 			sharpenRadius: document.getElementById('sharpenRadius'),
 			sharpenAmount: document.getElementById('sharpenAmount'),
-			threshold: document.getElementById('threshold')
+			threshold: document.getElementById('threshold'),
+			brightness: document.getElementById('brightness'),
+			contrast: document.getElementById('contrast'),
+			saturation: document.getElementById('saturation')
 		};
 		const valueLabels = {
 			lowPercentile: document.getElementById('lowPercentileValue'),
@@ -195,7 +226,10 @@ import Layout from '../../layouts/Layout.astro';
 			toneCompression: document.getElementById('toneCompressionValue'),
 			sharpenRadius: document.getElementById('sharpenRadiusValue'),
 			sharpenAmount: document.getElementById('sharpenAmountValue'),
-			threshold: document.getElementById('thresholdValue')
+			threshold: document.getElementById('thresholdValue'),
+			brightness: document.getElementById('brightnessValue'),
+			contrast: document.getElementById('contrastValue'),
+			saturation: document.getElementById('saturationValue')
 		};
 		const defaultValues = {
 			lowPercentile: '1.5',
@@ -207,7 +241,78 @@ import Layout from '../../layouts/Layout.astro';
 			toneCompression: '0.25',
 			sharpenRadius: '1',
 			sharpenAmount: '0.6',
-			threshold: '0.03'
+			threshold: '0.03',
+			brightness: '0',
+			contrast: '1',
+			saturation: '1'
+		};
+		const presets = {
+			galaxy: {
+				lowPercentile: 1.3,
+				highPercentile: 99.6,
+				smallBlur: 0.8,
+				starBlend: 0.12,
+				largeBlur: 8,
+				enhanceStrength: 0.45,
+				toneCompression: 0.35,
+				sharpenRadius: 0.8,
+				sharpenAmount: 0.25,
+				threshold: 0.06,
+				brightness: 0,
+				contrast: 1.05,
+				saturation: 1.1
+			},
+			emissionNebula: {
+				lowPercentile: 1.4,
+				highPercentile: 99.7,
+				smallBlur: 0.9,
+				starBlend: 0.15,
+				largeBlur: 10,
+				enhanceStrength: 0.65,
+				toneCompression: 0.3,
+				sharpenRadius: 0.8,
+				sharpenAmount: 0.35,
+				threshold: 0.05,
+				brightness: 0,
+				contrast: 1.08,
+				saturation: 1.2
+			},
+			brightCoreNebula: {
+				lowPercentile: 1.3,
+				highPercentile: 99.6,
+				smallBlur: 0.8,
+				starBlend: 0.12,
+				largeBlur: 9,
+				enhanceStrength: 0.55,
+				toneCompression: 0.45,
+				sharpenRadius: 0.8,
+				sharpenAmount: 0.3,
+				threshold: 0.05,
+				brightness: 0,
+				contrast: 1.04,
+				saturation: 1.15
+			},
+			conservative: {
+				lowPercentile: 1.5,
+				highPercentile: 99.5,
+				smallBlur: 0.7,
+				starBlend: 0.1,
+				largeBlur: 7,
+				enhanceStrength: 0.3,
+				toneCompression: 0.25,
+				sharpenRadius: 0.7,
+				sharpenAmount: 0.2,
+				threshold: 0.07,
+				brightness: 0,
+				contrast: 1.02,
+				saturation: 1.05
+			}
+		};
+		const presetLabels = {
+			galaxy: 'Galaxy preset applied.',
+			emissionNebula: 'Emission Nebula preset applied.',
+			brightCoreNebula: 'Bright-Core Nebula preset applied.',
+			conservative: 'Conservative preset applied.'
 		};
 
 		let sourceImage = null;
@@ -245,7 +350,10 @@ import Layout from '../../layouts/Layout.astro';
 			toneCompression: Number(controls.toneCompression.value),
 			sharpenRadius: Number(controls.sharpenRadius.value),
 			sharpenAmount: Number(controls.sharpenAmount.value),
-			threshold: Number(controls.threshold.value)
+			threshold: Number(controls.threshold.value),
+			brightness: Number(controls.brightness.value),
+			contrast: Number(controls.contrast.value),
+			saturation: Number(controls.saturation.value)
 		});
 
 		const loadStoredSettings = (key) => {
@@ -476,6 +584,29 @@ import Layout from '../../layouts/Layout.astro';
 			return result;
 		};
 
+		const applyFinishingAdjustments = (src, brightness, contrast, saturation) => {
+			const normalizedContrast = Math.max(0, contrast);
+			const normalizedSaturation = Math.max(0, saturation);
+			if (brightness === 0 && normalizedContrast === 1 && normalizedSaturation === 1) {
+				return new Float32Array(src);
+			}
+			const result = new Float32Array(src.length);
+			for (let i = 0; i < src.length; i += 4) {
+				let red = clamp((src[i] - 0.5) * normalizedContrast + 0.5 + brightness, 0, 1);
+				let green = clamp((src[i + 1] - 0.5) * normalizedContrast + 0.5 + brightness, 0, 1);
+				let blue = clamp((src[i + 2] - 0.5) * normalizedContrast + 0.5 + brightness, 0, 1);
+				const luminance = red * 0.2126 + green * 0.7152 + blue * 0.0722;
+				red = clamp(luminance + (red - luminance) * normalizedSaturation, 0, 1);
+				green = clamp(luminance + (green - luminance) * normalizedSaturation, 0, 1);
+				blue = clamp(luminance + (blue - luminance) * normalizedSaturation, 0, 1);
+				result[i] = red;
+				result[i + 1] = green;
+				result[i + 2] = blue;
+				result[i + 3] = src[i + 3];
+			}
+			return result;
+		};
+
 		const unsharpMask = (src, width, height, radius, amount, threshold) => {
 			const blurred = blurPixels(src, width, height, radius);
 			const result = new Float32Array(src.length);
@@ -509,7 +640,8 @@ import Layout from '../../layouts/Layout.astro';
 			const largeBlurred = blurPixels(starReduced, sourceImage.width, sourceImage.height, settings.largeBlur);
 			const enhanced = enhanceStructure(starReduced, largeBlurred, settings.enhanceStrength);
 			const toneMapped = applyToneCompression(enhanced, settings.toneCompression);
-			processedPixels = unsharpMask(toneMapped, sourceImage.width, sourceImage.height, settings.sharpenRadius, settings.sharpenAmount, settings.threshold);
+			const sharpened = unsharpMask(toneMapped, sourceImage.width, sourceImage.height, settings.sharpenRadius, settings.sharpenAmount, settings.threshold);
+			processedPixels = applyFinishingAdjustments(sharpened, settings.brightness, settings.contrast, settings.saturation);
 			const priorLastUsedSettings = loadStoredSettings(storageKeys.lastUsed);
 			if (priorLastUsedSettings) {
 				saveStoredSettings(storageKeys.previousUsed, priorLastUsedSettings);
@@ -594,6 +726,18 @@ import Layout from '../../layouts/Layout.astro';
 			}
 			applySettings(previousUsedSettings);
 			setStatus('Previous processed settings restored.');
+		});
+
+		presetButtons.forEach((button) => {
+			button.addEventListener('click', () => {
+				const presetKey = button.dataset.preset;
+				const preset = presets[presetKey];
+				if (!preset) {
+					return;
+				}
+				applySettings(preset);
+				setStatus(presetLabels[presetKey] ?? 'Preset applied.');
+			});
 		});
 
 		downloadButton.addEventListener('click', downloadOutputAndSettings);
@@ -724,6 +868,22 @@ import Layout from '../../layouts/Layout.astro';
 			margin: 0;
 			font-size: 1rem;
 			color: #1e293b;
+		}
+
+		.preset-copy {
+			margin: 0;
+			color: #475569;
+			line-height: 1.5;
+		}
+
+		.preset-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+		}
+
+		.preset-btn {
+			padding: 0.7rem 1rem;
 		}
 
 		.field {
