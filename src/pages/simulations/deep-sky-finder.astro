@@ -2,14 +2,47 @@
 import Layout from '../../layouts/Layout.astro';
 import targets from '../../data/deep-sky-targets.json';
 
+const toNumberOrNull = (value) => {
+	if (value === null || value === undefined || value === '') {
+		return null;
+	}
+	const parsed = Number(value);
+	return Number.isFinite(parsed) ? parsed : null;
+};
+const targetKey = (target) => `${target.catalog || 'unknown'}:${target.objectId || target.displayName || 'target'}`;
+const scoreTargetRecordQuality = (target) => {
+	let score = 0;
+	if (toNumberOrNull(target.raHours) !== null) score += 50;
+	if (toNumberOrNull(target.decDeg) !== null) score += 50;
+	if (target.searchText) score += 10;
+	if (target.notes) score += 5;
+	if (target.bestVisibility) score += 5;
+	if (target.objectType && target.objectType !== 'Low') score += 5;
+	if (toNumberOrNull(target.smartSuitability) !== null) score += 10;
+	if (Array.isArray(target.bestMonths) && target.bestMonths.length > 0) score += 10;
+	return score;
+};
+const dedupeTargets = (items) => {
+	const bestTargets = new Map();
+	items.forEach((target) => {
+		const key = targetKey(target);
+		const existing = bestTargets.get(key);
+		if (!existing || scoreTargetRecordQuality(target) > scoreTargetRecordQuality(existing)) {
+			bestTargets.set(key, target);
+		}
+	});
+	return [...bestTargets.values()];
+};
+
+const uniqueTargets = dedupeTargets(targets);
 const monthOptions = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const catalogOptions = [...new Set(targets.map((target) => target.catalog).filter(Boolean))].sort();
-const objectTypeOptions = [...new Set(targets.map((target) => target.objectType).filter(Boolean))].sort();
-const totalTargets = targets.length;
-const tonightTargets = targets.filter((target) => target.tonightUp === 'Yes').length;
-const notImagedTargets = targets.filter((target) => target.imaged !== 'Yes').length;
-const tonightPickTargets = targets.filter((target) => target.tonightsPick).length;
-const serializedTargets = JSON.stringify(targets).replace(/</g, '\\u003c');
+const catalogOptions = [...new Set(uniqueTargets.map((target) => target.catalog).filter(Boolean))].sort();
+const objectTypeOptions = [...new Set(uniqueTargets.map((target) => target.objectType).filter(Boolean))].sort();
+const totalTargets = uniqueTargets.length;
+const tonightTargets = uniqueTargets.filter((target) => target.tonightUp === 'Yes').length;
+const notImagedTargets = uniqueTargets.filter((target) => target.imaged !== 'Yes').length;
+const tonightPickTargets = uniqueTargets.filter((target) => target.tonightsPick).length;
+const serializedTargets = JSON.stringify(uniqueTargets).replace(/</g, '\\u003c');
 ---
 
 <Layout title="Deep Sky Finder">
@@ -152,7 +185,7 @@ const serializedTargets = JSON.stringify(targets).replace(/</g, '\\u003c');
 	<script id="deep-sky-data" type="application/json" set:html={serializedTargets}></script>
 
 	<script is:inline>
-		const targets = JSON.parse(document.getElementById('deep-sky-data')?.textContent || '[]');
+		const rawTargets = JSON.parse(document.getElementById('deep-sky-data')?.textContent || '[]');
 		const imagedStorageKey = 'deep-sky-finder-imaged-overrides';
 		const locationStorageKey = 'deep-sky-finder-location-settings';
 		const elements = {
@@ -228,9 +261,33 @@ const serializedTargets = JSON.stringify(targets).replace(/</g, '\\u003c');
 			return Number.isFinite(parsed) ? parsed : null;
 		};
 		const targetKey = (target) => `${target.catalog || 'unknown'}:${target.objectId || target.displayName || 'target'}`;
+		const scoreTargetRecordQuality = (target) => {
+			let score = 0;
+			if (toNumberOrNull(target.raHours) !== null) score += 50;
+			if (toNumberOrNull(target.decDeg) !== null) score += 50;
+			if (target.searchText) score += 10;
+			if (target.notes) score += 5;
+			if (target.bestVisibility) score += 5;
+			if (target.objectType && target.objectType !== 'Low') score += 5;
+			if (toNumberOrNull(target.smartSuitability) !== null) score += 10;
+			if (Array.isArray(target.bestMonths) && target.bestMonths.length > 0) score += 10;
+			return score;
+		};
+		const dedupeTargets = (items) => {
+			const bestTargets = new Map();
+			items.forEach((target) => {
+				const key = targetKey(target);
+				const existing = bestTargets.get(key);
+				if (!existing || scoreTargetRecordQuality(target) > scoreTargetRecordQuality(existing)) {
+					bestTargets.set(key, target);
+				}
+			});
+			return [...bestTargets.values()];
+		};
 		const isImaged = (target) => imagedOverrides[targetKey(target)] ?? (target.imaged === 'Yes');
 		const persistOverrides = () => localStorage.setItem(imagedStorageKey, JSON.stringify(imagedOverrides));
 		const persistLocationSettings = () => localStorage.setItem(locationStorageKey, JSON.stringify(locationSettings));
+		const targets = dedupeTargets(rawTargets);
 
 		targets.forEach((target) => {
 			target.clientKey = targetKey(target);

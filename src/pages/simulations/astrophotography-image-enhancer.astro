@@ -72,6 +72,22 @@ import Layout from '../../layouts/Layout.astro';
 				</div>
 
 				<div class="control-section">
+					<h3>Background Reduction</h3>
+					<label class="field">
+						<span>Reduction amount <strong id="backgroundReductionValue">0</strong></span>
+						<input id="backgroundReduction" type="range" min="0" max="1" step="0.05" value="0" />
+					</label>
+				</div>
+
+				<div class="control-section">
+					<h3>Noise Reduction</h3>
+					<label class="field">
+						<span>Reduction amount <strong id="noiseReductionValue">0</strong></span>
+						<input id="noiseReduction" type="range" min="0" max="1" step="0.05" value="0" />
+					</label>
+				</div>
+
+				<div class="control-section">
 					<h3>Star Reduction Approximation</h3>
 					<label class="field">
 						<span>Small blur radius <strong id="smallBlurValue">0.8</strong></span>
@@ -204,6 +220,8 @@ import Layout from '../../layouts/Layout.astro';
 		const controls = {
 			lowPercentile: document.getElementById('lowPercentile'),
 			highPercentile: document.getElementById('highPercentile'),
+			backgroundReduction: document.getElementById('backgroundReduction'),
+			noiseReduction: document.getElementById('noiseReduction'),
 			smallBlur: document.getElementById('smallBlur'),
 			starBlend: document.getElementById('starBlend'),
 			largeBlur: document.getElementById('largeBlur'),
@@ -219,6 +237,8 @@ import Layout from '../../layouts/Layout.astro';
 		const valueLabels = {
 			lowPercentile: document.getElementById('lowPercentileValue'),
 			highPercentile: document.getElementById('highPercentileValue'),
+			backgroundReduction: document.getElementById('backgroundReductionValue'),
+			noiseReduction: document.getElementById('noiseReductionValue'),
 			smallBlur: document.getElementById('smallBlurValue'),
 			starBlend: document.getElementById('starBlendValue'),
 			largeBlur: document.getElementById('largeBlurValue'),
@@ -234,6 +254,8 @@ import Layout from '../../layouts/Layout.astro';
 		const defaultValues = {
 			lowPercentile: '1.5',
 			highPercentile: '99.6',
+			backgroundReduction: '0',
+			noiseReduction: '0',
 			smallBlur: '0.8',
 			starBlend: '0.2',
 			largeBlur: '14',
@@ -250,6 +272,8 @@ import Layout from '../../layouts/Layout.astro';
 			galaxy: {
 				lowPercentile: 1.3,
 				highPercentile: 99.6,
+				backgroundReduction: 0,
+				noiseReduction: 0.2,
 				smallBlur: 0.8,
 				starBlend: 0.12,
 				largeBlur: 8,
@@ -265,6 +289,8 @@ import Layout from '../../layouts/Layout.astro';
 			emissionNebula: {
 				lowPercentile: 1.4,
 				highPercentile: 99.7,
+				backgroundReduction: 0,
+				noiseReduction: 0.1,
 				smallBlur: 0.9,
 				starBlend: 0.15,
 				largeBlur: 10,
@@ -280,6 +306,8 @@ import Layout from '../../layouts/Layout.astro';
 			brightCoreNebula: {
 				lowPercentile: 1.3,
 				highPercentile: 99.6,
+				backgroundReduction: 0,
+				noiseReduction: 0.1,
 				smallBlur: 0.8,
 				starBlend: 0.12,
 				largeBlur: 9,
@@ -295,6 +323,8 @@ import Layout from '../../layouts/Layout.astro';
 			conservative: {
 				lowPercentile: 1.5,
 				highPercentile: 99.5,
+				backgroundReduction: 0,
+				noiseReduction: 0.25,
 				smallBlur: 0.7,
 				starBlend: 0.1,
 				largeBlur: 7,
@@ -343,6 +373,8 @@ import Layout from '../../layouts/Layout.astro';
 		const getSettings = () => ({
 			lowPercentile: Number(controls.lowPercentile.value),
 			highPercentile: Number(controls.highPercentile.value),
+			backgroundReduction: Number(controls.backgroundReduction.value),
+			noiseReduction: Number(controls.noiseReduction.value),
 			smallBlur: Number(controls.smallBlur.value),
 			starBlend: Number(controls.starBlend.value),
 			largeBlur: Number(controls.largeBlur.value),
@@ -489,6 +521,24 @@ import Layout from '../../layouts/Layout.astro';
 			return result;
 		};
 
+		const reduceBackground = (src, width, height, amount) => {
+			if (amount <= 0) {
+				return new Float32Array(src);
+			}
+			const backgroundModel = blurPixels(src, width, height, Math.max(12, Math.round(Math.min(width, height) * 0.04)));
+			const result = new Float32Array(src.length);
+			for (let i = 0; i < src.length; i += 4) {
+				for (let channel = 0; channel < 3; channel += 1) {
+					const value = src[i + channel];
+					const background = backgroundModel[i + channel];
+					const lifted = clamp(value - background * amount + background * 0.5 * amount, 0, 1);
+					result[i + channel] = lifted;
+				}
+				result[i + 3] = src[i + 3];
+			}
+			return result;
+		};
+
 		const boxBlurPass = (src, width, height, radius, horizontal) => {
 			const result = new Float32Array(src.length);
 			const windowSize = radius * 2 + 1;
@@ -584,6 +634,27 @@ import Layout from '../../layouts/Layout.astro';
 			return result;
 		};
 
+		const reduceNoise = (src, width, height, amount) => {
+			if (amount <= 0) {
+				return new Float32Array(src);
+			}
+			const blurred = blurPixels(src, width, height, 1);
+			const result = new Float32Array(src.length);
+			for (let i = 0; i < src.length; i += 4) {
+				const luminance = src[i] * 0.2126 + src[i + 1] * 0.7152 + src[i + 2] * 0.0722;
+				const blurredLuminance = blurred[i] * 0.2126 + blurred[i + 1] * 0.7152 + blurred[i + 2] * 0.0722;
+				const detail = Math.abs(luminance - blurredLuminance);
+				const edgeProtection = clamp(1 - detail / 0.08, 0, 1);
+				const shadowBoost = clamp(1.1 - luminance, 0.25, 1);
+				const blendAmount = clamp(amount * edgeProtection * shadowBoost, 0, 1);
+				for (let channel = 0; channel < 3; channel += 1) {
+					result[i + channel] = clamp(src[i + channel] * (1 - blendAmount) + blurred[i + channel] * blendAmount, 0, 1);
+				}
+				result[i + 3] = src[i + 3];
+			}
+			return result;
+		};
+
 		const applyFinishingAdjustments = (src, brightness, contrast, saturation) => {
 			const normalizedContrast = Math.max(0, contrast);
 			const normalizedSaturation = Math.max(0, saturation);
@@ -635,12 +706,14 @@ import Layout from '../../layouts/Layout.astro';
 			setStatus('Processing image...');
 			await new Promise((resolve) => requestAnimationFrame(resolve));
 			const stretched = stretchPixels(sourcePixels, settings.lowPercentile, settings.highPercentile);
-			const smallBlurred = blurPixels(stretched, sourceImage.width, sourceImage.height, settings.smallBlur);
-			const starReduced = blendPixels(stretched, smallBlurred, settings.starBlend);
+			const backgroundReduced = reduceBackground(stretched, sourceImage.width, sourceImage.height, settings.backgroundReduction);
+			const smallBlurred = blurPixels(backgroundReduced, sourceImage.width, sourceImage.height, settings.smallBlur);
+			const starReduced = blendPixels(backgroundReduced, smallBlurred, settings.starBlend);
 			const largeBlurred = blurPixels(starReduced, sourceImage.width, sourceImage.height, settings.largeBlur);
 			const enhanced = enhanceStructure(starReduced, largeBlurred, settings.enhanceStrength);
 			const toneMapped = applyToneCompression(enhanced, settings.toneCompression);
-			const sharpened = unsharpMask(toneMapped, sourceImage.width, sourceImage.height, settings.sharpenRadius, settings.sharpenAmount, settings.threshold);
+			const denoised = reduceNoise(toneMapped, sourceImage.width, sourceImage.height, settings.noiseReduction);
+			const sharpened = unsharpMask(denoised, sourceImage.width, sourceImage.height, settings.sharpenRadius, settings.sharpenAmount, settings.threshold);
 			processedPixels = applyFinishingAdjustments(sharpened, settings.brightness, settings.contrast, settings.saturation);
 			const priorLastUsedSettings = loadStoredSettings(storageKeys.lastUsed);
 			if (priorLastUsedSettings) {

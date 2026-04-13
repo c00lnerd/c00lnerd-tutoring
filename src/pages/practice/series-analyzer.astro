@@ -1,0 +1,725 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Series Analyzer | C00lnerd" description="Student-friendly infinite series analyzer for common convergence patterns.">
+    <div class="container">
+        <div class="hero-card">
+            <p class="eyebrow">Calculus Practice Tool</p>
+            <h1>Infinite Series Analyzer</h1>
+            <p class="intro">
+                Enter a series pattern and get a quick, student-friendly explanation of whether it is likely to
+                converge or diverge. This tool recognizes several common Calc II patterns and gives a reason you can study.
+            </p>
+        </div>
+
+        <div class="tool-card">
+            <label for="seriesInput">Series expression</label>
+            <div class="input-row">
+                <input
+                    id="seriesInput"
+                    type="text"
+                    placeholder="Example: Σ (-1)^n / n^2, Σ n!/3^n, Σ e^(-n), Σ n^2/n^3"
+                    autocomplete="off"
+                >
+                <button id="analyzeBtn" type="button">Analyze</button>
+            </div>
+            <div class="example-buttons" aria-label="Example series expressions">
+                <button type="button" class="example-btn" data-example="n^3 / 5^n">n^3 / 5^n</button>
+                <button type="button" class="example-btn" data-example="(-1)^n / sqrt(n)">(-1)^n / sqrt(n)</button>
+                <button type="button" class="example-btn" data-example="(n^2 + 1)/(n^3 + 1)">(n^2 + 1)/(n^3 + 1)</button>
+                <button type="button" class="example-btn" data-example="n^2 / (2n)!">n^2 / (2n)!</button>
+                <button type="button" class="example-btn" data-example="n * e^(-n^2)">n * e^(-n^2)</button>
+            </div>
+            <p class="hint">
+                Try examples like <code>(-1)^n/n</code>, <code>n!/2^n</code>, <code>3^n/n!</code>, <code>e^(-n^2)</code>, or <code>n^2/n^3</code>.
+            </p>
+        </div>
+
+        <div id="resultCard" class="result-card neutral" aria-live="polite">
+            <h2>Result</h2>
+            <p id="resultSummary">Enter a series above, then click Analyze.</p>
+            <p id="resultExplanation" class="explanation"></p>
+            <p id="resultSuggestedTest" class="suggested-test"></p>
+            <div id="resultTags" class="tags"></div>
+        </div>
+
+        <div class="notes-card">
+            <h3>What this tool checks</h3>
+            <div class="notes-grid">
+                <div>
+                    <strong>Alternating series</strong>
+                    <p>Looks for patterns like <code>(-1)^n</code> or <code>(-1)^(n+1)</code>.</p>
+                </div>
+                <div>
+                    <strong>Factorials</strong>
+                    <p>Looks for <code>n!</code> and compares factorial growth to exponential or polynomial growth.</p>
+                </div>
+                <div>
+                    <strong>Exponentials</strong>
+                    <p>Looks for terms like <code>2^n</code>, <code>5^n</code>, or exponential decay such as <code>e^(-n)</code>.</p>
+                </div>
+                <div>
+                    <strong>Rational patterns</strong>
+                    <p>Looks for power comparisons like <code>n^2/n^3</code> and compares them to a <code>p</code>-series.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script is:inline>
+    function normalizeSeries(input) {
+        return input
+            .toLowerCase()
+            .replace(/\s+/g, '')
+            .replace(/∑|Σ/g, '')
+            .replace(/\\sum/g, '')
+            .replace(/\{/g, '(')
+            .replace(/\}/g, ')');
+    }
+
+    function formatOutcome(status, summary, explanation, tags, suggestedTest = 'Try another convergence test') {
+        return { status, summary, explanation, tags, suggestedTest };
+    }
+
+    function parseNumericValue(value) {
+        if (!value) {
+            return null;
+        }
+
+        const normalized = value.replace(/[()]/g, '');
+
+        if (normalized === 'e') {
+            return Math.E;
+        }
+
+        if (normalized.includes('/')) {
+            const parts = normalized.split('/');
+            if (parts.length === 2) {
+                const numerator = Number.parseFloat(parts[0]);
+                const denominator = Number.parseFloat(parts[1]);
+                if (!Number.isNaN(numerator) && !Number.isNaN(denominator) && denominator !== 0) {
+                    return numerator / denominator;
+                }
+            }
+        }
+
+        const parsed = Number.parseFloat(normalized);
+        return Number.isNaN(parsed) ? null : parsed;
+    }
+
+    function extractPower(term, variable) {
+        const escapedVariable = variable.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const match = term.match(new RegExp(`${escapedVariable}\^(\d+)`));
+        if (match) {
+            return Number.parseInt(match[1], 10);
+        }
+        if (term.includes(variable)) {
+            return 1;
+        }
+        return 0;
+    }
+
+    function getLeadingPolynomialPower(term) {
+        const cleaned = term.replace(/[()]/g, '');
+        const powerMatches = [...cleaned.matchAll(/n\^(\d+(?:\.\d+)?)/g)];
+
+        if (powerMatches.length > 0) {
+            return Math.max(...powerMatches.map((match) => Number.parseFloat(match[1])));
+        }
+
+        if (cleaned.includes('sqrt(n)')) {
+            return 0.5;
+        }
+
+        if (cleaned.includes('n')) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    function analyzeSeriesExpression(rawInput) {
+        const input = normalizeSeries(rawInput);
+
+        if (!input) {
+            return formatOutcome(
+                'neutral',
+                'Please enter a series expression.',
+                'For example, try something like (-1)^n/n, n!/3^n, e^(-n), or n^2/n^3.',
+                [],
+                'Enter a series first'
+            );
+        }
+
+        const tags = [];
+        const isAlternating = /\(-1\)\^n|\(-1\)\^\(n\+1\)|\(-1\)\^\(n-1\)|\(-1\)n/.test(input);
+        const hasFactorial = /[a-z0-9]\!/.test(input);
+        const hasENegativeQuadratic = /e\^\(-n\^2\)|e\^-n\^2/.test(input);
+        const hasENegativeLinear = /e\^\(-n\)|e\^-n/.test(input);
+        const hasConstantExponential = /(^|[^a-z])(\d+|[a-df-z])\^n/.test(input);
+        const rationalMatch = input.match(/^\(?n(?:\^(\d+))?\)?\/\(?n(?:\^(\d+))?\)?$/);
+        const pSeriesMatch = input.match(/^1\/\(?n(?:\^(\d+(?:\.\d+)?))?\)?$/);
+        const geometricMatch = input.match(/^\(?(-?\d+(?:\.\d+)?|-?\d+\/\d+|-?e)\)?\^n$/);
+        const slashParts = input.split('/');
+        const hasGeneralRationalForm = slashParts.length === 2 && /n/.test(slashParts[0]) && /n/.test(slashParts[1]) && !hasFactorial && !hasConstantExponential && !hasENegativeLinear && !hasENegativeQuadratic;
+
+        if (isAlternating) {
+            tags.push('alternating');
+        }
+        if (hasFactorial) {
+            tags.push('factorial');
+        }
+        if (hasENegativeLinear || hasENegativeQuadratic) {
+            tags.push('exponential decay');
+        } else if (hasConstantExponential) {
+            tags.push('exponential');
+        }
+        if (rationalMatch) {
+            tags.push('rational');
+        }
+        if (hasGeneralRationalForm && !rationalMatch) {
+            tags.push('rational');
+        }
+        if (pSeriesMatch) {
+            tags.push('p-series');
+        }
+        if (geometricMatch || hasENegativeLinear) {
+            tags.push('geometric');
+        }
+
+        if (hasENegativeQuadratic) {
+            return formatOutcome(
+                'converges',
+                'Converges',
+                'This has very strong exponential decay. The terms approach zero extremely quickly, and if you compare growth rates, the negative n^2 in the exponent beats polynomial growth by a lot. That is why this series converges absolutely.',
+                tags,
+                'Comparison Test'
+            );
+        }
+
+        if (pSeriesMatch) {
+            const pValue = pSeriesMatch[1] ? Number.parseFloat(pSeriesMatch[1]) : 1;
+
+            if (pValue > 1) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    `This is a p-series of the form 1/n^${pValue}. For a p-series, the rule is simple: it converges when p > 1. Here the terms approach zero fast enough, so the series converges.`,
+                    tags,
+                    'p-series comparison'
+                );
+            }
+
+            if (pValue === 1) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    'This is the classic p-series 1/n, which behaves like 1/n exactly. That is the harmonic series, and even though the terms approach zero, they do not shrink fast enough, so the series diverges.',
+                    tags,
+                    'p-series comparison'
+                );
+            }
+
+            return formatOutcome(
+                'diverges',
+                'Diverges',
+                `This is a p-series of the form 1/n^${pValue}. For p-series, anything with p less than or equal to 1 diverges. These terms approach zero too slowly, so the series diverges.`,
+                tags,
+                'p-series comparison'
+            );
+        }
+
+        if (geometricMatch) {
+            const ratioText = geometricMatch[1];
+            const ratioValue = parseNumericValue(ratioText);
+
+            if (ratioValue !== null && Math.abs(ratioValue) < 1) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    `This is a geometric series with ratio r = ${ratioText}. A geometric series converges when |r| < 1. Since |${ratioText}| is less than 1, the terms approach zero and the series converges.`,
+                    tags,
+                    'Geometric Series Test'
+                );
+            }
+
+            if (ratioValue !== null) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    `This is a geometric series with ratio r = ${ratioText}. A geometric series only converges when |r| < 1. Here |${ratioText}| is greater than or equal to 1, so the terms do not shrink enough and the series diverges.`,
+                    tags,
+                    'Geometric Series Test'
+                );
+            }
+
+            return formatOutcome(
+                'needs-more-work',
+                'Looks geometric',
+                'This appears to be a geometric series. Check the common ratio r and test whether |r| < 1. If it is, the series converges; otherwise it diverges.',
+                tags,
+                'Geometric Series Test'
+            );
+        }
+
+        if (hasENegativeLinear) {
+            return formatOutcome(
+                'converges',
+                'Converges',
+                'This behaves like a geometric series because e^(-n) = (1/e)^n. Since the ratio 1/e is less than 1, the terms approach zero fast enough for the series to converge.',
+                tags,
+                'Geometric Series Test'
+            );
+        }
+
+        if (hasFactorial) {
+            const factorialInNumerator = input.includes('n!/') || /\([^)]*![^)]*\)\//.test(input);
+            const factorialInDenominator = input.includes('/n!');
+            const exponentialInExpression = hasConstantExponential || /e\^/.test(input);
+
+            if (factorialInDenominator) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    'A factorial in the denominator makes the terms approach zero very quickly. If you compare growth rates, factorial growth beats both polynomial and constant-base exponential growth, so this series converges absolutely.',
+                    tags,
+                    'Ratio Test'
+                );
+            }
+
+            if (factorialInNumerator && exponentialInExpression) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    'Here the factorial is in the numerator, so if you compare growth rates, it grows faster than a constant-base exponential like c^n. That means the terms do not approach zero, so the series diverges.',
+                    tags,
+                    'Ratio Test'
+                );
+            }
+
+            return formatOutcome(
+                'converges',
+                'Likely converges',
+                'This includes a factorial pattern, so compare growth rates carefully. A factorial in the denominator usually forces the terms to approach zero very fast, while a factorial in the numerator can make the series diverge.',
+                tags,
+                'Ratio Test'
+            );
+        }
+
+        if (rationalMatch) {
+            const numeratorPower = rationalMatch[1] ? Number.parseInt(rationalMatch[1], 10) : 1;
+            const denominatorPower = rationalMatch[2] ? Number.parseInt(rationalMatch[2], 10) : 1;
+            const effectivePower = denominatorPower - numeratorPower;
+
+            if (effectivePower > 1) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    `This simplifies to something like 1/n^${effectivePower}. That is a p-series with p > 1, so the terms approach zero fast enough and the series converges.`,
+                    tags,
+                    'p-series comparison'
+                );
+            }
+
+            if (effectivePower === 1) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    'This behaves like 1/n. That is the harmonic series, and even though the terms approach zero, they do not shrink fast enough, so the series diverges.',
+                    tags,
+                    'p-series comparison'
+                );
+            }
+
+            if (effectivePower === 0) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    'The numerator and denominator have the same highest power of n, so the terms approach a nonzero constant rather than 0. Since the limit of a_n is not zero, the series diverges by the nth-term test.',
+                    tags,
+                    'nth-term test'
+                );
+            }
+
+            return formatOutcome(
+                'diverges',
+                'Diverges',
+                'The numerator grows at least as fast as the denominator, so the terms do not approach zero. Since the limit of a_n is not zero, the series diverges by the nth-term test.',
+                tags,
+                'nth-term test'
+            );
+        }
+
+        if (hasGeneralRationalForm) {
+            const numeratorPower = getLeadingPolynomialPower(slashParts[0]);
+            const denominatorPower = getLeadingPolynomialPower(slashParts[1]);
+            const effectivePower = denominatorPower - numeratorPower;
+
+            if (effectivePower > 1) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so this behaves like 1/n^${effectivePower}. Since that is a p-series with p > 1, the terms approach zero fast enough and the series converges.`,
+                    tags,
+                    'Limit Comparison Test'
+                );
+            }
+
+            if (effectivePower === 1) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so this behaves like 1/n. That is harmonic-like behavior, and even though the terms approach zero, they do not shrink fast enough, so the series diverges.`,
+                    tags,
+                    'Limit Comparison Test'
+                );
+            }
+
+            if (effectivePower === 0) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so the expression approaches a nonzero constant rather than 0. Since the limit of a_n is not zero, the series diverges by the nth-term test.`,
+                    tags,
+                    'nth-term test'
+                );
+            }
+
+            return formatOutcome(
+                'diverges',
+                'Diverges',
+                `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so the terms do not approach zero. Since the limit of a_n is not zero, the series diverges by the nth-term test.`,
+                tags,
+                'nth-term test'
+            );
+        }
+
+        if (hasConstantExponential) {
+            const numerator = input.split('/')[0] || input;
+            const denominator = input.split('/')[1] || '';
+            const exponentialInDenominator = /\/(\(?)(\d+|[a-df-z])\^n/.test(input);
+            const exponentialInNumerator = /(\d+|[a-df-z])\^n/.test(numerator);
+            const denominatorHasPolynomial = /n(\^\d+)?/.test(denominator);
+
+            if (exponentialInDenominator) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    'A constant-base exponential in the denominator grows faster than any polynomial in n. If you compare growth rates, the denominator wins, so the terms approach zero quickly enough for the series to converge.',
+                    tags,
+                    'Limit Comparison Test'
+                );
+            }
+
+            if (exponentialInNumerator && denominatorHasPolynomial) {
+                return formatOutcome(
+                    'diverges',
+                    'Diverges',
+                    'A constant-base exponential in the numerator grows faster than any polynomial in the denominator. If you compare growth rates, the numerator wins, so the terms do not approach zero and the series diverges.',
+                    tags,
+                    'Limit Comparison Test'
+                );
+            }
+
+            return formatOutcome(
+                'converges',
+                'Likely converges',
+                'This contains a constant-base exponential term. If it behaves like a geometric series with ratio magnitude less than 1, then the terms approach zero fast enough and the series converges.',
+                tags,
+                'Ratio Test'
+            );
+        }
+
+        if (isAlternating) {
+            const denominatorPower = extractPower(input.split('/')[1] || input, 'n');
+            if (denominatorPower > 0 || input.includes('/n')) {
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    'This is alternating, and the size of the terms appears to decrease while the terms approach zero. That matches the Alternating Series Test, so the series converges.',
+                    tags,
+                    'Alternating Series Test'
+                );
+            }
+
+            return formatOutcome(
+                'needs-more-work',
+                'Possibly alternating',
+                'The series alternates in sign, but I cannot tell from this pattern alone whether the terms approach zero and decrease in size. Check the Alternating Series Test carefully.',
+                tags,
+                'Alternating Series Test'
+            );
+        }
+
+        return formatOutcome(
+            'needs-more-work',
+            'Pattern not fully recognized',
+            'I could not confidently classify this series from the built-in patterns alone. Try to compare growth rates, check whether the terms approach zero, and test whether it behaves like 1/n, a geometric series, or a p-series. You can also try comparison, limit comparison, ratio, root, or integral tests.',
+            tags.length ? tags : ['needs another test'],
+            'Try Limit Comparison Test or Ratio Test'
+        );
+    }
+
+    function renderResult(outcome) {
+        const resultCard = document.getElementById('resultCard');
+        const resultSummary = document.getElementById('resultSummary');
+        const resultExplanation = document.getElementById('resultExplanation');
+        const resultSuggestedTest = document.getElementById('resultSuggestedTest');
+        const resultTags = document.getElementById('resultTags');
+
+        resultCard.className = `result-card ${outcome.status}`;
+        resultSummary.textContent = outcome.summary;
+        resultExplanation.textContent = outcome.explanation;
+        resultSuggestedTest.textContent = `Suggested Test: ${outcome.suggestedTest}`;
+        resultTags.innerHTML = '';
+
+        outcome.tags.forEach((tag) => {
+            const tagElement = document.createElement('span');
+            tagElement.className = 'tag';
+            tagElement.textContent = tag;
+            resultTags.appendChild(tagElement);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('seriesInput');
+        const button = document.getElementById('analyzeBtn');
+        const exampleButtons = document.querySelectorAll('.example-btn');
+
+        function runAnalysis() {
+            const outcome = analyzeSeriesExpression(input.value);
+            renderResult(outcome);
+        }
+
+        button.addEventListener('click', runAnalysis);
+        exampleButtons.forEach((exampleButton) => {
+            exampleButton.addEventListener('click', () => {
+                input.value = exampleButton.getAttribute('data-example') || '';
+                input.focus();
+            });
+        });
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runAnalysis();
+            }
+        });
+    });
+</script>
+
+<style>
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .hero-card,
+    .tool-card,
+    .result-card,
+    .notes-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .eyebrow {
+        margin: 0 0 0.5rem;
+        color: var(--accent);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+    }
+
+    h1 {
+        margin: 0 0 0.75rem;
+        color: var(--accent);
+        text-align: center;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+    }
+
+    .intro {
+        margin: 0 auto;
+        max-width: 720px;
+        text-align: center;
+        color: #4b5563;
+    }
+
+    .tool-card label,
+    .notes-card h3,
+    .result-card h2 {
+        display: block;
+        color: #111827;
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    input[type="text"] {
+        flex: 1 1 420px;
+        padding: 0.9rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: #f9fafb;
+    }
+
+    input[type="text"]:focus {
+        outline: 2px solid rgba(37, 99, 235, 0.2);
+        border-color: var(--accent);
+        background: white;
+    }
+
+    button {
+        padding: 0.9rem 1.4rem;
+        border: none;
+        border-radius: 10px;
+        background: var(--accent);
+        color: white;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+        background: var(--accent-dark);
+        transform: translateY(-1px);
+    }
+
+    .hint {
+        margin: 0.85rem 0 0;
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+
+    .example-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    .example-btn {
+        background: #eef2ff;
+        color: #3730a3;
+        border: 1px solid #c7d2fe;
+        padding: 0.6rem 0.9rem;
+        border-radius: 999px;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .example-btn:hover {
+        background: #e0e7ff;
+        transform: translateY(-1px);
+    }
+
+    .hint code,
+    .notes-card code {
+        background: #eff6ff;
+        color: #1d4ed8;
+        padding: 0.15rem 0.35rem;
+        border-radius: 6px;
+        font-family: 'Courier New', monospace;
+    }
+
+    .result-card {
+        border-left: 6px solid #9ca3af;
+    }
+
+    .result-card.converges {
+        border-left-color: #16a34a;
+        background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+    }
+
+    .result-card.diverges {
+        border-left-color: #dc2626;
+        background: linear-gradient(180deg, #fef2f2 0%, #ffffff 100%);
+    }
+
+    .result-card.neutral,
+    .result-card.needs-more-work {
+        border-left-color: #2563eb;
+        background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+    }
+
+    .result-card h2 {
+        margin-top: 0;
+    }
+
+    #resultSummary {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 0.5rem;
+    }
+
+    .explanation {
+        color: #374151;
+        margin: 0;
+    }
+
+    .suggested-test {
+        margin: 0.85rem 0 0;
+        color: #1d4ed8;
+        font-weight: 700;
+    }
+
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .tag {
+        background: rgba(37, 99, 235, 0.1);
+        color: #1d4ed8;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .notes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+    }
+
+    .notes-grid p {
+        margin-bottom: 0;
+        color: #4b5563;
+    }
+
+    @media (max-width: 640px) {
+        .container {
+            padding: 1rem 0.75rem 2rem;
+        }
+
+        .hero-card,
+        .tool-card,
+        .result-card,
+        .notes-card {
+            padding: 1.25rem;
+        }
+
+        .input-row {
+            flex-direction: column;
+        }
+
+        button {
+            width: 100%;
+        }
+    }
+</style>

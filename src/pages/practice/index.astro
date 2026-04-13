@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 
 const getModuleTitle = (moduleNum: number) => {
-    const titles = {
+    const titles: Record<number, string> = {
         1: "Introduction",
         2: "Fundamentals", 
         3: "Advanced Concepts",
@@ -17,7 +17,7 @@ const getModuleTitle = (moduleNum: number) => {
 };
 
 const getModuleDescription = (moduleNum: number) => {
-    const descriptions = {
+    const descriptions: Record<number, string> = {
         1: "Test your understanding of basic physical science concepts.",
         2: "Practice with fundamental principles of physical science.",
         3: "Test your knowledge of advanced physical science concepts.",
@@ -113,6 +113,26 @@ const getModuleDescription = (moduleNum: number) => {
                     <p>Test your mathematical skills with our collection of problems.</p>
                     <div class="resource-links">
                         <a href="/practice/math/game-of-24" class="resource-link">Try It</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mb-12">
+            <h2 class="text-2xl font-semibold mb-4">Calculus</h2>
+            <div class="resources-grid">
+                <div class="resource-card">
+                    <h3>Infinite Series Flowchart</h3>
+                    <p>Help students decide whether a series converges by working through a quick decision tree. Covers the nth-term test, alternating series ideas, geometric series, and common comparison patterns.</p>
+                    <div class="resource-links">
+                        <a href="/tools/series-tools.html" class="resource-link">Open Series Tools</a>
+                    </div>
+                </div>
+                <div class="resource-card">
+                    <h3>Series Analyzer</h3>
+                    <p>Type in a common infinite series pattern and get a quick student-friendly explanation about whether it converges or diverges, including alternating, factorial, exponential, and rational forms.</p>
+                    <div class="resource-links">
+                        <a href="/practice/series-analyzer" class="resource-link">Open Analyzer</a>
                     </div>
                 </div>
             </div>

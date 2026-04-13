@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Series Tools | C00lnerd</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #111827 100%);
+    color: #f9fafb;
+    min-height: 100vh;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .hero h1 {
+    margin: 0 0 0.75rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: #93c5fd;
+  }
+
+  .hero p {
+    margin: 0 auto;
+    max-width: 700px;
+    color: #cbd5e1;
+    line-height: 1.6;
+    font-size: 1.05rem;
+  }
+
+  .tool-card {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 18px;
+    padding: 1.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+  }
+
+  .box {
+    border: 2px solid #4CAF50;
+    border-radius: 14px;
+    padding: 1.25rem;
+    margin: 0 auto;
+    width: min(100%, 420px);
+    background: #1e293b;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .question {
+    font-size: 1.15rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+  }
+
+  .helper-text {
+    margin-top: 1.25rem;
+    color: #cbd5e1;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .examples {
+    margin-top: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 14px;
+  }
+
+  .examples h2 {
+    margin-top: 0;
+    color: #bfdbfe;
+    font-size: 1.1rem;
+  }
+
+  .examples ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    color: #dbeafe;
+    line-height: 1.7;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 0.8rem 1rem;
+    margin: 0.25rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+  }
+
+  button:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+  }
+
+  .yes {
+    background: #22c55e;
+    color: white;
+  }
+
+  .no {
+    background: #ef4444;
+    color: white;
+  }
+
+  .restart {
+    background: #3b82f6;
+    color: white;
+  }
+
+  .result {
+    font-size: 1.35rem;
+    color: #fef08a;
+  }
+
+  .tip {
+    margin-top: 1rem;
+    color: #d1fae5;
+    font-size: 0.95rem;
+  }
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="hero">
+      <h1>Infinite Series Decision Flowchart</h1>
+      <p>
+        Use this quick guide to help decide whether an infinite series converges.
+        It is designed as a study aid for common Calc II convergence tests and patterns.
+      </p>
+    </div>
+
+    <div class="tool-card">
+      <div id="flow"></div>
+
+      <div class="examples">
+        <h2>Quick reminders</h2>
+        <ul>
+          <li>If \(\lim_{n \to \infty} a_n \neq 0\), the series diverges immediately.</li>
+          <li>Alternating series may converge conditionally if terms decrease to 0.</li>
+          <li>Geometric series converge when \(|r| &lt; 1\).</li>
+          <li>Factorials and exponentials usually beat polynomials in the long run.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+<script>
+const flow = document.getElementById('flow');
+
+function showStep(step) {
+  flow.innerHTML = '';
+
+  if (step === 1) {
+    flow.innerHTML = `
+      <div class="box">
+        <div class="question">Does lim(n→∞) aₙ = 0?</div>
+        <div class="buttons">
+          <button class="yes" onclick="showStep(2)">Yes</button>
+          <button class="no" onclick="showResult('Diverges', 'Use the nth-term test: if the terms do not go to 0, the series cannot converge.')">No</button>
+        </div>
+      </div>
+      <p class="helper-text">Start with the nth-term test before trying anything more advanced.</p>
+    `;
+  }
+
+  if (step === 2) {
+    flow.innerHTML = `
+      <div class="box">
+        <div class="question">Is the series alternating?</div>
+        <div class="buttons">
+          <button class="yes" onclick="showStep(3)">Yes</button>
+          <button class="no" onclick="showStep(4)">No</button>
+        </div>
+      </div>
+      <p class="helper-text">Look for a factor like (-1)ⁿ or (-1)ⁿ⁺¹ that changes the sign of each term.</p>
+    `;
+  }
+
+  if (step === 3) {
+    flow.innerHTML = `
+      <div class="box">
+        <div class="question">Are the terms decreasing in magnitude and approaching 0?</div>
+        <div class="buttons">
+          <button class="yes" onclick="showResult('Conditionally Convergent', 'This matches the Alternating Series Test.')">Yes</button>
+          <button class="no" onclick="showStep(4)">No</button>
+        </div>
+      </div>
+      <p class="helper-text">If it alternates but the magnitudes do not decrease to 0, the alternating series test fails.</p>
+    `;
+  }
+
+  if (step === 4) {
+    flow.innerHTML = `
+      <div class="box">
+        <div class="question">Which pattern looks closest?</div>
+        <div style="text-align:left; line-height:1.8; color:#e5e7eb;">
+          Polynomial vs Exponential → Converges<br>
+          Polynomial vs Factorial → Converges<br>
+          Looks like 1/n → Diverges<br>
+          Geometric rⁿ with |r| &lt; 1 → Converges
+        </div>
+        <div class="buttons" style="margin-top:1rem;">
+          <button class="restart" onclick="showStep(1)">Restart</button>
+        </div>
+        <div class="tip">Tip: If none of these fit, try comparison, limit comparison, ratio, or root tests.</div>
+      </div>
+    `;
+  }
+}
+
+function showResult(result, explanation) {
+  flow.innerHTML = `
+    <div class="box">
+      <div class="question">Result</div>
+      <div class="result"><b>${result}</b></div>
+      <p class="helper-text">${explanation}</p>
+      <div class="buttons">
+        <button class="restart" onclick="showStep(1)">Restart</button>
+      </div>
+    </div>
+  `;
+}
+
+showStep(1);
+</script>
+</body>
+</html>
