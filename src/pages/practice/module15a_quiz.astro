@@ -56,82 +56,79 @@ import Layout from '../../layouts/Layout.astro';
     <!-- Load EmailJS before initializing -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
     <script type="text/javascript" is:inline>
+        let captchaAnswer = 0;
+
+        function generateCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            captchaAnswer = num1 + num2;
+            const questionElement = document.getElementById('captcha-question');
+            if (questionElement) {
+                questionElement.textContent = num1 + " + " + num2;
+            }
+        }
+
+        function validateCaptcha() {
+            const captchaInput = document.getElementById('captcha');
+            const errorDiv = document.getElementById('captcha-error');
+            if (!captchaInput) return false;
+
+            const userAnswer = parseInt(captchaInput.value);
+
+            if (userAnswer !== captchaAnswer) {
+                if (errorDiv) errorDiv.style.display = 'block';
+                generateCaptcha();
+                captchaInput.value = '';
+                return false;
+            }
+
+            if (errorDiv) errorDiv.style.display = 'none';
+            return true;
+        }
+
+        function validateSecurity() {
+            const honeypot = document.getElementById('website');
+            if (honeypot && honeypot.value) {
+                console.log('Spam bot detected via honeypot');
+                alert('Security check failed. Please try again.');
+                return false;
+            }
+
+            const lastSubmission = localStorage.getItem('lastQuizStart');
+            const now = Date.now();
+            if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+                alert('Please wait 30 seconds between quiz attempts.');
+                return false;
+            }
+            localStorage.setItem('lastQuizStart', now.toString());
+
+            if (!validateCaptcha()) {
+                return false;
+            }
+
+            const emailInput = document.getElementById('email');
+            if (emailInput && emailInput.value) {
+                const email = emailInput.value;
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    alert('Please enter a valid email address.');
+                    return false;
+                }
+
+                const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+                const domain = email.split('@')[1].toLowerCase();
+                if (spamDomains.includes(domain)) {
+                    alert('Please use a permanent email address.');
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         window.onload = function() {
             try {
                 emailjs.init("ct_s19oZHppLy9BlW");
-    // CAPTCHA variables
-    let captchaAnswer = 0;
-    
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2;
-        }
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }
             } catch (error) {
                 console.error('Failed to initialize EmailJS:', error);
             }
@@ -375,6 +372,7 @@ import Layout from '../../layouts/Layout.astro';
         if (savedEmail) {
             document.getElementById('email').value = savedEmail;
         }
+        generateCaptcha();
 
         function startQuiz() {
 if (!validateSecurity()) return;

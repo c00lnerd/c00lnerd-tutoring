@@ -222,13 +222,9 @@ import Layout from '../../layouts/Layout.astro';
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
 <script is:inline>
-    // Wait for EmailJS to load before initializing
-    window.onload = function() {
-        try {
-            emailjs.init("ct_s19oZHppLy9BlW");
-    // CAPTCHA variables
     let captchaAnswer = 0;
-    
+    let cooldownInterval = null;
+
     function generateCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
@@ -238,24 +234,24 @@ import Layout from '../../layouts/Layout.astro';
             questionElement.textContent = num1 + " + " + num2;
         }
     }
-    
+
     function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const captchaInput = document.getElementById('captcha');
         const errorDiv = document.getElementById('captcha-error');
-        
+        if (!captchaInput) return false;
+
+        const userAnswer = parseInt(captchaInput.value);
+
         if (userAnswer !== captchaAnswer) {
             if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
+            generateCaptcha();
+            captchaInput.value = '';
             return false;
         }
-        
+
         if (errorDiv) errorDiv.style.display = 'none';
         return true;
     }
-    
-    // Security validation function
-    let cooldownInterval = null;
 
     function startCooldown(remainingMs) {
         const cooldownDiv = document.getElementById('cooldown-timer');
@@ -288,7 +284,6 @@ import Layout from '../../layouts/Layout.astro';
     }
 
     function validateSecurity() {
-        // Check honeypot field (should be empty)
         const honeypot = document.getElementById('website');
         if (honeypot && honeypot.value) {
             console.log('Spam bot detected via honeypot');
@@ -336,9 +331,15 @@ import Layout from '../../layouts/Layout.astro';
         
         return true;
     }
+
+    window.onload = function() {
+        try {
+            emailjs.init("ct_s19oZHppLy9BlW");
         } catch (err) {
             console.error('Error initializing EmailJS:', err);
         }
+
+        generateCaptcha();
     };
 
     // Utility function to shuffle array and track original indices
@@ -837,7 +838,7 @@ import Layout from '../../layouts/Layout.astro';
     // Initialize quiz state after questions are defined
     window.currentQuestion = 0;
     window.userAnswers = new Array(originalQuestions.length).fill(undefined);
-    window.questionAttempts = new Array(window.questions.length).fill(0);
+    window.questionAttempts = new Array(originalQuestions.length).fill(0);
 
     function startQuiz() {
 if (!validateSecurity()) return;
