@@ -40,6 +40,7 @@ import Layout from '../../layouts/Layout.astro';
             <h2>Result</h2>
             <p id="resultSummary">Enter a series above, then click Analyze.</p>
             <p id="resultExplanation" class="explanation"></p>
+            <p id="resultSum" class="sum-output"></p>
             <p id="resultSuggestedTest" class="suggested-test"></p>
             <div id="resultTags" class="tags"></div>
         </div>
@@ -79,8 +80,8 @@ import Layout from '../../layouts/Layout.astro';
             .replace(/\}/g, ')');
     }
 
-    function formatOutcome(status, summary, explanation, tags, suggestedTest = 'Try another convergence test') {
-        return { status, summary, explanation, tags, suggestedTest };
+    function formatOutcome(status, summary, explanation, tags, suggestedTest = 'Try another convergence test', sumNote = '') {
+        return { status, summary, explanation, tags, suggestedTest, sumNote };
     }
 
     function parseNumericValue(value) {
@@ -156,6 +157,28 @@ import Layout from '../../layouts/Layout.astro';
         return `n^${power}`;
     }
 
+    function formatDecimal(value) {
+        if (!Number.isFinite(value)) {
+            return null;
+        }
+
+        const rounded = Math.round(value * 1000000) / 1000000;
+        return Number.isInteger(rounded) ? `${rounded}` : `${rounded}`;
+    }
+
+    function buildGeometricSumNote(ratioValue, ratioText) {
+        if (ratioValue === null || !Number.isFinite(ratioValue) || Math.abs(ratioValue) >= 1) {
+            return '';
+        }
+
+        const sumFromZero = 1 / (1 - ratioValue);
+        const sumFromOne = ratioValue / (1 - ratioValue);
+        const formattedZero = formatDecimal(sumFromZero);
+        const formattedOne = formatDecimal(sumFromOne);
+
+        return `If the series starts at n = 0, its sum is ${formattedZero}. If it starts at n = 1, its sum is ${formattedOne}. For ratio r = ${ratioText}, these come from the geometric-series formula S = a/(1-r).`;
+    }
+
     function analyzeSeriesExpression(rawInput) {
         const input = normalizeSeries(rawInput);
 
@@ -178,6 +201,7 @@ import Layout from '../../layouts/Layout.astro';
         const rationalMatch = input.match(/^\(?n(?:\^(\d+))?\)?\/\(?n(?:\^(\d+))?\)?$/);
         const pSeriesMatch = input.match(/^1\/\(?n(?:\^(\d+(?:\.\d+)?))?\)?$/);
         const geometricMatch = input.match(/^\(?(-?\d+(?:\.\d+)?|-?\d+\/\d+|-?e)\)?\^n$/);
+        const reciprocalGeometricMatch = input.match(/^1\/\(?((?:\d+(?:\.\d+)?)|e)\^n\)?$/);
         const slashParts = input.split('/');
         const hasGeneralRationalForm = slashParts.length === 2 && /n/.test(slashParts[1]) && !hasFactorial && !hasConstantExponential && !hasENegativeLinear && !hasENegativeQuadratic;
 
@@ -252,12 +276,14 @@ import Layout from '../../layouts/Layout.astro';
             const ratioValue = parseNumericValue(ratioText);
 
             if (ratioValue !== null && Math.abs(ratioValue) < 1) {
+                const sumNote = buildGeometricSumNote(ratioValue, ratioText);
                 return formatOutcome(
                     'converges',
                     'Converges',
                     `This is a geometric series with ratio r = ${ratioText}. A geometric series converges when |r| < 1. Since |${ratioText}| is less than 1, the terms approach zero and the series converges.`,
                     tags,
-                    'Geometric Series Test'
+                    'Geometric Series Test',
+                    sumNote
                 );
             }
 
@@ -280,13 +306,35 @@ import Layout from '../../layouts/Layout.astro';
             );
         }
 
+        if (reciprocalGeometricMatch) {
+            const baseText = reciprocalGeometricMatch[1];
+            const baseValue = parseNumericValue(baseText);
+
+            if (baseValue !== null && Math.abs(baseValue) > 1) {
+                const ratioValue = 1 / baseValue;
+                const ratioText = `1/${baseText}`;
+                const sumNote = buildGeometricSumNote(ratioValue, ratioText);
+
+                return formatOutcome(
+                    'converges',
+                    'Converges',
+                    `This is a geometric series because 1/(${baseText}^n) = (${ratioText})^n. Since |${ratioText}| is less than 1, the terms approach zero and the series converges.`,
+                    [...tags, 'geometric'],
+                    'Geometric Series Test',
+                    sumNote
+                );
+            }
+        }
+
         if (hasENegativeLinear) {
+            const sumNote = buildGeometricSumNote(1 / Math.E, '1/e');
             return formatOutcome(
                 'converges',
                 'Converges',
                 'This behaves like a geometric series because e^(-n) = (1/e)^n. Since the ratio 1/e is less than 1, the terms approach zero fast enough for the series to converge.',
                 tags,
-                'Geometric Series Test'
+                'Geometric Series Test',
+                sumNote
             );
         }
 
@@ -484,12 +532,14 @@ import Layout from '../../layouts/Layout.astro';
         const resultCard = document.getElementById('resultCard');
         const resultSummary = document.getElementById('resultSummary');
         const resultExplanation = document.getElementById('resultExplanation');
+        const resultSum = document.getElementById('resultSum');
         const resultSuggestedTest = document.getElementById('resultSuggestedTest');
         const resultTags = document.getElementById('resultTags');
 
         resultCard.className = `result-card ${outcome.status}`;
         resultSummary.textContent = outcome.summary;
         resultExplanation.textContent = outcome.explanation;
+        resultSum.textContent = outcome.sumNote || '';
         resultSuggestedTest.textContent = `Suggested Test: ${outcome.suggestedTest}`;
         resultTags.innerHTML = '';
 
@@ -618,6 +668,13 @@ import Layout from '../../layouts/Layout.astro';
         margin: 0.85rem 0 0;
         color: #6b7280;
         font-size: 0.95rem;
+    }
+
+    .sum-output {
+        margin: 1rem 0 0;
+        color: #065f46;
+        font-weight: 600;
+        line-height: 1.6;
     }
 
     .example-buttons {
