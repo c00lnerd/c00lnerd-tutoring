@@ -1,0 +1,823 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Series Explorer | C00lnerd" description="Numerically explore infinite series using partial sums.">
+    <div class="container">
+        <div class="hero-card">
+            <p class="eyebrow">Calculus Practice Tool</p>
+            <h1>Infinite Series Explorer</h1>
+            <p class="intro">
+                Enter the nth term of a series, compute many partial sums, and explore whether the series appears to
+                converge. This tool gives numerical evidence from partial sums, but it does not replace a formal
+                convergence test.
+            </p>
+        </div>
+
+        <div class="tool-grid">
+            <section class="panel-card inputs-card">
+                <h2>Inputs</h2>
+                <div class="field-group">
+                    <label for="exprInput">Series term a<sub>n</sub></label>
+                    <input id="exprInput" type="text" value="1/n^2" autocomplete="off">
+                    <p class="helper-text">
+                        Use <code>n</code> as the index. Supported functions: <code>sin</code>, <code>cos</code>,
+                        <code>tan</code>, <code>sqrt</code>, <code>abs</code>, <code>log</code>, <code>exp</code>.
+                        Use <code>^</code> for powers.
+                    </p>
+                </div>
+
+                <div class="number-grid">
+                    <div class="field-group">
+                        <label for="startInput">Starting n</label>
+                        <input id="startInput" type="number" min="1" step="1" value="1">
+                    </div>
+                    <div class="field-group">
+                        <label for="countInput">Number of terms</label>
+                        <input id="countInput" type="number" min="5" step="1" value="200">
+                    </div>
+                </div>
+
+                <button id="analyzeBtn" type="button" class="primary-btn">Explore Series</button>
+
+                <div class="preset-group">
+                    <h3>Examples</h3>
+                    <div class="preset-buttons">
+                        <button type="button" class="preset-btn" data-expr="(1/2)^(n-1)" data-start="1" data-count="60">∑ Geometric</button>
+                        <button type="button" class="preset-btn" data-expr="1/n^2" data-start="1" data-count="200">∑ p-series convergent</button>
+                        <button type="button" class="preset-btn" data-expr="1/n" data-start="1" data-count="500">∑ Harmonic</button>
+                        <button type="button" class="preset-btn" data-expr="(-1)^(n+1)/n" data-start="1" data-count="500">∑ Alternating harmonic</button>
+                        <button type="button" class="preset-btn" data-expr="(-1)^n" data-start="1" data-count="80">∑ Divergent oscillation</button>
+                        <button type="button" class="preset-btn" data-expr="1/(n*(n+1))" data-start="1" data-count="200">∑ Telescoping-like</button>
+                    </div>
+                </div>
+
+                <p id="errorMessage" class="error-box" hidden></p>
+            </section>
+
+            <section class="results-column">
+                <div class="summary-grid">
+                    <div class="metric-card">
+                        <h3>Computed partial sum</h3>
+                        <p id="finalSum" class="metric-value">—</p>
+                        <p id="validTerms" class="metric-note">After 0 terms</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Behavior</h3>
+                        <p id="behaviorLabel" class="metric-value behavior-text">Need input</p>
+                        <p id="behaviorDetail" class="metric-note">Enter a series term and click Explore Series.</p>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Tail average</h3>
+                        <p id="tailAverage" class="metric-value">—</p>
+                        <p class="metric-note">Average of the last 10 partial sums</p>
+                    </div>
+                </div>
+
+                <div class="panel-card chart-card">
+                    <h2>Partial sums</h2>
+                    <div class="chart-wrap">
+                        <svg id="chartSvg" viewBox="0 0 800 360" role="img" aria-label="Partial sums chart"></svg>
+                    </div>
+                    <p class="chart-note">The dashed line marks the average of the last 10 partial sums when available.</p>
+                </div>
+
+                <div class="panel-card values-card">
+                    <h2>Beginning and tail values</h2>
+                    <div class="values-grid">
+                        <div>
+                            <h3>Beginning</h3>
+                            <div id="startValues" class="value-list"></div>
+                        </div>
+                        <div>
+                            <h3>Tail</h3>
+                            <div id="endValues" class="value-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</Layout>
+
+<script is:inline>
+    function formatOutcomeError(message) {
+        return {
+            rows: [],
+            finalSum: Number.NaN,
+            validTermCount: 0,
+            tailAverage: null,
+            behavior: {
+                label: 'Error',
+                detail: message
+            }
+        };
+    }
+
+    function normalizeExpression(expression) {
+        return expression.toLowerCase().replace(/\s+/g, '');
+    }
+
+    function tokenize(expression) {
+        const tokens = [];
+        let index = 0;
+
+        while (index < expression.length) {
+            const char = expression[index];
+
+            if (/\d|\./.test(char)) {
+                let number = char;
+                index += 1;
+                while (index < expression.length && /[\d.]/.test(expression[index])) {
+                    number += expression[index];
+                    index += 1;
+                }
+                if ((number.match(/\./g) || []).length > 1) {
+                    throw new Error(`Invalid number: ${number}`);
+                }
+                tokens.push({ type: 'number', value: Number.parseFloat(number) });
+                continue;
+            }
+
+            if (/[a-z]/.test(char)) {
+                let word = char;
+                index += 1;
+                while (index < expression.length && /[a-z]/.test(expression[index])) {
+                    word += expression[index];
+                    index += 1;
+                }
+                tokens.push({ type: 'identifier', value: word });
+                continue;
+            }
+
+            if ('+-*/^()'.includes(char)) {
+                tokens.push({ type: char === '(' || char === ')' ? 'paren' : 'operator', value: char });
+                index += 1;
+                continue;
+            }
+
+            throw new Error(`Unsupported character: ${char}`);
+        }
+
+        return tokens;
+    }
+
+    function toRpn(tokens) {
+        const output = [];
+        const operators = [];
+        const functions = new Set(['sin', 'cos', 'tan', 'sqrt', 'abs', 'log', 'exp']);
+        const precedence = {
+            '+': 1,
+            '-': 1,
+            '*': 2,
+            '/': 2,
+            '^': 3,
+            neg: 4
+        };
+        const rightAssociative = new Set(['^', 'neg']);
+        let previousToken = null;
+
+        tokens.forEach((token) => {
+            if (token.type === 'number') {
+                output.push(token);
+                previousToken = token;
+                return;
+            }
+
+            if (token.type === 'identifier') {
+                if (token.value === 'n' || token.value === 'pi' || token.value === 'e') {
+                    output.push(token);
+                } else if (functions.has(token.value)) {
+                    operators.push({ type: 'function', value: token.value });
+                } else {
+                    throw new Error(`Unsupported name: ${token.value}`);
+                }
+                previousToken = token;
+                return;
+            }
+
+            if (token.type === 'operator') {
+                const isUnaryMinus = token.value === '-' && (!previousToken || (previousToken.type === 'operator') || (previousToken.type === 'paren' && previousToken.value === '('));
+                const operatorValue = isUnaryMinus ? 'neg' : token.value;
+
+                while (operators.length > 0) {
+                    const top = operators[operators.length - 1];
+                    if (top.type === 'paren' && top.value === '(') {
+                        break;
+                    }
+                    const topPrecedence = precedence[top.value];
+                    const currentPrecedence = precedence[operatorValue];
+                    if (top.type === 'function' || topPrecedence > currentPrecedence || (topPrecedence === currentPrecedence && !rightAssociative.has(operatorValue))) {
+                        output.push(operators.pop());
+                        continue;
+                    }
+                    break;
+                }
+
+                operators.push({ type: 'operator', value: operatorValue });
+                previousToken = { type: 'operator', value: operatorValue };
+                return;
+            }
+
+            if (token.type === 'paren' && token.value === '(') {
+                operators.push(token);
+                previousToken = token;
+                return;
+            }
+
+            if (token.type === 'paren' && token.value === ')') {
+                let foundLeftParen = false;
+                while (operators.length > 0) {
+                    const top = operators.pop();
+                    if (top.type === 'paren' && top.value === '(') {
+                        foundLeftParen = true;
+                        break;
+                    }
+                    output.push(top);
+                }
+                if (!foundLeftParen) {
+                    throw new Error('Mismatched parentheses.');
+                }
+                if (operators.length > 0 && operators[operators.length - 1].type === 'function') {
+                    output.push(operators.pop());
+                }
+                previousToken = token;
+            }
+        });
+
+        while (operators.length > 0) {
+            const top = operators.pop();
+            if (top.type === 'paren') {
+                throw new Error('Mismatched parentheses.');
+            }
+            output.push(top);
+        }
+
+        return output;
+    }
+
+    function evaluateRpn(rpn, nValue) {
+        const stack = [];
+        const applyFunction = {
+            sin: Math.sin,
+            cos: Math.cos,
+            tan: Math.tan,
+            sqrt: Math.sqrt,
+            abs: Math.abs,
+            log: Math.log,
+            exp: Math.exp
+        };
+
+        rpn.forEach((token) => {
+            if (token.type === 'number') {
+                stack.push(token.value);
+                return;
+            }
+
+            if (token.type === 'identifier') {
+                if (token.value === 'n') {
+                    stack.push(nValue);
+                    return;
+                }
+                if (token.value === 'pi') {
+                    stack.push(Math.PI);
+                    return;
+                }
+                if (token.value === 'e') {
+                    stack.push(Math.E);
+                    return;
+                }
+            }
+
+            if (token.type === 'function') {
+                const value = stack.pop();
+                if (value === undefined) {
+                    throw new Error('Invalid expression.');
+                }
+                stack.push(applyFunction[token.value](value));
+                return;
+            }
+
+            if (token.type === 'operator') {
+                if (token.value === 'neg') {
+                    const value = stack.pop();
+                    if (value === undefined) {
+                        throw new Error('Invalid expression.');
+                    }
+                    stack.push(-value);
+                    return;
+                }
+
+                const right = stack.pop();
+                const left = stack.pop();
+                if (left === undefined || right === undefined) {
+                    throw new Error('Invalid expression.');
+                }
+
+                if (token.value === '+') {
+                    stack.push(left + right);
+                } else if (token.value === '-') {
+                    stack.push(left - right);
+                } else if (token.value === '*') {
+                    stack.push(left * right);
+                } else if (token.value === '/') {
+                    stack.push(left / right);
+                } else if (token.value === '^') {
+                    stack.push(left ** right);
+                }
+            }
+        });
+
+        if (stack.length !== 1) {
+            throw new Error('Invalid expression.');
+        }
+
+        return stack[0];
+    }
+
+    function classifyBehavior(rows) {
+        if (rows.length < 20) {
+            return { label: 'Need more terms', detail: 'Try at least 20 terms to make the tail behavior easier to judge.' };
+        }
+
+        const tail = rows.slice(-20).map((row) => row.partialSum);
+        const max = Math.max(...tail);
+        const min = Math.min(...tail);
+        const spread = max - min;
+        const last = tail[tail.length - 1];
+        const prev = tail[tail.length - 2];
+
+        if (!Number.isFinite(last)) {
+            return { label: 'Diverges', detail: 'The partial sums became non-finite.' };
+        }
+
+        if (Math.abs(last) > 1e8) {
+            return { label: 'Likely diverges', detail: 'The partial sums are growing very large.' };
+        }
+
+        if (spread < 1e-6) {
+            return { label: 'Strongly suggests convergence', detail: 'The last 20 partial sums are nearly the same.' };
+        }
+
+        if (spread < Math.max(1e-4, Math.abs(last) * 1e-5) && Math.abs(last - prev) < Math.max(1e-6, Math.abs(last) * 1e-6)) {
+            return { label: 'Appears to converge', detail: 'The tail of the partial sums is stabilizing.' };
+        }
+
+        let alternating = true;
+        for (let i = 2; i < tail.length; i += 1) {
+            const differenceOne = tail[i] - tail[i - 1];
+            const differenceTwo = tail[i - 1] - tail[i - 2];
+            if (differenceOne === 0 || differenceTwo === 0 || Math.sign(differenceOne) === Math.sign(differenceTwo)) {
+                alternating = false;
+                break;
+            }
+        }
+
+        if (alternating && spread < 0.1) {
+            return { label: 'Possibly converging with oscillation', detail: 'The partial sums appear to alternate while narrowing in.' };
+        }
+
+        const firstTailAverage = tail.slice(0, 10).reduce((sum, value) => sum + value, 0) / 10;
+        const secondTailAverage = tail.slice(10).reduce((sum, value) => sum + value, 0) / 10;
+        if (Math.abs(secondTailAverage) > Math.abs(firstTailAverage) * 1.1) {
+            return { label: 'Likely diverges', detail: 'The tail averages are still drifting away.' };
+        }
+
+        return { label: 'Inconclusive', detail: 'The finite partial sums do not yet show a clear pattern.' };
+    }
+
+    function formatNumber(value, digits = 10) {
+        if (!Number.isFinite(value)) {
+            return '—';
+        }
+        return Number(value.toPrecision(digits)).toString();
+    }
+
+    function computeTailAverage(rows) {
+        const tail = rows.slice(-10);
+        if (tail.length === 0) {
+            return null;
+        }
+        return tail.reduce((sum, row) => sum + row.partialSum, 0) / tail.length;
+    }
+
+    function buildRows(expression, startN, termCount) {
+        const normalized = normalizeExpression(expression);
+        if (!normalized) {
+            throw new Error('Enter a series term first.');
+        }
+
+        const rpn = toRpn(tokenize(normalized));
+        const rows = [];
+        let sum = 0;
+
+        for (let offset = 0; offset < termCount; offset += 1) {
+            const n = startN + offset;
+            const term = evaluateRpn(rpn, n);
+            if (!Number.isFinite(term)) {
+                throw new Error(`The term at n = ${n} is not finite.`);
+            }
+            sum += term;
+            rows.push({
+                n,
+                term,
+                partialSum: sum
+            });
+        }
+
+        return rows;
+    }
+
+    function renderChart(rows, tailAverage) {
+        const svg = document.getElementById('chartSvg');
+        const width = 800;
+        const height = 360;
+        const padding = { top: 20, right: 24, bottom: 36, left: 58 };
+
+        if (!rows.length) {
+            svg.innerHTML = `<text x="400" y="180" text-anchor="middle" fill="#6b7280" font-size="18">No data to display yet.</text>`;
+            return;
+        }
+
+        const xValues = rows.map((row) => row.n);
+        const yValues = rows.map((row) => row.partialSum);
+        if (tailAverage !== null && Number.isFinite(tailAverage)) {
+            yValues.push(tailAverage);
+        }
+
+        const xMin = Math.min(...xValues);
+        const xMax = Math.max(...xValues);
+        const yMinRaw = Math.min(...yValues);
+        const yMaxRaw = Math.max(...yValues);
+        const yPadding = yMaxRaw === yMinRaw ? 1 : (yMaxRaw - yMinRaw) * 0.1;
+        const yMin = yMinRaw - yPadding;
+        const yMax = yMaxRaw + yPadding;
+
+        const xScale = (value) => {
+            if (xMax === xMin) {
+                return padding.left + (width - padding.left - padding.right) / 2;
+            }
+            return padding.left + ((value - xMin) / (xMax - xMin)) * (width - padding.left - padding.right);
+        };
+
+        const yScale = (value) => padding.top + ((yMax - value) / (yMax - yMin)) * (height - padding.top - padding.bottom);
+        const pathPoints = rows.map((row) => `${xScale(row.n)},${yScale(row.partialSum)}`).join(' ');
+        const zeroY = yMin <= 0 && yMax >= 0 ? yScale(0) : null;
+        const tailLine = tailAverage !== null && Number.isFinite(tailAverage)
+            ? `<line x1="${padding.left}" y1="${yScale(tailAverage)}" x2="${width - padding.right}" y2="${yScale(tailAverage)}" stroke="#10b981" stroke-width="2" stroke-dasharray="8 6"></line>`
+            : '';
+
+        svg.innerHTML = `
+            <rect x="0" y="0" width="${width}" height="${height}" fill="#ffffff"></rect>
+            <line x1="${padding.left}" y1="${height - padding.bottom}" x2="${width - padding.right}" y2="${height - padding.bottom}" stroke="#cbd5e1" stroke-width="1.5"></line>
+            <line x1="${padding.left}" y1="${padding.top}" x2="${padding.left}" y2="${height - padding.bottom}" stroke="#cbd5e1" stroke-width="1.5"></line>
+            ${zeroY !== null ? `<line x1="${padding.left}" y1="${zeroY}" x2="${width - padding.right}" y2="${zeroY}" stroke="#e5e7eb" stroke-width="1"></line>` : ''}
+            ${tailLine}
+            <polyline fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="${pathPoints}"></polyline>
+            <text x="${padding.left}" y="${padding.top - 4}" fill="#64748b" font-size="14">Sₙ</text>
+            <text x="${width - padding.right}" y="${height - 10}" text-anchor="end" fill="#64748b" font-size="14">n</text>
+            <text x="${padding.left}" y="${height - 10}" fill="#64748b" font-size="13">${xMin}</text>
+            <text x="${width - padding.right}" y="${height - 10}" text-anchor="end" fill="#64748b" font-size="13">${xMax}</text>
+            <text x="${padding.left - 10}" y="${yScale(yMaxRaw) + 4}" text-anchor="end" fill="#64748b" font-size="13">${formatNumber(yMaxRaw, 6)}</text>
+            <text x="${padding.left - 10}" y="${yScale(yMinRaw) + 4}" text-anchor="end" fill="#64748b" font-size="13">${formatNumber(yMinRaw, 6)}</text>
+        `;
+    }
+
+    function renderValueList(targetId, rows) {
+        const container = document.getElementById(targetId);
+        container.innerHTML = rows.map((row) => `
+            <div class="value-row">
+                <span>n=${row.n}</span>
+                <span>Sₙ=${formatNumber(row.partialSum, 8)}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderResult(result) {
+        document.getElementById('finalSum').textContent = formatNumber(result.finalSum, 10);
+        document.getElementById('validTerms').textContent = `After ${result.validTermCount} terms`;
+        document.getElementById('behaviorLabel').textContent = result.behavior.label;
+        document.getElementById('behaviorDetail').textContent = result.behavior.detail;
+        document.getElementById('tailAverage').textContent = result.tailAverage === null ? '—' : formatNumber(result.tailAverage, 10);
+        renderChart(result.rows, result.tailAverage);
+        renderValueList('startValues', result.rows.slice(0, 8));
+        renderValueList('endValues', result.rows.slice(-8));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const exprInput = document.getElementById('exprInput');
+        const startInput = document.getElementById('startInput');
+        const countInput = document.getElementById('countInput');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const presetButtons = document.querySelectorAll('.preset-btn');
+
+        function runExplorer() {
+            errorMessage.hidden = true;
+            errorMessage.textContent = '';
+
+            const startN = Math.max(1, Number.parseInt(startInput.value, 10) || 1);
+            const termCount = Math.max(5, Number.parseInt(countInput.value, 10) || 5);
+            startInput.value = `${startN}`;
+            countInput.value = `${termCount}`;
+
+            try {
+                const rows = buildRows(exprInput.value, startN, termCount);
+                const result = {
+                    rows,
+                    finalSum: rows.length ? rows[rows.length - 1].partialSum : Number.NaN,
+                    validTermCount: rows.length,
+                    tailAverage: computeTailAverage(rows),
+                    behavior: classifyBehavior(rows)
+                };
+                renderResult(result);
+            } catch (error) {
+                const result = formatOutcomeError(error.message || 'Could not evaluate that series term.');
+                renderResult(result);
+                errorMessage.textContent = error.message || 'Could not evaluate that series term.';
+                errorMessage.hidden = false;
+            }
+        }
+
+        analyzeBtn.addEventListener('click', runExplorer);
+        exprInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runExplorer();
+            }
+        });
+        startInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runExplorer();
+            }
+        });
+        countInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                runExplorer();
+            }
+        });
+
+        presetButtons.forEach((button) => {
+            button.addEventListener('click', () => {
+                exprInput.value = button.getAttribute('data-expr') || '';
+                startInput.value = button.getAttribute('data-start') || '1';
+                countInput.value = button.getAttribute('data-count') || '100';
+                runExplorer();
+            });
+        });
+
+        renderChart([], null);
+        renderValueList('startValues', []);
+        renderValueList('endValues', []);
+        runExplorer();
+    });
+</script>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem 3rem;
+    }
+
+    .hero-card,
+    .panel-card,
+    .metric-card {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .hero-card {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .eyebrow {
+        margin: 0 0 0.5rem;
+        color: var(--accent);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+    }
+
+    h1 {
+        margin: 0 0 0.75rem;
+        color: var(--accent);
+        text-align: center;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+    }
+
+    .intro {
+        margin: 0 auto;
+        max-width: 760px;
+        text-align: center;
+        color: #4b5563;
+        line-height: 1.7;
+    }
+
+    .tool-grid {
+        display: grid;
+        grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+        gap: 1.5rem;
+        align-items: start;
+    }
+
+    .panel-card {
+        padding: 1.5rem;
+    }
+
+    .inputs-card h2,
+    .chart-card h2,
+    .values-card h2 {
+        margin: 0 0 1rem;
+        color: #111827;
+        font-size: 1.35rem;
+    }
+
+    .field-group {
+        margin-bottom: 1rem;
+    }
+
+    label,
+    .preset-group h3,
+    .values-card h3,
+    .metric-card h3 {
+        display: block;
+        color: #111827;
+        font-weight: 700;
+        margin-bottom: 0.55rem;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 10px;
+        font-size: 1rem;
+        background: #f9fafb;
+        box-sizing: border-box;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+        outline: 2px solid rgba(37, 99, 235, 0.2);
+        border-color: var(--accent);
+        background: white;
+    }
+
+    .helper-text,
+    .metric-note,
+    .chart-note {
+        color: #6b7280;
+        line-height: 1.6;
+        font-size: 0.95rem;
+    }
+
+    .number-grid,
+    .summary-grid,
+    .values-grid {
+        display: grid;
+        gap: 1rem;
+    }
+
+    .number-grid,
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin-bottom: 1.5rem;
+    }
+
+    .primary-btn,
+    .preset-btn {
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .primary-btn {
+        width: 100%;
+        padding: 0.95rem 1.25rem;
+        background: var(--accent);
+        color: white;
+        font-size: 1rem;
+        margin: 0.5rem 0 1rem;
+    }
+
+    .primary-btn:hover,
+    .preset-btn:hover {
+        transform: translateY(-1px);
+    }
+
+    .primary-btn:hover {
+        background: var(--accent-dark);
+    }
+
+    .preset-group {
+        margin-top: 0.5rem;
+    }
+
+    .preset-buttons {
+        display: grid;
+        gap: 0.75rem;
+    }
+
+    .preset-btn {
+        text-align: left;
+        padding: 0.85rem 1rem;
+        background: #eef2ff;
+        color: #3730a3;
+        border: 1px solid #c7d2fe;
+        font-size: 0.95rem;
+    }
+
+    .metric-card {
+        padding: 1.25rem;
+    }
+
+    .metric-card h3 {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin-bottom: 0.75rem;
+    }
+
+    .metric-value {
+        margin: 0;
+        font-size: 1.85rem;
+        color: #111827;
+        font-weight: 700;
+        line-height: 1.2;
+    }
+
+    .behavior-text {
+        font-size: 1.35rem;
+    }
+
+    .chart-wrap {
+        width: 100%;
+        overflow-x: auto;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        border: 1px solid #e5e7eb;
+        padding: 0.5rem;
+        box-sizing: border-box;
+    }
+
+    #chartSvg {
+        width: 100%;
+        min-height: 360px;
+        display: block;
+    }
+
+    .values-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .value-list {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .value-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        border-radius: 10px;
+        background: #f1f5f9;
+        padding: 0.7rem 0.9rem;
+        color: #0f172a;
+        font-family: ui-monospace, SFMono-Regular, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace;
+        font-size: 0.92rem;
+    }
+
+    .error-box {
+        margin: 1rem 0 0;
+        padding: 0.9rem 1rem;
+        border-radius: 10px;
+        background: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fecaca;
+        line-height: 1.6;
+    }
+
+    code {
+        background: #eef2ff;
+        color: #4338ca;
+        padding: 0.15rem 0.35rem;
+        border-radius: 6px;
+    }
+
+    @media (max-width: 960px) {
+        .tool-grid,
+        .summary-grid,
+        .values-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
