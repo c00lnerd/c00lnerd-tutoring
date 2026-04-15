@@ -140,6 +140,22 @@ import Layout from '../../layouts/Layout.astro';
         return 0;
     }
 
+    function formatGrowthTerm(power) {
+        if (power === 0) {
+            return '1';
+        }
+
+        if (power === 0.5) {
+            return 'sqrt(n)';
+        }
+
+        if (power === 1) {
+            return 'n';
+        }
+
+        return `n^${power}`;
+    }
+
     function analyzeSeriesExpression(rawInput) {
         const input = normalizeSeries(rawInput);
 
@@ -163,7 +179,7 @@ import Layout from '../../layouts/Layout.astro';
         const pSeriesMatch = input.match(/^1\/\(?n(?:\^(\d+(?:\.\d+)?))?\)?$/);
         const geometricMatch = input.match(/^\(?(-?\d+(?:\.\d+)?|-?\d+\/\d+|-?e)\)?\^n$/);
         const slashParts = input.split('/');
-        const hasGeneralRationalForm = slashParts.length === 2 && /n/.test(slashParts[0]) && /n/.test(slashParts[1]) && !hasFactorial && !hasConstantExponential && !hasENegativeLinear && !hasENegativeQuadratic;
+        const hasGeneralRationalForm = slashParts.length === 2 && /n/.test(slashParts[1]) && !hasFactorial && !hasConstantExponential && !hasENegativeLinear && !hasENegativeQuadratic;
 
         if (isAlternating) {
             tags.push('alternating');
@@ -356,12 +372,14 @@ import Layout from '../../layouts/Layout.astro';
             const numeratorPower = getLeadingPolynomialPower(slashParts[0]);
             const denominatorPower = getLeadingPolynomialPower(slashParts[1]);
             const effectivePower = denominatorPower - numeratorPower;
+            const numeratorGrowth = formatGrowthTerm(numeratorPower);
+            const denominatorGrowth = formatGrowthTerm(denominatorPower);
 
             if (effectivePower > 1) {
                 return formatOutcome(
                     'converges',
                     'Converges',
-                    `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so this behaves like 1/n^${effectivePower}. Since that is a p-series with p > 1, the terms approach zero fast enough and the series converges.`,
+                    `Compare the leading terms. The numerator grows like ${numeratorGrowth} and the denominator grows like ${denominatorGrowth}, so this behaves like 1/n^${effectivePower}. Since that is a p-series with p > 1, the terms approach zero fast enough and the series converges.`,
                     tags,
                     'Limit Comparison Test'
                 );
@@ -371,7 +389,7 @@ import Layout from '../../layouts/Layout.astro';
                 return formatOutcome(
                     'diverges',
                     'Diverges',
-                    `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so this behaves like 1/n. That is harmonic-like behavior, and even though the terms approach zero, they do not shrink fast enough, so the series diverges.`,
+                    `Compare the leading terms. The numerator grows like ${numeratorGrowth} and the denominator grows like ${denominatorGrowth}, so this behaves like 1/n. That is harmonic-like behavior, and even though the terms approach zero, they do not shrink fast enough, so the series diverges.`,
                     tags,
                     'Limit Comparison Test'
                 );
@@ -381,7 +399,7 @@ import Layout from '../../layouts/Layout.astro';
                 return formatOutcome(
                     'diverges',
                     'Diverges',
-                    `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so the expression approaches a nonzero constant rather than 0. Since the limit of a_n is not zero, the series diverges by the nth-term test.`,
+                    `Compare the leading terms. The numerator grows like ${numeratorGrowth} and the denominator grows like ${denominatorGrowth}, so the expression approaches a nonzero constant rather than 0. Since the limit of a_n is not zero, the series diverges by the nth-term test.`,
                     tags,
                     'nth-term test'
                 );
@@ -390,7 +408,7 @@ import Layout from '../../layouts/Layout.astro';
             return formatOutcome(
                 'diverges',
                 'Diverges',
-                `Compare the leading terms. The numerator grows like n^${numeratorPower} and the denominator grows like n^${denominatorPower}, so the terms do not approach zero. Since the limit of a_n is not zero, the series diverges by the nth-term test.`,
+                `Compare the leading terms. The numerator grows like ${numeratorGrowth} and the denominator grows like ${denominatorGrowth}, so the terms do not approach zero. Since the limit of a_n is not zero, the series diverges by the nth-term test.`,
                 tags,
                 'nth-term test'
             );
