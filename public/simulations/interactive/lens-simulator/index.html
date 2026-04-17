@@ -174,6 +174,47 @@
       line-height: 1.5;
     }
 
+    .formula-box {
+      margin-top: 20px;
+      background: var(--panel);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.08);
+      padding: 20px;
+    }
+
+    .formula-box h2 {
+      margin: 0 0 12px;
+      color: var(--accent);
+      font-size: 1.2rem;
+    }
+
+    .formula-box p {
+      margin: 0 0 12px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .formula-box ul {
+      margin: 0 0 12px 20px;
+      padding: 0;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .formula-box li {
+      margin-bottom: 8px;
+    }
+
+    .equation-line {
+      font-weight: bold;
+      color: var(--accent);
+      background: var(--accent-soft);
+      padding: 10px 12px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
     @media (max-width: 900px) {
       .layout {
         grid-template-columns: 1fr;
@@ -248,6 +289,21 @@
           <p class="hint">For a converging lens, a real image appears on the right side when the object is outside the focal length. For a diverging lens, the image stays virtual and upright on the same side as the object.</p>
         </div>
       </div>
+    </div>
+
+    <div class="formula-box">
+      <h2>How the Lens Maker Formula Is Used</h2>
+      <div class="equation-line">1/f = ((n₂ - n₁) / n₁) × (1/R₁ - 1/R₂)</div>
+      <p>This simulator can calculate the focal length in two different ways. In <strong>Manual slider</strong> mode, you choose <code>f</code> directly. In <strong>Lens maker equation</strong> mode, the simulator computes <code>f</code> from the refractive index and the two surface radii.</p>
+      <ul>
+        <li><strong>n₁</strong> is the refractive index of the surrounding medium, which is set to air in this demo.</li>
+        <li><strong>n₂</strong> is the refractive index of the lens material, controlled by the slider.</li>
+        <li><strong>R₁</strong> and <strong>R₂</strong> describe the curvature of the front and back lens surfaces.</li>
+        <li>A more strongly curved lens or a bigger difference between <strong>n₂</strong> and <strong>n₁</strong> gives a stronger lens power, which changes the focal length.</li>
+      </ul>
+      <p>After the simulator finds <code>f</code>, it uses the thin-lens equation below to determine where the image forms:</p>
+      <div class="equation-line">1/f = 1/dₒ + 1/dᵢ</div>
+      <p>Here <code>dₒ</code> is the object distance and <code>dᵢ</code> is the image distance. Then the magnification is found from <code>m = -dᵢ / dₒ</code>, which tells whether the image is upright or inverted and how tall it should be.</p>
     </div>
   </div>
 
