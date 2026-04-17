@@ -58,6 +58,11 @@
       align-items: start;
     }
 
+    .sim-column {
+      display: grid;
+      gap: 20px;
+    }
+
     .panel {
       background: var(--panel);
       border-radius: 18px;
@@ -219,6 +224,10 @@
       .layout {
         grid-template-columns: 1fr;
       }
+
+      .sim-column {
+        gap: 14px;
+      }
     }
   </style>
 </head>
@@ -228,8 +237,25 @@
     <p class="subtitle">Drag the green object arrow left and right to explore image formation for converging and diverging lenses. Compare a manual focal length with the focal length predicted by the lens maker equation.</p>
 
     <div class="layout">
-      <div class="panel">
-        <canvas id="canvas" width="900" height="450" aria-label="Interactive lens simulation"></canvas>
+      <div class="sim-column">
+        <div class="panel">
+          <canvas id="canvas" width="900" height="450" aria-label="Interactive lens simulation"></canvas>
+        </div>
+
+        <div class="formula-box">
+          <h2>How the Lens Maker Formula Is Used</h2>
+          <div class="equation-line">1/f = ((n₂ - n₁) / n₁) × (1/R₁ - 1/R₂)</div>
+          <p>This simulator can calculate the focal length in two different ways. In <strong>Manual slider</strong> mode, you choose <code>f</code> directly. In <strong>Lens maker equation</strong> mode, the simulator computes <code>f</code> from the refractive index and the two surface radii.</p>
+          <ul>
+            <li><strong>n₁</strong> is the refractive index of the surrounding medium, which is set to air in this demo.</li>
+            <li><strong>n₂</strong> is the refractive index of the lens material, controlled by the slider.</li>
+            <li><strong>R₁</strong> and <strong>R₂</strong> describe the curvature of the front and back lens surfaces.</li>
+            <li>A more strongly curved lens or a bigger difference between <strong>n₂</strong> and <strong>n₁</strong> gives a stronger lens power, which changes the focal length.</li>
+          </ul>
+          <p>After the simulator finds <code>f</code>, it uses the thin-lens equation below to determine where the image forms:</p>
+          <div class="equation-line">1/f = 1/dₒ + 1/dᵢ</div>
+          <p>Here <code>dₒ</code> is the object distance and <code>dᵢ</code> is the image distance. Then the magnification is found from <code>m = -dᵢ / dₒ</code>, which tells whether the image is upright or inverted and how tall it should be.</p>
+        </div>
       </div>
 
       <div class="controls">
@@ -289,21 +315,6 @@
           <p class="hint">For a converging lens, a real image appears on the right side when the object is outside the focal length. For a diverging lens, the image stays virtual and upright on the same side as the object.</p>
         </div>
       </div>
-    </div>
-
-    <div class="formula-box">
-      <h2>How the Lens Maker Formula Is Used</h2>
-      <div class="equation-line">1/f = ((n₂ - n₁) / n₁) × (1/R₁ - 1/R₂)</div>
-      <p>This simulator can calculate the focal length in two different ways. In <strong>Manual slider</strong> mode, you choose <code>f</code> directly. In <strong>Lens maker equation</strong> mode, the simulator computes <code>f</code> from the refractive index and the two surface radii.</p>
-      <ul>
-        <li><strong>n₁</strong> is the refractive index of the surrounding medium, which is set to air in this demo.</li>
-        <li><strong>n₂</strong> is the refractive index of the lens material, controlled by the slider.</li>
-        <li><strong>R₁</strong> and <strong>R₂</strong> describe the curvature of the front and back lens surfaces.</li>
-        <li>A more strongly curved lens or a bigger difference between <strong>n₂</strong> and <strong>n₁</strong> gives a stronger lens power, which changes the focal length.</li>
-      </ul>
-      <p>After the simulator finds <code>f</code>, it uses the thin-lens equation below to determine where the image forms:</p>
-      <div class="equation-line">1/f = 1/dₒ + 1/dᵢ</div>
-      <p>Here <code>dₒ</code> is the object distance and <code>dᵢ</code> is the image distance. Then the magnification is found from <code>m = -dᵢ / dₒ</code>, which tells whether the image is upright or inverted and how tall it should be.</p>
     </div>
   </div>
 
