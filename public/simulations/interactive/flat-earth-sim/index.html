@@ -203,6 +203,12 @@
                 <div style="width: 800px; height: 800px; margin: 0 auto;">
                     <canvas id="mapCanvas" width="800" height="800" style="border: 1px solid #ccc; cursor: crosshair;"></canvas>
                 </div>
+                <div id="mapMeasurePanel" style="display: none; width: 800px; margin: 10px auto 0; background: rgba(255,255,255,0.95); border: 1px solid #ccc; border-radius: 6px; padding: 10px; font-family: monospace;">
+                    <div style="font-weight: bold; margin-bottom: 6px;">Map distance measurement</div>
+                    <div>Flat vs Globe: <span id="mapMeasureFlat">--</span> / <span id="mapMeasureGlobe">--</span></div>
+                    <div>Difference (Flat − Globe): <span id="mapMeasureDiff">--</span></div>
+                    <div style="margin-top: 6px; font-family: Arial, sans-serif; font-size: 0.9em; color: #555;">Tip: Click-drag a line on the map while measurement mode is enabled.</div>
+                </div>
                 <div style="text-align: center; margin: 20px 0 5px;">
                     <div>Observer's View</div>
                     <div style="font-size: 0.9em; color: #666; margin-top: 5px;">
@@ -263,10 +269,6 @@
                         <br>
 
                         Flat Earth sun diameter: <span id="sunDiameter">0</span> 
-                        <br>
-                        Map measurement (Flat vs Globe): <span id="mapMeasureFlat">--</span> / <span id="mapMeasureGlobe">--</span>
-                        <br>
-                        Difference: <span id="mapMeasureDiff">--</span>
                     </div>
                 </div>
             </div>
@@ -364,6 +366,11 @@
                         this.measureEndPx = null;
                         measureModeToggle.textContent = this.measureModeEnabled ? 'Measuring (Drag on Map)' : 'Measure Distance';
                         measureModeToggle.style.backgroundColor = this.measureModeEnabled ? '#f44336' : '#2196F3';
+
+                        const panel = document.getElementById('mapMeasurePanel');
+                        if (panel) {
+                            panel.style.display = this.measureModeEnabled ? 'block' : 'none';
+                        }
                         this.draw();
                     });
                 }
@@ -485,6 +492,34 @@
                     this.measureEnd = coords;
                     this.measureStartPx = { x, y };
                     this.measureEndPx = { x, y };
+                    this.draw();
+                });
+
+                this.canvas.addEventListener('mouseup', (e) => {
+                    if (!this.measureModeEnabled) {
+                        return;
+                    }
+                    if (!this.isMeasuring) {
+                        return;
+                    }
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const coords = this.getLatLonFromClick(x, y);
+                    this.measureEnd = coords;
+                    this.measureEndPx = { x, y };
+                    this.isMeasuring = false;
+                    this.draw();
+                });
+
+                this.canvas.addEventListener('mouseleave', () => {
+                    if (!this.measureModeEnabled) {
+                        return;
+                    }
+                    if (!this.isMeasuring) {
+                        return;
+                    }
+                    this.isMeasuring = false;
                     this.draw();
                 });
 
