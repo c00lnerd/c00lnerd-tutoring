@@ -214,6 +214,7 @@
                     <button id="viewDirectionToggle" type="button">Looking South</button>
                     <button id="viewZoomToggle" type="button" style="margin-left: 10px;">Full View (±180°)</button>
                     <button id="sunTraceToggle" type="button" style="margin-left: 10px;">Enable Sun Trace</button>
+                    <button id="measureModeToggle" type="button" style="margin-left: 10px; background-color: #2196F3;">Measure Distance</button>
                 </div>
                 <div style="position: relative;">
                     <div class="observer-view-container">
@@ -262,6 +263,10 @@
                         <br>
 
                         Flat Earth sun diameter: <span id="sunDiameter">0</span> 
+                        <br>
+                        Map measurement (Flat vs Globe): <span id="mapMeasureFlat">--</span> / <span id="mapMeasureGlobe">--</span>
+                        <br>
+                        Difference: <span id="mapMeasureDiff">--</span>
                     </div>
                 </div>
             </div>
@@ -301,6 +306,12 @@
                 // Initialize sun trace array
                 this.sunTracePoints = [];
                 this.sunTraceEnabled = false;
+                this.measureModeEnabled = false;
+                this.isMeasuring = false;
+                this.measureStart = null;
+                this.measureEnd = null;
+                this.measureStartPx = null;
+                this.measureEndPx = null;
                 this.canvas = null;
                 this.ctx = null;
                 this.observerCanvas = null;
@@ -338,6 +349,21 @@
                     
                     lonInput.addEventListener('change', (e) => {
                         this.observerLon = parseFloat(e.target.value);
+                        this.draw();
+                    });
+                }
+
+                const measureModeToggle = document.getElementById('measureModeToggle');
+                if (measureModeToggle) {
+                    measureModeToggle.addEventListener('click', () => {
+                        this.measureModeEnabled = !this.measureModeEnabled;
+                        this.isMeasuring = false;
+                        this.measureStart = null;
+                        this.measureEnd = null;
+                        this.measureStartPx = null;
+                        this.measureEndPx = null;
+                        measureModeToggle.textContent = this.measureModeEnabled ? 'Measuring (Drag on Map)' : 'Measure Distance';
+                        measureModeToggle.style.backgroundColor = this.measureModeEnabled ? '#f44336' : '#2196F3';
                         this.draw();
                     });
                 }
@@ -409,6 +435,9 @@
 
                 // Add click handler for observer position
                 this.canvas.addEventListener('click', (e) => {
+                    if (this.measureModeEnabled) {
+                        return;
+                    }
                     const rect = this.canvas.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
@@ -440,6 +469,33 @@
                     document.getElementById('observerLon').value = this.observerLon.toFixed(2);
                     
                     // Redraw
+                    this.draw();
+                });
+
+                this.canvas.addEventListener('mousedown', (e) => {
+                    if (!this.measureModeEnabled) {
+                        return;
+                    }
+                    const rect = this.canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const coords = this.getLatLonFromClick(x, y);
+                    this.isMeasuring = true;
+                    this.measureStart = coords;
+                    this.measureEnd = coords;
+                    this.measureStartPx = { x, y };
+                    this.measureEndPx = { x, y };
+                    this.draw();
+                });
+
+                window.addEventListener('mouseup', () => {
+                    if (!this.measureModeEnabled) {
+                        return;
+                    }
+                    if (!this.isMeasuring) {
+                        return;
+                    }
+                    this.isMeasuring = false;
                     this.draw();
                 });
 
@@ -528,6 +584,12 @@
                         const x = e.clientX - rect.left;
                         const y = e.clientY - rect.top;
                         const coords = this.getLatLonFromClick(x, y);
+
+                        if (this.measureModeEnabled && this.isMeasuring) {
+                            this.measureEnd = coords;
+                            this.measureEndPx = { x, y };
+                            this.draw();
+                        }
                         
                         // Update tooltip
                         const tooltip = document.getElementById('mouseTooltip');
@@ -622,6 +684,9 @@
 
                     // Add click handler to set observer position
                     this.canvas.addEventListener('click', (e) => {
+                        if (this.measureModeEnabled) {
+                            return;
+                        }
                         const rect = this.canvas.getBoundingClientRect();
                         const x = e.clientX - rect.left;
                         const y = e.clientY - rect.top;
@@ -1709,6 +1774,29 @@
                 this.ctx.lineTo(sunX, sunY);
                 this.ctx.stroke();
                 this.ctx.setLineDash([]); // Reset to solid line
+
+                if (this.measureStartPx && this.measureEndPx) {
+                    this.ctx.beginPath();
+                    this.ctx.strokeStyle = '#00BCD4';
+                    this.ctx.lineWidth = 3;
+                    this.ctx.setLineDash([8, 6]);
+                    this.ctx.moveTo(this.measureStartPx.x, this.measureStartPx.y);
+                    this.ctx.lineTo(this.measureEndPx.x, this.measureEndPx.y);
+                    this.ctx.stroke();
+                    this.ctx.setLineDash([]);
+
+                    this.ctx.fillStyle = '#00BCD4';
+                    this.ctx.strokeStyle = '#006064';
+                    this.ctx.lineWidth = 2;
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.measureStartPx.x, this.measureStartPx.y, 5, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                    this.ctx.stroke();
+                    this.ctx.beginPath();
+                    this.ctx.arc(this.measureEndPx.x, this.measureEndPx.y, 5, 0, 2 * Math.PI);
+                    this.ctx.fill();
+                    this.ctx.stroke();
+                }
                 
                 // Get distances from current sun position
                 const groundDistance = sunPos.groundDistance;
@@ -1741,9 +1829,52 @@
                 updateElement('sunElevation', sunPos.elevation.toFixed(2));
                 updateElement('sunDiameter', `${Math.round(sunPos.sunDiameter * conversion)} ${unit}`);
                 updateElement('sunAzimuth', sunPos.azimuth.toFixed(2));
-                
 
-                
+                const updateMapMeasure = () => {
+                    const flatEl = document.getElementById('mapMeasureFlat');
+                    const globeEl = document.getElementById('mapMeasureGlobe');
+                    const diffEl = document.getElementById('mapMeasureDiff');
+                    if (!flatEl || !globeEl || !diffEl) {
+                        return;
+                    }
+                    if (!this.measureStart || !this.measureEnd) {
+                        flatEl.textContent = '--';
+                        globeEl.textContent = '--';
+                        diffEl.textContent = '--';
+                        return;
+                    }
+
+                    const flatKm = this.calculateGroundDistance(
+                        this.measureStart.lat,
+                        this.measureStart.lon,
+                        this.measureEnd.lat,
+                        this.measureEnd.lon
+                    );
+
+                    const toRad = (deg) => deg * Math.PI / 180;
+                    const R = 6371;
+                    const lat1 = toRad(this.measureStart.lat);
+                    const lon1 = toRad(this.measureStart.lon);
+                    const lat2 = toRad(this.measureEnd.lat);
+                    const lon2 = toRad(this.measureEnd.lon);
+                    const dLat = lat2 - lat1;
+                    const dLon = lon2 - lon1;
+                    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    const globeKm = R * c;
+
+                    const flatDisplay = flatKm * conversion;
+                    const globeDisplay = globeKm * conversion;
+                    const diffDisplay = (flatKm - globeKm) * conversion;
+
+                    flatEl.textContent = `${flatDisplay.toFixed(2)} ${unit}`;
+                    globeEl.textContent = `${globeDisplay.toFixed(2)} ${unit}`;
+                    diffEl.textContent = `${diffDisplay.toFixed(2)} ${unit}`;
+                };
+
+                updateMapMeasure();
+
                 // Use calculated azimuth, elevation and sun position for observer view
                 this.drawObserverView(sunPos.azimuth, sunPos.elevation, sunPos);
                 
