@@ -220,6 +220,11 @@
                     <button id="viewDirectionToggle" type="button">Looking South</button>
                     <button id="viewZoomToggle" type="button" style="margin-left: 10px;">Full View (±180°)</button>
                     <button id="sunTraceToggle" type="button" style="margin-left: 10px;">Enable Sun Trace</button>
+                    <button id="sunTraceClear" type="button" style="margin-left: 10px; background-color: #607D8B;">Clear Trace</button>
+                    <label style="margin-left: 10px; font-weight: bold;">
+                        Trace Length:
+                        <input type="number" id="sunTraceMaxPoints" min="10" max="5000" value="600" step="10" style="width: 80px;">
+                    </label>
                     <button id="measureModeToggle" type="button" style="margin-left: 10px; background-color: #2196F3;">Measure Distance</button>
                 </div>
                 <div style="position: relative;">
@@ -241,13 +246,17 @@
                     <label>Date: </label>
                     <input type="date" id="dateInput" onchange="sim.updateDateTime()">
                     <div id="timeControls" style="display: inline-block; margin-left: 10px;">
-                        <label>UTC Time: </label>
+                        <label id="timeLabel">UTC Time: </label>
                         <input type="number" id="timeHours" min="0" max="23" style="width:50px">
                         :
                         <input type="number" id="timeMinutes" min="0" max="59" style="width:50px">
                         <span id="timeDisplay" style="margin-left: 10px;"></span>
+                        <label style="margin-left: 10px; font-weight: bold; font-size: 0.9em; color: #444;">
+                            <input type="checkbox" id="useLocalSolarTime">
+                            Use local solar time
+                        </label>
                         <div style="margin-top: 10px;">
-                            <input type="range" id="hourSlider" min="0" max="24" step="1" style="width: 300px">
+                            <input type="range" id="hourSlider" min="0" max="1439" step="1" style="width: 300px">
                         </div>
                     </div>
                 </div>
@@ -273,6 +282,21 @@
                 </div>
             </div>
             <div style="text-align: center;">
+                <div style="margin: 10px 0;">
+                    <label style="margin-left: 10px;">City Presets:
+                        <select id="cityPreset" style="margin-left: 8px; padding: 6px; border: 1px solid #ccc; border-radius: 4px;">
+                            <option value="">Select a city...</option>
+                            <option value="33.5900,-86.4900">Birmingham, AL (USA)</option>
+                            <option value="51.5074,-0.1278">London (UK)</option>
+                            <option value="-33.8688,151.2093">Sydney (Australia)</option>
+                            <option value="40.7128,-74.0060">New York City (USA)</option>
+                            <option value="34.0522,-118.2437">Los Angeles (USA)</option>
+                            <option value="35.6895,139.6917">Tokyo (Japan)</option>
+                            <option value="-23.5505,-46.6333">São Paulo (Brazil)</option>
+                            <option value="-33.9249,18.4241">Cape Town (South Africa)</option>
+                        </select>
+                    </label>
+                </div>
                 <label style="margin-left: 10px;">Observer Lat: 
                     <input type="number" id="observerLat" min="-90" max="90" value="33.59" step="0.01" style="width: 70px;">°
                 </label>
@@ -308,6 +332,8 @@
                 // Initialize sun trace array
                 this.sunTracePoints = [];
                 this.sunTraceEnabled = false;
+                this.sunTraceMaxPoints = 600;
+                this.useLocalSolarTime = false;
                 this.measureModeEnabled = false;
                 this.isMeasuring = false;
                 this.measureStart = null;
@@ -351,6 +377,47 @@
                     
                     lonInput.addEventListener('change', (e) => {
                         this.observerLon = parseFloat(e.target.value);
+                        this.draw();
+                    });
+                }
+
+                const cityPreset = document.getElementById('cityPreset');
+                if (cityPreset) {
+                    cityPreset.addEventListener('change', (e) => {
+                        const value = e.target.value;
+                        if (!value) {
+                            return;
+                        }
+                        const parts = value.split(',');
+                        if (parts.length !== 2) {
+                            return;
+                        }
+                        const lat = parseFloat(parts[0]);
+                        const lon = parseFloat(parts[1]);
+                        if (Number.isNaN(lat) || Number.isNaN(lon)) {
+                            return;
+                        }
+                        this.observerLat = lat;
+                        this.observerLon = lon;
+                        const latEl = document.getElementById('observerLat');
+                        const lonEl = document.getElementById('observerLon');
+                        if (latEl) latEl.value = lat.toFixed(2);
+                        if (lonEl) lonEl.value = lon.toFixed(2);
+                        this.sunTracePoints = [];
+                        this.updateTimeInputsFromCurrentTime();
+                        this.draw();
+                    });
+                }
+
+                const useLocalSolarTime = document.getElementById('useLocalSolarTime');
+                if (useLocalSolarTime) {
+                    useLocalSolarTime.addEventListener('change', (e) => {
+                        this.useLocalSolarTime = !!e.target.checked;
+                        const label = document.getElementById('timeLabel');
+                        if (label) {
+                            label.textContent = this.useLocalSolarTime ? 'Local Solar Time: ' : 'UTC Time: ';
+                        }
+                        this.updateTimeInputsFromCurrentTime();
                         this.draw();
                     });
                 }
@@ -828,7 +895,7 @@
                 // Set up time controls event listeners
                 if (timeHours) timeHours.addEventListener('change', () => this.updateDateTime());
                 if (timeMinutes) timeMinutes.addEventListener('change', () => this.updateDateTime());
-                if (hourSlider) hourSlider.addEventListener('input', (e) => this.updateSliderValue(parseFloat(e.target.value) * 60));
+                if (hourSlider) hourSlider.addEventListener('input', (e) => this.updateSliderValue(parseFloat(e.target.value)));
                 
                 // Set up sun height input event listener
                 if (sunHeightInput) {
@@ -882,6 +949,29 @@
                 const sunTraceToggle = document.getElementById('sunTraceToggle');
                 if (sunTraceToggle) {
                     sunTraceToggle.addEventListener('click', () => this.toggleSunTrace());
+                }
+
+                const sunTraceClear = document.getElementById('sunTraceClear');
+                if (sunTraceClear) {
+                    sunTraceClear.addEventListener('click', () => {
+                        this.sunTracePoints = [];
+                        this.draw();
+                    });
+                }
+
+                const sunTraceMaxPoints = document.getElementById('sunTraceMaxPoints');
+                if (sunTraceMaxPoints) {
+                    sunTraceMaxPoints.addEventListener('change', (e) => {
+                        const n = parseInt(e.target.value);
+                        if (!Number.isFinite(n) || Number.isNaN(n)) {
+                            return;
+                        }
+                        this.sunTraceMaxPoints = Math.max(10, Math.min(5000, n));
+                        if (this.sunTracePoints.length > this.sunTraceMaxPoints) {
+                            this.sunTracePoints = this.sunTracePoints.slice(-this.sunTraceMaxPoints);
+                        }
+                        this.draw();
+                    });
                 }
                 
                 // Set up analemma simulation button
@@ -963,17 +1053,50 @@
                 // Parse the date from input, maintaining the current date if it exists
                 const currentDate = dateInput.value;
                 this.currentTime = new Date(currentDate);
-                this.currentTime.setUTCHours(hours, minutes, 0, 0);
+
+                const observerLon = parseFloat(document.getElementById('observerLon').value);
+                const tzOffsetHours = observerLon / 15;
+                const displayedMinutes = ((hours * 60 + minutes) % 1440 + 1440) % 1440;
+                const utcMinutes = this.useLocalSolarTime
+                    ? displayedMinutes - Math.round(tzOffsetHours * 60)
+                    : displayedMinutes;
+                const normalizedUtcMinutes = ((utcMinutes % 1440) + 1440) % 1440;
+                const utcHours = Math.floor(normalizedUtcMinutes / 60);
+                const utcMins = normalizedUtcMinutes % 60;
+                this.currentTime.setUTCHours(utcHours, utcMins, 0, 0);
                 
                 // Update display
                 document.getElementById('timeDisplay').textContent = 
                     `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
                 
                 // Update slider
-                const totalMinutes = hours * 60 + minutes;
-                document.getElementById('hourSlider').value = totalMinutes;
+                const totalMinutes = (hours * 60 + minutes);
+                const slider = document.getElementById('hourSlider');
+                if (slider) slider.value = ((totalMinutes % 1440) + 1440) % 1440;
                 
                 this.draw();
+            }
+
+            updateTimeInputsFromCurrentTime() {
+                const timeHours = document.getElementById('timeHours');
+                const timeMinutes = document.getElementById('timeMinutes');
+                const hourSlider = document.getElementById('hourSlider');
+                if (!timeHours || !timeMinutes || !hourSlider) {
+                    return;
+                }
+                const observerLon = parseFloat(document.getElementById('observerLon').value);
+                const tzOffsetMinutes = Math.round((observerLon / 15) * 60);
+
+                const utcTotal = this.currentTime.getUTCHours() * 60 + this.currentTime.getUTCMinutes();
+                const displayTotal = this.useLocalSolarTime
+                    ? utcTotal + tzOffsetMinutes
+                    : utcTotal;
+                const normalized = ((displayTotal % 1440) + 1440) % 1440;
+                const hours = Math.floor(normalized / 60);
+                const minutes = normalized % 60;
+                timeHours.value = hours;
+                timeMinutes.value = minutes;
+                hourSlider.value = normalized;
             }
 
             animate = () => {
@@ -1441,71 +1564,41 @@
                 if (this.sunTraceEnabled) {
                     // Add current position to trace points array
                     this.sunTracePoints.push({ x: sunX, y: sunY });
-                    
-                    // No limit on trace points for unlimited tracking
-                    
+                    if (this.sunTracePoints.length > this.sunTraceMaxPoints) {
+                        this.sunTracePoints = this.sunTracePoints.slice(-this.sunTraceMaxPoints);
+                    }
                 }
                 
                 // Draw the trace path if enabled (show all points, clipping to view)
                 if (this.sunTraceEnabled && this.sunTracePoints.length > 1) {
-                        obsCtx.strokeStyle = 'rgba(255, 100, 0, 0.7)';
-                        obsCtx.lineWidth = 2;
-                        
-                        // Start a new path
+                    obsCtx.lineWidth = 2;
+
+                    const n = this.sunTracePoints.length;
+                    for (let i = 1; i < n; i++) {
+                        const prevX = this.sunTracePoints[i - 1].x;
+                        const prevY = this.sunTracePoints[i - 1].y;
+                        const currentX = this.sunTracePoints[i].x;
+                        const currentY = this.sunTracePoints[i].y;
+
+                        const prevVisible = prevX >= 0 && prevX <= this.observerCanvas.width;
+                        const currentVisible = currentX >= 0 && currentX <= this.observerCanvas.width;
+                        if (!prevVisible || !currentVisible) {
+                            continue;
+                        }
+
+                        if (Math.abs(currentX - prevX) > this.observerCanvas.width / 3) {
+                            continue;
+                        }
+
+                        const alpha = Math.max(0.12, (i / n) * 0.85);
+                        obsCtx.strokeStyle = `rgba(255, 100, 0, ${alpha})`;
                         obsCtx.beginPath();
-                        obsCtx.moveTo(this.sunTracePoints[0].x, this.sunTracePoints[0].y);
-                        
-                        // Connect points, properly handling off-screen segments
-                        let pathStarted = false;
-                        
-                        for (let i = 1; i < this.sunTracePoints.length; i++) {
-                            const prevX = this.sunTracePoints[i-1].x;
-                            const prevY = this.sunTracePoints[i-1].y;
-                            const currentX = this.sunTracePoints[i].x;
-                            const currentY = this.sunTracePoints[i].y;
-                            
-                            // Check if both points are within visible area
-                            const prevVisible = prevX >= 0 && prevX <= this.observerCanvas.width;
-                            const currentVisible = currentX >= 0 && currentX <= this.observerCanvas.width;
-                            
-                            // Only draw if both points are visible (no retrace lines)
-                            if (prevVisible && currentVisible) {
-                                // Check if we've crossed the boundary (large jump in x position)
-                                if (Math.abs(currentX - prevX) > this.observerCanvas.width / 3) {
-                                    // End current path
-                                    if (pathStarted) {
-                                        obsCtx.stroke();
-                                    }
-                                    // Start new path
-                                    obsCtx.beginPath();
-                                    obsCtx.moveTo(currentX, currentY);
-                                    pathStarted = true;
-                                } else {
-                                    if (!pathStarted) {
-                                        // Start new path segment
-                                        obsCtx.beginPath();
-                                        obsCtx.moveTo(prevX, prevY);
-                                        pathStarted = true;
-                                    }
-                                    obsCtx.lineTo(currentX, currentY);
-                                }
-                            } else {
-                                // One or both points are off-screen, break the path
-                                if (pathStarted) {
-                                    obsCtx.stroke();
-                                    pathStarted = false;
-                                }
-                            }
-                        }
-                        
-                        // Draw final segment if path was started
-                        if (pathStarted) {
-                            obsCtx.stroke();
-                        }
-                        
-                        // Draw final segment
+                        obsCtx.moveTo(prevX, prevY);
+                        obsCtx.lineTo(currentX, currentY);
                         obsCtx.stroke();
                     }
+                }
+ 
                 
                 // Draw the sun only if it's visible in the current view
                 if (sunVisible) {
@@ -2041,8 +2134,9 @@
 
             updateSliderValue(value) {
                 try {
-                    const hours = Math.floor(value / 60);
-                    const minutes = value % 60;
+                    const normalized = ((value % 1440) + 1440) % 1440;
+                    const hours = Math.floor(normalized / 60);
+                    const minutes = normalized % 60;
                     
                     // Get all required DOM elements
                     const elements = {
@@ -2059,7 +2153,17 @@
                     // Update current time
                     if (elements.date) {
                         this.currentTime = new Date(elements.date.value);
-                        this.currentTime.setUTCHours(hours, minutes, 0, 0);
+
+                        const observerLon = parseFloat(document.getElementById('observerLon').value);
+                        const tzOffsetMinutes = Math.round((observerLon / 15) * 60);
+                        const displayedMinutes = hours * 60 + minutes;
+                        const utcMinutes = this.useLocalSolarTime
+                            ? displayedMinutes - tzOffsetMinutes
+                            : displayedMinutes;
+                        const normalizedUtcMinutes = ((utcMinutes % 1440) + 1440) % 1440;
+                        const utcHours = Math.floor(normalizedUtcMinutes / 60);
+                        const utcMins = normalizedUtcMinutes % 60;
+                        this.currentTime.setUTCHours(utcHours, utcMins, 0, 0);
                     }
                     
                     // Update time display with local time
@@ -2075,7 +2179,7 @@
                     }
                     
                     const totalMinutes = hours * 60 + minutes;
-                    document.getElementById('timeSlider').value = totalMinutes;
+                    document.getElementById('hourSlider').value = totalMinutes;
                     
                     this.update();
                 } catch (error) {
