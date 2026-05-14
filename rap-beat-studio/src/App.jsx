@@ -21,6 +21,75 @@ const DEFAULT_PATTERN = [
   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
 ];
 
+const STYLE_PRESETS = {
+  "Classic Boom Bap": {
+    bpm: 92,
+    pattern: [
+      [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+      [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+      [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,0,1,0],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+    ],
+  },
+  "Trap (808 + Hats)": {
+    bpm: 140,
+    pattern: [
+      [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,1,0,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+      [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+      [0,0,0,0, 0,0,1,0, 0,0,0,0, 0,0,1,0],
+      [1,0,0,0, 1,0,0,0, 1,0,0,0, 1,0,0,0],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+    ],
+  },
+  "UK Drill": {
+    bpm: 145,
+    pattern: [
+      [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,0,0,1],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+      [1,1,1,1, 1,1,1,1, 1,1,1,1, 1,1,1,1],
+      [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      [1,0,0,0, 0,1,0,0, 1,0,0,0, 0,1,0,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    ],
+  },
+  "Lo‑Fi Chill": {
+    bpm: 78,
+    pattern: [
+      [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 0,0,1,0],
+      [1,0,0,1, 1,0,0,1, 1,0,0,1, 1,0,0,1],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+      [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,0,1,0],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+    ],
+  },
+  "West Coast Bounce": {
+    bpm: 96,
+    pattern: [
+      [1,0,0,0, 0,0,1,0, 1,0,0,0, 0,0,1,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+      [0,0,1,0, 0,1,0,0, 0,0,1,0, 0,1,0,0],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+      [1,0,0,1, 0,0,1,0, 1,0,0,1, 0,0,1,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+    ],
+  },
+  "Reggaeton / Dembow": {
+    bpm: 95,
+    pattern: [
+      [1,0,0,0, 0,0,1,0, 0,0,1,0, 0,1,0,0],
+      [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
+      [0,0,1,0, 0,0,1,0, 0,0,1,0, 0,0,1,0],
+      [0,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      [1,0,0,0, 0,0,0,0, 1,0,0,0, 0,0,0,0],
+      [0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0],
+    ],
+  },
+};
+
 function createAudioCtx() {
   return new (window.AudioContext || window.webkitAudioContext)();
 }
@@ -100,6 +169,7 @@ export default function BeatStudio() {
   const [playing, setPlaying] = useState(false);
   const [curStep, setCurStep] = useState(-1);
   const [volumes, setVolumes] = useState(TRACKS.map(() => 0.8));
+  const [styleName, setStyleName] = useState("Custom");
   const [recText, setRecText] = useState("");
   const [micRecording, setMicRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
@@ -174,10 +244,33 @@ export default function BeatStudio() {
       np[track][step] = np[track][step] ? 0 : 1;
       return np;
     });
+    setStyleName("Custom");
   };
 
-  const clearPattern = () => setPattern(TRACKS.map(() => Array(STEPS).fill(0)));
-  const resetPattern = () => setPattern(DEFAULT_PATTERN.map(r => [...r]));
+  const clearPattern = () => {
+    setPattern(TRACKS.map(() => Array(STEPS).fill(0)));
+    setStyleName("Custom");
+  };
+
+  const resetPattern = () => {
+    setPattern(DEFAULT_PATTERN.map(r => [...r]));
+    setBpm(DEFAULT_BPM);
+    setStyleName("Custom");
+  };
+
+  const applyStyle = (name) => {
+    if (name === "Custom") {
+      setStyleName("Custom");
+      return;
+    }
+
+    const preset = STYLE_PRESETS[name];
+    if (!preset) return;
+
+    setStyleName(name);
+    setBpm(preset.bpm);
+    setPattern(preset.pattern.map(r => [...r]));
+  };
 
   const startMic = async () => {
     try {
@@ -237,6 +330,28 @@ export default function BeatStudio() {
         <div>
           {/* BPM + Controls */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap", justifyContent: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#aaa", fontSize: 13 }}>Style</span>
+              <select
+                value={styleName}
+                onChange={(e) => applyStyle(e.target.value)}
+                style={{
+                  height: 34,
+                  borderRadius: 10,
+                  border: "1px solid #333",
+                  background: "#0f0f1a",
+                  color: "#fff",
+                  padding: "0 10px",
+                  fontWeight: 700,
+                  fontSize: 12,
+                }}
+              >
+                <option value="Custom">Custom</option>
+                {Object.keys(STYLE_PRESETS).map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ color: "#aaa", fontSize: 13 }}>BPM</span>
               <input type="range" min="60" max="180" value={bpm} onChange={e => setBpm(+e.target.value)}
