@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const STEPS = 16;
+const DEFAULT_STEPS = 16;
+const AVAILABLE_STEPS = [16, 32];
 const DEFAULT_BPM = 90;
 
 const TRACKS = [
@@ -20,6 +21,24 @@ const DEFAULT_PATTERN = [
   [1,0,0,1, 0,0,1,0, 1,0,0,1, 0,0,1,0],
   [0,0,0,0, 1,0,0,0, 0,0,0,0, 1,0,0,0],
 ];
+
+function createEmptyPattern(steps) {
+  return TRACKS.map(() => Array(steps).fill(0));
+}
+
+function resizeRow(row, steps) {
+  if (row.length === steps) return [...row];
+  if (row.length > steps) return row.slice(0, steps);
+  const out = [];
+  for (let i = 0; i < steps; i++) out.push(row[i % row.length] ?? 0);
+  return out;
+}
+
+function resizePattern(pattern, steps) {
+  const base = Array.isArray(pattern) ? pattern : [];
+  const out = TRACKS.map((_, i) => resizeRow(base[i] ?? [], steps));
+  return out;
+}
 
 const STYLE_PRESETS = {
   "Classic Boom Bap": {
@@ -164,12 +183,16 @@ function triggerSound(ctx, type, t) {
 }
 
 export default function BeatStudio() {
-  const [pattern, setPattern] = useState(DEFAULT_PATTERN.map(r => [...r]));
+  const [steps, setSteps] = useState(DEFAULT_STEPS);
+  const [pattern, setPattern] = useState(() => resizePattern(DEFAULT_PATTERN, DEFAULT_STEPS));
   const [bpm, setBpm] = useState(DEFAULT_BPM);
   const [playing, setPlaying] = useState(false);
   const [curStep, setCurStep] = useState(-1);
   const [volumes, setVolumes] = useState(TRACKS.map(() => 0.8));
   const [styleName, setStyleName] = useState("Custom");
+  const [backingURL, setBackingURL] = useState(null);
+  const [backingVol, setBackingVol] = useState(0.8);
+  const [syncBacking, setSyncBacking] = useState(true);
   const [recText, setRecText] = useState("");
   const [micRecording, setMicRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
@@ -185,15 +208,24 @@ export default function BeatStudio() {
   const patternRef = useRef(pattern);
   const bpmRef = useRef(bpm);
   const volRef = useRef(volumes);
+  const stepsRef = useRef(steps);
   const playingRef = useRef(false);
   const mediaRecRef = useRef(null);
   const chunksRef = useRef([]);
   const beatGainRef = useRef(null);
   const voiceGainRef = useRef(null);
+  const backingAudioRef = useRef(null);
 
   useEffect(() => { patternRef.current = pattern; }, [pattern]);
   useEffect(() => { bpmRef.current = bpm; }, [bpm]);
   useEffect(() => { volRef.current = volumes; }, [volumes]);
+  useEffect(() => { stepsRef.current = steps; }, [steps]);
+
+  useEffect(() => {
+    const el = backingAudioRef.current;
+    if (!el) return;
+    el.volume = backingVol;
+  }, [backingVol]);
 
   const getCtx = () => {
     if (!ctxRef.current) ctxRef.current = createAudioCtx();
@@ -214,7 +246,7 @@ export default function BeatStudio() {
           triggerSound(ctx, tr.type, nextTimeRef.current);
         }
       });
-      stepRef.current = (step + 1) % STEPS;
+      stepRef.current = (step + 1) % stepsRef.current;
       nextTimeRef.current += secondsPerStep;
     }
   }, []);
@@ -227,6 +259,13 @@ export default function BeatStudio() {
     playingRef.current = true;
     timerRef.current = setInterval(schedule, 25);
     setPlaying(true);
+
+    if (syncBacking && backingAudioRef.current && backingURL) {
+      try {
+        backingAudioRef.current.currentTime = 0;
+        backingAudioRef.current.play();
+      } catch (e) {}
+    }
   };
 
   const stopPlay = () => {
@@ -234,6 +273,13 @@ export default function BeatStudio() {
     playingRef.current = false;
     setPlaying(false);
     setCurStep(-1);
+
+    if (syncBacking && backingAudioRef.current) {
+      try {
+        backingAudioRef.current.pause();
+        backingAudioRef.current.currentTime = 0;
+      } catch (e) {}
+    }
   };
 
   const togglePlay = () => playing ? stopPlay() : startPlay();
@@ -248,12 +294,12 @@ export default function BeatStudio() {
   };
 
   const clearPattern = () => {
-    setPattern(TRACKS.map(() => Array(STEPS).fill(0)));
+    setPattern(createEmptyPattern(stepsRef.current));
     setStyleName("Custom");
   };
 
   const resetPattern = () => {
-    setPattern(DEFAULT_PATTERN.map(r => [...r]));
+    setPattern(resizePattern(DEFAULT_PATTERN, stepsRef.current));
     setBpm(DEFAULT_BPM);
     setStyleName("Custom");
   };
@@ -269,7 +315,39 @@ export default function BeatStudio() {
 
     setStyleName(name);
     setBpm(preset.bpm);
-    setPattern(preset.pattern.map(r => [...r]));
+    setPattern(resizePattern(preset.pattern, stepsRef.current));
+  };
+
+  const applySteps = (nextSteps) => {
+    const s = Number(nextSteps);
+    if (!AVAILABLE_STEPS.includes(s)) return;
+    setSteps(s);
+    setPattern((p) => resizePattern(p, s));
+    stepRef.current = 0;
+    setCurStep(-1);
+    setStyleName("Custom");
+  };
+
+  const onBackingUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setBackingURL(url);
+  };
+
+  const clearBacking = () => {
+    if (backingAudioRef.current) {
+      try {
+        backingAudioRef.current.pause();
+        backingAudioRef.current.currentTime = 0;
+      } catch (e) {}
+    }
+    if (backingURL) {
+      try {
+        URL.revokeObjectURL(backingURL);
+      } catch (e) {}
+    }
+    setBackingURL(null);
   };
 
   const startMic = async () => {
@@ -331,6 +409,27 @@ export default function BeatStudio() {
           {/* BPM + Controls */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap", justifyContent: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ color: "#aaa", fontSize: 13 }}>Steps</span>
+              <select
+                value={steps}
+                onChange={(e) => applySteps(e.target.value)}
+                style={{
+                  height: 34,
+                  borderRadius: 10,
+                  border: "1px solid #333",
+                  background: "#0f0f1a",
+                  color: "#fff",
+                  padding: "0 10px",
+                  fontWeight: 700,
+                  fontSize: 12,
+                }}
+              >
+                {AVAILABLE_STEPS.map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ color: "#aaa", fontSize: 13 }}>Style</span>
               <select
                 value={styleName}
@@ -368,33 +467,84 @@ export default function BeatStudio() {
           </div>
 
           {/* Step labels */}
-          <div style={{ display: "grid", gridTemplateColumns: "72px repeat(16, 1fr)", gap: 3, marginBottom: 4 }}>
-            <div />
-            {Array.from({length:16},(_,i) => (
-              <div key={i} style={{ textAlign: "center", fontSize: 10, color: i % 4 === 0 ? "#e74c3c" : "#555", fontWeight: i%4===0 ? 700 : 400 }}>
-                {i%4===0 ? (i/4+1) : "·"}
-              </div>
-            ))}
+          <div style={{ overflowX: "auto", paddingBottom: 6 }}>
+            <div style={{ display: "grid", gridTemplateColumns: `72px repeat(${steps}, 34px)`, gap: 3, marginBottom: 4, width: "max-content" }}>
+              <div />
+              {Array.from({length:steps},(_,i) => (
+                <div key={i} style={{ textAlign: "center", fontSize: 10, color: i % 4 === 0 ? "#e74c3c" : "#555", fontWeight: i%4===0 ? 700 : 400, width: 34 }}>
+                  {i%4===0 ? (i/4+1) : "·"}
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Sequencer Grid */}
-          {TRACKS.map((tr, ti) => (
-            <div key={ti} style={{ display: "grid", gridTemplateColumns: "72px repeat(16, 1fr)", gap: 3, marginBottom: 3 }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: 6 }}>
-                <span style={{ fontSize: 11, color: tr.color, fontWeight: 700 }}>{tr.name}</span>
-              </div>
-              {Array.from({length:16},(_,si) => (
-                <button key={si} onClick={() => toggleStep(ti,si)} style={{
-                  height: 34, borderRadius: 5, border: "none", cursor: "pointer",
-                  background: pattern[ti][si]
-                    ? (curStep === si ? "#fff" : tr.color)
-                    : (curStep === si ? "#2a2a40" : "#1a1a2e"),
-                  transition: "background 0.05s",
-                  boxShadow: pattern[ti][si] && curStep===si ? `0 0 8px ${tr.color}` : "none"
-                }} />
+          <div style={{ overflowX: "auto", paddingBottom: 10 }}>
+            <div style={{ width: "max-content" }}>
+              {TRACKS.map((tr, ti) => (
+                <div key={ti} style={{ display: "grid", gridTemplateColumns: `72px repeat(${steps}, 34px)`, gap: 3, marginBottom: 3 }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", paddingRight: 6 }}>
+                    <span style={{ fontSize: 11, color: tr.color, fontWeight: 700 }}>{tr.name}</span>
+                  </div>
+                  {Array.from({length:steps},(_,si) => (
+                    <button key={si} onClick={() => toggleStep(ti,si)} style={{
+                      height: 34, width: 34, borderRadius: 5, border: "none", cursor: "pointer",
+                      background: pattern[ti][si]
+                        ? (curStep === si ? "#fff" : tr.color)
+                        : (curStep === si ? "#2a2a40" : "#1a1a2e"),
+                      transition: "background 0.05s",
+                      boxShadow: pattern[ti][si] && curStep===si ? `0 0 8px ${tr.color}` : "none"
+                    }} />
+                  ))}
+                </div>
               ))}
             </div>
-          ))}
+          </div>
+
+          {/* Backing track */}
+          <div style={{ marginTop: 18, background: "#1a1a2e", borderRadius: 16, padding: 16 }}>
+            <div style={{ color: "#aaa", fontSize: 12, marginBottom: 10, fontWeight: 700 }}>Backing Track (MP3/WAV)</div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+              <input type="file" accept="audio/*" onChange={onBackingUpload} />
+              {backingURL && (
+                <button onClick={clearBacking} style={{
+                  padding: "8px 16px",
+                  borderRadius: 16,
+                  border: "1px solid #555",
+                  background: "transparent",
+                  color: "#aaa",
+                  cursor: "pointer",
+                  fontSize: 12,
+                }}>Remove</button>
+              )}
+              <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#aaa", fontSize: 12 }}>
+                <input type="checkbox" checked={syncBacking} onChange={(e) => setSyncBacking(e.target.checked)} />
+                Sync play/stop with sequencer
+              </label>
+            </div>
+
+            {backingURL && (
+              <div style={{ marginTop: 10 }}>
+                <audio ref={backingAudioRef} controls src={backingURL} style={{ width: "100%" }} />
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 8, flexWrap: "wrap" }}>
+                  <span style={{ color: "#aaa", fontSize: 12 }}>Volume</span>
+                  <input
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.05"
+                    value={backingVol}
+                    onChange={(e) => setBackingVol(+e.target.value)}
+                    style={{ width: 160, accentColor: "#3498db" }}
+                  />
+                  <span style={{ color: "#3498db", fontWeight: 700, fontSize: 12 }}>{Math.round(backingVol * 100)}%</span>
+                </div>
+                <div style={{ color: "#555", fontSize: 11, marginTop: 6, lineHeight: 1.4 }}>
+                  Note: This plays your audio file as a backing track. It does not automatically detect BPM or convert the MP3 into step hits.
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Volume sliders */}
           <div style={{ marginTop: 16 }}>
