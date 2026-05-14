@@ -190,6 +190,7 @@ export default function BeatStudio() {
   const [curStep, setCurStep] = useState(-1);
   const [volumes, setVolumes] = useState(TRACKS.map(() => 0.8));
   const [styleName, setStyleName] = useState("Custom");
+  const [endFill, setEndFill] = useState("None");
   const [backingURL, setBackingURL] = useState(null);
   const [backingVol, setBackingVol] = useState(0.8);
   const [syncBacking, setSyncBacking] = useState(true);
@@ -238,15 +239,53 @@ export default function BeatStudio() {
     while (nextTimeRef.current < ctx.currentTime + 0.1) {
       const step = stepRef.current;
       setCurStep(step);
+
+      const curSteps = stepsRef.current;
+      const fillActive = curSteps === 32 && endFill !== "None";
+      const isFillStep = fillActive && step >= 28;
+
+      const fillExtraHit = (trackType) => {
+        if (!isFillStep) return false;
+
+        // step 28..31 corresponds to beats 29..32 in a 32-step loop.
+        const s = step;
+        if (endFill === "Hat Stutter") {
+          if (trackType === "hihat") return true;
+          if (trackType === "openhat") return s === 31;
+          return false;
+        }
+
+        if (endFill === "Snare Roll") {
+          if (trackType === "snare") return true;
+          if (trackType === "hihat") return s !== 31;
+          return false;
+        }
+
+        if (endFill === "Clap Build") {
+          if (trackType === "clap") return true;
+          if (trackType === "hihat") return s === 29 || s === 31;
+          return false;
+        }
+
+        if (endFill === "Kick Drop") {
+          if (trackType === "kick") return s === 28 || s === 30;
+          if (trackType === "snare") return s === 29;
+          if (trackType === "openhat") return s === 31;
+          return false;
+        }
+
+        return false;
+      };
+
       TRACKS.forEach((tr, i) => {
-        if (patternRef.current[i][step]) {
+        if (patternRef.current[i][step] || fillExtraHit(tr.type)) {
           const g = ctx.createGain();
           g.gain.value = volRef.current[i];
           g.connect(ctx.destination);
           triggerSound(ctx, tr.type, nextTimeRef.current);
         }
       });
-      stepRef.current = (step + 1) % stepsRef.current;
+      stepRef.current = (step + 1) % curSteps;
       nextTimeRef.current += secondsPerStep;
     }
   }, []);
@@ -326,6 +365,10 @@ export default function BeatStudio() {
     stepRef.current = 0;
     setCurStep(-1);
     setStyleName("Custom");
+
+    if (s !== 32) {
+      setEndFill("None");
+    }
   };
 
   const onBackingUpload = (e) => {
@@ -429,6 +472,36 @@ export default function BeatStudio() {
                 ))}
               </select>
             </div>
+
+            {steps === 32 && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ color: "#aaa", fontSize: 13 }}>End Fill</span>
+                <select
+                  value={endFill}
+                  onChange={(e) => setEndFill(e.target.value)}
+                  style={{
+                    height: 34,
+                    borderRadius: 10,
+                    border: "1px solid #333",
+                    background: "#0f0f1a",
+                    color: "#fff",
+                    padding: "0 10px",
+                    fontWeight: 700,
+                    fontSize: 12,
+                  }}
+                >
+                  {[
+                    "None",
+                    "Hat Stutter",
+                    "Snare Roll",
+                    "Clap Build",
+                    "Kick Drop",
+                  ].map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ color: "#aaa", fontSize: 13 }}>Style</span>
               <select
