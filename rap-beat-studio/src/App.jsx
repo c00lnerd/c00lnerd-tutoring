@@ -210,6 +210,7 @@ export default function BeatStudio() {
   const bpmRef = useRef(bpm);
   const volRef = useRef(volumes);
   const stepsRef = useRef(steps);
+  const endFillRef = useRef(endFill);
   const playingRef = useRef(false);
   const mediaRecRef = useRef(null);
   const chunksRef = useRef([]);
@@ -221,6 +222,7 @@ export default function BeatStudio() {
   useEffect(() => { bpmRef.current = bpm; }, [bpm]);
   useEffect(() => { volRef.current = volumes; }, [volumes]);
   useEffect(() => { stepsRef.current = steps; }, [steps]);
+  useEffect(() => { endFillRef.current = endFill; }, [endFill]);
 
   useEffect(() => {
     const el = backingAudioRef.current;
@@ -241,7 +243,8 @@ export default function BeatStudio() {
       setCurStep(step);
 
       const curSteps = stepsRef.current;
-      const fillActive = curSteps === 32 && endFill !== "None";
+      const curEndFill = endFillRef.current;
+      const fillActive = curSteps === 32 && curEndFill !== "None";
       const isFillStep = fillActive && step >= 28;
 
       const fillExtraHit = (trackType) => {
@@ -249,25 +252,25 @@ export default function BeatStudio() {
 
         // step 28..31 corresponds to beats 29..32 in a 32-step loop.
         const s = step;
-        if (endFill === "Hat Stutter") {
+        if (curEndFill === "Hat Stutter") {
           if (trackType === "hihat") return true;
           if (trackType === "openhat") return s === 31;
           return false;
         }
 
-        if (endFill === "Snare Roll") {
+        if (curEndFill === "Snare Roll") {
           if (trackType === "snare") return true;
           if (trackType === "hihat") return s !== 31;
           return false;
         }
 
-        if (endFill === "Clap Build") {
+        if (curEndFill === "Clap Build") {
           if (trackType === "clap") return true;
           if (trackType === "hihat") return s === 29 || s === 31;
           return false;
         }
 
-        if (endFill === "Kick Drop") {
+        if (curEndFill === "Kick Drop") {
           if (trackType === "kick") return s === 28 || s === 30;
           if (trackType === "snare") return s === 29;
           if (trackType === "openhat") return s === 31;
