@@ -359,9 +359,9 @@ function createAudioCtx() {
   return new (window.AudioContext || window.webkitAudioContext)();
 }
 
-function playKick(ctx, t) {
+function playKick(ctx, t, out) {
   const o = ctx.createOscillator(), g = ctx.createGain();
-  o.connect(g); g.connect(ctx.destination);
+  o.connect(g); g.connect(out || ctx.destination);
   o.frequency.setValueAtTime(150, t);
   o.frequency.exponentialRampToValueAtTime(0.001, t + 0.5);
   g.gain.setValueAtTime(1, t);
@@ -369,62 +369,62 @@ function playKick(ctx, t) {
   o.start(t); o.stop(t + 0.5);
 }
 
-function playSnare(ctx, t) {
+function playSnare(ctx, t, out) {
   const buf = ctx.createBuffer(1, ctx.sampleRate * 0.2, ctx.sampleRate);
   const d = buf.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   const src = ctx.createBufferSource(), g = ctx.createGain();
   const f = ctx.createBiquadFilter();
   f.type = "highpass"; f.frequency.value = 1000;
-  src.buffer = buf; src.connect(f); f.connect(g); g.connect(ctx.destination);
+  src.buffer = buf; src.connect(f); f.connect(g); g.connect(out || ctx.destination);
   g.gain.setValueAtTime(0.8, t);
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
   src.start(t); src.stop(t + 0.2);
 }
 
-function playHihat(ctx, t, open = false) {
+function playHihat(ctx, t, open = false, out) {
   const buf = ctx.createBuffer(1, ctx.sampleRate * (open ? 0.3 : 0.08), ctx.sampleRate);
   const d = buf.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   const src = ctx.createBufferSource(), g = ctx.createGain();
   const f = ctx.createBiquadFilter();
   f.type = "highpass"; f.frequency.value = 7000;
-  src.buffer = buf; src.connect(f); f.connect(g); g.connect(ctx.destination);
+  src.buffer = buf; src.connect(f); f.connect(g); g.connect(out || ctx.destination);
   g.gain.setValueAtTime(0.4, t);
   g.gain.exponentialRampToValueAtTime(0.001, t + (open ? 0.3 : 0.08));
   src.start(t); src.stop(t + (open ? 0.3 : 0.08));
 }
 
-function playBass(ctx, t) {
+function playBass(ctx, t, out) {
   const o = ctx.createOscillator(), g = ctx.createGain();
-  o.type = "sawtooth"; o.connect(g); g.connect(ctx.destination);
+  o.type = "sawtooth"; o.connect(g); g.connect(out || ctx.destination);
   o.frequency.setValueAtTime(80, t);
   g.gain.setValueAtTime(0.5, t);
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
   o.start(t); o.stop(t + 0.3);
 }
 
-function playClap(ctx, t) {
+function playClap(ctx, t, out) {
   const buf = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
   const d = buf.getChannelData(0);
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   const src = ctx.createBufferSource(), g = ctx.createGain();
   const f = ctx.createBiquadFilter();
   f.type = "bandpass"; f.frequency.value = 1200; f.Q.value = 0.5;
-  src.buffer = buf; src.connect(f); f.connect(g); g.connect(ctx.destination);
+  src.buffer = buf; src.connect(f); f.connect(g); g.connect(out || ctx.destination);
   g.gain.setValueAtTime(0.7, t);
   g.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
   src.start(t); src.stop(t + 0.1);
 }
 
-function triggerSound(ctx, type, t) {
+function triggerSound(ctx, type, t, out) {
   try {
-    if (type === "kick") playKick(ctx, t);
-    else if (type === "snare") playSnare(ctx, t);
-    else if (type === "hihat") playHihat(ctx, t, false);
-    else if (type === "openhat") playHihat(ctx, t, true);
-    else if (type === "bass") playBass(ctx, t);
-    else if (type === "clap") playClap(ctx, t);
+    if (type === "kick") playKick(ctx, t, out);
+    else if (type === "snare") playSnare(ctx, t, out);
+    else if (type === "hihat") playHihat(ctx, t, false, out);
+    else if (type === "openhat") playHihat(ctx, t, true, out);
+    else if (type === "bass") playBass(ctx, t, out);
+    else if (type === "clap") playClap(ctx, t, out);
   } catch(e) {}
 }
 
@@ -455,6 +455,8 @@ export default function BeatStudio() {
   const [recText, setRecText] = useState("");
   const [micRecording, setMicRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
+  const [mixRecording, setMixRecording] = useState(false);
+  const [mixURL, setMixURL] = useState(null);
   const [tab, setTab] = useState("beats");
   const [mixVolBeat, setMixVolBeat] = useState(0.8);
   const [mixVolVoice, setMixVolVoice] = useState(0.9);
@@ -474,6 +476,11 @@ export default function BeatStudio() {
   const chunksRef = useRef([]);
   const beatGainRef = useRef(null);
   const voiceGainRef = useRef(null);
+  const masterGainRef = useRef(null);
+  const recordDestRef = useRef(null);
+  const backingSourceRef = useRef(null);
+  const micStreamRef = useRef(null);
+  const micSourceRef = useRef(null);
   const backingAudioRef = useRef(null);
 
   useEffect(() => {
@@ -493,9 +500,56 @@ export default function BeatStudio() {
   }, [backingVol]);
 
   const getCtx = () => {
-    if (!ctxRef.current) ctxRef.current = createAudioCtx();
+    if (!ctxRef.current) {
+      const ctx = createAudioCtx();
+
+      // Master mix bus so we can record (and apply mix volumes).
+      const master = ctx.createGain();
+      master.gain.value = 1;
+      master.connect(ctx.destination);
+
+      const recordDest = ctx.createMediaStreamDestination();
+      master.connect(recordDest);
+
+      const beat = ctx.createGain();
+      beat.gain.value = mixVolBeat;
+      beat.connect(master);
+
+      const voice = ctx.createGain();
+      voice.gain.value = mixVolVoice;
+      voice.connect(master);
+
+      masterGainRef.current = master;
+      recordDestRef.current = recordDest;
+      beatGainRef.current = beat;
+      voiceGainRef.current = voice;
+
+      ctxRef.current = ctx;
+    }
     return ctxRef.current;
   };
+
+  useEffect(() => {
+    if (beatGainRef.current) beatGainRef.current.gain.value = mixVolBeat;
+  }, [mixVolBeat]);
+
+  useEffect(() => {
+    if (voiceGainRef.current) voiceGainRef.current.gain.value = mixVolVoice;
+  }, [mixVolVoice]);
+
+  useEffect(() => {
+    // Route backing audio element through the AudioContext so it can be recorded in the mix.
+    const el = backingAudioRef.current;
+    if (!el || !backingURL) return;
+    const ctx = getCtx();
+    try {
+      if (!backingSourceRef.current) {
+        const src = ctx.createMediaElementSource(el);
+        src.connect(beatGainRef.current || ctx.destination);
+        backingSourceRef.current = src;
+      }
+    } catch (e) {}
+  }, [backingURL]);
 
   const schedule = useCallback(() => {
     const ctx = getCtx();
@@ -546,8 +600,8 @@ export default function BeatStudio() {
         if (patternRef.current[i][step] || fillExtraHit(tr.type)) {
           const g = ctx.createGain();
           g.gain.value = volRef.current[i];
-          g.connect(ctx.destination);
-          triggerSound(ctx, tr.type, nextTimeRef.current);
+          g.connect(beatGainRef.current || ctx.destination);
+          triggerSound(ctx, tr.type, nextTimeRef.current, g);
         }
       });
       stepRef.current = (step + 1) % curSteps;
@@ -823,6 +877,58 @@ export default function BeatStudio() {
   const stopMic = () => {
     mediaRecRef.current?.stop();
     setMicRecording(false);
+  };
+
+  const ensureMicInMix = async () => {
+    if (micStreamRef.current) return;
+    const ctx = getCtx();
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    micStreamRef.current = stream;
+    try {
+      const src = ctx.createMediaStreamSource(stream);
+      micSourceRef.current = src;
+      src.connect(voiceGainRef.current || ctx.destination);
+    } catch (e) {}
+  };
+
+  const stopMicInMix = () => {
+    if (micStreamRef.current) {
+      try {
+        micStreamRef.current.getTracks().forEach(t => t.stop());
+      } catch (e) {}
+    }
+    micStreamRef.current = null;
+    micSourceRef.current = null;
+  };
+
+  const startMixRecord = async () => {
+    try {
+      const ctx = getCtx();
+      if (ctx.state === "suspended") await ctx.resume();
+      await ensureMicInMix();
+
+      const dest = recordDestRef.current;
+      if (!dest) return;
+
+      const rec = new MediaRecorder(dest.stream);
+      chunksRef.current = [];
+      rec.ondataavailable = e => chunksRef.current.push(e.data);
+      rec.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        setMixURL(URL.createObjectURL(blob));
+        stopMicInMix();
+      };
+      rec.start();
+      mediaRecRef.current = rec;
+      setMixRecording(true);
+    } catch (e) {
+      alert("Could not start mix recording. Make sure mic access is allowed.");
+    }
+  };
+
+  const stopMixRecord = () => {
+    mediaRecRef.current?.stop();
+    setMixRecording(false);
   };
 
   const tips = [
@@ -1333,6 +1439,37 @@ export default function BeatStudio() {
                 }}>⬇ Download Vocals</a>
               </div>
             )}
+
+            <div style={{ marginTop: 18, paddingTop: 18, borderTop: "1px solid #232343" }}>
+              <div style={{ color: "#3498db", fontWeight: 700, marginBottom: 10 }}>🎚️ Record Full Mix (Voice + Beat)</div>
+              <p style={{ color: "#aaa", fontSize: 12, marginBottom: 14 }}>
+                This records what you hear: your beat + backing track + your microphone into one downloadable file.
+              </p>
+              <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+                <button onClick={mixRecording ? stopMixRecord : startMixRecord} style={{
+                  padding: "12px 28px", borderRadius: 24, border: "none", cursor: "pointer",
+                  background: mixRecording ? "#e74c3c" : "linear-gradient(90deg,#3498db,#2ecc71)",
+                  color: "#fff", fontWeight: 800, fontSize: 15
+                }}>
+                  {mixRecording ? "⏹ Stop Mix" : "⏺ Record Mix"}
+                </button>
+              </div>
+              {mixRecording && (
+                <div style={{ textAlign: "center", marginTop: 12, color: "#e74c3c", fontWeight: 700, animation: "pulse 1s infinite" }}>
+                  🔴 Recording mix...
+                </div>
+              )}
+              {mixURL && (
+                <div style={{ marginTop: 16 }}>
+                  <div style={{ color: "#2ecc71", fontWeight: 700, marginBottom: 8 }}>✅ Mix saved!</div>
+                  <audio controls src={mixURL} style={{ width: "100%" }} />
+                  <a href={mixURL} download="my_mix.webm" style={{
+                    display: "inline-block", marginTop: 8, padding: "6px 16px",
+                    background: "#2ecc71", borderRadius: 12, color: "#fff", fontSize: 12, textDecoration: "none", fontWeight: 700
+                  }}>⬇ Download Mix</a>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
