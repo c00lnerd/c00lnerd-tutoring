@@ -457,6 +457,7 @@ export default function BeatStudio() {
   const [audioURL, setAudioURL] = useState(null);
   const [mixRecording, setMixRecording] = useState(false);
   const [mixURL, setMixURL] = useState(null);
+  const [syncRecordingWithBeat, setSyncRecordingWithBeat] = useState(true);
   const [tab, setTab] = useState("beats");
   const [mixVolBeat, setMixVolBeat] = useState(0.8);
   const [mixVolVoice, setMixVolVoice] = useState(0.9);
@@ -858,6 +859,8 @@ export default function BeatStudio() {
 
   const startMic = async () => {
     try {
+      const ctx = getCtx();
+      if (ctx.state === "suspended") await ctx.resume();
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const rec = new MediaRecorder(stream);
       chunksRef.current = [];
@@ -869,6 +872,14 @@ export default function BeatStudio() {
       rec.start();
       mediaRecRef.current = rec;
       setMicRecording(true);
+
+      if (syncRecordingWithBeat) {
+        // Restart beat/backing so the recorded vocal starts aligned to step 1.
+        try { stopPlay(); } catch (e) {}
+        setTimeout(() => {
+          try { startPlay(); } catch (e) {}
+        }, 60);
+      }
     } catch(e) {
       alert("Microphone access denied. Please allow mic access to record.");
     }
@@ -921,6 +932,13 @@ export default function BeatStudio() {
       rec.start();
       mediaRecRef.current = rec;
       setMixRecording(true);
+
+      if (syncRecordingWithBeat) {
+        try { stopPlay(); } catch (e) {}
+        setTimeout(() => {
+          try { startPlay(); } catch (e) {}
+        }, 60);
+      }
     } catch (e) {
       alert("Could not start mix recording. Make sure mic access is allowed.");
     }
@@ -1415,6 +1433,16 @@ export default function BeatStudio() {
             <p style={{ color: "#aaa", fontSize: 12, marginBottom: 16 }}>
               Hit Play on the Beats tab to hear your beat while recording. Then press Record here to capture your voice!
             </p>
+            <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
+              <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#aaa", fontSize: 12 }}>
+                <input
+                  type="checkbox"
+                  checked={syncRecordingWithBeat}
+                  onChange={(e) => setSyncRecordingWithBeat(e.target.checked)}
+                />
+                Sync recording with beat (restart from step 1)
+              </label>
+            </div>
             <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
               <button onClick={micRecording ? stopMic : startMic} style={{
                 padding: "12px 28px", borderRadius: 24, border: "none", cursor: "pointer",
