@@ -332,6 +332,29 @@ const STYLE_PRESETS = {
   },
 };
 
+const SAVED_BEATS_KEY = "rap_beat_studio_saved_beats_v1";
+
+function safeJsonParse(s) {
+  try {
+    return JSON.parse(s);
+  } catch (e) {
+    return null;
+  }
+}
+
+function loadSavedBeats() {
+  if (typeof window === "undefined") return [];
+  const raw = window.localStorage.getItem(SAVED_BEATS_KEY);
+  const parsed = raw ? safeJsonParse(raw) : null;
+  if (!Array.isArray(parsed)) return [];
+  return parsed;
+}
+
+function persistSavedBeats(items) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(SAVED_BEATS_KEY, JSON.stringify(items));
+}
+
 function createAudioCtx() {
   return new (window.AudioContext || window.webkitAudioContext)();
 }
@@ -423,6 +446,12 @@ export default function BeatStudio() {
   const [analysis, setAnalysis] = useState(null);
   const [analysisSensitivity, setAnalysisSensitivity] = useState(1.0);
   const [analysisOverwrite, setAnalysisOverwrite] = useState(true);
+  const [savedBeats, setSavedBeats] = useState(() => loadSavedBeats());
+  const [saveBeatName, setSaveBeatName] = useState("");
+  const [selectedBeatId, setSelectedBeatId] = useState("");
+  const [exportJson, setExportJson] = useState("");
+  const [importJson, setImportJson] = useState("");
+  const [saveBeatError, setSaveBeatError] = useState(null);
   const [recText, setRecText] = useState("");
   const [micRecording, setMicRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
@@ -446,6 +475,10 @@ export default function BeatStudio() {
   const beatGainRef = useRef(null);
   const voiceGainRef = useRef(null);
   const backingAudioRef = useRef(null);
+
+  useEffect(() => {
+    persistSavedBeats(savedBeats);
+  }, [savedBeats]);
 
   useEffect(() => { patternRef.current = pattern; }, [pattern]);
   useEffect(() => { bpmRef.current = bpm; }, [bpm]);
@@ -611,6 +644,106 @@ export default function BeatStudio() {
     setBackingFile(file);
     setAnalysis(null);
     setAnalysisError(null);
+  };
+
+  const makeBeatSnapshot = () => {
+    return {
+      steps: stepsRef.current,
+      bpm: bpmRef.current,
+      pattern: resizePattern(patternRef.current, stepsRef.current),
+      endFill: endFillRef.current,
+      styleName,
+    };
+  };
+
+  const saveCurrentBeat = () => {
+    const name = (saveBeatName || "").trim();
+    if (!name) {
+      setSaveBeatError("Enter a name to save this beat.");
+      return;
+    }
+    setSaveBeatError(null);
+    const id = `beat_${Date.now()}_${Math.floor(Math.random() * 1e9)}`;
+    const item = {
+      id,
+      name,
+      createdAt: Date.now(),
+      data: makeBeatSnapshot(),
+    };
+    setSavedBeats(prev => [item, ...prev]);
+    setSelectedBeatId(id);
+    setSaveBeatName("");
+    setExportJson("");
+  };
+
+  const loadBeatById = (id) => {
+    const item = savedBeats.find(b => b.id === id);
+    if (!item) return;
+    const d = item.data || {};
+    const nextSteps = d.steps === 32 ? 32 : 16;
+    const nextPattern = resizePattern(d.pattern || [], nextSteps);
+
+    stop();
+    setSteps(nextSteps);
+    stepsRef.current = nextSteps;
+    setPattern(nextPattern);
+    setBpm(Math.round(d.bpm || DEFAULT_BPM));
+    bpmRef.current = Math.round(d.bpm || DEFAULT_BPM);
+
+    setEndFill(d.endFill || "None");
+    setStyleName(d.styleName || "Custom");
+    setExportJson("");
+  };
+
+  const deleteBeatById = (id) => {
+    setSavedBeats(prev => prev.filter(b => b.id !== id));
+    if (selectedBeatId === id) {
+      setSelectedBeatId("");
+      setExportJson("");
+    }
+  };
+
+  const exportSelectedBeat = () => {
+    const item = savedBeats.find(b => b.id === selectedBeatId);
+    if (!item) return;
+    setExportJson(JSON.stringify(item, null, 2));
+  };
+
+  const importBeatFromJson = () => {
+    const parsed = safeJsonParse(importJson);
+    if (!parsed) {
+      setSaveBeatError("Invalid JSON.");
+      return;
+    }
+
+    const asItem = (() => {
+      if (parsed && parsed.id && parsed.data) return parsed;
+      if (parsed && parsed.steps && parsed.pattern) {
+        return {
+          id: `beat_${Date.now()}_${Math.floor(Math.random() * 1e9)}`,
+          name: parsed.name || `Imported ${new Date().toLocaleString()}`,
+          createdAt: Date.now(),
+          data: {
+            steps: parsed.steps,
+            bpm: parsed.bpm,
+            pattern: parsed.pattern,
+            endFill: parsed.endFill,
+            styleName: parsed.styleName,
+          }
+        };
+      }
+      return null;
+    })();
+
+    if (!asItem) {
+      setSaveBeatError("JSON format not recognized.");
+      return;
+    }
+    setSaveBeatError(null);
+    setSavedBeats(prev => [asItem, ...prev]);
+    setSelectedBeatId(asItem.id);
+    setImportJson("");
+    setExportJson("");
   };
 
   const clearBacking = () => {
@@ -966,6 +1099,179 @@ export default function BeatStudio() {
                 </div>
               </div>
             )}
+          </div>
+
+          <div style={{ marginTop: 18, background: "#1a1a2e", borderRadius: 16, padding: 16 }}>
+            <div style={{ color: "#aaa", fontSize: 12, marginBottom: 10, fontWeight: 700 }}>Saved Beats</div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+              <input
+                value={saveBeatName}
+                onChange={(e) => setSaveBeatName(e.target.value)}
+                placeholder="Name this beat"
+                style={{
+                  height: 34,
+                  borderRadius: 10,
+                  border: "1px solid #333",
+                  background: "#0f0f1a",
+                  color: "#fff",
+                  padding: "0 10px",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  width: 220,
+                }}
+              />
+              <button
+                onClick={saveCurrentBeat}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 16,
+                  border: "none",
+                  cursor: "pointer",
+                  background: "linear-gradient(90deg,#e74c3c,#9b59b6)",
+                  color: "#fff",
+                  fontWeight: 900,
+                  fontSize: 12,
+                }}
+              >
+                Save
+              </button>
+
+              <select
+                value={selectedBeatId}
+                onChange={(e) => { setSelectedBeatId(e.target.value); setExportJson(""); }}
+                style={{
+                  height: 34,
+                  borderRadius: 10,
+                  border: "1px solid #333",
+                  background: "#0f0f1a",
+                  color: "#fff",
+                  padding: "0 10px",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  minWidth: 260,
+                }}
+              >
+                <option value="">Select a saved beat…</option>
+                {savedBeats.map((b) => (
+                  <option key={b.id} value={b.id}>{b.name}</option>
+                ))}
+              </select>
+
+              <button
+                onClick={() => loadBeatById(selectedBeatId)}
+                disabled={!selectedBeatId}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 16,
+                  border: "none",
+                  cursor: selectedBeatId ? "pointer" : "not-allowed",
+                  background: selectedBeatId ? "#2ecc71" : "#444",
+                  color: "#0f0f1a",
+                  fontWeight: 900,
+                  fontSize: 12,
+                }}
+              >
+                Load
+              </button>
+
+              <button
+                onClick={() => deleteBeatById(selectedBeatId)}
+                disabled={!selectedBeatId}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 16,
+                  border: "1px solid #555",
+                  cursor: selectedBeatId ? "pointer" : "not-allowed",
+                  background: "transparent",
+                  color: "#aaa",
+                  fontWeight: 800,
+                  fontSize: 12,
+                }}
+              >
+                Delete
+              </button>
+
+              <button
+                onClick={exportSelectedBeat}
+                disabled={!selectedBeatId}
+                style={{
+                  padding: "10px 16px",
+                  borderRadius: 16,
+                  border: "1px solid #555",
+                  cursor: selectedBeatId ? "pointer" : "not-allowed",
+                  background: "transparent",
+                  color: "#aaa",
+                  fontWeight: 800,
+                  fontSize: 12,
+                }}
+              >
+                Export
+              </button>
+            </div>
+
+            {saveBeatError && (
+              <div style={{ color: "#ff8080", fontSize: 12, marginTop: 8 }}>
+                {saveBeatError}
+              </div>
+            )}
+
+            <div style={{ marginTop: 10, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+              <div>
+                <div style={{ color: "#555", fontSize: 11, marginBottom: 6 }}>Export JSON</div>
+                <textarea
+                  value={exportJson}
+                  readOnly
+                  rows={6}
+                  style={{
+                    width: "100%",
+                    borderRadius: 10,
+                    border: "1px solid #333",
+                    background: "#0f0f1a",
+                    color: "#fff",
+                    padding: 10,
+                    fontSize: 11,
+                    resize: "vertical",
+                  }}
+                />
+              </div>
+              <div>
+                <div style={{ color: "#555", fontSize: 11, marginBottom: 6 }}>Import JSON</div>
+                <textarea
+                  value={importJson}
+                  onChange={(e) => setImportJson(e.target.value)}
+                  rows={6}
+                  placeholder="Paste beat JSON here"
+                  style={{
+                    width: "100%",
+                    borderRadius: 10,
+                    border: "1px solid #333",
+                    background: "#0f0f1a",
+                    color: "#fff",
+                    padding: 10,
+                    fontSize: 11,
+                    resize: "vertical",
+                  }}
+                />
+                <div style={{ marginTop: 8 }}>
+                  <button
+                    onClick={importBeatFromJson}
+                    disabled={!importJson.trim()}
+                    style={{
+                      padding: "8px 16px",
+                      borderRadius: 16,
+                      border: "none",
+                      cursor: importJson.trim() ? "pointer" : "not-allowed",
+                      background: importJson.trim() ? "#3498db" : "#444",
+                      color: "#fff",
+                      fontWeight: 900,
+                      fontSize: 12,
+                    }}
+                  >
+                    Import
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Volume sliders */}
