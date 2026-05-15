@@ -40,6 +40,229 @@ function resizePattern(pattern, steps) {
   return out;
 }
 
+function clamp01(x) {
+  return Math.max(0, Math.min(1, x));
+}
+
+function findTrackIndex(type) {
+  return TRACKS.findIndex(t => t.type === type);
+}
+
+function mean(arr) {
+  if (!arr.length) return 0;
+  let s = 0;
+  for (let i = 0; i < arr.length; i++) s += arr[i];
+  return s / arr.length;
+}
+
+function std(arr) {
+  if (arr.length < 2) return 0;
+  const m = mean(arr);
+  let v = 0;
+  for (let i = 0; i < arr.length; i++) {
+    const d = arr[i] - m;
+    v += d * d;
+  }
+  return Math.sqrt(v / (arr.length - 1));
+}
+
+function lowpass1Pole(x, a, state) {
+  state.v = state.v + a * (x - state.v);
+  return state.v;
+}
+
+function estimateBpmFromOnsetCurve(onset, sampleRate, hop) {
+  // Autocorrelation over onset strength curve.
+  const minBpm = 60;
+  const maxBpm = 180;
+  const minLag = Math.floor((60 * sampleRate) / (maxBpm * hop));
+  const maxLag = Math.floor((60 * sampleRate) / (minBpm * hop));
+  const n = onset.length;
+
+  // Normalize (zero-mean).
+  const m = mean(onset);
+  const x = new Float32Array(n);
+  for (let i = 0; i < n; i++) x[i] = onset[i] - m;
+
+  let bestLag = 0;
+  let bestScore = -Infinity;
+  for (let lag = minLag; lag <= maxLag; lag++) {
+    let s = 0;
+    for (let i = 0; i < n - lag; i++) {
+      s += x[i] * x[i + lag];
+    }
+    if (s > bestScore) {
+      bestScore = s;
+      bestLag = lag;
+    }
+  }
+
+  if (!bestLag) return null;
+  const bpm = (60 * sampleRate) / (bestLag * hop);
+  return bpm;
+}
+
+function peakPick(onset, threshold, minDistanceFrames) {
+  const peaks = [];
+  let lastPeak = -Infinity;
+  for (let i = 1; i < onset.length - 1; i++) {
+    const v = onset[i];
+    if (v < threshold) continue;
+    if (v <= onset[i - 1] || v <= onset[i + 1]) continue;
+    if (i - lastPeak < minDistanceFrames) continue;
+    peaks.push(i);
+    lastPeak = i;
+  }
+  return peaks;
+}
+
+async function analyzeAudioFile(file, steps, sensitivity) {
+  const arrayBuffer = await file.arrayBuffer();
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+
+  const sr = audioBuffer.sampleRate;
+  const ch0 = audioBuffer.getChannelData(0);
+  const ch1 = audioBuffer.numberOfChannels > 1 ? audioBuffer.getChannelData(1) : null;
+  const len = audioBuffer.length;
+
+  // Mix to mono.
+  const mono = new Float32Array(len);
+  if (ch1) {
+    for (let i = 0; i < len; i++) mono[i] = 0.5 * (ch0[i] + ch1[i]);
+  } else {
+    mono.set(ch0);
+  }
+
+  // Frame parameters.
+  const frameSize = 1024;
+  const hop = 256;
+  const frames = Math.floor((len - frameSize) / hop);
+
+  // Band-ish envelopes using simple one-pole filters.
+  // These are heuristics; tuned for drum loops.
+  const lpState = { v: 0 };
+  const hpState = { v: 0 };
+  const midLpState = { v: 0 };
+  const midHpState = { v: 0 };
+
+  // Filter coefficients (0..1). Smaller = slower cutoff.
+  // Derived empirically for ~44.1k; still works decently across SR.
+  const aKick = 2 * Math.PI * 140 / sr; // lowpass ~140Hz
+  const aHatLp = 2 * Math.PI * 8000 / sr; // lowpass for mid chain
+  const aMidHp = 2 * Math.PI * 180 / sr; // highpass ~180Hz
+  const aSmooth = 2 * Math.PI * 10 / sr; // envelope smoothing
+
+  const envLow = new Float32Array(frames);
+  const envMid = new Float32Array(frames);
+  const envHigh = new Float32Array(frames);
+  const onset = new Float32Array(frames);
+
+  let prevEnergy = 0;
+  let envLowState = { v: 0 };
+  let envMidState = { v: 0 };
+  let envHighState = { v: 0 };
+
+  for (let f = 0; f < frames; f++) {
+    const start = f * hop;
+    let eLow = 0, eMid = 0, eHigh = 0;
+    for (let i = 0; i < frameSize; i++) {
+      const s = mono[start + i] || 0;
+
+      // Low band (kick-ish): lowpass.
+      const low = lowpass1Pole(s, aKick, lpState);
+
+      // High band (hat-ish): highpass by subtracting lowpass @ ~8k-ish surrogate.
+      const midBase = lowpass1Pole(s, aHatLp, midLpState);
+      const high = s - midBase;
+
+      // Mid band (snare-ish): highpass then lowpass-ish.
+      const midHp = (midBase - lowpass1Pole(midBase, aMidHp, midHpState));
+      const mid = midHp;
+
+      eLow += low * low;
+      eMid += mid * mid;
+      eHigh += high * high;
+    }
+
+    // Simple envelope smoothing.
+    const lowEnv = lowpass1Pole(Math.sqrt(eLow / frameSize), aSmooth, envLowState);
+    const midEnv = lowpass1Pole(Math.sqrt(eMid / frameSize), aSmooth, envMidState);
+    const highEnv = lowpass1Pole(Math.sqrt(eHigh / frameSize), aSmooth, envHighState);
+
+    envLow[f] = lowEnv;
+    envMid[f] = midEnv;
+    envHigh[f] = highEnv;
+
+    const energy = lowEnv + midEnv + highEnv;
+    const diff = Math.max(0, energy - prevEnergy);
+    onset[f] = diff;
+    prevEnergy = energy;
+  }
+
+  // Peak picking.
+  const onsetArr = Array.from(onset);
+  const thr = mean(onsetArr) + sensitivity * std(onsetArr);
+  const minDist = Math.floor((0.06 * sr) / hop); // ~60ms
+  const peakFrames = peakPick(onset, thr, minDist);
+
+  // BPM.
+  let bpm = estimateBpmFromOnsetCurve(onset, sr, hop);
+  if (!bpm || !Number.isFinite(bpm)) bpm = 120;
+  // Fold BPM into sane range.
+  while (bpm < 60) bpm *= 2;
+  while (bpm > 180) bpm /= 2;
+
+  // Convert peaks to times and classify.
+  const hits = [];
+  for (const pf of peakFrames) {
+    const t = (pf * hop) / sr;
+
+    // Energy ratios at that frame.
+    const l = envLow[pf] + 1e-8;
+    const mE = envMid[pf] + 1e-8;
+    const h = envHigh[pf] + 1e-8;
+    const total = l + mE + h;
+    const rl = l / total;
+    const rm = mE / total;
+    const rh = h / total;
+
+    let kind = "snare";
+    if (rl > 0.55) kind = "kick";
+    else if (rh > 0.55) kind = "hihat";
+    else if (rm >= rl && rm >= rh) kind = "snare";
+
+    hits.push({ t, kind });
+  }
+
+  // Quantize to steps.
+  const secondsPerBeat = 60 / bpm;
+  const secondsPerStep = secondsPerBeat / 4;
+  const startTime = hits.length ? hits[0].t : 0;
+
+  const kickSteps = new Set();
+  const snareSteps = new Set();
+  const hatSteps = new Set();
+  for (const h of hits) {
+    const rel = h.t - startTime;
+    const step = ((Math.round(rel / secondsPerStep) % steps) + steps) % steps;
+    if (h.kind === "kick") kickSteps.add(step);
+    else if (h.kind === "hihat") hatSteps.add(step);
+    else snareSteps.add(step);
+  }
+
+  try { ctx.close(); } catch (e) {}
+
+  return {
+    bpm,
+    steps,
+    kick: Array.from(kickSteps).sort((a,b) => a-b),
+    snare: Array.from(snareSteps).sort((a,b) => a-b),
+    hihat: Array.from(hatSteps).sort((a,b) => a-b),
+    hitCount: hits.length,
+  };
+}
+
 const STYLE_PRESETS = {
   "Classic Boom Bap": {
     bpm: 92,
@@ -192,8 +415,14 @@ export default function BeatStudio() {
   const [styleName, setStyleName] = useState("Custom");
   const [endFill, setEndFill] = useState("None");
   const [backingURL, setBackingURL] = useState(null);
+  const [backingFile, setBackingFile] = useState(null);
   const [backingVol, setBackingVol] = useState(0.8);
   const [syncBacking, setSyncBacking] = useState(true);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState(null);
+  const [analysis, setAnalysis] = useState(null);
+  const [analysisSensitivity, setAnalysisSensitivity] = useState(1.0);
+  const [analysisOverwrite, setAnalysisOverwrite] = useState(true);
   const [recText, setRecText] = useState("");
   const [micRecording, setMicRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
@@ -379,6 +608,9 @@ export default function BeatStudio() {
     if (!file) return;
     const url = URL.createObjectURL(file);
     setBackingURL(url);
+    setBackingFile(file);
+    setAnalysis(null);
+    setAnalysisError(null);
   };
 
   const clearBacking = () => {
@@ -394,6 +626,47 @@ export default function BeatStudio() {
       } catch (e) {}
     }
     setBackingURL(null);
+    setBackingFile(null);
+    setAnalysis(null);
+    setAnalysisError(null);
+  };
+
+  const runAnalysis = async () => {
+    if (!backingFile) return;
+    setAnalyzing(true);
+    setAnalysisError(null);
+    try {
+      const res = await analyzeAudioFile(backingFile, stepsRef.current, analysisSensitivity);
+      setAnalysis(res);
+    } catch (e) {
+      setAnalysisError("Analysis failed. Try a shorter/cleaner loop (WAV works best). ");
+    } finally {
+      setAnalyzing(false);
+    }
+  };
+
+  const applyAnalysis = () => {
+    if (!analysis) return;
+    const kickI = findTrackIndex("kick");
+    const snareI = findTrackIndex("snare");
+    const hatI = findTrackIndex("hihat");
+    if (kickI < 0 || snareI < 0 || hatI < 0) return;
+
+    setBpm(Math.round(analysis.bpm));
+
+    setPattern((prev) => {
+      const curSteps = stepsRef.current;
+      const base = analysisOverwrite ? createEmptyPattern(curSteps) : resizePattern(prev, curSteps);
+      const next = base.map(r => [...r]);
+
+      for (const s of analysis.kick) next[kickI][s] = 1;
+      for (const s of analysis.snare) next[snareI][s] = 1;
+      for (const s of analysis.hihat) next[hatI][s] = 1;
+
+      return next;
+    });
+
+    setStyleName("Custom");
   };
 
   const startMic = async () => {
@@ -614,6 +887,79 @@ export default function BeatStudio() {
                     style={{ width: 160, accentColor: "#3498db" }}
                   />
                   <span style={{ color: "#3498db", fontWeight: 700, fontSize: 12 }}>{Math.round(backingVol * 100)}%</span>
+                </div>
+                <div style={{ marginTop: 10, paddingTop: 10, borderTop: "1px solid #232343" }}>
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                    <button
+                      onClick={runAnalysis}
+                      disabled={!backingFile || analyzing}
+                      style={{
+                        padding: "10px 16px",
+                        borderRadius: 16,
+                        border: "none",
+                        cursor: analyzing ? "not-allowed" : "pointer",
+                        background: analyzing ? "#444" : "linear-gradient(90deg,#3498db,#9b59b6)",
+                        color: "#fff",
+                        fontWeight: 800,
+                        fontSize: 12,
+                      }}
+                    >
+                      {analyzing ? "Analyzing…" : "Analyze Beat"}
+                    </button>
+
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#aaa", fontSize: 12 }}>
+                      Sensitivity
+                      <input
+                        type="range"
+                        min="0.5"
+                        max="2.0"
+                        step="0.1"
+                        value={analysisSensitivity}
+                        onChange={(e) => setAnalysisSensitivity(+e.target.value)}
+                        style={{ width: 140, accentColor: "#9b59b6" }}
+                      />
+                      <span style={{ color: "#9b59b6", fontWeight: 700 }}>{analysisSensitivity.toFixed(1)}</span>
+                    </label>
+
+                    <label style={{ display: "flex", alignItems: "center", gap: 8, color: "#aaa", fontSize: 12 }}>
+                      <input type="checkbox" checked={analysisOverwrite} onChange={(e) => setAnalysisOverwrite(e.target.checked)} />
+                      Overwrite grid
+                    </label>
+                  </div>
+
+                  {analysisError && (
+                    <div style={{ color: "#ff8080", fontSize: 12, marginTop: 8 }}>
+                      {analysisError}
+                    </div>
+                  )}
+
+                  {analysis && (
+                    <div style={{ marginTop: 10 }}>
+                      <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+                        <div style={{ color: "#aaa", fontSize: 12 }}>
+                          Detected BPM: <span style={{ color: "#2ecc71", fontWeight: 800 }}>{Math.round(analysis.bpm)}</span>
+                        </div>
+                        <div style={{ color: "#555", fontSize: 12 }}>
+                          Hits: {analysis.hitCount} · K:{analysis.kick.length} S:{analysis.snare.length} H:{analysis.hihat.length}
+                        </div>
+                        <button
+                          onClick={applyAnalysis}
+                          style={{
+                            padding: "8px 16px",
+                            borderRadius: 16,
+                            border: "none",
+                            cursor: "pointer",
+                            background: "#2ecc71",
+                            color: "#0f0f1a",
+                            fontWeight: 900,
+                            fontSize: 12,
+                          }}
+                        >
+                          Apply to Grid
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div style={{ color: "#555", fontSize: 11, marginTop: 6, lineHeight: 1.4 }}>
                   Note: This plays your audio file as a backing track. It does not automatically detect BPM or convert the MP3 into step hits.
