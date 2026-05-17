@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
-const DEFAULT_STEPS = 16;
-const AVAILABLE_STEPS = [16, 32];
+const DEFAULT_BEATS = 4;
+const AVAILABLE_BEATS = [4, 8, 16, 32];
+const DEFAULT_STEPS = DEFAULT_BEATS * 4;
 const DEFAULT_BPM = 90;
 
 const TRACKS = [
@@ -561,36 +562,39 @@ export default function BeatStudio() {
 
       const curSteps = stepsRef.current;
       const curEndFill = endFillRef.current;
-      const fillActive = curSteps === 32 && curEndFill !== "None";
-      const isFillStep = fillActive && step >= 28;
+      const beatsPerLoop = curSteps / 4;
+      const fillActive = beatsPerLoop === 32 && curEndFill !== "None";
+      const beatIdx = Math.floor(step / 4);
+      const subStep = step % 4;
+      const isFillStep = fillActive && beatIdx >= 28;
 
       const fillExtraHit = (trackType) => {
         if (!isFillStep) return false;
 
-        // step 28..31 corresponds to beats 29..32 in a 32-step loop.
-        const s = step;
+        const b = beatIdx;
+        const ss = subStep;
         if (curEndFill === "Hat Stutter") {
           if (trackType === "hihat") return true;
-          if (trackType === "openhat") return s === 31;
+          if (trackType === "openhat") return b === 31 && ss === 3;
           return false;
         }
 
         if (curEndFill === "Snare Roll") {
           if (trackType === "snare") return true;
-          if (trackType === "hihat") return s !== 31;
+          if (trackType === "hihat") return !(b === 31 && ss === 3);
           return false;
         }
 
         if (curEndFill === "Clap Build") {
           if (trackType === "clap") return true;
-          if (trackType === "hihat") return s === 29 || s === 31;
+          if (trackType === "hihat") return (b === 29 || b === 31) && ss === 0;
           return false;
         }
 
         if (curEndFill === "Kick Drop") {
-          if (trackType === "kick") return s === 28 || s === 30;
-          if (trackType === "snare") return s === 29;
-          if (trackType === "openhat") return s === 31;
+          if (trackType === "kick") return (b === 28 || b === 30) && ss === 0;
+          if (trackType === "snare") return b === 29 && ss === 0;
+          if (trackType === "openhat") return b === 31 && ss === 3;
           return false;
         }
 
@@ -677,16 +681,15 @@ export default function BeatStudio() {
     setPattern(resizePattern(preset.pattern, stepsRef.current));
   };
 
-  const applySteps = (nextSteps) => {
-    const s = Number(nextSteps);
-    if (!AVAILABLE_STEPS.includes(s)) return;
+  const applySteps = (nextBeats) => {
+    const beats = Number(nextBeats);
+    if (!AVAILABLE_BEATS.includes(beats)) return;
+    const s = beats * 4;
     setSteps(s);
     setPattern((p) => resizePattern(p, s));
     stepRef.current = 0;
-    setCurStep(-1);
-    setStyleName("Custom");
-
-    if (s !== 32) {
+    nextTimeRef.current = getCtx().currentTime + 0.05;
+    if (beats !== 32) {
       setEndFill("None");
     }
   };
@@ -735,7 +738,10 @@ export default function BeatStudio() {
     const item = savedBeats.find(b => b.id === id);
     if (!item) return;
     const d = item.data || {};
-    const nextSteps = d.steps === 32 ? 32 : 16;
+    const rawSteps = Number(d.steps);
+    const normalizedSteps = Number.isFinite(rawSteps) ? rawSteps : DEFAULT_STEPS;
+    const beats = Math.max(4, Math.min(32, Math.round(normalizedSteps / 4)));
+    const nextSteps = beats * 4;
     const nextPattern = resizePattern(d.pattern || [], nextSteps);
 
     stop();
@@ -985,9 +991,9 @@ export default function BeatStudio() {
           {/* BPM + Controls */}
           <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16, flexWrap: "wrap", justifyContent: "center" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ color: "#aaa", fontSize: 13 }}>Steps</span>
+              <span style={{ color: "#aaa", fontSize: 13 }}>Beats</span>
               <select
-                value={steps}
+                value={steps / 4}
                 onChange={(e) => applySteps(e.target.value)}
                 style={{
                   height: 34,
@@ -1000,13 +1006,13 @@ export default function BeatStudio() {
                   fontSize: 12,
                 }}
               >
-                {AVAILABLE_STEPS.map((n) => (
+                {AVAILABLE_BEATS.map((n) => (
                   <option key={n} value={n}>{n}</option>
                 ))}
               </select>
             </div>
 
-            {steps === 32 && (
+            {steps === 128 && (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ color: "#aaa", fontSize: 13 }}>End Fill</span>
                 <select
