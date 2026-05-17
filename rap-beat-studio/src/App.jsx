@@ -677,11 +677,12 @@ export default function BeatStudio() {
             const viewRight = viewLeft + scroller.clientWidth;
             if (left < viewLeft + 40 || right > viewRight - 40) {
               const target = left - scroller.clientWidth / 2 + el.offsetWidth / 2;
-              scroller.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+              const nextLeft = Math.max(0, target);
+              scrollSyncRef.current = true;
+              scroller.scrollLeft = nextLeft;
               const labels = labelsScrollRef.current;
-              if (labels) {
-                labels.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
-              }
+              if (labels) labels.scrollLeft = nextLeft;
+              scrollSyncRef.current = false;
             }
           }
         }
