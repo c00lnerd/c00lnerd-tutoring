@@ -486,6 +486,8 @@ export default function BeatStudio() {
   const micSourceRef = useRef(null);
   const backingAudioRef = useRef(null);
   const gridScrollRef = useRef(null);
+  const labelsScrollRef = useRef(null);
+  const scrollSyncRef = useRef(false);
 
   useEffect(() => {
     persistSavedBeats(savedBeats);
@@ -676,6 +678,10 @@ export default function BeatStudio() {
             if (left < viewLeft + 40 || right > viewRight - 40) {
               const target = left - scroller.clientWidth / 2 + el.offsetWidth / 2;
               scroller.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+              const labels = labelsScrollRef.current;
+              if (labels) {
+                labels.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+              }
             }
           }
         }
@@ -1122,7 +1128,19 @@ export default function BeatStudio() {
           </div>
 
           {/* Step labels */}
-          <div style={{ overflowX: "auto", paddingBottom: 6 }}>
+          <div
+            ref={labelsScrollRef}
+            onScroll={() => {
+              if (scrollSyncRef.current) return;
+              const labels = labelsScrollRef.current;
+              const grid = gridScrollRef.current;
+              if (!labels || !grid) return;
+              scrollSyncRef.current = true;
+              grid.scrollLeft = labels.scrollLeft;
+              scrollSyncRef.current = false;
+            }}
+            style={{ overflowX: "auto", paddingBottom: 6 }}
+          >
             <div style={{ display: "grid", gridTemplateColumns: `72px repeat(${steps}, 34px)`, gap: 3, marginBottom: 4, width: "max-content" }}>
               <div />
               {Array.from({length:steps},(_,i) => (
@@ -1134,7 +1152,19 @@ export default function BeatStudio() {
           </div>
 
           {/* Sequencer Grid */}
-          <div ref={gridScrollRef} style={{ overflowX: "auto", paddingBottom: 10 }}>
+          <div
+            ref={gridScrollRef}
+            onScroll={() => {
+              if (scrollSyncRef.current) return;
+              const labels = labelsScrollRef.current;
+              const grid = gridScrollRef.current;
+              if (!labels || !grid) return;
+              scrollSyncRef.current = true;
+              labels.scrollLeft = grid.scrollLeft;
+              scrollSyncRef.current = false;
+            }}
+            style={{ overflowX: "auto", paddingBottom: 10 }}
+          >
             <div style={{ width: "max-content" }}>
               {TRACKS.map((tr, ti) => (
                 <div key={ti} style={{ display: "grid", gridTemplateColumns: `72px repeat(${steps}, 34px)`, gap: 3, marginBottom: 3 }}>
