@@ -467,6 +467,7 @@ export default function BeatStudio() {
   const ctxRef = useRef(null);
   const stepRef = useRef(0);
   const nextTimeRef = useRef(0);
+  const loopStartTimeRef = useRef(0);
   const timerRef = useRef(null);
   const patternRef = useRef(pattern);
   const bpmRef = useRef(bpm);
@@ -484,6 +485,7 @@ export default function BeatStudio() {
   const micStreamRef = useRef(null);
   const micSourceRef = useRef(null);
   const backingAudioRef = useRef(null);
+  const gridScrollRef = useRef(null);
 
   useEffect(() => {
     persistSavedBeats(savedBeats);
@@ -558,7 +560,6 @@ export default function BeatStudio() {
     const secondsPerStep = 60 / bpmRef.current / 4;
     while (nextTimeRef.current < ctx.currentTime + 0.1) {
       const step = stepRef.current;
-      setCurStep(step);
 
       const curSteps = stepsRef.current;
       const curEndFill = endFillRef.current;
@@ -618,7 +619,8 @@ export default function BeatStudio() {
     const ctx = getCtx();
     if (ctx.state === "suspended") ctx.resume();
     stepRef.current = 0;
-    nextTimeRef.current = ctx.currentTime + 0.05;
+    loopStartTimeRef.current = ctx.currentTime + 0.05;
+    nextTimeRef.current = loopStartTimeRef.current;
     playingRef.current = true;
     timerRef.current = setInterval(schedule, 25);
     setPlaying(true);
@@ -646,6 +648,47 @@ export default function BeatStudio() {
   };
 
   const togglePlay = () => playing ? stopPlay() : startPlay();
+
+  useEffect(() => {
+    if (!playing) return;
+
+    let raf = 0;
+    const tick = () => {
+      if (!playingRef.current) return;
+      const ctx = ctxRef.current;
+      if (!ctx) return;
+
+      const curSteps = stepsRef.current;
+      const secondsPerStep = 60 / bpmRef.current / 4;
+      const elapsed = ctx.currentTime - loopStartTimeRef.current;
+      if (elapsed >= 0 && Number.isFinite(elapsed)) {
+        const step = ((Math.floor(elapsed / secondsPerStep) % curSteps) + curSteps) % curSteps;
+        setCurStep(step);
+
+        const scroller = gridScrollRef.current;
+        if (scroller) {
+          const el = scroller.querySelector(`[data-track="0"][data-step="${step}"]`);
+          if (el) {
+            const left = el.offsetLeft;
+            const right = left + el.offsetWidth;
+            const viewLeft = scroller.scrollLeft;
+            const viewRight = viewLeft + scroller.clientWidth;
+            if (left < viewLeft + 40 || right > viewRight - 40) {
+              const target = left - scroller.clientWidth / 2 + el.offsetWidth / 2;
+              scroller.scrollTo({ left: Math.max(0, target), behavior: "smooth" });
+            }
+          }
+        }
+      }
+
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    return () => {
+      try { cancelAnimationFrame(raf); } catch (e) {}
+    };
+  }, [playing]);
 
   const toggleStep = (track, step) => {
     setPattern(p => {
@@ -1091,7 +1134,7 @@ export default function BeatStudio() {
           </div>
 
           {/* Sequencer Grid */}
-          <div style={{ overflowX: "auto", paddingBottom: 10 }}>
+          <div ref={gridScrollRef} style={{ overflowX: "auto", paddingBottom: 10 }}>
             <div style={{ width: "max-content" }}>
               {TRACKS.map((tr, ti) => (
                 <div key={ti} style={{ display: "grid", gridTemplateColumns: `72px repeat(${steps}, 34px)`, gap: 3, marginBottom: 3 }}>
@@ -1099,7 +1142,7 @@ export default function BeatStudio() {
                     <span style={{ fontSize: 11, color: tr.color, fontWeight: 700 }}>{tr.name}</span>
                   </div>
                   {Array.from({length:steps},(_,si) => (
-                    <button key={si} onClick={() => toggleStep(ti,si)} style={{
+                    <button key={si} data-step={si} data-track={ti} onClick={() => toggleStep(ti,si)} style={{
                       height: 34, width: 34, borderRadius: 5, border: "none", cursor: "pointer",
                       background: pattern[ti][si]
                         ? (curStep === si ? "#fff" : tr.color)
