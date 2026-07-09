@@ -73,6 +73,22 @@
       box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
     }
 
+    select {
+      width: 100%;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+      background: white;
+      color: #111827;
+    }
+
+    select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
+    }
+
     .controls {
       display: flex;
       gap: 10px;
@@ -193,24 +209,16 @@
     }
 
     .examples {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
       margin-top: 10px;
+      display: grid;
+      gap: 8px;
     }
 
-    .example {
-      border: 1px dashed #d1d5db;
-      background: #f9fafb;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      cursor: pointer;
-      user-select: none;
-      color: #111827;
+    .examples label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 700;
     }
-
-    .example:hover { background: #f3f4f6; }
 
     .hint {
       margin-top: 10px;
@@ -248,7 +256,10 @@
         <h2>Input (LaTeX)</h2>
         <textarea id="inputLatex">2^3 \cdot \frac{8\cdot(12-9)}{3}</textarea>
 
-        <div class="examples" id="examples"></div>
+        <div class="examples">
+          <label for="exampleSelect">Examples</label>
+          <select id="exampleSelect"></select>
+        </div>
 
         <div class="controls">
           <button class="btn-primary" id="btnStart">Start / Re-parse</button>
@@ -736,10 +747,22 @@
     const elInput = document.getElementById('inputLatex');
     const elSteps = document.getElementById('steps');
     const elMsg = document.getElementById('message');
+    const elExampleSelect = document.getElementById('exampleSelect');
 
     const btnStart = document.getElementById('btnStart');
     const btnNext = document.getElementById('btnNext');
     const btnReset = document.getElementById('btnReset');
+
+    function updateLastStepMath(latex) {
+      const last = elSteps.lastElementChild;
+      if (!last) return;
+      const math = last.querySelector('.math');
+      if (!math) return;
+      math.innerHTML = `\\( ${latex} \\)`;
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([last]).catch(() => {});
+      }
+    }
 
     function setMessage(text, kind) {
       if (!text) {
@@ -869,18 +892,30 @@
     }
 
     function renderExamples() {
-      const ex = document.getElementById('examples');
-      ex.innerHTML = '';
-      for (const s of EXAMPLES) {
-        const div = document.createElement('div');
-        div.className = 'example';
-        div.textContent = s;
-        div.addEventListener('click', () => {
-          elInput.value = s;
-          start();
-        });
-        ex.appendChild(div);
+      elExampleSelect.innerHTML = '';
+
+      const placeholder = document.createElement('option');
+      placeholder.value = '';
+      placeholder.textContent = 'Choose an example…';
+      elExampleSelect.appendChild(placeholder);
+
+      for (let i = 0; i < EXAMPLES.length; i++) {
+        const s = EXAMPLES[i];
+        const opt = document.createElement('option');
+        opt.value = String(i);
+        opt.textContent = s;
+        elExampleSelect.appendChild(opt);
       }
+
+      elExampleSelect.addEventListener('change', () => {
+        const idx = Number(elExampleSelect.value);
+        if (!Number.isFinite(idx)) return;
+        const s = EXAMPLES[idx];
+        if (!s) return;
+        elInput.value = s;
+        start();
+        elExampleSelect.value = '';
+      });
     }
 
     btnStart.addEventListener('click', start);
