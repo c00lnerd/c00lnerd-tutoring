@@ -404,7 +404,7 @@
       return childLatex;
     }
 
-    function astToLatex(n, highlightPath = null, highlightColor = 'rgba(253, 224, 71, 0.55)') {
+    function astToLatex(n, highlightPath = null, highlightColor = '#fde68a') {
       const shouldHighlightHere = Array.isArray(highlightPath) && highlightPath.length === 0;
       const take = (childKey) => {
         if (!Array.isArray(highlightPath) || highlightPath.length === 0) return null;
@@ -870,17 +870,17 @@
 
           const evaluated = evaluateNode(currentAst);
           currentAst = nodeNum(evaluated);
-          addStep(astToLatex(currentAst, [], 'rgba(34, 197, 94, 0.40)'), 'Final evaluation');
+          addStep(astToLatex(currentAst, [], '#bbf7d0'), 'Final evaluation');
           updateButtons();
           return;
         }
 
-        const highlightBefore = astToLatex(currentAst, r.path, 'rgba(253, 224, 71, 0.55)');
+        const highlightBefore = astToLatex(currentAst, r.path, '#fde68a');
         updateLastStepMath(highlightBefore);
 
         setTimeout(() => {
           currentAst = r.node;
-          const highlightAfter = astToLatex(currentAst, r.path, 'rgba(34, 197, 94, 0.40)');
+          const highlightAfter = astToLatex(currentAst, r.path, '#bbf7d0');
           addStep(highlightAfter, r.reason);
           updateButtons();
         }, 180);
