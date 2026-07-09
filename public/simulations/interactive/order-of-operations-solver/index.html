@@ -168,15 +168,53 @@
       padding: 12px;
     }
 
-    .step.enter {
-      opacity: 0;
-      transform: translateY(8px) scale(0.98);
+    .viewport {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      background: #ffffff;
+      min-height: 140px;
+      display: grid;
+      gap: 10px;
     }
 
-    .step.enter-active {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      transition: opacity 220ms ease, transform 220ms ease;
+    .viewport-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .viewport-step {
+      font-size: 12px;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .viewport-reason {
+      color: #6b7280;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .viewport-math {
+      font-size: 26px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      transform-origin: center;
+    }
+
+    .morph-in {
+      animation: morphIn 220ms ease;
+    }
+
+    @keyframes morphIn {
+      from { opacity: 0; transform: translateY(6px) scale(0.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .step-header {
@@ -276,7 +314,13 @@
 
       <div class="panel">
         <h2>Steps</h2>
-        <div id="steps" class="steps"></div>
+        <div class="viewport">
+          <div class="viewport-header">
+            <div id="viewportStep" class="viewport-step">Step 0/0</div>
+            <div id="viewportReason" class="viewport-reason">Parsed expression</div>
+          </div>
+          <div id="viewportMath" class="viewport-math"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -784,24 +828,45 @@
     let currentAst = null;
     let stepIndex = 0;
 
+    /**
+     * History of computed steps.
+     * Each step stores an AST snapshot so Back/Next can move without recomputing.
+     */
+    let history = [];
+    let historyIndex = 0;
+
     const elInput = document.getElementById('inputLatex');
-    const elSteps = document.getElementById('steps');
     const elMsg = document.getElementById('message');
     const elExampleSelect = document.getElementById('exampleSelect');
 
+    const elViewportStep = document.getElementById('viewportStep');
+    const elViewportReason = document.getElementById('viewportReason');
+    const elViewportMath = document.getElementById('viewportMath');
+
     const btnStart = document.getElementById('btnStart');
+    let btnBack = null;
     const btnNext = document.getElementById('btnNext');
     const btnReset = document.getElementById('btnReset');
 
-    function updateLastStepMath(latex) {
-      const last = elSteps.lastElementChild;
-      if (!last) return;
-      const math = last.querySelector('.math');
-      if (!math) return;
-      math.innerHTML = `\\( ${latex} \\)`;
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([last]).catch(() => {});
+    function renderViewportMath(latex, animate = true) {
+      elViewportMath.classList.remove('morph-in');
+      elViewportMath.innerHTML = `\\( ${latex} \\)`;
+      if (animate) {
+        void elViewportMath.offsetWidth;
+        elViewportMath.classList.add('morph-in');
       }
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([elViewportMath]).catch(() => {});
+      }
+    }
+
+    function renderViewportFromHistory(animate = true) {
+      if (!history.length) return;
+      const s = history[historyIndex];
+      const total = history.length;
+      elViewportStep.textContent = historyIndex === 0 ? `Start (1/${total})` : `Step ${historyIndex} (${historyIndex + 1}/${total})`;
+      elViewportReason.textContent = s.reason || '';
+      renderViewportMath(s.latex, animate);
     }
 
     function setMessage(text, kind) {
@@ -816,71 +881,35 @@
       elMsg.style.display = 'block';
     }
 
-    function clearSteps() {
-      elSteps.innerHTML = '';
-    }
-
-    function addStep(latex, reason) {
-      const idx = stepIndex;
-      stepIndex++;
-
-      const div = document.createElement('div');
-      div.className = 'step';
-
-      const header = document.createElement('div');
-      header.className = 'step-header';
-
-      const badge = document.createElement('div');
-      badge.className = 'badge';
-      badge.textContent = idx === 0 ? 'Start' : `Step ${idx}`;
-
-      const why = document.createElement('div');
-      why.className = 'reason';
-      why.textContent = reason || (idx === 0 ? 'Parsed expression' : '');
-
-      header.appendChild(badge);
-      header.appendChild(why);
-
-      const math = document.createElement('div');
-      math.className = 'math';
-      math.innerHTML = `\\( ${latex} \\)`;
-
-      div.appendChild(header);
-      div.appendChild(math);
-      elSteps.appendChild(div);
-
-      div.classList.add('enter');
-      requestAnimationFrame(() => {
-        div.classList.add('enter-active');
-      });
-
-      if (window.MathJax && window.MathJax.typesetPromise) {
-        window.MathJax.typesetPromise([div]).catch(() => {});
-      }
-    }
-
     function updateButtons() {
-      const canStep = currentAst && currentAst.t !== 'num';
-      btnNext.disabled = !canStep;
+      const canStepForward = currentAst && currentAst.t !== 'num';
+      btnNext.disabled = !initialAst || (!canStepForward && historyIndex === history.length - 1);
       btnReset.disabled = !initialAst;
+      if (btnBack) btnBack.disabled = !initialAst || historyIndex <= 0;
     }
 
     function start() {
       try {
         setMessage('', '');
-        clearSteps();
         stepIndex = 0;
 
         initialAst = parseLatexToAst(elInput.value);
         currentAst = cloneAst(initialAst);
 
-        addStep(astToLatex(currentAst), 'Parsed expression');
+        history = [];
+        historyIndex = 0;
+        pushHistoryStep(currentAst, astToLatex(currentAst), 'Parsed expression');
+        renderViewportFromHistory(false);
         updateButtons();
       } catch (e) {
         initialAst = null;
         currentAst = null;
-        clearSteps();
         stepIndex = 0;
+        history = [];
+        historyIndex = 0;
+        elViewportStep.textContent = 'Step 0/0';
+        elViewportReason.textContent = '';
+        elViewportMath.innerHTML = '';
         updateButtons();
         setMessage(e?.message ? String(e.message) : 'Failed to parse expression', 'error');
       }
@@ -889,15 +918,36 @@
     function reset() {
       if (!initialAst) return;
       setMessage('', '');
-      clearSteps();
       stepIndex = 0;
       currentAst = cloneAst(initialAst);
-      addStep(astToLatex(currentAst), 'Reset to start');
+
+      history = [];
+      historyIndex = 0;
+      pushHistoryStep(currentAst, astToLatex(currentAst), 'Reset to start');
+      renderViewportFromHistory(false);
+      updateButtons();
+    }
+
+    function backStep() {
+      if (!initialAst) return;
+      if (historyIndex <= 0) return;
+      historyIndex--;
+      currentAst = cloneAst(history[historyIndex].ast);
+      renderViewportFromHistory(true);
       updateButtons();
     }
 
     function nextStep() {
       if (!currentAst) return;
+
+      if (historyIndex < history.length - 1) {
+        historyIndex++;
+        currentAst = cloneAst(history[historyIndex].ast);
+        renderViewportFromHistory(true);
+        updateButtons();
+        return;
+      }
+
       try {
         setMessage('', '');
         const r = reduceOnce(currentAst);
@@ -910,18 +960,20 @@
 
           const evaluated = evaluateNode(currentAst);
           currentAst = nodeNum(evaluated);
-          addStep(astToLatex(currentAst, [], '#bbf7d0'), 'Final evaluation');
+          pushHistoryStep(currentAst, astToLatex(currentAst, [], '#bbf7d0'), 'Final evaluation');
+          renderViewportFromHistory(true);
           updateButtons();
           return;
         }
 
         const highlightBefore = astToLatex(currentAst, r.path, '#fde68a');
-        updateLastStepMath(highlightBefore);
+        renderViewportMath(highlightBefore, false);
 
         setTimeout(() => {
           currentAst = r.node;
           const highlightAfter = astToLatex(currentAst, r.path, '#bbf7d0');
-          addStep(highlightAfter, r.reason);
+          pushHistoryStep(currentAst, highlightAfter, r.reason);
+          renderViewportFromHistory(true);
           updateButtons();
         }, 180);
 
@@ -959,6 +1011,27 @@
     }
 
     btnStart.addEventListener('click', start);
+    
+    // Insert Back button next to Next Step for Manim-like navigation
+    (function ensureBackButton() {
+      const controls = btnNext.parentElement;
+      if (!controls) return;
+      const existing = document.getElementById('btnBack');
+      if (existing) {
+        btnBack = existing;
+        return;
+      }
+      const b = document.createElement('button');
+      b.className = 'btn-primary';
+      b.id = 'btnBack';
+      b.textContent = 'Back';
+      b.style.background = '#64748b';
+      b.style.color = 'white';
+      b.addEventListener('click', backStep);
+      controls.insertBefore(b, btnNext);
+      btnBack = b;
+    })();
+
     btnNext.addEventListener('click', nextStep);
     btnReset.addEventListener('click', reset);
 
