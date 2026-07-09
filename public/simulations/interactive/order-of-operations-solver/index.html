@@ -508,6 +508,21 @@
       }
     }
 
+    function isIntegerNumNode(n) {
+      return n && n.t === 'num' && n.v && n.v.d === 1n;
+    }
+
+    function isSimpleFractionNode(n) {
+      return n && n.t === 'div' && isIntegerNumNode(n.a) && isIntegerNumNode(n.b);
+    }
+
+    function lcmBigInt(a, b) {
+      const aa = a < 0n ? -a : a;
+      const bb = b < 0n ? -b : b;
+      if (aa === 0n || bb === 0n) return 0n;
+      return (aa / Fraction.gcd(aa, bb)) * bb;
+    }
+
     function reduceOnce(n) {
       if (n.t === 'num') return { node: n, changed: false, reason: '', path: [] };
 
@@ -552,6 +567,31 @@
       }
 
       if (n.t === 'add' || n.t === 'sub') {
+        if (isSimpleFractionNode(n.a) && isSimpleFractionNode(n.b)) {
+          const aNum = n.a.a.v.n;
+          const aDen = n.a.b.v.n;
+          const bNum = n.b.a.v.n;
+          const bDen = n.b.b.v.n;
+
+          if (aDen === bDen) {
+            const op = n.t === 'add' ? 'add' : 'sub';
+            const newNum = nodeOp(op, nodeNum(new Fraction(aNum, 1n)), nodeNum(new Fraction(bNum, 1n)));
+            const newNode = nodeOp('div', newNum, nodeNum(new Fraction(aDen, 1n)));
+            return { node: newNode, changed: true, reason: 'Common denominator', path: [] };
+          }
+
+          const commonDen = lcmBigInt(aDen, bDen);
+          const aFactor = commonDen / aDen;
+          const bFactor = commonDen / bDen;
+
+          const op = n.t === 'add' ? 'add' : 'sub';
+          const leftScaled = nodeOp('mul', nodeNum(new Fraction(aNum, 1n)), nodeNum(new Fraction(aFactor, 1n)));
+          const rightScaled = nodeOp('mul', nodeNum(new Fraction(bNum, 1n)), nodeNum(new Fraction(bFactor, 1n)));
+          const newNum = nodeOp(op, leftScaled, rightScaled);
+          const newNode = nodeOp('div', newNum, nodeNum(new Fraction(commonDen, 1n)));
+          return { node: newNode, changed: true, reason: 'Common denominator', path: [] };
+        }
+
         const left = reduceOnce(n.a);
         if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason, path: ['a', ...left.path] };
 
