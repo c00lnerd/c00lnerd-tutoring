@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order of Operations Step Solver - C00lnerd Tutoring</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      background: linear-gradient(135deg, #1e3a8a 0%, #6d28d9 100%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1000px;
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+      padding: 28px;
+    }
+
+    .header {
+      display: flex;
+      gap: 16px;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.9rem;
+      color: #111827;
+    }
+
+    .header p {
+      margin: 0;
+      color: #6b7280;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    @media (min-width: 900px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      resize: vertical;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.15);
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.08s ease, background 0.15s ease;
+      color: white;
+    }
+
+    button:active { transform: translateY(1px); }
+
+    .btn-primary { background: #4f46e5; }
+    .btn-primary:hover { background: #4338ca; }
+
+    .btn-step { background: #059669; }
+    .btn-step:hover { background: #047857; }
+
+    .btn-reset { background: #ef4444; }
+    .btn-reset:hover { background: #dc2626; }
+
+    button:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .panel {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px 0;
+      font-size: 1.1rem;
+      color: #111827;
+    }
+
+    .message {
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+      line-height: 1.35;
+      display: none;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+      display: block;
+    }
+
+    .message.info {
+      background: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+      display: block;
+    }
+
+    .steps {
+      display: grid;
+      gap: 10px;
+    }
+
+    .step {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: #374151;
+    }
+
+    .reason {
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    .math {
+      font-size: 22px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+
+    .examples {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .example {
+      border: 1px dashed #d1d5db;
+      background: #f9fafb;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      user-select: none;
+      color: #111827;
+    }
+
+    .example:hover { background: #f3f4f6; }
+
+    .hint {
+      margin-top: 10px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.35;
+    }
+  </style>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script','noscript','style','textarea','pre','code']
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>Order of Operations Step Solver</h1>
+        <p>Enter LaTeX and solve step-by-step using PEMDAS</p>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Input (LaTeX)</h2>
+        <textarea id="inputLatex">2^3 \cdot \frac{8\cdot(12-9)}{3}</textarea>
+
+        <div class="examples" id="examples"></div>
+
+        <div class="controls">
+          <button class="btn-primary" id="btnStart">Start / Re-parse</button>
+          <button class="btn-step" id="btnNext" disabled>Next Step</button>
+          <button class="btn-reset" id="btnReset" disabled>Reset</button>
+        </div>
+
+        <div class="hint">
+          Supported: numbers, parentheses, <strong>+</strong> <strong>-</strong> <strong>\cdot</strong> <strong>\times</strong> <strong>\frac{a}{b}</strong>, and exponents like <strong>2^3</strong> or <strong>2^{10}</strong>.
+        </div>
+
+        <div id="message" class="message"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Steps</h2>
+        <div id="steps" class="steps"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class Fraction {
+      constructor(n, d = 1n) {
+        if (d === 0n) throw new Error('Division by zero');
+        if (d < 0n) { n = -n; d = -d; }
+        const g = Fraction.gcd(n < 0n ? -n : n, d);
+        this.n = n / g;
+        this.d = d / g;
+      }
+
+      static gcd(a, b) {
+        while (b !== 0n) {
+          const t = a % b;
+          a = b;
+          b = t;
+        }
+        return a;
+      }
+
+      static fromInt(x) {
+        return new Fraction(BigInt(x), 1n);
+      }
+
+      static add(a, b) {
+        return new Fraction(a.n * b.d + b.n * a.d, a.d * b.d);
+      }
+
+      static sub(a, b) {
+        return new Fraction(a.n * b.d - b.n * a.d, a.d * b.d);
+      }
+
+      static mul(a, b) {
+        return new Fraction(a.n * b.n, a.d * b.d);
+      }
+
+      static div(a, b) {
+        return new Fraction(a.n * b.d, a.d * b.n);
+      }
+
+      static pow(a, exp) {
+        if (exp === 0n) return new Fraction(1n, 1n);
+        const neg = exp < 0n;
+        let e = neg ? -exp : exp;
+        let n = a.n;
+        let d = a.d;
+
+        let rn = 1n;
+        let rd = 1n;
+
+        while (e > 0n) {
+          if (e & 1n) {
+            rn = rn * n;
+            rd = rd * d;
+          }
+          e >>= 1n;
+          if (e > 0n) {
+            n = n * n;
+            d = d * d;
+          }
+        }
+
+        const r = new Fraction(rn, rd);
+        if (!neg) return r;
+        return new Fraction(r.d, r.n);
+      }
+
+      isInt() {
+        return this.d === 1n;
+      }
+
+      toLatex() {
+        if (this.d === 1n) return this.n.toString();
+        const n = this.n < 0n ? `-${(-this.n).toString()}` : this.n.toString();
+        return `\\frac{${n}}{${this.d.toString()}}`;
+      }
+
+      toString() {
+        if (this.d === 1n) return this.n.toString();
+        return `${this.n.toString()}/${this.d.toString()}`;
+      }
+    }
+
+    function nodeNum(frac) { return { t: 'num', v: frac }; }
+    function nodeOp(t, a, b) { return { t, a, b }; }
+    function nodeNeg(a) { return { t: 'neg', a }; }
+
+    function precedence(n) {
+      switch (n.t) {
+        case 'add':
+        case 'sub':
+          return 1;
+        case 'mul':
+        case 'div':
+          return 2;
+        case 'neg':
+          return 3;
+        case 'pow':
+          return 4;
+        case 'num':
+          return 5;
+        default:
+          return 0;
+      }
+    }
+
+    function latexWrap(child, parentPrec, side, parentType) {
+      const cp = precedence(child);
+      if (cp > parentPrec) return astToLatex(child);
+      if (cp < parentPrec) return `\\left(${astToLatex(child)}\\right)`;
+
+      if (parentType === 'sub' && side === 'right' && (child.t === 'add' || child.t === 'sub')) {
+        return `\\left(${astToLatex(child)}\\right)`;
+      }
+      if (parentType === 'div') {
+        return astToLatex(child);
+      }
+      if (parentType === 'pow' && side === 'right') {
+        return `{${astToLatex(child)}}`;
+      }
+      return astToLatex(child);
+    }
+
+    function astToLatex(n) {
+      switch (n.t) {
+        case 'num':
+          return n.v.toLatex();
+        case 'neg': {
+          const inner = n.a.t === 'num' ? astToLatex(n.a) : `\\left(${astToLatex(n.a)}\\right)`;
+          return `-${inner}`;
+        }
+        case 'add': {
+          const p = precedence(n);
+          return `${latexWrap(n.a, p, 'left', 'add')} + ${latexWrap(n.b, p, 'right', 'add')}`;
+        }
+        case 'sub': {
+          const p = precedence(n);
+          return `${latexWrap(n.a, p, 'left', 'sub')} - ${latexWrap(n.b, p, 'right', 'sub')}`;
+        }
+        case 'mul': {
+          const p = precedence(n);
+          return `${latexWrap(n.a, p, 'left', 'mul')} \\cdot ${latexWrap(n.b, p, 'right', 'mul')}`;
+        }
+        case 'div': {
+          return `\\frac{${astToLatex(n.a)}}{${astToLatex(n.b)}}`;
+        }
+        case 'pow': {
+          const p = precedence(n);
+          const baseNeedsParens = precedence(n.a) < p;
+          const base = baseNeedsParens ? `\\left(${astToLatex(n.a)}\\right)` : astToLatex(n.a);
+          const exp = (n.b.t === 'num') ? n.b.v.toLatex() : astToLatex(n.b);
+          const expWrapped = exp.startsWith('\\frac') || exp.includes(' ') || exp.includes('+') || exp.includes('-') || exp.includes('\\cdot') ? `{${exp}}` : `{${exp}}`;
+          return `${base}^{${expWrapped.slice(1, -1)}}`;
+        }
+        default:
+          return '';
+      }
+    }
+
+    function cloneAst(n) {
+      switch (n.t) {
+        case 'num':
+          return nodeNum(new Fraction(n.v.n, n.v.d));
+        case 'neg':
+          return nodeNeg(cloneAst(n.a));
+        case 'add':
+        case 'sub':
+        case 'mul':
+        case 'div':
+        case 'pow':
+          return nodeOp(n.t, cloneAst(n.a), cloneAst(n.b));
+        default:
+          throw new Error('Unknown node');
+      }
+    }
+
+    function evaluateNode(n) {
+      switch (n.t) {
+        case 'num':
+          return n.v;
+        case 'neg':
+          return new Fraction(-evaluateNode(n.a).n, evaluateNode(n.a).d);
+        case 'add':
+          return Fraction.add(evaluateNode(n.a), evaluateNode(n.b));
+        case 'sub':
+          return Fraction.sub(evaluateNode(n.a), evaluateNode(n.b));
+        case 'mul':
+          return Fraction.mul(evaluateNode(n.a), evaluateNode(n.b));
+        case 'div':
+          return Fraction.div(evaluateNode(n.a), evaluateNode(n.b));
+        case 'pow': {
+          const base = evaluateNode(n.a);
+          const exp = evaluateNode(n.b);
+          if (!exp.isInt()) throw new Error('Exponent must be an integer');
+          return Fraction.pow(base, exp.n);
+        }
+        default:
+          throw new Error('Cannot evaluate');
+      }
+    }
+
+    function reduceOnce(n) {
+      if (n.t === 'num') return { node: n, changed: false, reason: '' };
+
+      if (n.t === 'neg') {
+        const inner = reduceOnce(n.a);
+        if (inner.changed) return { node: nodeNeg(inner.node), changed: true, reason: inner.reason };
+        if (inner.node.t === 'num') {
+          return { node: nodeNum(new Fraction(-inner.node.v.n, inner.node.v.d)), changed: true, reason: 'Negation' };
+        }
+        return { node: n, changed: false, reason: '' };
+      }
+
+      if (n.t === 'pow') {
+        const left = reduceOnce(n.a);
+        if (left.changed) return { node: nodeOp('pow', left.node, n.b), changed: true, reason: left.reason };
+
+        const right = reduceOnce(n.b);
+        if (right.changed) return { node: nodeOp('pow', n.a, right.node), changed: true, reason: right.reason };
+
+        if (n.a.t === 'num' && n.b.t === 'num') {
+          const exp = n.b.v;
+          if (!exp.isInt()) throw new Error('Exponent must be an integer');
+          return { node: nodeNum(Fraction.pow(n.a.v, exp.n)), changed: true, reason: 'Exponent' };
+        }
+
+        return { node: n, changed: false, reason: '' };
+      }
+
+      if (n.t === 'mul' || n.t === 'div') {
+        const left = reduceOnce(n.a);
+        if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason };
+
+        const right = reduceOnce(n.b);
+        if (right.changed) return { node: nodeOp(n.t, n.a, right.node), changed: true, reason: right.reason };
+
+        if (n.a.t === 'num' && n.b.t === 'num') {
+          const r = n.t === 'mul' ? Fraction.mul(n.a.v, n.b.v) : Fraction.div(n.a.v, n.b.v);
+          return { node: nodeNum(r), changed: true, reason: n.t === 'mul' ? 'Multiplication/Division' : 'Multiplication/Division' };
+        }
+
+        return { node: n, changed: false, reason: '' };
+      }
+
+      if (n.t === 'add' || n.t === 'sub') {
+        const left = reduceOnce(n.a);
+        if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason };
+
+        const right = reduceOnce(n.b);
+        if (right.changed) return { node: nodeOp(n.t, n.a, right.node), changed: true, reason: right.reason };
+
+        if (n.a.t === 'num' && n.b.t === 'num') {
+          const r = n.t === 'add' ? Fraction.add(n.a.v, n.b.v) : Fraction.sub(n.a.v, n.b.v);
+          return { node: nodeNum(r), changed: true, reason: 'Addition/Subtraction' };
+        }
+
+        return { node: n, changed: false, reason: '' };
+      }
+
+      return { node: n, changed: false, reason: '' };
+    }
+
+    function normalizeLatexInput(src) {
+      let s = src;
+      s = s.replace(/\s+/g, '');
+      s = s.replace(/\\left/g, '');
+      s = s.replace(/\\right/g, '');
+      s = s.replace(/\\cdot/g, '*');
+      s = s.replace(/\\times/g, '*');
+      return s;
+    }
+
+    function Parser(src) {
+      this.s = src;
+      this.i = 0;
+
+      this.peek = () => this.s[this.i] ?? '';
+      this.eof = () => this.i >= this.s.length;
+      this.consume = (ch) => {
+        if (this.s[this.i] !== ch) throw new Error(`Expected '${ch}'`);
+        this.i++;
+      };
+
+      this.startsWith = (x) => this.s.slice(this.i, this.i + x.length) === x;
+
+      this.parse = () => {
+        const n = this.parseAddSub();
+        if (!this.eof()) throw new Error(`Unexpected token '${this.peek()}'`);
+        return n;
+      };
+
+      this.parseAddSub = () => {
+        let n = this.parseMulDiv();
+        while (!this.eof()) {
+          const ch = this.peek();
+          if (ch === '+') {
+            this.consume('+');
+            n = nodeOp('add', n, this.parseMulDiv());
+          } else if (ch === '-') {
+            this.consume('-');
+            n = nodeOp('sub', n, this.parseMulDiv());
+          } else {
+            break;
+          }
+        }
+        return n;
+      };
+
+      this.isPrimaryStart = () => {
+        const ch = this.peek();
+        if (!ch) return false;
+        if (ch === '(' || ch === '{' || ch === '\\') return true;
+        if (ch >= '0' && ch <= '9') return true;
+        if (ch === '.') return true;
+        return false;
+      };
+
+      this.parseMulDiv = () => {
+        let n = this.parsePow();
+        while (!this.eof()) {
+          const ch = this.peek();
+          if (ch === '*') {
+            this.consume('*');
+            n = nodeOp('mul', n, this.parsePow());
+          } else if (ch === '/') {
+            this.consume('/');
+            n = nodeOp('div', n, this.parsePow());
+          } else if (this.isPrimaryStart()) {
+            n = nodeOp('mul', n, this.parsePow());
+          } else {
+            break;
+          }
+        }
+        return n;
+      };
+
+      this.parsePow = () => {
+        let n = this.parseUnary();
+        if (!this.eof() && this.peek() === '^') {
+          this.consume('^');
+          const exp = this.parseUnary();
+          n = nodeOp('pow', n, exp);
+        }
+        return n;
+      };
+
+      this.parseUnary = () => {
+        if (this.peek() === '+') {
+          this.consume('+');
+          return this.parseUnary();
+        }
+        if (this.peek() === '-') {
+          this.consume('-');
+          return nodeNeg(this.parseUnary());
+        }
+        return this.parsePrimary();
+      };
+
+      this.parsePrimary = () => {
+        if (this.eof()) throw new Error('Unexpected end of input');
+
+        if (this.startsWith('\\frac')) {
+          this.i += '\\frac'.length;
+          const a = this.parseGroup();
+          const b = this.parseGroup();
+          return nodeOp('div', a, b);
+        }
+
+        const ch = this.peek();
+        if (ch === '(') {
+          this.consume('(');
+          const n = this.parseAddSub();
+          this.consume(')');
+          return n;
+        }
+
+        if (ch === '{') {
+          const n = this.parseGroup();
+          return n;
+        }
+
+        if ((ch >= '0' && ch <= '9') || ch === '.') {
+          return this.parseNumber();
+        }
+
+        throw new Error(`Unexpected token '${ch}'`);
+      };
+
+      this.parseGroup = () => {
+        if (this.peek() !== '{') throw new Error("Expected '{'");
+        this.consume('{');
+        const n = this.parseAddSub();
+        if (this.peek() !== '}') throw new Error("Expected '}'");
+        this.consume('}');
+        return n;
+      };
+
+      this.parseNumber = () => {
+        let start = this.i;
+        while (!this.eof()) {
+          const ch = this.peek();
+          if ((ch >= '0' && ch <= '9') || ch === '.') this.i++;
+          else break;
+        }
+        const raw = this.s.slice(start, this.i);
+        if (!raw) throw new Error('Expected number');
+        if (raw.includes('.')) {
+          const parts = raw.split('.');
+          if (parts.length !== 2) throw new Error('Invalid number');
+          const a = parts[0] === '' ? '0' : parts[0];
+          const b = parts[1];
+          const scale = 10n ** BigInt(b.length);
+          const n = BigInt(a + b);
+          return nodeNum(new Fraction(n, scale));
+        }
+        return nodeNum(new Fraction(BigInt(raw), 1n));
+      };
+    }
+
+    function parseLatexToAst(latex) {
+      const s = normalizeLatexInput(latex);
+      const p = new Parser(s);
+      return p.parse();
+    }
+
+    const EXAMPLES = [
+      '2^3 \\cdot \\frac{8\\cdot(12-9)}{3}',
+      '\\frac{3+9}{2} \\cdot 4',
+      '12-3^2\\cdot2',
+      '\\frac{5}{6}+\\frac{1}{3}',
+      '(-3)^2 + 4'
+    ];
+
+    let initialAst = null;
+    let currentAst = null;
+    let stepIndex = 0;
+
+    const elInput = document.getElementById('inputLatex');
+    const elSteps = document.getElementById('steps');
+    const elMsg = document.getElementById('message');
+
+    const btnStart = document.getElementById('btnStart');
+    const btnNext = document.getElementById('btnNext');
+    const btnReset = document.getElementById('btnReset');
+
+    function setMessage(text, kind) {
+      if (!text) {
+        elMsg.textContent = '';
+        elMsg.className = 'message';
+        elMsg.style.display = 'none';
+        return;
+      }
+      elMsg.textContent = text;
+      elMsg.className = `message ${kind}`;
+      elMsg.style.display = 'block';
+    }
+
+    function clearSteps() {
+      elSteps.innerHTML = '';
+    }
+
+    function addStep(latex, reason) {
+      const idx = stepIndex;
+      stepIndex++;
+
+      const div = document.createElement('div');
+      div.className = 'step';
+
+      const header = document.createElement('div');
+      header.className = 'step-header';
+
+      const badge = document.createElement('div');
+      badge.className = 'badge';
+      badge.textContent = idx === 0 ? 'Start' : `Step ${idx}`;
+
+      const why = document.createElement('div');
+      why.className = 'reason';
+      why.textContent = reason || (idx === 0 ? 'Parsed expression' : '');
+
+      header.appendChild(badge);
+      header.appendChild(why);
+
+      const math = document.createElement('div');
+      math.className = 'math';
+      math.innerHTML = `\\( ${latex} \\)`;
+
+      div.appendChild(header);
+      div.appendChild(math);
+      elSteps.appendChild(div);
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([div]).catch(() => {});
+      }
+    }
+
+    function updateButtons() {
+      const canStep = currentAst && currentAst.t !== 'num';
+      btnNext.disabled = !canStep;
+      btnReset.disabled = !initialAst;
+    }
+
+    function start() {
+      try {
+        setMessage('', '');
+        clearSteps();
+        stepIndex = 0;
+
+        initialAst = parseLatexToAst(elInput.value);
+        currentAst = cloneAst(initialAst);
+
+        addStep(astToLatex(currentAst), 'Parsed expression');
+        updateButtons();
+      } catch (e) {
+        initialAst = null;
+        currentAst = null;
+        clearSteps();
+        stepIndex = 0;
+        updateButtons();
+        setMessage(e?.message ? String(e.message) : 'Failed to parse expression', 'error');
+      }
+    }
+
+    function reset() {
+      if (!initialAst) return;
+      setMessage('', '');
+      clearSteps();
+      stepIndex = 0;
+      currentAst = cloneAst(initialAst);
+      addStep(astToLatex(currentAst), 'Reset to start');
+      updateButtons();
+    }
+
+    function nextStep() {
+      if (!currentAst) return;
+      try {
+        setMessage('', '');
+        const r = reduceOnce(currentAst);
+        if (!r.changed) {
+          if (currentAst.t === 'num') {
+            setMessage('Already fully simplified.', 'info');
+            updateButtons();
+            return;
+          }
+
+          const evaluated = evaluateNode(currentAst);
+          currentAst = nodeNum(evaluated);
+          addStep(astToLatex(currentAst), 'Final evaluation');
+          updateButtons();
+          return;
+        }
+        currentAst = r.node;
+        addStep(astToLatex(currentAst), r.reason);
+        updateButtons();
+      } catch (e) {
+        setMessage(e?.message ? String(e.message) : 'Failed to compute next step', 'error');
+      }
+    }
+
+    function renderExamples() {
+      const ex = document.getElementById('examples');
+      ex.innerHTML = '';
+      for (const s of EXAMPLES) {
+        const div = document.createElement('div');
+        div.className = 'example';
+        div.textContent = s;
+        div.addEventListener('click', () => {
+          elInput.value = s;
+          start();
+        });
+        ex.appendChild(div);
+      }
+    }
+
+    btnStart.addEventListener('click', start);
+    btnNext.addEventListener('click', nextStep);
+    btnReset.addEventListener('click', reset);
+
+    renderExamples();
+    start();
+  </script>
+</body>
+</html>
