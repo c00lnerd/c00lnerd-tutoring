@@ -869,6 +869,11 @@
       renderViewportMath(s.latex, animate);
     }
 
+    function pushHistoryStep(ast, latex, reason) {
+      history.push({ ast: cloneAst(ast), latex, reason });
+      historyIndex = history.length - 1;
+    }
+
     function setMessage(text, kind) {
       if (!text) {
         elMsg.textContent = '';
