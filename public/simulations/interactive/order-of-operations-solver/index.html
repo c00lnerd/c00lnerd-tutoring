@@ -152,6 +152,17 @@
       padding: 12px;
     }
 
+    .step.enter {
+      opacity: 0;
+      transform: translateY(8px) scale(0.98);
+    }
+
+    .step.enter-active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
     .step-header {
       display: flex;
       justify-content: space-between;
@@ -364,53 +375,80 @@
       }
     }
 
-    function latexWrap(child, parentPrec, side, parentType) {
+    function latexWrap(child, parentPrec, side, parentType, highlightPath, highlightColor) {
       const cp = precedence(child);
-      if (cp > parentPrec) return astToLatex(child);
-      if (cp < parentPrec) return `\\left(${astToLatex(child)}\\right)`;
+      const childLatex = astToLatex(child, highlightPath, highlightColor);
+      if (cp > parentPrec) return childLatex;
+      if (cp < parentPrec) return `\\left(${childLatex}\\right)`;
 
       if (parentType === 'sub' && side === 'right' && (child.t === 'add' || child.t === 'sub')) {
-        return `\\left(${astToLatex(child)}\\right)`;
+        return `\\left(${childLatex}\\right)`;
       }
       if (parentType === 'div') {
-        return astToLatex(child);
+        return childLatex;
       }
       if (parentType === 'pow' && side === 'right') {
-        return `{${astToLatex(child)}}`;
+        return `{${childLatex}}`;
       }
-      return astToLatex(child);
+      return childLatex;
     }
 
-    function astToLatex(n) {
+    function astToLatex(n, highlightPath = null, highlightColor = 'rgba(253, 224, 71, 0.55)') {
+      const shouldHighlightHere = Array.isArray(highlightPath) && highlightPath.length === 0;
+      const take = (childKey) => {
+        if (!Array.isArray(highlightPath) || highlightPath.length === 0) return null;
+        if (highlightPath[0] !== childKey) return null;
+        return highlightPath.slice(1);
+      };
+
       switch (n.t) {
         case 'num':
-          return n.v.toLatex();
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${n.v.toLatex()}}` : n.v.toLatex();
         case 'neg': {
-          const inner = n.a.t === 'num' ? astToLatex(n.a) : `\\left(${astToLatex(n.a)}\\right)`;
-          return `-${inner}`;
+          const innerPath = take('a');
+          const innerRaw = astToLatex(n.a, innerPath, highlightColor);
+          const inner = n.a.t === 'num' ? innerRaw : `\\left(${innerRaw}\\right)`;
+          const out = `-${inner}`;
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${out}}` : out;
         }
         case 'add': {
           const p = precedence(n);
-          return `${latexWrap(n.a, p, 'left', 'add')} + ${latexWrap(n.b, p, 'right', 'add')}`;
+          const leftPath = take('a');
+          const rightPath = take('b');
+          const out = `${latexWrap(n.a, p, 'left', 'add', leftPath, highlightColor)} + ${latexWrap(n.b, p, 'right', 'add', rightPath, highlightColor)}`;
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${out}}` : out;
         }
         case 'sub': {
           const p = precedence(n);
-          return `${latexWrap(n.a, p, 'left', 'sub')} - ${latexWrap(n.b, p, 'right', 'sub')}`;
+          const leftPath = take('a');
+          const rightPath = take('b');
+          const out = `${latexWrap(n.a, p, 'left', 'sub', leftPath, highlightColor)} - ${latexWrap(n.b, p, 'right', 'sub', rightPath, highlightColor)}`;
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${out}}` : out;
         }
         case 'mul': {
           const p = precedence(n);
-          return `${latexWrap(n.a, p, 'left', 'mul')} \\cdot ${latexWrap(n.b, p, 'right', 'mul')}`;
+          const leftPath = take('a');
+          const rightPath = take('b');
+          const out = `${latexWrap(n.a, p, 'left', 'mul', leftPath, highlightColor)} \\cdot ${latexWrap(n.b, p, 'right', 'mul', rightPath, highlightColor)}`;
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${out}}` : out;
         }
         case 'div': {
-          return `\\frac{${astToLatex(n.a)}}{${astToLatex(n.b)}}`;
+          const leftPath = take('a');
+          const rightPath = take('b');
+          const out = `\\frac{${astToLatex(n.a, leftPath, highlightColor)}}{${astToLatex(n.b, rightPath, highlightColor)}}`;
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${out}}` : out;
         }
         case 'pow': {
           const p = precedence(n);
+          const leftPath = take('a');
+          const rightPath = take('b');
           const baseNeedsParens = precedence(n.a) < p;
-          const base = baseNeedsParens ? `\\left(${astToLatex(n.a)}\\right)` : astToLatex(n.a);
-          const exp = (n.b.t === 'num') ? n.b.v.toLatex() : astToLatex(n.b);
+          const baseRaw = astToLatex(n.a, leftPath, highlightColor);
+          const base = baseNeedsParens ? `\\left(${baseRaw}\\right)` : baseRaw;
+          const exp = (n.b.t === 'num') ? astToLatex(n.b, rightPath, highlightColor) : astToLatex(n.b, rightPath, highlightColor);
           const expWrapped = exp.startsWith('\\frac') || exp.includes(' ') || exp.includes('+') || exp.includes('-') || exp.includes('\\cdot') ? `{${exp}}` : `{${exp}}`;
-          return `${base}^{${expWrapped.slice(1, -1)}}`;
+          const out = `${base}^{${expWrapped.slice(1, -1)}}`;
+          return shouldHighlightHere ? `\\bbox[${highlightColor}]{${out}}` : out;
         }
         default:
           return '';
@@ -460,64 +498,64 @@
     }
 
     function reduceOnce(n) {
-      if (n.t === 'num') return { node: n, changed: false, reason: '' };
+      if (n.t === 'num') return { node: n, changed: false, reason: '', path: [] };
 
       if (n.t === 'neg') {
         const inner = reduceOnce(n.a);
-        if (inner.changed) return { node: nodeNeg(inner.node), changed: true, reason: inner.reason };
+        if (inner.changed) return { node: nodeNeg(inner.node), changed: true, reason: inner.reason, path: ['a', ...inner.path] };
         if (inner.node.t === 'num') {
-          return { node: nodeNum(new Fraction(-inner.node.v.n, inner.node.v.d)), changed: true, reason: 'Negation' };
+          return { node: nodeNum(new Fraction(-inner.node.v.n, inner.node.v.d)), changed: true, reason: 'Negation', path: [] };
         }
-        return { node: n, changed: false, reason: '' };
+        return { node: n, changed: false, reason: '', path: [] };
       }
 
       if (n.t === 'pow') {
         const left = reduceOnce(n.a);
-        if (left.changed) return { node: nodeOp('pow', left.node, n.b), changed: true, reason: left.reason };
+        if (left.changed) return { node: nodeOp('pow', left.node, n.b), changed: true, reason: left.reason, path: ['a', ...left.path] };
 
         const right = reduceOnce(n.b);
-        if (right.changed) return { node: nodeOp('pow', n.a, right.node), changed: true, reason: right.reason };
+        if (right.changed) return { node: nodeOp('pow', n.a, right.node), changed: true, reason: right.reason, path: ['b', ...right.path] };
 
         if (n.a.t === 'num' && n.b.t === 'num') {
           const exp = n.b.v;
           if (!exp.isInt()) throw new Error('Exponent must be an integer');
-          return { node: nodeNum(Fraction.pow(n.a.v, exp.n)), changed: true, reason: 'Exponent' };
+          return { node: nodeNum(Fraction.pow(n.a.v, exp.n)), changed: true, reason: 'Exponent', path: [] };
         }
 
-        return { node: n, changed: false, reason: '' };
+        return { node: n, changed: false, reason: '', path: [] };
       }
 
       if (n.t === 'mul' || n.t === 'div') {
         const left = reduceOnce(n.a);
-        if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason };
+        if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason, path: ['a', ...left.path] };
 
         const right = reduceOnce(n.b);
-        if (right.changed) return { node: nodeOp(n.t, n.a, right.node), changed: true, reason: right.reason };
+        if (right.changed) return { node: nodeOp(n.t, n.a, right.node), changed: true, reason: right.reason, path: ['b', ...right.path] };
 
         if (n.a.t === 'num' && n.b.t === 'num') {
           const r = n.t === 'mul' ? Fraction.mul(n.a.v, n.b.v) : Fraction.div(n.a.v, n.b.v);
-          return { node: nodeNum(r), changed: true, reason: n.t === 'mul' ? 'Multiplication/Division' : 'Multiplication/Division' };
+          return { node: nodeNum(r), changed: true, reason: 'Multiplication/Division', path: [] };
         }
 
-        return { node: n, changed: false, reason: '' };
+        return { node: n, changed: false, reason: '', path: [] };
       }
 
       if (n.t === 'add' || n.t === 'sub') {
         const left = reduceOnce(n.a);
-        if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason };
+        if (left.changed) return { node: nodeOp(n.t, left.node, n.b), changed: true, reason: left.reason, path: ['a', ...left.path] };
 
         const right = reduceOnce(n.b);
-        if (right.changed) return { node: nodeOp(n.t, n.a, right.node), changed: true, reason: right.reason };
+        if (right.changed) return { node: nodeOp(n.t, n.a, right.node), changed: true, reason: right.reason, path: ['b', ...right.path] };
 
         if (n.a.t === 'num' && n.b.t === 'num') {
           const r = n.t === 'add' ? Fraction.add(n.a.v, n.b.v) : Fraction.sub(n.a.v, n.b.v);
-          return { node: nodeNum(r), changed: true, reason: 'Addition/Subtraction' };
+          return { node: nodeNum(r), changed: true, reason: 'Addition/Subtraction', path: [] };
         }
 
-        return { node: n, changed: false, reason: '' };
+        return { node: n, changed: false, reason: '', path: [] };
       }
 
-      return { node: n, changed: false, reason: '' };
+      return { node: n, changed: false, reason: '', path: [] };
     }
 
     function normalizeLatexInput(src) {
@@ -748,6 +786,11 @@
       div.appendChild(math);
       elSteps.appendChild(div);
 
+      div.classList.add('enter');
+      requestAnimationFrame(() => {
+        div.classList.add('enter-active');
+      });
+
       if (window.MathJax && window.MathJax.typesetPromise) {
         window.MathJax.typesetPromise([div]).catch(() => {});
       }
@@ -804,12 +847,21 @@
 
           const evaluated = evaluateNode(currentAst);
           currentAst = nodeNum(evaluated);
-          addStep(astToLatex(currentAst), 'Final evaluation');
+          addStep(astToLatex(currentAst, [], 'rgba(34, 197, 94, 0.40)'), 'Final evaluation');
           updateButtons();
           return;
         }
-        currentAst = r.node;
-        addStep(astToLatex(currentAst), r.reason);
+
+        const highlightBefore = astToLatex(currentAst, r.path, 'rgba(253, 224, 71, 0.55)');
+        updateLastStepMath(highlightBefore);
+
+        setTimeout(() => {
+          currentAst = r.node;
+          const highlightAfter = astToLatex(currentAst, r.path, 'rgba(34, 197, 94, 0.40)');
+          addStep(highlightAfter, r.reason);
+          updateButtons();
+        }, 180);
+
         updateButtons();
       } catch (e) {
         setMessage(e?.message ? String(e.message) : 'Failed to compute next step', 'error');
