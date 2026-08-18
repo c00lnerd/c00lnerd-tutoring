@@ -468,11 +468,11 @@ import Layout from '../../../layouts/Layout.astro';
                 subject: `Week 1 Arduino Quiz - ${studentName} (${percentage}%)`
             });
 
-            let grade = 'F';
-            if (percentage >= 90) grade = 'A';
-            else if (percentage >= 80) grade = 'B';
-            else if (percentage >= 70) grade = 'C';
-            else if (percentage >= 60) grade = 'D';
+            let submissionGrade = 'F';
+            if (percentage >= 90) submissionGrade = 'A';
+            else if (percentage >= 80) submissionGrade = 'B';
+            else if (percentage >= 70) submissionGrade = 'C';
+            else if (percentage >= 60) submissionGrade = 'D';
 
             const sheetsData = {
                 studentName: studentName,
@@ -482,7 +482,7 @@ import Layout from '../../../layouts/Layout.astro';
                 score: score,
                 totalPoints: 7,
                 percentage: percentage,
-                grade: grade,
+                grade: submissionGrade,
                 timestamp: new Date().toISOString()
             };
 
@@ -550,3 +550,4 @@ import Layout from '../../../layouts/Layout.astro';
         });
     </script>
 </Layout>
+
