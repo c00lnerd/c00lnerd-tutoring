@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -159,7 +159,7 @@ import Layout from '../../../layouts/Layout.astro';
                     transition: all 0.3s ease;
                     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="
                     background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
@@ -187,7 +187,7 @@ import Layout from '../../../layouts/Layout.astro';
                     transition: all 0.3s ease;
                     box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -224,9 +224,9 @@ window.onload = function() { generateCaptcha(); };
                 const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
                 if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
                     score += questionId === 'q1' || questionId === 'q3' || questionId === 'q4' ? 2 : 1;
-                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Correct`);
                 } else {
-                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Incorrect`);
                 }
             });
 
@@ -234,9 +234,9 @@ window.onload = function() { generateCaptcha(); };
             const q2Answer = document.getElementById('q2').value.toLowerCase().trim();
             if (q2Answer.includes('def') && q2Answer.includes('greet') && q2Answer.includes('return')) {
                 score += 3;
-                feedback.push('✓ Question 2: Correct - Good function structure');
+                feedback.push('? Question 2: Correct - Good function structure');
             } else {
-                feedback.push('✗ Question 2: Missing key elements (def, function name, return statement)');
+                feedback.push('? Question 2: Missing key elements (def, function name, return statement)');
             }
 
             const percentage = Math.round((score / totalPoints) * 100);
@@ -276,29 +276,29 @@ window.onload = function() { generateCaptcha(); };
             const formattedMessage = `WEEK 5 QUIZ RESULTS - FUNCTIONS AND MODULAR PROGRAMMING
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
 
 Student Responses:
-• Q1 (Function Definition): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
-• Q2 (Function Code): ${quizData.answers.q2}
-• Q3 (Return Statement): ${quizData.answers.q3} ${quizData.answers.q3 === 'b' ? '✓' : '✗'}
-• Q4 (Multiple Parameters): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
-• Q5 (Missing Parameters): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+� Q1 (Function Definition): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '?' : '?'}
+� Q2 (Function Code): ${quizData.answers.q2}
+� Q3 (Return Statement): ${quizData.answers.q3} ${quizData.answers.q3 === 'b' ? '?' : '?'}
+� Q4 (Multiple Parameters): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '?' : '?'}
+� Q5 (Missing Parameters): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '?' : '?'}
 
 Performance Analysis:
-${quizData.percentage >= 80 ? '🎉 Excellent! Student shows strong understanding of functions and modular programming concepts.' : 
-  quizData.percentage >= 70 ? '👍 Good work! Student grasps function concepts but may need practice with syntax and structure.' :
-  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with function definition and usage.' :
-  '📚 Needs improvement. Recommend additional review of function syntax, parameters, and return statements.'}`;
+${quizData.percentage >= 80 ? '?? Excellent! Student shows strong understanding of functions and modular programming concepts.' : 
+  quizData.percentage >= 70 ? '?? Good work! Student grasps function concepts but may need practice with syntax and structure.' :
+  quizData.percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with function definition and usage.' :
+  '?? Needs improvement. Recommend additional review of function syntax, parameters, and return statements.'}`;
 
             // Send email using the working inline format
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,

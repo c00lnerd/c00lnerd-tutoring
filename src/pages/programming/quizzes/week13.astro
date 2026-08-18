@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -147,13 +147,13 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Navigation -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
                 <a href="/programming/lessons/week13" style="background: #f57c00; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
                     Semester Overview
                 </a>
                 <a href="/programming/lessons/week14" style="background: var(--accent-dark); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -324,7 +324,7 @@ window.onload = function() { generateCaptcha(); };
                 <div style="text-align: left;">
                     ${results.map(r => `
                         <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                            <strong>Question ${r.question.toUpperCase()}:</strong> ${r.isCorrect ? '✓' : '✗'} (${r.points} points)<br>
+                            <strong>Question ${r.question.toUpperCase()}:</strong> ${r.isCorrect ? '?' : '?'} (${r.points} points)<br>
                             <strong>Your answer:</strong> ${r.userAnswer}<br>
                             <strong>Correct answer:</strong> ${r.correctAnswer}
                         </div>
@@ -354,29 +354,29 @@ window.onload = function() { generateCaptcha(); };
             // EmailJS configuration
             emailjs.init('ct_s19oZHppLy9BlW');
             
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,
                 message: `WEEK 13 QUIZ RESULTS - INTRODUCTION TO MINIAUTO PLATFORM
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date().toLocaleString()}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date().toLocaleString()}
 
 Student Responses:
-${quizData.results.map(r => `• Question ${r.question.toUpperCase()}: ${r.userAnswer} ${r.isCorrect ? '✓' : '✗'}`).join('\n')}
+${quizData.results.map(r => `� Question ${r.question.toUpperCase()}: ${r.userAnswer} ${r.isCorrect ? '?' : '?'}`).join('\n')}
 
 Performance Analysis:
-${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of miniAuto platform and hardware integration.' : 
-  quizData.percentage >= 70 ? '👍 Good work! Student grasps miniAuto fundamentals but may need practice with assembly and configuration.' :
-  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with hardware setup and mobile app connectivity.' :
-  '📚 Needs improvement. Recommend additional review of miniAuto components, assembly process, and system testing procedures.'}`,
+${quizData.percentage >= 80 ? '?? Excellent! Student demonstrates strong understanding of miniAuto platform and hardware integration.' : 
+  quizData.percentage >= 70 ? '?? Good work! Student grasps miniAuto fundamentals but may need practice with assembly and configuration.' :
+  quizData.percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with hardware setup and mobile app connectivity.' :
+  '?? Needs improvement. Recommend additional review of miniAuto components, assembly process, and system testing procedures.'}`,
                 subject: `Week 13 Programming Quiz - ${quizData.studentName}`
             }).then(function(response) {
                 console.log('Email sent successfully:', response);

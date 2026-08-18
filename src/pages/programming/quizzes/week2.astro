@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -148,13 +148,13 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Navigation -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
                 <a href="/programming/lessons/week2" style="background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="background: var(--gray); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
                     Semester Overview
                 </a>
                 <a href="/programming/lessons/week3" style="background: var(--accent-dark); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -262,15 +262,15 @@ window.onload = function() { generateCaptcha(); };
             
             // Validate student information with specific messages
             if (!studentName && !studentEmail) {
-                alert('⚠️ Please enter both your name and email address before submitting the quiz.');
+                alert('?? Please enter both your name and email address before submitting the quiz.');
                 document.getElementById('studentName').focus();
                 return;
             } else if (!studentName) {
-                alert('⚠️ Please enter your name before submitting the quiz.');
+                alert('?? Please enter your name before submitting the quiz.');
                 document.getElementById('studentName').focus();
                 return;
             } else if (!studentEmail) {
-                alert('⚠️ Please enter your email address before submitting the quiz.');
+                alert('?? Please enter your email address before submitting the quiz.');
                 document.getElementById('studentEmail').focus();
                 return;
             }
@@ -278,7 +278,7 @@ window.onload = function() { generateCaptcha(); };
             // Basic email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(studentEmail)) {
-                alert('⚠️ Please enter a valid email address (e.g., student@example.com).');
+                alert('?? Please enter a valid email address (e.g., student@example.com).');
                 document.getElementById('studentEmail').focus();
                 return;
             }
@@ -294,9 +294,9 @@ window.onload = function() { generateCaptcha(); };
                 
                 if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
                     score += points;
-                    feedback.push(`✓ Question ${questionNum}: Correct (${points} points)`);
+                    feedback.push(`? Question ${questionNum}: Correct (${points} points)`);
                 } else {
-                    feedback.push(`✗ Question ${questionNum}: Incorrect (0 points)`);
+                    feedback.push(`? Question ${questionNum}: Incorrect (0 points)`);
                 }
             });
 
@@ -308,13 +308,13 @@ window.onload = function() { generateCaptcha(); };
             
             if (hasInput && hasAge && hasAssignment) {
                 score += questionPoints.q3;
-                feedback.push(`✓ Question 3: Correct - Good use of input() function and variable assignment (${questionPoints.q3} points)`);
+                feedback.push(`? Question 3: Correct - Good use of input() function and variable assignment (${questionPoints.q3} points)`);
             } else {
                 let missing = [];
                 if (!hasInput) missing.push('input() function');
                 if (!hasAge) missing.push('age variable');
                 if (!hasAssignment) missing.push('variable assignment (=)');
-                feedback.push(`✗ Question 3: Missing key elements: ${missing.join(', ')} (0 points)`);
+                feedback.push(`? Question 3: Missing key elements: ${missing.join(', ')} (0 points)`);
             }
 
             const percentage = Math.round((score / totalPoints) * 100);
@@ -353,19 +353,19 @@ window.onload = function() { generateCaptcha(); };
             const formattedMessage = `WEEK 2 QUIZ RESULTS - VARIABLES AND DATA TYPES
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.maxScore} (${Math.round(quizData.score/quizData.maxScore*100)}%)
-• Week: ${quizData.week}
+� Score: ${quizData.score}/${quizData.maxScore} (${Math.round(quizData.score/quizData.maxScore*100)}%)
+� Week: ${quizData.week}
 
 Student Answers:
-• Q1 (Variable names): ${quizData.answers.q1}
-• Q2 (Data types): ${quizData.answers.q2}
-• Q3 (Input function): ${quizData.answers.q3}
-• Q4 (Input returns string): ${quizData.answers.q4}
-• Q5 (Type conversion): ${quizData.answers.q5}
+� Q1 (Variable names): ${quizData.answers.q1}
+� Q2 (Data types): ${quizData.answers.q2}
+� Q3 (Input function): ${quizData.answers.q3}
+� Q4 (Input returns string): ${quizData.answers.q4}
+� Q5 (Type conversion): ${quizData.answers.q5}
 
 Automated Feedback:
 ${quizData.feedback.join('\n')}
@@ -377,7 +377,7 @@ This is an automated submission from the C00lnerd Programming Quiz System.`;
             emailjs.init('ct_s19oZHppLy9BlW');
             
             // Send email using EmailJS (exact same format as working Week 1)
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,

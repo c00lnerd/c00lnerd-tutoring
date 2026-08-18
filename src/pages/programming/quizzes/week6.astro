@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -159,7 +159,7 @@ import Layout from '../../../layouts/Layout.astro';
                     transition: all 0.3s ease;
                     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="
                     background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
@@ -187,7 +187,7 @@ import Layout from '../../../layouts/Layout.astro';
                     transition: all 0.3s ease;
                     box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -224,9 +224,9 @@ window.onload = function() { generateCaptcha(); };
                 const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
                 if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
                     score += questionId === 'q1' || questionId === 'q2' || questionId === 'q4' ? 2 : 1;
-                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Correct`);
                 } else {
-                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Incorrect`);
                 }
             });
 
@@ -234,9 +234,9 @@ window.onload = function() { generateCaptcha(); };
             const q3Answer = document.getElementById('q3').value.toLowerCase().trim();
             if (q3Answer.includes('fruits.append') && q3Answer.includes('orange')) {
                 score += 3;
-                feedback.push('✓ Question 3: Correct - Good use of append() method');
+                feedback.push('? Question 3: Correct - Good use of append() method');
             } else {
-                feedback.push('✗ Question 3: Missing key elements (fruits.append and orange)');
+                feedback.push('? Question 3: Missing key elements (fruits.append and orange)');
             }
 
             const percentage = Math.round((score / totalPoints) * 100);
@@ -276,29 +276,29 @@ window.onload = function() { generateCaptcha(); };
             const formattedMessage = `WEEK 6 QUIZ RESULTS - LISTS AND DATA STRUCTURES
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
 
 Student Responses:
-• Q1 (Creating Lists): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
-• Q2 (List Indexing): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '✓' : '✗'}
-• Q3 (Append Method): ${quizData.answers.q3}
-• Q4 (Mixed Data Types): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
-• Q5 (Pop Method): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+� Q1 (Creating Lists): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '?' : '?'}
+� Q2 (List Indexing): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '?' : '?'}
+� Q3 (Append Method): ${quizData.answers.q3}
+� Q4 (Mixed Data Types): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '?' : '?'}
+� Q5 (Pop Method): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '?' : '?'}
 
 Performance Analysis:
-${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of lists and data structures.' : 
-  quizData.percentage >= 70 ? '👍 Good work! Student grasps list concepts but may need practice with methods and indexing.' :
-  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with list operations.' :
-  '📚 Needs improvement. Recommend additional review of list creation, indexing, and methods.'}`;
+${quizData.percentage >= 80 ? '?? Excellent! Student demonstrates strong understanding of lists and data structures.' : 
+  quizData.percentage >= 70 ? '?? Good work! Student grasps list concepts but may need practice with methods and indexing.' :
+  quizData.percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with list operations.' :
+  '?? Needs improvement. Recommend additional review of list creation, indexing, and methods.'}`;
 
             // Send email using the working inline format
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,

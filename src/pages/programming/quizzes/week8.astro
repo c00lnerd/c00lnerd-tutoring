@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -148,13 +148,13 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Navigation -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
                 <a href="/programming/lessons/week8" style="background: #f57c00; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="background: var(--gray); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
                     Semester Overview
                 </a>
                 <a href="/programming/lessons/week9" style="background: #e65100; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -192,36 +192,36 @@ window.onload = function() { generateCaptcha(); };
             const q1Answer = document.querySelector('input[name="q1"]:checked') as HTMLInputElement;
             if (q1Answer && q1Answer.value === correctAnswers.q1) {
                 score += 2;
-                feedback.push('✓ Question 1: Correct - Arduino is an open-source microcontroller platform');
+                feedback.push('? Question 1: Correct - Arduino is an open-source microcontroller platform');
             } else {
-                feedback.push('✗ Question 1: Incorrect - Arduino is an open-source microcontroller platform');
+                feedback.push('? Question 1: Incorrect - Arduino is an open-source microcontroller platform');
             }
 
             // Check Q2 (2 points)
             const q2Answer = document.querySelector('input[name="q2"]:checked') as HTMLInputElement;
             if (q2Answer && q2Answer.value === correctAnswers.q2) {
                 score += 2;
-                feedback.push('✓ Question 2: Correct - Arduino uses setup() and loop() functions');
+                feedback.push('? Question 2: Correct - Arduino uses setup() and loop() functions');
             } else {
-                feedback.push('✗ Question 2: Incorrect - Arduino uses setup() and loop() functions');
+                feedback.push('? Question 2: Incorrect - Arduino uses setup() and loop() functions');
             }
 
             // Check Q4 (2 points)
             const q4Answer = document.querySelector('input[name="q4"]:checked') as HTMLInputElement;
             if (q4Answer && q4Answer.value === correctAnswers.q4) {
                 score += 2;
-                feedback.push('✓ Question 4: Correct - Digital pins output HIGH (5V) or LOW (0V)');
+                feedback.push('? Question 4: Correct - Digital pins output HIGH (5V) or LOW (0V)');
             } else {
-                feedback.push('✗ Question 4: Incorrect - Digital pins output HIGH (5V) or LOW (0V)');
+                feedback.push('? Question 4: Incorrect - Digital pins output HIGH (5V) or LOW (0V)');
             }
 
             // Check Q5 (2 points)
             const q5Answer = document.querySelector('input[name="q5"]:checked') as HTMLInputElement;
             if (q5Answer && q5Answer.value === correctAnswers.q5) {
                 score += 2;
-                feedback.push('✓ Question 5: Correct - setup() runs once at start');
+                feedback.push('? Question 5: Correct - setup() runs once at start');
             } else {
-                feedback.push('✗ Question 5: Incorrect - setup() runs once at start');
+                feedback.push('? Question 5: Incorrect - setup() runs once at start');
             }
 
             // Check short answer (Q3) - basic validation for Arduino LED code
@@ -229,9 +229,9 @@ window.onload = function() { generateCaptcha(); };
             if ((q3Answer.includes('pinmode') && q3Answer.includes('13') && q3Answer.includes('output')) &&
                 (q3Answer.includes('digitalwrite') && q3Answer.includes('high'))) {
                 score += 3;
-                feedback.push('✓ Question 3: Correct - Good Arduino LED control code');
+                feedback.push('? Question 3: Correct - Good Arduino LED control code');
             } else {
-                feedback.push('✗ Question 3: Missing key elements (pinMode, digitalWrite, pin 13, HIGH)');
+                feedback.push('? Question 3: Missing key elements (pinMode, digitalWrite, pin 13, HIGH)');
             }
 
             const percentage = Math.round((score / totalPoints) * 100);
@@ -264,33 +264,33 @@ window.onload = function() { generateCaptcha(); };
             };
 
             // Submit to teacher via EmailJS
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,
                 message: `WEEK 8 QUIZ RESULTS - INTRODUCTION TO ARDUINO AND HARDWARE
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
 
 Student Responses:
-• Q1 (Arduino Definition): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
-• Q2 (Required Functions): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '✓' : '✗'}
-• Q3 (LED Control Code): ${quizData.answers.q3}
-• Q4 (Digital Pin Values): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
-• Q5 (Setup Function): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+� Q1 (Arduino Definition): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '?' : '?'}
+� Q2 (Required Functions): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '?' : '?'}
+� Q3 (LED Control Code): ${quizData.answers.q3}
+� Q4 (Digital Pin Values): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '?' : '?'}
+� Q5 (Setup Function): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '?' : '?'}
 
 Performance Analysis:
-${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of Arduino basics and hardware concepts.' : 
-  quizData.percentage >= 70 ? '👍 Good work! Student grasps Arduino fundamentals but may need practice with code syntax.' :
-  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with Arduino programming.' :
-  '📚 Needs improvement. Recommend additional review of Arduino platform, functions, and basic programming.'}`,
+${quizData.percentage >= 80 ? '?? Excellent! Student demonstrates strong understanding of Arduino basics and hardware concepts.' : 
+  quizData.percentage >= 70 ? '?? Good work! Student grasps Arduino fundamentals but may need practice with code syntax.' :
+  quizData.percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with Arduino programming.' :
+  '?? Needs improvement. Recommend additional review of Arduino platform, functions, and basic programming.'}`,
                 subject: `Week 8 Arduino Quiz - ${quizData.studentName}`
             })
             .then(function(response) {

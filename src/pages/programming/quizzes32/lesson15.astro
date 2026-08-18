@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -210,15 +210,15 @@ import Layout from '../../../layouts/Layout.astro';
         <!-- Navigation -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
             <a href="/programming/lessons32/week15" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                ← Back to Lesson
+                ? Back to Lesson
             </a>
             
             <a href="/programming/semester1" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                📚 Semester Overview
+                ?? Semester Overview
             </a>
             
             <a href="/programming/lessons32/week16" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                Next: Week 16 →
+                Next: Week 16 ?
             </a>
         </div>
     </div>
@@ -363,7 +363,7 @@ Email: ${studentEmail}
 Score: ${score}/8 (${percentage}%)
 
 MULTIPLE CHOICE ANSWERS:
-${results.map(r => `Question ${r.question}: ${r.selected} ${r.isCorrect ? '✓' : '✗ (Correct: ' + r.correct + ')'}`).join('\n')}
+${results.map(r => `Question ${r.question}: ${r.selected} ${r.isCorrect ? '?' : '? (Correct: ' + r.correct + ')'}`).join('\n')}
 
 SHORT ANSWER RESPONSES:
 
@@ -395,7 +395,7 @@ Please review the short answer responses and provide feedback to the student.`;
             // Initialize EmailJS right before sending
             (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
-            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            (window as any).emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
@@ -447,14 +447,14 @@ Please review the short answer responses and provide feedback to the student.`;
                     <div style="font-size: 2rem; font-weight: bold; color: #8b5cf6;">${score}/${total} (${percentage}%)</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;">Grade: ${grade}</div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #f3e8ff; border-radius: 6px; color: #8b5cf6; font-weight: bold;">
-                        🧠 Week 15: Advanced miniAuto Features
+                        ?? Week 15: Advanced miniAuto Features
                     </div>
                 </div>
                 <div style="text-align: left;">
                     ${results.map((result, index) => {
                         return `
                             <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '✓' : '✗'}<br>
+                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '?' : '?'}<br>
                                 <strong>Your answer:</strong> ${result.selected}<br>
                                 <strong>Correct answer:</strong> ${result.correct}
                             </div>

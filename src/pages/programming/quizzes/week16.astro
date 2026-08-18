@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -147,13 +147,13 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Navigation -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
                 <a href="/programming/lessons/week16" style="background: #880e4f; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
                     Semester Overview
                 </a>
                 <div style="background: #28a745; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; font-weight: 600;">
-                    🎉 Semester Complete!
+                    ?? Semester Complete!
                 </div>
             </div>
         </div>
@@ -329,13 +329,13 @@ window.onload = function() { generateCaptcha(); };
                     <div style="font-size: 2rem; font-weight: bold; color: #4a148c;">${score}/${totalPoints} (${percentage}%)</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: #4a148c;">Final Grade: ${grade}</div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e8; border-radius: 6px; color: #2e7d32; font-weight: bold;">
-                        🎉 Congratulations on completing the miniAuto Programming Course!
+                        ?? Congratulations on completing the miniAuto Programming Course!
                     </div>
                 </div>
                 <div style="text-align: left;">
                     ${results.map(r => `
                         <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                            <strong>Question ${r.question.toUpperCase()}:</strong> ${r.isCorrect ? '✓' : '✗'} (${r.points} points)<br>
+                            <strong>Question ${r.question.toUpperCase()}:</strong> ${r.isCorrect ? '?' : '?'} (${r.points} points)<br>
                             <strong>Your answer:</strong> ${r.userAnswer}<br>
                             <strong>Correct answer:</strong> ${r.correctAnswer}
                         </div>
@@ -365,34 +365,34 @@ window.onload = function() { generateCaptcha(); };
             // EmailJS configuration
             emailjs.init('ct_s19oZHppLy9BlW');
             
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,
-                message: `🎉 WEEK 16 FINAL QUIZ RESULTS - COMPETITION AND SHOWCASE 🎉
+                message: `?? WEEK 16 FINAL QUIZ RESULTS - COMPETITION AND SHOWCASE ??
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Final Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date().toLocaleString()}
-• Final Grade: ${quizData.grade}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date().toLocaleString()}
+� Final Grade: ${quizData.grade}
 
 Student Responses:
-${quizData.results.map(r => `• Question ${r.question.toUpperCase()}: ${r.userAnswer} ${r.isCorrect ? '✓' : '✗'}`).join('\n')}
+${quizData.results.map(r => `� Question ${r.question.toUpperCase()}: ${r.userAnswer} ${r.isCorrect ? '?' : '?'}`).join('\n')}
 
-🏆 FINAL PERFORMANCE ANALYSIS:
-${quizData.percentage >= 90 ? '🌟 OUTSTANDING! Student has mastered all aspects of robotics programming and is ready for advanced competitions. Exceptional understanding of autonomous systems, sensor integration, and problem-solving strategies.' : 
-  quizData.percentage >= 80 ? '🎉 EXCELLENT! Student demonstrates comprehensive understanding of robotics programming concepts and autonomous navigation. Strong foundation for future robotics projects and competitions.' :
-  quizData.percentage >= 70 ? '👍 VERY GOOD! Student has solid grasp of robotics fundamentals with good problem-solving skills. Ready for intermediate-level robotics challenges and continued learning.' :
-  quizData.percentage >= 60 ? '⚠️ SATISFACTORY. Student understands basic concepts but should review advanced topics like sensor fusion, autonomous behaviors, and optimization strategies before competitions.' :
-  '📚 NEEDS REVIEW. Recommend additional practice with core robotics concepts, programming fundamentals, and hands-on robot operation before attempting advanced challenges.'}
+?? FINAL PERFORMANCE ANALYSIS:
+${quizData.percentage >= 90 ? '?? OUTSTANDING! Student has mastered all aspects of robotics programming and is ready for advanced competitions. Exceptional understanding of autonomous systems, sensor integration, and problem-solving strategies.' : 
+  quizData.percentage >= 80 ? '?? EXCELLENT! Student demonstrates comprehensive understanding of robotics programming concepts and autonomous navigation. Strong foundation for future robotics projects and competitions.' :
+  quizData.percentage >= 70 ? '?? VERY GOOD! Student has solid grasp of robotics fundamentals with good problem-solving skills. Ready for intermediate-level robotics challenges and continued learning.' :
+  quizData.percentage >= 60 ? '?? SATISFACTORY. Student understands basic concepts but should review advanced topics like sensor fusion, autonomous behaviors, and optimization strategies before competitions.' :
+  '?? NEEDS REVIEW. Recommend additional practice with core robotics concepts, programming fundamentals, and hands-on robot operation before attempting advanced challenges.'}
 
-🎓 CURRICULUM COMPLETION: The student has successfully completed the 16-week miniAuto programming curriculum covering Arduino basics, sensor integration, motor control, autonomous navigation, computer vision, and competition preparation!`,
-                subject: `🏆 FINAL Week 16 Programming Quiz - ${quizData.studentName}`
+?? CURRICULUM COMPLETION: The student has successfully completed the 16-week miniAuto programming curriculum covering Arduino basics, sensor integration, motor control, autonomous navigation, computer vision, and competition preparation!`,
+                subject: `?? FINAL Week 16 Programming Quiz - ${quizData.studentName}`
             }).then(function(response) {
                 console.log('Email sent successfully:', response);
             }).catch(function(error) {

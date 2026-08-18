@@ -1,4 +1,4 @@
-Ôªø---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -149,13 +149,13 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Navigation -->
             <div style="display: flex; justify-content: center; align-items: center; margin-top: 2rem; gap: 1rem; flex-direction: column;">
                 <a href="/programming/lessons/week1" style="display: inline-block; background: #3182ce; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; min-width: 200px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.background='#2c5282'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#3182ce'; this.style.transform='translateY(0)';">
-                    ‚Üê Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="display: inline-block; background: #38a169; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; min-width: 200px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.background='#2f855a'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#38a169'; this.style.transform='translateY(0)';">
                     Semester Overview
                 </a>
                 <a href="/programming/lessons/week2" style="display: inline-block; background: #805ad5; color: white; padding: 0.75rem 2rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; cursor: pointer; border: none; min-width: 200px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" onmouseover="this.style.background='#6b46c1'; this.style.transform='translateY(-2px)';" onmouseout="this.style.background='#805ad5'; this.style.transform='translateY(0)';">
-                    Next Lesson ‚Üí
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -267,9 +267,9 @@ window.onload = function() { generateCaptcha(); };
                 const selected = document.querySelector(`input[name="${question}"]:checked`);
                 if (selected && selected.value === correctAnswers[question]) {
                     totalScore += pointValues[question];
-                    feedback.push(`‚úì ${question.toUpperCase()}: Correct (${pointValues[question]} points)`);
+                    feedback.push(`? ${question.toUpperCase()}: Correct (${pointValues[question]} points)`);
                 } else {
-                    feedback.push(`‚úó ${question.toUpperCase()}: Incorrect (0 points)`);
+                    feedback.push(`? ${question.toUpperCase()}: Incorrect (0 points)`);
                 }
             }
 
@@ -282,14 +282,14 @@ window.onload = function() { generateCaptcha(); };
             // Simple checks for open-ended questions
             if (q3Answer.toLowerCase().includes('hello') && q3Answer.toLowerCase().includes('world')) {
                 totalScore += 3;
-                feedback.push('‚úì Q3: Good understanding of print output (3 points)');
+                feedback.push('? Q3: Good understanding of print output (3 points)');
             } else {
                 feedback.push('? Q3: Please review print statement output (0 points - needs teacher review)');
             }
 
             if (q5Answer.includes('print') && q5Answer.includes('#')) {
                 totalScore += 4;
-                feedback.push('‚úì Q5: Good code structure with comment (4 points)');
+                feedback.push('? Q5: Good code structure with comment (4 points)');
             } else {
                 feedback.push('? Q5: Make sure to include both print statement and comment (partial credit - needs teacher review)');
             }
@@ -319,9 +319,9 @@ window.onload = function() { generateCaptcha(); };
             feedback.forEach(item => {
                 const p = document.createElement('p');
                 p.innerHTML = item;
-                if (item.startsWith('‚úì')) {
+                if (item.startsWith('?')) {
                     p.className = 'text-green-700';
-                } else if (item.startsWith('‚úó')) {
+                } else if (item.startsWith('?')) {
                     p.className = 'text-red-700';
                 } else {
                     p.className = 'text-yellow-700';
@@ -359,21 +359,21 @@ window.onload = function() { generateCaptcha(); };
             const formattedMessage = `WEEK 1 QUIZ RESULTS - INTRODUCTION TO PROGRAMMING & PYTHON
 
 Student Information:
-‚Ä¢ Name: ${quizData.studentName}
-‚Ä¢ Email: ${quizData.studentEmail}
+ï Name: ${quizData.studentName}
+ï Email: ${quizData.studentEmail}
 
 Quiz Performance:
-‚Ä¢ Score: ${quizData.score}/${quizData.maxScore} (${Math.round(quizData.score/quizData.maxScore*100)}%)
-‚Ä¢ Week: ${quizData.week}
+ï Score: ${quizData.score}/${quizData.maxScore} (${Math.round(quizData.score/quizData.maxScore*100)}%)
+ï Week: ${quizData.week}
 
 Student Answers:
-‚Ä¢ Q1 (Programming definition): ${quizData.answers.q1}
-‚Ä¢ Q2 (Comment symbol): ${quizData.answers.q2}
-‚Ä¢ Q3 (Code output): ${quizData.answers.q3}
-‚Ä¢ Q4 (Comments true/false): ${quizData.answers.q4}
-‚Ä¢ Q5 (Code writing): ${quizData.answers.q5}
-‚Ä¢ Q6 (Comment importance): ${quizData.answers.q6}
-‚Ä¢ Q7 (Robotics application): ${quizData.answers.q7}
+ï Q1 (Programming definition): ${quizData.answers.q1}
+ï Q2 (Comment symbol): ${quizData.answers.q2}
+ï Q3 (Code output): ${quizData.answers.q3}
+ï Q4 (Comments true/false): ${quizData.answers.q4}
+ï Q5 (Code writing): ${quizData.answers.q5}
+ï Q6 (Comment importance): ${quizData.answers.q6}
+ï Q7 (Robotics application): ${quizData.answers.q7}
 
 Automated Feedback:
 ${quizData.feedback.join('\n')}
@@ -385,7 +385,7 @@ This is an automated submission from the C00lnerd Programming Quiz System.`;
             emailjs.init('ct_s19oZHppLy9BlW');
             
             // Send email using EmailJS (exact same format as working experiments)
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,

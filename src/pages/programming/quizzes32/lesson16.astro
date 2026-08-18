@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -210,15 +210,15 @@ import Layout from '../../../layouts/Layout.astro';
         <!-- Navigation -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
             <a href="/programming/lessons32/week16" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                ← Back to Lesson
+                ? Back to Lesson
             </a>
             
             <a href="/programming/semester1" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #f59e0b; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                📚 Semester Overview
+                ?? Semester Overview
             </a>
             
             <div style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #10b981; color: white; border-radius: 6px; font-weight: 500;">
-                🎉 Semester Complete!
+                ?? Semester Complete!
             </div>
         </div>
     </div>
@@ -363,7 +363,7 @@ Email: ${studentEmail}
 Score: ${score}/8 (${percentage}%)
 
 MULTIPLE CHOICE ANSWERS:
-${results.map(r => `Question ${r.question}: ${r.selected} ${r.isCorrect ? '✓' : '✗ (Correct: ' + r.correct + ')'}`).join('\n')}
+${results.map(r => `Question ${r.question}: ${r.selected} ${r.isCorrect ? '?' : '? (Correct: ' + r.correct + ')'}`).join('\n')}
 
 SHORT ANSWER RESPONSES:
 
@@ -379,7 +379,7 @@ ${percentage >= 90 ? 'OUTSTANDING! Exceptional mastery of the entire semester cu
   percentage >= 70 ? 'GOOD! Solid grasp of key concepts. Review project planning and documentation strategies before the final project.' :
   'NEEDS REVIEW! Please revisit semester materials and meet with instructor to ensure readiness for the final project.'}
 
-🎉 CONGRATULATIONS ON COMPLETING SEMESTER 1! 🎉
+?? CONGRATULATIONS ON COMPLETING SEMESTER 1! ??
 
 This student has successfully completed the first 16 weeks of the miniAuto programming curriculum, covering:
 - Arduino programming fundamentals
@@ -404,15 +404,15 @@ Please review the reflection responses and provide personalized feedback for the
             // Initialize EmailJS right before sending
             (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
-            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            (window as any).emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
                 message: message,
-                subject: `🎉 SEMESTER 1 COMPLETE - Week 16 Final Quiz - ${studentName} (${percentage}%)`
+                subject: `?? SEMESTER 1 COMPLETE - Week 16 Final Quiz - ${studentName} (${percentage}%)`
             }).then(function(response) {
                 console.log('Quiz results sent successfully!', response.status, response.text);
-                alert('🎉 Congratulations! You\'ve completed the entire 16-week miniAuto programming curriculum!');
+                alert('?? Congratulations! You\'ve completed the entire 16-week miniAuto programming curriculum!');
                 
                 // Log to Google Sheets
                 console.log('Logging final quiz results to Google Sheets...');
@@ -456,14 +456,14 @@ Please review the reflection responses and provide personalized feedback for the
                     <div style="font-size: 2rem; font-weight: bold; color: #f59e0b;">${score}/${total} (${percentage}%)</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b;">Grade: ${grade}</div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #fef3c7; border-radius: 6px; color: #f59e0b; font-weight: bold;">
-                        🎉 Week 16: Final Project and Competition - SEMESTER 1 COMPLETE!
+                        ?? Week 16: Final Project and Competition - SEMESTER 1 COMPLETE!
                     </div>
                 </div>
                 <div style="text-align: left;">
                     ${results.map((result, index) => {
                         return `
                             <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '✓' : '✗'}<br>
+                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '?' : '?'}<br>
                                 <strong>Your answer:</strong> ${result.selected}<br>
                                 <strong>Correct answer:</strong> ${result.correct}
                             </div>
@@ -478,7 +478,7 @@ Please review the reflection responses and provide personalized feedback for the
                         <strong>Your answer:</strong> ${q10Answer || 'No answer provided'}
                     </div>
                     <div style="margin-top: 2rem; padding: 1.5rem; background: #10b981; color: white; border-radius: 8px; text-align: center;">
-                        <h3 style="margin: 0 0 1rem 0; font-size: 1.5rem;">🎊 Congratulations! 🎊</h3>
+                        <h3 style="margin: 0 0 1rem 0; font-size: 1.5rem;">?? Congratulations! ??</h3>
                         <p style="margin: 0; font-size: 1.1rem;">You have successfully completed Semester 1 of the miniAuto Programming Curriculum!</p>
                         <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Ready for Semester 2: Advanced Robotics and AI Applications</p>
                     </div>

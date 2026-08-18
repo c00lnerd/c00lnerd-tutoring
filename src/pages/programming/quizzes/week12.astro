@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -147,13 +147,13 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Navigation -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
                 <a href="/programming/lessons/week12" style="background: #2e7d32; color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="background: var(--accent); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
                     Semester Overview
                 </a>
                 <a href="/programming/lessons/week13" style="background: var(--accent-dark); color: white; padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; transition: background-color 0.2s;">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -236,24 +236,24 @@ window.onload = function() { generateCaptcha(); };
     }
         // IMMEDIATE EmailJS TEST - runs on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 Page loaded - testing EmailJS immediately...');
+            console.log('?? Page loaded - testing EmailJS immediately...');
             
             // Initialize EmailJS
             emailjs.init('ct_s19oZHppLy9BlW');
             
             // Test EmailJS immediately
             setTimeout(function() {
-                console.log('📧 Sending test email...');
-                emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+                console.log('?? Sending test email...');
+                emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                     to_email: 'chuck@c00lnerd.com',
                     from_name: 'Page Load Test',
                     from_email: 'test@pageload.com',
                     message: 'This is an automatic test email sent when the quiz page loads.',
                     subject: 'EmailJS Page Load Test'
                 }).then(function(response) {
-                    console.log('✅ Page load test email sent successfully:', response);
+                    console.log('? Page load test email sent successfully:', response);
                 }).catch(function(error) {
-                    console.error('❌ Page load test email failed:', error);
+                    console.error('? Page load test email failed:', error);
                 });
             }, 2000); // Wait 2 seconds for EmailJS to fully load
         });
@@ -348,7 +348,7 @@ window.onload = function() { generateCaptcha(); };
                 <div style="text-align: left;">
                     ${results.map(r => `
                         <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                            <strong>Question ${r.question.toUpperCase()}:</strong> ${r.isCorrect ? '✓' : '✗'} (${r.points} points)<br>
+                            <strong>Question ${r.question.toUpperCase()}:</strong> ${r.isCorrect ? '?' : '?'} (${r.points} points)<br>
                             <strong>Your answer:</strong> ${r.userAnswer}<br>
                             <strong>Correct answer:</strong> ${r.correctAnswer}
                         </div>
@@ -389,7 +389,7 @@ window.onload = function() { generateCaptcha(); };
             });
             
             // EmailJS configuration (independent of Google Sheets)
-            console.log('🚀 Starting EmailJS section...');
+            console.log('?? Starting EmailJS section...');
             emailjs.init('ct_s19oZHppLy9BlW');
             
             console.log('Attempting to send email with data:', {
@@ -399,35 +399,35 @@ window.onload = function() { generateCaptcha(); };
                 subject: `Week 12 Programming Quiz - ${document.getElementById('quiz12StudentName').value}`
             });
             
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: document.getElementById('quiz12StudentName').value,
                 from_email: document.getElementById('quiz12StudentEmail').value,
                 message: `WEEK 12 QUIZ RESULTS - ULTRASONIC SENSORS AND OBSTACLE DETECTION
 
 Student Information:
-• Name: ${document.getElementById('quiz12StudentName').value}
-• Email: ${document.getElementById('quiz12StudentEmail').value}
+� Name: ${document.getElementById('quiz12StudentName').value}
+� Email: ${document.getElementById('quiz12StudentEmail').value}
 
 Quiz Performance:
-• Score: ${score}/${totalPoints} (${percentage}%)
-• Topic: Ultrasonic Sensors and Obstacle Detection
-• Submission Date: ${new Date().toLocaleString()}
+� Score: ${score}/${totalPoints} (${percentage}%)
+� Topic: Ultrasonic Sensors and Obstacle Detection
+� Submission Date: ${new Date().toLocaleString()}
 
 Student Responses:
-${results.map(r => `• Question ${r.question.toUpperCase()}: ${r.userAnswer} ${r.isCorrect ? '✓' : '✗'}`).join('\n')}
+${results.map(r => `� Question ${r.question.toUpperCase()}: ${r.userAnswer} ${r.isCorrect ? '?' : '?'}`).join('\n')}
 
 Performance Analysis:
-${percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of ultrasonic sensors and obstacle detection algorithms.' : 
-  percentage >= 70 ? '👍 Good work! Student grasps ultrasonic sensor fundamentals but may need practice with distance calculations and navigation logic.' :
-  percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with sensor reliability and advanced navigation behaviors.' :
-  '📚 Needs improvement. Recommend additional review of ultrasonic sensor principles, distance measurement, and obstacle avoidance programming.'}`,
+${percentage >= 80 ? '?? Excellent! Student demonstrates strong understanding of ultrasonic sensors and obstacle detection algorithms.' : 
+  percentage >= 70 ? '?? Good work! Student grasps ultrasonic sensor fundamentals but may need practice with distance calculations and navigation logic.' :
+  percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with sensor reliability and advanced navigation behaviors.' :
+  '?? Needs improvement. Recommend additional review of ultrasonic sensor principles, distance measurement, and obstacle avoidance programming.'}`,
                 subject: `Week 12 Programming Quiz - ${document.getElementById('quiz12StudentName').value}`
             }).then(function(response) {
-                console.log('✅ Email sent successfully:', response);
+                console.log('? Email sent successfully:', response);
                 alert('Quiz submitted! Email sent to instructor.');
             }).catch(function(error) {
-                console.error('❌ Email send failed:', error);
+                console.error('? Email send failed:', error);
                 alert('Quiz submitted! Google Sheets updated, but email failed to send.');
             });
         });

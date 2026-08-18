@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -160,7 +160,7 @@ import Layout from '../../../layouts/Layout.astro';
                           text-align: center;"
                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'"
                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
-                    ← Back to Week 3 Lesson
+                    ? Back to Week 3 Lesson
                 </a>
                 
                 <a href="/programming/semester1" 
@@ -176,7 +176,7 @@ import Layout from '../../../layouts/Layout.astro';
                           text-align: center;"
                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(107, 114, 128, 0.4)'"
                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(107, 114, 128, 0.3)'">
-                    📚 Semester Overview
+                    ?? Semester Overview
                 </a>
                 
                 <a href="/programming/lessons/week4" 
@@ -192,7 +192,7 @@ import Layout from '../../../layouts/Layout.astro';
                           text-align: center;"
                    onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'"
                    onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
-                    Next: Week 4 Lesson →
+                    Next: Week 4 Lesson ?
                 </a>
             </div>
         </div>
@@ -226,15 +226,15 @@ window.onload = function() { generateCaptcha(); };
             
             // Validate student information with specific messages
             if (!studentName && !studentEmail) {
-                alert('⚠️ Please enter both your name and email address before submitting the quiz.');
+                alert('?? Please enter both your name and email address before submitting the quiz.');
                 document.getElementById('studentName').focus();
                 return;
             } else if (!studentName) {
-                alert('⚠️ Please enter your name before submitting the quiz.');
+                alert('?? Please enter your name before submitting the quiz.');
                 document.getElementById('studentName').focus();
                 return;
             } else if (!studentEmail) {
-                alert('⚠️ Please enter your email address before submitting the quiz.');
+                alert('?? Please enter your email address before submitting the quiz.');
                 document.getElementById('studentEmail').focus();
                 return;
             }
@@ -242,7 +242,7 @@ window.onload = function() { generateCaptcha(); };
             // Basic email validation
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(studentEmail)) {
-                alert('⚠️ Please enter a valid email address (e.g., student@example.com).');
+                alert('?? Please enter a valid email address (e.g., student@example.com).');
                 document.getElementById('studentEmail').focus();
                 return;
             }
@@ -255,9 +255,9 @@ window.onload = function() { generateCaptcha(); };
                 const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
                 if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
                     score += questionPoints[questionId];
-                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct (${questionPoints[questionId]} points)`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Correct (${questionPoints[questionId]} points)`);
                 } else {
-                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect (0 points)`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Incorrect (0 points)`);
                 }
             });
 
@@ -270,14 +270,14 @@ window.onload = function() { generateCaptcha(); };
             
             if (hasIf && hasAge && hasComparison && hasEighteen) {
                 score += questionPoints.q2;
-                feedback.push(`✓ Question 2: Correct - Good conditional structure (${questionPoints.q2} points)`);
+                feedback.push(`? Question 2: Correct - Good conditional structure (${questionPoints.q2} points)`);
             } else {
                 let missing = [];
                 if (!hasIf) missing.push('if statement');
                 if (!hasAge) missing.push('age variable');
                 if (!hasComparison) missing.push('comparison operator (>= or >)');
                 if (!hasEighteen) missing.push('value 18');
-                feedback.push(`✗ Question 2: Missing key elements: ${missing.join(', ')} (0 points)`);
+                feedback.push(`? Question 2: Missing key elements: ${missing.join(', ')} (0 points)`);
             }
 
             const percentage = Math.round((score / totalPoints) * 100);
@@ -317,28 +317,28 @@ window.onload = function() { generateCaptcha(); };
             const formattedMessage = `WEEK 3 QUIZ RESULTS - CONDITIONALS AND DECISION MAKING
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
 
 Student Responses:
-• Q1 (Equality Operator): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
-• Q2 (If Statement): ${quizData.answers.q2}
-• Q3 (Code Output): ${quizData.answers.q3} ${quizData.answers.q3 === 'a' ? '✓' : '✗'}
-• Q4 (Multiple elif): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
-• Q5 (Logical AND): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+� Q1 (Equality Operator): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '?' : '?'}
+� Q2 (If Statement): ${quizData.answers.q2}
+� Q3 (Code Output): ${quizData.answers.q3} ${quizData.answers.q3 === 'a' ? '?' : '?'}
+� Q4 (Multiple elif): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '?' : '?'}
+� Q5 (Logical AND): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '?' : '?'}
 
 Performance Analysis:
-${quizData.percentage >= 80 ? '🎉 Excellent! Student shows strong understanding of conditionals and decision-making logic.' : 
-  quizData.percentage >= 70 ? '👍 Good work! Student grasps conditional concepts but may need practice with syntax.' :
-  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with if-elif-else structures.' :
-  '📚 Needs improvement. Recommend additional review of conditional statements and logical operators.'}`;
+${quizData.percentage >= 80 ? '?? Excellent! Student shows strong understanding of conditionals and decision-making logic.' : 
+  quizData.percentage >= 70 ? '?? Good work! Student grasps conditional concepts but may need practice with syntax.' :
+  quizData.percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with if-elif-else structures.' :
+  '?? Needs improvement. Recommend additional review of conditional statements and logical operators.'}`;
 
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,

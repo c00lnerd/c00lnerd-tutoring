@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
@@ -159,7 +159,7 @@ import Layout from '../../../layouts/Layout.astro';
                     transition: all 0.3s ease;
                     box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(59, 130, 246, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(59, 130, 246, 0.3)'">
-                    ← Back to Lesson
+                    ? Back to Lesson
                 </a>
                 <a href="/programming/semester1" style="
                     background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
@@ -187,7 +187,7 @@ import Layout from '../../../layouts/Layout.astro';
                     transition: all 0.3s ease;
                     box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
                 " onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 8px rgba(16, 185, 129, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 4px rgba(16, 185, 129, 0.3)'">
-                    Next Lesson →
+                    Next Lesson ?
                 </a>
             </div>
         </div>
@@ -224,9 +224,9 @@ window.onload = function() { generateCaptcha(); };
                 const selectedAnswer = document.querySelector(`input[name="${questionId}"]:checked`);
                 if (selectedAnswer && selectedAnswer.value === correctAnswers[questionId]) {
                     score += questionId === 'q1' || questionId === 'q2' || questionId === 'q4' ? 2 : 1;
-                    feedback.push(`✓ Question ${questionId.slice(1)}: Correct`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Correct`);
                 } else {
-                    feedback.push(`✗ Question ${questionId.slice(1)}: Incorrect`);
+                    feedback.push(`? Question ${questionId.slice(1)}: Incorrect`);
                 }
             });
 
@@ -235,9 +235,9 @@ window.onload = function() { generateCaptcha(); };
             if ((q3Answer.includes('open') && q3Answer.includes('data.txt') && q3Answer.includes('readlines')) ||
                 (q3Answer.includes('with open') && q3Answer.includes('data.txt') && q3Answer.includes('lines'))) {
                 score += 3;
-                feedback.push('✓ Question 3: Correct - Good file reading approach');
+                feedback.push('? Question 3: Correct - Good file reading approach');
             } else {
-                feedback.push('✗ Question 3: Missing key elements (open, data.txt, readlines or similar)');
+                feedback.push('? Question 3: Missing key elements (open, data.txt, readlines or similar)');
             }
 
             const percentage = Math.round((score / totalPoints) * 100);
@@ -277,29 +277,29 @@ window.onload = function() { generateCaptcha(); };
             const formattedMessage = `WEEK 7 QUIZ RESULTS - FILE HANDLING AND DATA PROCESSING
 
 Student Information:
-• Name: ${quizData.studentName}
-• Email: ${quizData.studentEmail}
+� Name: ${quizData.studentName}
+� Email: ${quizData.studentEmail}
 
 Quiz Performance:
-• Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
-• Topic: ${quizData.topic}
-• Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
+� Score: ${quizData.score}/${quizData.totalPoints} (${quizData.percentage}%)
+� Topic: ${quizData.topic}
+� Submission Date: ${new Date(quizData.submittedAt).toLocaleString()}
 
 Student Responses:
-• Q1 (File Opening): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '✓' : '✗'}
-• Q2 (File Modes): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '✓' : '✗'}
-• Q3 (Reading Files): ${quizData.answers.q3}
-• Q4 (File Closing): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '✓' : '✗'}
-• Q5 (CSV Files): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '✓' : '✗'}
+� Q1 (File Opening): ${quizData.answers.q1} ${quizData.answers.q1 === 'b' ? '?' : '?'}
+� Q2 (File Modes): ${quizData.answers.q2} ${quizData.answers.q2 === 'b' ? '?' : '?'}
+� Q3 (Reading Files): ${quizData.answers.q3}
+� Q4 (File Closing): ${quizData.answers.q4} ${quizData.answers.q4 === 'true' ? '?' : '?'}
+� Q5 (CSV Files): ${quizData.answers.q5} ${quizData.answers.q5 === 'b' ? '?' : '?'}
 
 Performance Analysis:
-${quizData.percentage >= 80 ? '🎉 Excellent! Student demonstrates strong understanding of file handling concepts.' : 
-  quizData.percentage >= 70 ? '👍 Good work! Student grasps file operations but may need practice with file modes or syntax.' :
-  quizData.percentage >= 60 ? '⚠️ Satisfactory. Student understands basics but needs more practice with file operations.' :
-  '📚 Needs improvement. Recommend additional review of file opening, reading, and closing operations.'}`;
+${quizData.percentage >= 80 ? '?? Excellent! Student demonstrates strong understanding of file handling concepts.' : 
+  quizData.percentage >= 70 ? '?? Good work! Student grasps file operations but may need practice with file modes or syntax.' :
+  quizData.percentage >= 60 ? '?? Satisfactory. Student understands basics but needs more practice with file operations.' :
+  '?? Needs improvement. Recommend additional review of file opening, reading, and closing operations.'}`;
 
             // Send email using the working inline format
-            emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: quizData.studentName,
                 from_email: quizData.studentEmail,
