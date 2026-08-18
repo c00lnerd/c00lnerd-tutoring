@@ -586,15 +586,15 @@ window.onload = function() { generateCaptcha(); };
             
             // Send email using EmailJS
             // Check if EmailJS is available
-            if (typeof (window as any).emailjs === 'undefined') {
+            if (typeof window.emailjs === 'undefined') {
                 alert('Email service is not available. Please refresh the page and try again.');
                 return;
             }
             
             // Initialize EmailJS right before sending
-            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
+            window.emailjs.init('ct_s19oZHppLy9BlW');
             
-            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            window.emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',

@@ -431,14 +431,14 @@ window.onload = function() { generateCaptcha(); };
         document.getElementById('quizForm')?.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const submitBtn = document.getElementById('submitBtn') as HTMLButtonElement;
+            const submitBtn = document.getElementById('submitBtn');
             if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Submitting...';
             }
             
             // Check if EmailJS is available
-            if (!emailjsReady || typeof (window as any).emailjs === 'undefined') {
+            if (!emailjsReady || typeof window.emailjs === 'undefined') {
                 alert('Email service is not available. Please refresh the page and try again.');
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -448,9 +448,9 @@ window.onload = function() { generateCaptcha(); };
             }
             
             // Get form data
-            const formData = new FormData(this as HTMLFormElement);
-            const studentNameEl = document.getElementById('quiz2StudentName') as HTMLInputElement;
-            const studentEmailEl = document.getElementById('quiz2StudentEmail') as HTMLInputElement;
+            const formData = new FormData(this);
+            const studentNameEl = document.getElementById('quiz2StudentName');
+            const studentEmailEl = document.getElementById('quiz2StudentEmail');
             const studentName = studentNameEl ? studentNameEl.value : '';
             const studentEmail = studentEmailEl ? studentEmailEl.value : '';
             
@@ -583,13 +583,13 @@ window.onload = function() { generateCaptcha(); };
             if (quizResults) quizResults.scrollIntoView({ behavior: 'smooth' });
             
             // Send email using EmailJS
-            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            window.emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
                 message: message,
                 subject: `Week 2 Arduino Quiz - ${studentName} (${percentage}%)`
-            }).then(function(response: any) {
+            }).then(function(response) {
                 console.log('Quiz results sent successfully!', response.status, response.text);
                 alert('Quiz results sent successfully!');
                 
@@ -614,9 +614,9 @@ window.onload = function() { generateCaptcha(); };
                     })
                 })
                 .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
-                .catch((error: any) => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+                .catch((error) => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
                 
-            }, function(error: any) {
+            }, function(error) {
                 console.log('Failed to send quiz results...', error);
                 alert('There was an issue sending your quiz results. Please contact your instructor.');
             });

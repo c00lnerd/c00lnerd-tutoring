@@ -397,8 +397,8 @@ window.onload = function() { generateCaptcha(); };
         
         // Wait for EmailJS to load, then initialize
         window.addEventListener('load', function() {
-            if (typeof (window as any).emailjs !== 'undefined') {
-                (window as any).emailjs.init('ct_s19oZHppLy9BlW');
+            if (typeof window.emailjs !== 'undefined') {
+                window.emailjs.init('ct_s19oZHppLy9BlW');
                 emailjsReady = true;
                 console.log('EmailJS initialized successfully');
             } else {
@@ -566,13 +566,13 @@ window.onload = function() { generateCaptcha(); };
             document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
             
             // Check if EmailJS is available
-            if (!emailjsReady || typeof (window as any).emailjs === 'undefined') {
+            if (!emailjsReady || typeof window.emailjs === 'undefined') {
                 alert('Email service is not available. Please refresh the page and try again.');
                 return;
             }
             
             // Send email using EmailJS
-            (window as any).emailjs.send('service_ot1jg6s', 'template_io02xtm', {
+            window.emailjs.send('service_ot1jg6s', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
