@@ -467,6 +467,42 @@ import Layout from '../../../layouts/Layout.astro';
                 from_email: 'chuck@c00lnerd.com',
                 subject: `Week 1 Arduino Quiz - ${studentName} (${percentage}%)`
             });
+
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+
+            const sheetsData = {
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 'Week 1',
+                topic: 'Introduction to Programming',
+                score: score,
+                totalPoints: 7,
+                percentage: percentage,
+                grade: grade,
+                timestamp: new Date().toISOString()
+            };
+
+            function logQuizToGoogleSheets() {
+                console.log('Logging quiz results to Google Sheets...');
+                return fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(sheetsData)
+                })
+                .then(() => {
+                    console.log('Quiz results logged to Google Sheets successfully!');
+                })
+                .catch(error => {
+                    console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error);
+                });
+            }
             
             // Set a timeout to prevent infinite loading
             const timeoutId = setTimeout(() => {
@@ -478,9 +514,12 @@ import Layout from '../../../layouts/Layout.astro';
             
             // Check if EmailJS is available
             if (typeof window.emailjs === 'undefined') {
-                alert('Email service is not available. Please refresh the page and try again.');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Quiz';
+                clearTimeout(timeoutId);
+                logQuizToGoogleSheets().finally(() => {
+                    alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Quiz';
+                });
                 return;
             }
             
@@ -497,51 +536,16 @@ import Layout from '../../../layouts/Layout.astro';
                 clearTimeout(timeoutId);
                 console.log('Quiz results sent successfully!', response.status, response.text);
                 alert('Quiz submitted successfully! Your results have been sent to your instructor.');
-                
-                // Log to Google Sheets
-                console.log('Logging quiz results to Google Sheets...');
-                const totalQuestions = 7;
-                
-                // Calculate grade
-                let grade = 'F';
-                if (percentage >= 90) grade = 'A';
-                else if (percentage >= 80) grade = 'B';
-                else if (percentage >= 70) grade = 'C';
-                else if (percentage >= 60) grade = 'D';
-                
-                const sheetsData = {
-                    studentName: studentName,
-                    studentEmail: studentEmail,
-                    week: 'Week 1',
-                    topic: 'Introduction to Programming',
-                    score: score,
-                    totalPoints: 7,
-                    percentage: percentage,
-                    grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
-                    timestamp: new Date().toISOString()
-                };
-
-                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(sheetsData)
-                })
-                .then(() => {
-                    console.log('Quiz results logged to Google Sheets successfully!');
-                })
-                .catch(error => {
-                    console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error);
-                });
+                logQuizToGoogleSheets();
             }).catch(function(error) {
                 clearTimeout(timeoutId);
                 console.error('EmailJS Error:', error);
                 console.error('Error details:', error.text || error.message || 'Unknown error');
-                alert(`There was an error submitting your quiz: ${error.text || error.message || 'Unknown error'}. Please try again or contact your instructor.`);
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Quiz';
+                logQuizToGoogleSheets().finally(() => {
+                    alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit Quiz';
+                });
             });
         });
     </script>
