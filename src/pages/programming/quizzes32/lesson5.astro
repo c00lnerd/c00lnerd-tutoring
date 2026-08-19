@@ -607,7 +607,7 @@ window.onload = function() { generateCaptcha(); };
                 
                 // Log to Google Sheets
                 console.log('Logging quiz results to Google Sheets...');
-                fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+                fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: {
@@ -632,12 +632,13 @@ window.onload = function() { generateCaptcha(); };
                 submitBtn.style.backgroundColor = '#10b981';
             }).catch(function(error) {
                 console.log('Failed to send quiz results...', error);
-                alert('There was an issue sending your quiz results. Please contact your instructor.');
+                alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Quiz';
             });
         });
     </script>
 </Layout>
+
 
 

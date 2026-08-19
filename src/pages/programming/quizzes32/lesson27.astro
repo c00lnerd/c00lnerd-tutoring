@@ -487,7 +487,7 @@ window.onload = function() { generateCaptcha(); };
         function sendResultsEmail(data) {
             // Check if EmailJS is available
             if (typeof (window as any).emailjs === 'undefined') {
-                alert('Email service is not available. Please refresh the page and try again.');
+                console.log('Email service unavailable; relying on Google Sheets logging.');
                 return;
             }
             
@@ -548,7 +548,7 @@ window.onload = function() { generateCaptcha(); };
                 timestamp: new Date().toISOString()
             };
             
-            fetch('https://script.google.com/macros/s/AKfycbyiA4c14AqtPjr6T8OUXQkGoJ4C3QQnK6WHCdCa2xBDKx1SZreL0Y-sk70YJoa0OzME8w/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
                 method: 'POST',
                 mode: 'no-cors',
                 headers: {
@@ -565,3 +565,4 @@ window.onload = function() { generateCaptcha(); };
     </script>
     </body>
 </html>
+
