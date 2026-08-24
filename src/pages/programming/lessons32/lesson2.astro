@@ -194,6 +194,78 @@ void setup() {
 void loop() {
 }`}</code></pre>
                 </div>
+
+                <div>
+                    <h3 style="color: #2d3748; font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Conditional statements: <code>if</code> and <code>else</code></h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        Sometimes a program should only do something when a condition is true. That is what a conditional statement does.
+                    </p>
+                    <div style="background: #eef2ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <code>if</code> means “only do this when the condition is true”</li>
+                            <li>• <code>else</code> means “otherwise, do this instead”</li>
+                            <li>• Conditions often compare values with symbols like <code>==</code>, <code>&lt;</code>, or <code>&gt;</code></li>
+                        </ul>
+                    </div>
+                    <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #f59e0b;">
+                        <h4 style="color: #9a3412; font-weight: bold; margin-bottom: 1rem;">Important: <code>=</code> is not the same as <code>==</code></h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <code>x = 0</code> means “store 0 in <code>x</code>”</li>
+                            <li>• <code>x == 0</code> means “check whether <code>x</code> is equal to 0”</li>
+                            <li>• In an <code>if</code> statement, you usually want <code>==</code> because you are testing a value</li>
+                        </ul>
+                    </div>
+                    <div style="background: #ecfeff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #06b6d4;">
+                        <h4 style="color: #155e75; font-weight: bold; margin-bottom: 1rem;">What do <code>()</code> and <code>{}</code> do?</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Parentheses <code>()</code> hold the condition or information being passed in</li>
+                            <li>• Braces <code>{}</code> hold the block of code that belongs together</li>
+                            <li>• In <code>if (score == 7) &#123; ... &#125;</code>, the parentheses contain the test, and the braces contain the code to run if the test is true</li>
+                        </ul>
+                    </div>
+                    <div style="background: #f0fdf4; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #22c55e;">
+                        <h4 style="color: #166534; font-weight: bold; margin-bottom: 1rem;">What does a semicolon <code>;</code> do?</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• A semicolon usually marks the end of one complete statement</li>
+                            <li>• Many lines like <code>int score = 7;</code> or <code>Serial.begin(9600);</code> need semicolons</li>
+                            <li>• Lines that open a block, like <code>if (...)</code> or <code>void setup()</code>, do not use a semicolon before the opening brace</li>
+                        </ul>
+                    </div>
+                    <div style="background: #fefce8; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #eab308;">
+                        <h4 style="color: #854d0e; font-weight: bold; margin-bottom: 1rem;">What are comments?</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• Comments are notes for people reading the code</li>
+                            <li>• The computer ignores comments when it runs the program</li>
+                            <li>• A single-line comment starts with <code>//</code></li>
+                        </ul>
+                    </div>
+<pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`int score = 7;
+
+void setup() {
+  // Start serial communication
+  Serial.begin(9600);
+
+  if (score == 7) {
+    Serial.println("Score is 7");
+  } else {
+    Serial.println("Score is not 7");
+  }
+}
+
+void loop() {
+}`}</code></pre>
+                    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                            <li>• <code>score == 7</code> asks whether the value in <code>score</code> is equal to 7</li>
+                            <li>• If that is true, the first message prints</li>
+                            <li>• If that is false, the <code>else</code> message prints instead</li>
+                            <li>• Writing <code>if (score = 7)</code> would mean something very different, so be careful</li>
+                            <li>• The parentheses check the condition, and the braces group the lines that belong to that choice</li>
+                            <li>• The semicolons end the regular statements inside the program</li>
+                            <li>• <code>// Start serial communication</code> is a comment for the human reader, not for the computer</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
 
