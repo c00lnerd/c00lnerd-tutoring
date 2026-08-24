@@ -2,7 +2,7 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 3: Variables & Data Types">
+<Layout title="Lesson 3: Calculations with Variables">
     <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
         <div class="container mx-auto px-4 max-w-4xl">
             <!-- Header -->
@@ -10,8 +10,8 @@ import Layout from '../../../layouts/Layout.astro';
                 <div class="flex items-center justify-center mb-4">
                     <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">3</div>
                     <div class="text-left">
-                        <h1 class="text-3xl font-bold text-gray-800">Lesson 3: Variables & Data Types</h1>
-                        <p class="text-gray-600">Learn to store and manipulate data in your Arduino programs</p>
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 3: Calculations with Variables</h1>
+                        <p class="text-gray-600">Use variables to do math, convert values, and print useful results</p>
                         <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
                     </div>
                 </div>
@@ -30,19 +30,19 @@ import Layout from '../../../layouts/Layout.astro';
                         <ul class="space-y-2 text-gray-700">
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Understand different Arduino data types
+                                Review the most useful variable types from Lesson 2
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Declare and use variables effectively
+                                Use variables in arithmetic calculations
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Perform mathematical operations
+                                Convert one value into another using formulas
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Handle user input and sensor data
+                                Print calculation results clearly in the Serial Monitor
                             </li>
                         </ul>
                     </div>
@@ -51,19 +51,19 @@ import Layout from '../../../layouts/Layout.astro';
                         <ul class="space-y-2 text-gray-700">
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Data type selection and optimization
+                                Choosing simple, appropriate variable types
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Variable naming conventions
+                                Writing readable arithmetic expressions
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Mathematical calculations
+                                Tracing how values change step by step
                             </li>
                             <li class="flex items-start">
                                 <span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>
-                                Data conversion techniques
+                                Displaying results for debugging and checking work
                             </li>
                         </ul>
                     </div>
@@ -72,61 +72,57 @@ import Layout from '../../../layouts/Layout.astro';
 
             <!-- Section 1: Understanding Data Types -->
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: Understanding Data Types</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: A Quick Review of Variables</h2>
                 
                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">What Are Data Types?</h3>
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">What should you remember from Lesson 2?</h3>
                     <p class="text-gray-700 mb-4">
-                        Data types tell the Arduino what kind of information you're storing and how much memory to use. 
-                        Choosing the right data type is important for efficient programming and avoiding errors.
+                        Lesson 2 already introduced variables and some basic types. In this lesson, we will use those ideas instead of starting over from the beginning.
                     </p>
                     
                     <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                        <h4 class="font-semibold text-blue-800 mb-2">Why Data Types Matter:</h4>
+                        <h4 class="font-semibold text-blue-800 mb-2">The main ideas to keep in mind:</h4>
                         <ul class="space-y-2 text-blue-700">
-                            <li><strong>Memory Efficiency:</strong> Different types use different amounts of memory</li>
-                            <li><strong>Range Limits:</strong> Each type can hold different ranges of values</li>
-                            <li><strong>Operations:</strong> Some operations only work with specific types</li>
-                            <li><strong>Precision:</strong> Decimal numbers need special handling</li>
+                            <li><strong>Variables store values:</strong> You give a name to a piece of data</li>
+                            <li><strong>Different types store different kinds of data:</strong> whole numbers, decimals, letters, and true/false</li>
+                            <li><strong>Good names help:</strong> <code>temperature</code> is clearer than <code>x</code></li>
+                            <li><strong>We can change variable values:</strong> that is what makes calculations possible</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Common Arduino Data Types</h3>
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Most useful types for now</h3>
                     <div class="grid md:grid-cols-2 gap-4">
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-800 mb-2">Integer Types (Whole Numbers)</h4>
+                            <h4 class="font-semibold text-gray-800 mb-2">Whole numbers and decimals</h4>
                             <ul class="space-y-2 text-gray-700 text-sm">
-                                <li><strong>int:</strong> -32,768 to 32,767 (most common)</li>
-                                <li><strong>byte:</strong> 0 to 255 (small positive numbers)</li>
-                                <li><strong>long:</strong> -2 billion to 2 billion (large numbers)</li>
-                                <li><strong>unsigned int:</strong> 0 to 65,535 (positive only)</li>
+                                <li><strong>int:</strong> whole numbers like <code>0</code>, <code>7</code>, or <code>100</code></li>
+                                <li><strong>float:</strong> decimal numbers like <code>3.14</code> or <code>22.5</code></li>
+                                <li><strong>byte:</strong> small positive values like brightness from <code>0</code> to <code>255</code></li>
+                                <li><strong>const int:</strong> a whole number that should not change</li>
                             </ul>
                         </div>
                         <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-800 mb-2">Other Important Types</h4>
+                            <h4 class="font-semibold text-gray-800 mb-2">Other basic types</h4>
                             <ul class="space-y-2 text-gray-700 text-sm">
-                                <li><strong>float:</strong> Decimal numbers (3.14, -2.5)</li>
-                                <li><strong>bool:</strong> True or false values</li>
-                                <li><strong>char:</strong> Single characters ('A', '5', '!')</li>
-                                <li><strong>String:</strong> Text messages ("Hello World")</li>
+                                <li><strong>bool:</strong> true or false values</li>
+                                <li><strong>char:</strong> a single character like <code>'A'</code></li>
+                                <li><strong>String:</strong> text like <code>"Hello"</code></li>
+                                <li><strong>You do not need every type yet:</strong> for many early programs, <code>int</code> and <code>float</code> are enough</li>
                             </ul>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Data Type Examples</h3>
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Small review example</h3>
                     <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`// Integer examples
 int temperature = 25;           // Room temperature
 byte ledBrightness = 128;       // LED brightness (0-255)
-long milliseconds = 1234567;    // Large time value
-unsigned int sensorReading = 1023;  // Sensor value (always positive)
 
 // Decimal examples
 float voltage = 3.3;            // Precise voltage reading
-float pi = 3.14159;             // Mathematical constant
 
 // Boolean examples
 bool ledState = true;           // LED is on
@@ -134,11 +130,10 @@ bool buttonPressed = false;     // Button is not pressed
 
 // Character and String examples
 char grade = 'A';               // Single letter grade
-String robotName = "miniAuto";  // Robot's name
 String message = "Hello, World!";  // Text message
 
-// Special Arduino types
-unsigned long currentTime = millis();  // Time since startup`}</pre>
+// A constant
+const int maxScore = 10;`}</pre>
                 </div>
             </div>
 
@@ -205,48 +200,6 @@ const String DEVICE_ID = "ROBOT_001";  // Device identifier`}</pre>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Variable Scope and Lifetime</h3>
-                    <p class="text-gray-700 mb-4">
-                        Understanding where variables can be used (scope) and how long they exist (lifetime) is crucial for effective programming.
-                    </p>
-                    
-                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`// Global variables (declared outside functions)
-int globalCounter = 0;        // Available everywhere in the program
-String robotStatus = "Ready"; // Can be used in setup() and loop()
-
-void setup() {
-  // Local variables (declared inside functions)
-  int setupCounter = 0;       // Only available inside setup()
-  Serial.begin(9600);
-  
-  // Can access global variables
-  globalCounter = 10;
-  Serial.println(robotStatus);
-  
-  // setupCounter goes away when setup() ends
-}
-
-void loop() {
-  // Local variables in loop()
-  int loopCounter = 0;        // Only available inside loop()
-  
-  // Can access global variables
-  globalCounter++;
-  
-  // Cannot access setupCounter here - it doesn't exist!
-  // setupCounter++; // This would cause an error
-  
-  // Block scope example
-  if (globalCounter > 5) {
-    int blockVariable = 100;  // Only exists inside this if block
-    Serial.println(blockVariable);
-  }
-  // blockVariable doesn't exist here
-  
-  delay(1000);
-}`}</pre>
-                </div>
             </div>
 
             <!-- Section 3: Mathematical Operations -->
@@ -257,7 +210,7 @@ void loop() {
                     <h3 class="text-xl font-semibold text-blue-600 mb-3">Basic Arithmetic Operators</h3>
                     <p class="text-gray-700 mb-4">
                         Arduino supports all standard mathematical operations. Understanding these is essential for 
-                        calculations involving sensors, timing, and control logic.
+                        calculations involving counters, conversions, timing, and control logic.
                     </p>
                     
                     <div class="grid md:grid-cols-2 gap-4 mb-4">
@@ -305,8 +258,6 @@ counter /= 3;          // counter = 4
 // Increment and decrement
 counter++;             // counter = 5 (add 1)
 counter--;             // counter = 4 (subtract 1)
-++counter;             // counter = 5 (pre-increment)
---counter;             // counter = 4 (pre-decrement)
 
 // Working with floats for precise division
 float voltage = 3.3;
@@ -320,59 +271,32 @@ float percentage = (float)sensorValue / 1023.0 * 100.0;  // Convert to percentag
 
                 <div class="mb-6">
                     <h3 class="text-xl font-semibold text-blue-600 mb-3">Practical Math Examples</h3>
-                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`/*
-  Practical Mathematical Operations
-  Real-world examples for robotics and sensor applications
-*/
-
-void setup() {
+                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`void setup() {
   Serial.begin(9600);
-  Serial.println("=== Mathematical Operations Demo ===");
-  
-  // Example 1: Converting sensor readings to voltage
-  int sensorReading = 512;      // Raw ADC value (0-1023)
-  float voltage = sensorReading * (5.0 / 1023.0);  // Convert to voltage
-  Serial.print("Sensor reading: ");
-  Serial.print(sensorReading);
-  Serial.print(" = ");
-  Serial.print(voltage);
-  Serial.println(" volts");
-  
-  // Example 2: Calculating LED brightness percentage
-  int brightness = 128;         // PWM value (0-255)
-  float percentage = (brightness / 255.0) * 100.0;
-  Serial.print("LED brightness: ");
-  Serial.print(percentage);
-  Serial.println("%");
-  
-  // Example 3: Distance calculation from time
-  long duration = 2000;         // Microseconds from ultrasonic sensor
-  float distance = (duration * 0.034) / 2;  // Convert to centimeters
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" cm");
-  
-  // Example 4: Temperature conversion
+  Serial.println("=== Variable Math Demo ===");
+
+  // Example 1: Temperature conversion
   float celsius = 25.0;
   float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
   Serial.print(celsius);
-  Serial.print("°C = ");
+  Serial.print(" C = ");
   Serial.print(fahrenheit);
-  Serial.println("°F");
+  Serial.println(" F");
+
+  // Example 2: Percentage calculation
+  int score = 8;
+  int total = 10;
+  float percentage = (score / 10.0) * 100.0;
+  Serial.print("Score: ");
+  Serial.print(score);
+  Serial.print("/");
+  Serial.print(total);
+  Serial.print(" = ");
+  Serial.print(percentage);
+  Serial.println("%");
 }
 
 void loop() {
-  // Example 5: Cycling through values with modulo
-  static int counter = 0;
-  
-  int ledValue = (counter % 256);  // Cycles 0-255 repeatedly
-  Serial.print("Counter: ");
-  Serial.print(counter);
-  Serial.print(", LED value: ");
-  Serial.println(ledValue);
-  
-  counter++;
-  delay(500);
 }`}</pre>
                 </div>
             </div>
@@ -382,9 +306,9 @@ void loop() {
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 4: Hands-On Activity</h2>
                 
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">🛠️ Activity: Build a Personal Data Logger</h3>
+                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">🛠️ Activity: Build a Simple Calculator Program</h3>
                     <p class="text-yellow-700">
-                        Create a program that collects, processes, and displays data using different variable types and mathematical operations!
+                        Create a small Arduino program that uses variables to calculate and print useful results.
                     </p>
                 </div>
 
@@ -392,37 +316,37 @@ void loop() {
                     <h3 class="text-xl font-semibold text-blue-600 mb-3">Activity Instructions</h3>
                     <div class="space-y-4">
                         <div class="bg-blue-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-blue-800 mb-2">Step 1: Choose Your Data Theme</h4>
-                            <p class="text-blue-700 mb-2">Pick one theme for your data logger:</p>
+                            <h4 class="font-semibold text-blue-800 mb-2">Step 1: Choose one calculation theme</h4>
+                            <p class="text-blue-700 mb-2">Pick one simple program idea:</p>
                             <ul class="list-disc list-inside text-blue-700 text-sm space-y-1">
-                                <li><strong>Environmental Monitor:</strong> Track temperature, humidity, light levels</li>
-                                <li><strong>Activity Tracker:</strong> Count steps, calculate distance, track time</li>
-                                <li><strong>System Monitor:</strong> Track uptime, memory usage, performance metrics</li>
-                                <li><strong>Game Statistics:</strong> Score tracking, level progression, achievements</li>
-                                <li><strong>Your Choice:</strong> Any data collection theme that interests you</li>
+                                <li><strong>Temperature Converter:</strong> Convert Celsius to Fahrenheit</li>
+                                <li><strong>Score Calculator:</strong> Turn points into a percentage</li>
+                                <li><strong>Distance Tracker:</strong> Add lap distances together</li>
+                                <li><strong>Budget Helper:</strong> Add prices and calculate total cost</li>
+                                <li><strong>Your Choice:</strong> Any simple calculation with 2 or 3 variables</li>
                             </ul>
                         </div>
 
                         <div class="bg-green-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-green-800 mb-2">Step 2: Plan Your Variables</h4>
-                            <p class="text-green-700 mb-2">Your program must include:</p>
+                            <h4 class="font-semibold text-green-800 mb-2">Step 2: Plan your variables</h4>
+                            <p class="text-green-700 mb-2">Your program should include:</p>
                             <ul class="list-disc list-inside text-green-700 text-sm space-y-1">
-                                <li>At least 3 different data types (int, float, bool, String)</li>
-                                <li>At least 2 mathematical calculations</li>
-                                <li>At least 1 constant value</li>
-                                <li>Meaningful variable names following best practices</li>
-                                <li>Both global and local variables</li>
+                                <li>At least 2 variables</li>
+                                <li>At least 1 calculation using <code>+</code>, <code>-</code>, <code>*</code>, or <code>/</code></li>
+                                <li>Clear variable names</li>
+                                <li>At least 1 line of Serial output that explains the result</li>
+                                <li>An <code>int</code> or <code>float</code>, depending on the problem</li>
                             </ul>
                         </div>
 
                         <div class="bg-purple-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-purple-800 mb-2">Step 3: Required Features</h4>
+                            <h4 class="font-semibold text-purple-800 mb-2">Step 3: Required features</h4>
                             <ul class="list-disc list-inside text-purple-700 text-sm space-y-1">
-                                <li>Display current values every 2 seconds</li>
-                                <li>Calculate and show averages or totals</li>
-                                <li>Include percentage calculations</li>
-                                <li>Show data in different units (e.g., Celsius and Fahrenheit)</li>
-                                <li>Use Serial Monitor for clear, formatted output</li>
+                                <li>Print the starting values</li>
+                                <li>Print the calculated result</li>
+                                <li>Use <code>Serial.print()</code> and <code>Serial.println()</code> to make the output readable</li>
+                                <li>Add at least one comment to explain part of the code</li>
+                                <li>Test the program by changing one value and observing the new result</li>
                             </ul>
                         </div>
                     </div>
@@ -431,10 +355,10 @@ void loop() {
                 <div class="bg-gray-50 p-4 rounded-lg">
                     <h4 class="font-semibold text-gray-800 mb-2">💡 Programming Challenges</h4>
                     <ul class="space-y-1 text-gray-700 text-sm">
-                        <li>• <strong>Beginner:</strong> Create a simple counter with percentage display</li>
-                        <li>• <strong>Intermediate:</strong> Add multiple data types and calculations</li>
-                        <li>• <strong>Advanced:</strong> Include data validation and error handling</li>
-                        <li>• <strong>Expert:</strong> Create a menu system to view different statistics</li>
+                        <li>• <strong>Beginner:</strong> Convert one temperature from Celsius to Fahrenheit</li>
+                        <li>• <strong>Intermediate:</strong> Calculate both total and percentage</li>
+                        <li>• <strong>Advanced:</strong> Use a constant like <code>const int totalPoints = 10;</code></li>
+                        <li>• <strong>Extra Challenge:</strong> Make the program repeat in <code>loop()</code> with changing values</li>
                     </ul>
                 </div>
             </div>
@@ -447,16 +371,16 @@ void loop() {
                     <div>
                         <h3 class="text-lg font-semibold text-blue-600 mb-3">📝 This Lesson's Quiz</h3>
                         <p class="text-gray-700 mb-4">
-                            Test your understanding of variables, data types, and mathematical operations.
+                            Test your understanding of variables in calculations and clear Serial output.
                         </p>
                         <div class="bg-blue-50 p-4 rounded-lg">
                             <h4 class="font-semibold text-blue-800 mb-2">Quiz Topics:</h4>
                             <ul class="space-y-1 text-blue-700 text-sm">
-                                <li>• Data type selection and memory usage</li>
-                                <li>• Variable declaration and initialization</li>
-                                <li>• Scope and lifetime concepts</li>
-                                <li>• Mathematical operators and expressions</li>
-                                <li>• Type conversion and casting</li>
+                                <li>• Choosing between <code>int</code> and <code>float</code></li>
+                                <li>• Writing arithmetic expressions</li>
+                                <li>• Understanding percentages and conversions</li>
+                                <li>• Reading calculation code</li>
+                                <li>• Printing results clearly</li>
                             </ul>
                         </div>
                     </div>
@@ -464,16 +388,16 @@ void loop() {
                     <div>
                         <h3 class="text-lg font-semibold text-green-600 mb-3">🏠 Homework Assignment</h3>
                         <p class="text-gray-700 mb-4">
-                            Practice variable usage and mathematical operations with these exercises.
+                            Practice using variables in small, readable Arduino math programs.
                         </p>
                         <div class="bg-green-50 p-4 rounded-lg">
                             <h4 class="font-semibold text-green-800 mb-2">Assignment Tasks:</h4>
                             <ol class="list-decimal list-inside space-y-1 text-green-700 text-sm">
-                                <li>Complete your personal data logger from the hands-on activity</li>
-                                <li>Create a temperature conversion program (C ↔ F ↔ K)</li>
-                                <li>Build a simple calculator using Serial input</li>
-                                <li>Write a program that finds the average of 10 sensor readings</li>
-                                <li>Bonus: Create a unit converter (inches/cm, pounds/kg, etc.)</li>
+                                <li>Complete your simple calculator program from the hands-on activity</li>
+                                <li>Create one temperature conversion program</li>
+                                <li>Create one score-to-percentage program</li>
+                                <li>Write clear Serial output that explains each answer</li>
+                                <li>Bonus: Change one program to use a constant value</li>
                             </ol>
                         </div>
                     </div>
@@ -482,11 +406,11 @@ void loop() {
                 <div class="mt-6 bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
                     <h4 class="font-semibold text-yellow-800 mb-2">📋 Submission Guidelines</h4>
                     <ul class="space-y-1 text-yellow-700 text-sm">
-                        <li>• Use appropriate data types for each variable</li>
-                        <li>• Include comments explaining your variable choices</li>
-                        <li>• Test all mathematical calculations with known values</li>
-                        <li>• Demonstrate proper variable naming conventions</li>
-                        <li>• Show examples of both global and local variable usage</li>
+                        <li>• Use appropriate variable types for the numbers in your program</li>
+                        <li>• Include comments explaining what the program calculates</li>
+                        <li>• Test each calculation with values you can check by hand</li>
+                        <li>• Use descriptive variable names</li>
+                        <li>• Make the Serial output easy for someone else to read</li>
                     </ul>
                 </div>
             </div>
