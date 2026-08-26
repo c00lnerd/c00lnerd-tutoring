@@ -3,54 +3,38 @@ import Layout from '../../layouts/Layout.astro';
 
 const module1Pacing = [
 	{
-		day: 1,
-		focus: 'Introduction to motion and the language of kinematics',
-		assignment: 'Define motion, frame of reference, position, and displacement. Introduce scalar vs. vector quantities and set up a physics notebook for diagrams and definitions.',
+		week: 'Week 2',
+		title: 'Motion in One Dimension I',
+		studentWork: [
+			'Read the first half of Module 1 on motion, position, distance, displacement, speed, and velocity.',
+			'Define each new term in a notebook and draw simple motion diagrams on a number line.',
+			'Complete practice problems comparing distance vs. displacement and speed vs. average velocity.',
+		],
+		mastery: [
+			'Explain the difference between scalar and vector quantities.',
+			'Calculate distance, displacement, speed, and average velocity from simple examples.',
+			'Interpret motion in words, diagrams, and basic graphs.',
+		],
+		fridayOverview: 'Review the language of kinematics, model one-dimensional motion on a board, and walk through representative examples before checking student reasoning.',
+		experiment: 'Experiment 1.1: Measuring Average Velocity.',
+		assessment: 'Discuss the practice set, correct misunderstandings, and assign a short oral or written check on distance, displacement, and velocity.',
 	},
 	{
-		day: 2,
-		focus: 'Distance and displacement',
-		assignment: 'Work through one-dimensional motion examples that compare total distance traveled with net displacement. Practice sign conventions and number-line representations.',
-	},
-	{
-		day: 3,
-		focus: 'Speed and average velocity',
-		assignment: 'Calculate speed and average velocity from tables and short word problems. Emphasize the difference between how fast something moves and how its position changes.',
-	},
-	{
-		day: 4,
-		focus: 'Experiment 1.1: Measuring Average Velocity',
-		assignment: 'Run the average-velocity lab, collect time and distance data, compute average velocity, and discuss measurement uncertainty and repeat trials.',
-	},
-	{
-		day: 5,
-		focus: 'Instantaneous velocity and interpreting motion',
-		assignment: 'Contrast average velocity with instantaneous velocity using short intervals, verbal descriptions, and graph sketches. Finish with mixed practice problems.',
-	},
-	{
-		day: 6,
-		focus: 'Relative velocity',
-		assignment: 'Study relative motion in one dimension with walking, car, and current-style examples. Practice adding and subtracting signed velocities.',
-	},
-	{
-		day: 7,
-		focus: 'Acceleration as a rate of change',
-		assignment: 'Introduce acceleration conceptually and numerically. Solve problems involving changes in velocity over time, including positive and negative acceleration.',
-	},
-	{
-		day: 8,
-		focus: 'Experiment 1.2: Measuring an Object\'s Acceleration',
-		assignment: 'Measure acceleration experimentally, organize data in a table, compute acceleration values, and compare multiple trials.',
-	},
-	{
-		day: 9,
-		focus: 'Putting position, velocity, and acceleration together',
-		assignment: 'Connect displacement, velocity, and acceleration through conceptual questions, short calculations, and simple motion graphs.',
-	},
-	{
-		day: 10,
-		focus: 'Module 1 review and assessment',
-		assignment: 'Complete a cumulative review on distance, displacement, speed, velocity, relative velocity, and acceleration, then give a short quiz or oral assessment.',
+		week: 'Week 3',
+		title: 'Motion in One Dimension II',
+		studentWork: [
+			'Read the second half of Module 1 on instantaneous velocity, relative velocity, and acceleration.',
+			'Work practice problems involving changing velocity over time and signed quantities.',
+			'Prepare at least two questions or worked examples to discuss during the Friday meeting.',
+		],
+		mastery: [
+			'Distinguish average velocity from instantaneous velocity.',
+			'Use relative velocity in simple one-dimensional situations.',
+			'Calculate and explain acceleration, including positive and negative values.',
+		],
+		fridayOverview: 'Connect displacement, velocity, and acceleration, then review how the ideas fit together across the whole module using worked examples and student questions.',
+		experiment: 'Experiment 1.2: Measuring an Object\'s Acceleration.',
+		assessment: 'Finish with a cumulative Module 1 review, discussion, and short quiz or verbal assessment before moving into Module 2.',
 	},
 ];
 
@@ -209,31 +193,50 @@ const weeks = [
 					<p class="module-kicker">Detailed Pacing</p>
 					<h2>Module 1: Motion in One Dimension</h2>
 					<p class="module-copy">
-						This first detailed pacing block covers the opening motion unit across 10 instructional days.
-						It is designed to fit after the introductory measurement week and before the class moves into motion equations.
+						This pacing block is organized for a homeschool student who works independently during the week
+						and meets on Friday for guided review, discussion, and experiments.
 					</p>
 				</div>
 			</div>
 
-			<div class="table-wrap">
-				<table>
-					<thead>
-						<tr>
-							<th class="day-col">Day</th>
-							<th class="focus-col">Focus</th>
-							<th>Assignment</th>
-						</tr>
-					</thead>
-					<tbody>
-						{module1Pacing.map((item) => (
-							<tr>
-								<td class="day">{item.day}</td>
-								<td class="focus">{item.focus}</td>
-								<td class="task">{item.assignment}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+			<div class="module-week-grid">
+				{module1Pacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
 			</div>
 		</section>
 
@@ -331,6 +334,64 @@ const weeks = [
 			margin-bottom: 1rem;
 		}
 
+		.module-week-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+			gap: 1rem;
+		}
+
+		.module-week-card {
+			border: 1px solid #dbeafe;
+			border-radius: 12px;
+			padding: 1.25rem;
+			background: #f8fbff;
+		}
+
+		.module-week-heading {
+			margin-bottom: 1rem;
+		}
+
+		.module-week-heading h3 {
+			margin: 0;
+			color: #111827;
+		}
+
+		.week-tag {
+			margin: 0 0 0.35rem 0;
+			color: #2563eb;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.06em;
+			font-size: 0.82rem;
+		}
+
+		.detail-block + .detail-block {
+			margin-top: 1rem;
+		}
+
+		.detail-block h4 {
+			margin: 0 0 0.5rem 0;
+			color: #1f2937;
+		}
+
+		.detail-block p,
+		.detail-block ul {
+			margin: 0;
+			color: #374151;
+			line-height: 1.7;
+		}
+
+		.detail-block ul {
+			padding-left: 1.2rem;
+		}
+
+		.experiment-block {
+			background: #eff6ff;
+			padding: 0.9rem;
+			border-radius: 10px;
+			border-left: 4px solid #2563eb;
+		}
+
 		.module-kicker {
 			margin: 0 0 0.4rem 0;
 			color: #2563eb;
@@ -343,49 +404,6 @@ const weeks = [
 		.module-copy {
 			margin: 0;
 			color: #4b5563;
-			line-height: 1.7;
-		}
-
-		.table-wrap {
-			overflow-x: auto;
-		}
-
-		table {
-			width: 100%;
-			border-collapse: collapse;
-		}
-
-		th,
-		td {
-			padding: 0.9rem 0.85rem;
-			text-align: left;
-			vertical-align: top;
-			border-bottom: 1px solid #e5e7eb;
-		}
-
-		th {
-			font-size: 0.9rem;
-			text-transform: uppercase;
-			letter-spacing: 0.04em;
-			color: #4b5563;
-		}
-
-		.day-col {
-			width: 5rem;
-		}
-
-		.focus-col {
-			width: 18rem;
-		}
-
-		.day {
-			font-weight: 700;
-			color: #2563eb;
-		}
-
-		.focus,
-		.task {
-			color: #374151;
 			line-height: 1.7;
 		}
 
