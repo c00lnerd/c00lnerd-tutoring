@@ -1,6 +1,59 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
+const module1Pacing = [
+	{
+		day: 1,
+		focus: 'Introduction to motion and the language of kinematics',
+		assignment: 'Define motion, frame of reference, position, and displacement. Introduce scalar vs. vector quantities and set up a physics notebook for diagrams and definitions.',
+	},
+	{
+		day: 2,
+		focus: 'Distance and displacement',
+		assignment: 'Work through one-dimensional motion examples that compare total distance traveled with net displacement. Practice sign conventions and number-line representations.',
+	},
+	{
+		day: 3,
+		focus: 'Speed and average velocity',
+		assignment: 'Calculate speed and average velocity from tables and short word problems. Emphasize the difference between how fast something moves and how its position changes.',
+	},
+	{
+		day: 4,
+		focus: 'Experiment 1.1: Measuring Average Velocity',
+		assignment: 'Run the average-velocity lab, collect time and distance data, compute average velocity, and discuss measurement uncertainty and repeat trials.',
+	},
+	{
+		day: 5,
+		focus: 'Instantaneous velocity and interpreting motion',
+		assignment: 'Contrast average velocity with instantaneous velocity using short intervals, verbal descriptions, and graph sketches. Finish with mixed practice problems.',
+	},
+	{
+		day: 6,
+		focus: 'Relative velocity',
+		assignment: 'Study relative motion in one dimension with walking, car, and current-style examples. Practice adding and subtracting signed velocities.',
+	},
+	{
+		day: 7,
+		focus: 'Acceleration as a rate of change',
+		assignment: 'Introduce acceleration conceptually and numerically. Solve problems involving changes in velocity over time, including positive and negative acceleration.',
+	},
+	{
+		day: 8,
+		focus: 'Experiment 1.2: Measuring an Object\'s Acceleration',
+		assignment: 'Measure acceleration experimentally, organize data in a table, compute acceleration values, and compare multiple trials.',
+	},
+	{
+		day: 9,
+		focus: 'Putting position, velocity, and acceleration together',
+		assignment: 'Connect displacement, velocity, and acceleration through conceptual questions, short calculations, and simple motion graphs.',
+	},
+	{
+		day: 10,
+		focus: 'Module 1 review and assessment',
+		assignment: 'Complete a cumulative review on distance, displacement, speed, velocity, relative velocity, and acceleration, then give a short quiz or oral assessment.',
+	},
+];
+
 const weeks = [
 	{
 		week: 1,
@@ -150,6 +203,40 @@ const weeks = [
 			</div>
 		</div>
 
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Module 1: Motion in One Dimension</h2>
+					<p class="module-copy">
+						This first detailed pacing block covers the opening motion unit across 10 instructional days.
+						It is designed to fit after the introductory measurement week and before the class moves into motion equations.
+					</p>
+				</div>
+			</div>
+
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr>
+							<th class="day-col">Day</th>
+							<th class="focus-col">Focus</th>
+							<th>Assignment</th>
+						</tr>
+					</thead>
+					<tbody>
+						{module1Pacing.map((item) => (
+							<tr>
+								<td class="day">{item.day}</td>
+								<td class="focus">{item.focus}</td>
+								<td class="task">{item.assignment}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</section>
+
 		<div class="weeks">
 			{weeks.map((item) => (
 				<section class="week-card">
@@ -230,6 +317,76 @@ const weeks = [
 			padding-left: 1.2rem;
 			line-height: 1.8;
 			color: #374151;
+		}
+
+		.module-detail {
+			background: white;
+			padding: 1.5rem;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+			margin-bottom: 2rem;
+		}
+
+		.module-detail-header {
+			margin-bottom: 1rem;
+		}
+
+		.module-kicker {
+			margin: 0 0 0.4rem 0;
+			color: #2563eb;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-size: 0.8rem;
+		}
+
+		.module-copy {
+			margin: 0;
+			color: #4b5563;
+			line-height: 1.7;
+		}
+
+		.table-wrap {
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			padding: 0.9rem 0.85rem;
+			text-align: left;
+			vertical-align: top;
+			border-bottom: 1px solid #e5e7eb;
+		}
+
+		th {
+			font-size: 0.9rem;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+			color: #4b5563;
+		}
+
+		.day-col {
+			width: 5rem;
+		}
+
+		.focus-col {
+			width: 18rem;
+		}
+
+		.day {
+			font-weight: 700;
+			color: #2563eb;
+		}
+
+		.focus,
+		.task {
+			color: #374151;
+			line-height: 1.7;
 		}
 
 		.weeks {
