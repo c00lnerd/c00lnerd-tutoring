@@ -1,0 +1,311 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const weeks = [
+	{
+		week: 1,
+		title: 'Scientific Foundations and Measurement',
+		module: 'Introductory Remarks',
+		topics: 'Metric system, factor-label method, units in equations, measurements, accuracy, precision, significant figures, and scientific notation.',
+		lab: 'Measurement practice and unit-conversion drills.',
+	},
+	{
+		week: 2,
+		title: 'Motion in One Dimension I',
+		module: 'Module 1',
+		topics: 'Distance and displacement, speed and velocity, average and instantaneous velocity.',
+		lab: 'Experiment 1.1: Measuring Average Velocity.',
+	},
+	{
+		week: 3,
+		title: 'Motion in One Dimension II',
+		module: 'Module 1',
+		topics: 'Relative velocity, acceleration, and average versus instantaneous acceleration.',
+		lab: 'Experiment 1.2: Measuring an Object\'s Acceleration.',
+	},
+	{
+		week: 4,
+		title: 'Motion Equations and Free Fall I',
+		module: 'Module 2',
+		topics: 'Relating velocity, acceleration, time, and displacement in one dimension.',
+		lab: 'Equation setup and problem-solving workshop.',
+	},
+	{
+		week: 5,
+		title: 'Motion Equations and Free Fall II',
+		module: 'Module 2',
+		topics: 'Free fall, reaction time, terminal velocity, and air resistance.',
+		lab: 'Experiments 2.1, 2.2, and 2.3.',
+	},
+	{
+		week: 6,
+		title: 'Two-Dimensional Vectors I',
+		module: 'Module 3',
+		topics: 'Vectors, graphical addition and subtraction, and vector components.',
+		lab: 'Experiment 3.1: Vector Components.',
+	},
+	{
+		week: 7,
+		title: 'Two-Dimensional Vectors II',
+		module: 'Module 3',
+		topics: 'Analytical vector addition and applying vectors to physical situations.',
+		lab: 'Experiment 3.2: Vector Addition.',
+	},
+	{
+		week: 8,
+		title: 'Motion in Two Dimensions I',
+		module: 'Module 4',
+		topics: 'Navigation in two dimensions, projectile motion, and the range equation.',
+		lab: 'Experiment 4.1: Rubber band projectile flight.',
+	},
+	{
+		week: 9,
+		title: 'Motion in Two Dimensions II',
+		module: 'Module 4',
+		topics: 'Non-ideal projectile situations and measuring horizontal speed experimentally.',
+		lab: 'Experiment 4.2: Measuring horizontal speed without a stopwatch.',
+	},
+	{
+		week: 10,
+		title: 'Newton\'s Laws I',
+		module: 'Module 5',
+		topics: 'Newton\'s first and second laws, inertia, mass, and weight.',
+		lab: 'Experiment 5.1: Inertia.',
+	},
+	{
+		week: 11,
+		title: 'Newton\'s Laws II',
+		module: 'Module 5',
+		topics: 'Normal force, friction, friction equations, and Newton\'s third law.',
+		lab: 'Experiment 5.2: The Frictional Force.',
+	},
+	{
+		week: 12,
+		title: 'Applications of Newton\'s Second Law I',
+		module: 'Module 6',
+		topics: 'Translational equilibrium, measuring weight, and rotational motion with torque.',
+		lab: 'Experiments 6.1 and 6.2.',
+	},
+	{
+		week: 13,
+		title: 'Applications of Newton\'s Second Law II',
+		module: 'Module 6',
+		topics: 'Rotational equilibrium, inclined planes, and multi-object systems.',
+		lab: 'Experiment 6.3: Static friction on an inclined surface.',
+	},
+	{
+		week: 14,
+		title: 'Uniform Circular Motion',
+		module: 'Module 7',
+		topics: 'Centripetal force, centripetal acceleration, and sources of circular-motion forces.',
+		lab: 'Experiment 7.1: Centripetal Force.',
+	},
+	{
+		week: 15,
+		title: 'Gravity and Planetary Motion',
+		module: 'Module 7',
+		topics: 'Gravity, circular motion terminology, fictional forces, and planetary motion.',
+		lab: 'Problem set synthesis and orbital-motion applications.',
+	},
+	{
+		week: 16,
+		title: 'Semester 1 Review and Assessment',
+		module: 'Cumulative Review',
+		topics: 'Review of modules 1-7 with cumulative problem solving, concept integration, and exam prep.',
+		lab: 'Semester exam, project wrap-up, or targeted reteaching.',
+	},
+];
+---
+
+<Layout title="Physics Semester 1">
+	<div class="semester-page">
+		<div class="header">
+			<p class="eyebrow">Physics · Semester 1</p>
+			<h1>Mechanics Foundations</h1>
+			<p class="subtitle">
+				Semester 1 covers the mathematical language of physics, one- and two-dimensional motion,
+				force analysis, equilibrium, circular motion, and gravity.
+			</p>
+		</div>
+
+		<div class="overview-grid">
+			<div class="overview-card">
+				<h2>Semester Themes</h2>
+				<ul>
+					<li>Measurement, units, and scientific notation</li>
+					<li>Kinematics in one and two dimensions</li>
+					<li>Vectors and projectile motion</li>
+					<li>Newton\'s laws, torque, and equilibrium</li>
+					<li>Circular motion and gravity</li>
+				</ul>
+			</div>
+			<div class="overview-card">
+				<h2>Module Range</h2>
+				<ul>
+					<li>Introductory Remarks</li>
+					<li>Module 1 through Module 7</li>
+					<li>Includes experiments 1.1-7.1</li>
+					<li>Weekly review and practice-problem emphasis</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="weeks">
+			{weeks.map((item) => (
+				<section class="week-card">
+					<div class="week-top">
+						<div class="week-number">{item.week}</div>
+						<div>
+							<p class="module-label">{item.module}</p>
+							<h2>{item.title}</h2>
+						</div>
+					</div>
+					<p><strong>Topics:</strong> {item.topics}</p>
+					<p><strong>Lab / activity:</strong> {item.lab}</p>
+				</section>
+			))}
+		</div>
+
+		<div class="nav-row">
+			<a href="/physics.html" class="secondary">← Physics Overview</a>
+			<a href="/physics/semester2.html" class="primary">Semester 2 →</a>
+		</div>
+	</div>
+
+	<style>
+		.semester-page {
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 2rem 1rem 3rem;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			margin: 0 0 0.75rem 0;
+			color: #2563eb;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+
+		h1 {
+			margin: 0 0 1rem 0;
+			font-size: 2.7rem;
+		}
+
+		.subtitle {
+			margin: 0 auto;
+			max-width: 760px;
+			color: #4b5563;
+			line-height: 1.7;
+		}
+
+		.overview-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 1.25rem;
+			margin-bottom: 2rem;
+		}
+
+		.overview-card,
+		.week-card {
+			background: white;
+			padding: 1.5rem;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+		}
+
+		.overview-card h2,
+		.week-card h2 {
+			margin-top: 0;
+			color: #111827;
+		}
+
+		.overview-card ul {
+			margin: 0;
+			padding-left: 1.2rem;
+			line-height: 1.8;
+			color: #374151;
+		}
+
+		.weeks {
+			display: grid;
+			gap: 1rem;
+		}
+
+		.week-top {
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+			margin-bottom: 0.75rem;
+		}
+
+		.week-number {
+			width: 3rem;
+			height: 3rem;
+			border-radius: 999px;
+			background: #2563eb;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 700;
+			font-size: 1.1rem;
+			flex-shrink: 0;
+		}
+
+		.module-label {
+			margin: 0 0 0.2rem 0;
+			color: #2563eb;
+			font-weight: 700;
+		}
+
+		.week-card p {
+			margin: 0.4rem 0 0 0;
+			line-height: 1.7;
+			color: #374151;
+		}
+
+		.nav-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-top: 2rem;
+		}
+
+		.primary,
+		.secondary {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0.85rem 1.25rem;
+			border-radius: 8px;
+			text-decoration: none;
+			font-weight: 700;
+		}
+
+		.primary {
+			background: #2563eb;
+			color: white;
+		}
+
+		.secondary {
+			background: #e5e7eb;
+			color: #111827;
+		}
+
+		@media (max-width: 768px) {
+			h1 {
+				font-size: 2.2rem;
+			}
+
+			.nav-row {
+				flex-direction: column;
+			}
+		}
+	</style>
+</Layout>

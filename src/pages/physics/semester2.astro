@@ -1,0 +1,311 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const weeks = [
+	{
+		week: 17,
+		title: 'Work and Energy I',
+		module: 'Module 8',
+		topics: 'Definitions of work and energy, mathematical work, kinetic energy, and potential energy.',
+		lab: 'Experiment 8.1: Energy in a Pendulum.',
+	},
+	{
+		week: 18,
+		title: 'Work and Energy II',
+		module: 'Module 8',
+		topics: 'First law of thermodynamics, friction and energy, and power.',
+		lab: 'Experiment 8.2: Estimating the Work Done by Friction.',
+	},
+	{
+		week: 19,
+		title: 'Momentum I',
+		module: 'Module 9',
+		topics: 'Definition of momentum, impulse, and collision thinking.',
+		lab: 'Experiment 9.1: Egg Drop.',
+	},
+	{
+		week: 20,
+		title: 'Momentum II',
+		module: 'Module 9',
+		topics: 'Conservation of momentum, mathematical treatment, and angular momentum.',
+		lab: 'Experiment 9.2: Momentum and Energy Conservation.',
+	},
+	{
+		week: 21,
+		title: 'Periodic Motion I',
+		module: 'Module 10',
+		topics: 'Hooke\'s law, spring constants, and periodic motion as a repeating physical system.',
+		lab: 'Experiment 10.1: Hooke\'s Law.',
+	},
+	{
+		week: 22,
+		title: 'Periodic Motion II',
+		module: 'Module 10',
+		topics: 'Mass-spring systems, spring-system math, and energy in oscillating systems.',
+		lab: 'Experiment 10.2: Characteristics of a Mass/Spring System.',
+	},
+	{
+		week: 23,
+		title: 'Periodic Motion III',
+		module: 'Module 10',
+		topics: 'Further spring analysis, potential energy in a spring, and the simple pendulum.',
+		lab: 'Pendulum modeling and cumulative periodic-motion problems.',
+	},
+	{
+		week: 24,
+		title: 'Waves I',
+		module: 'Module 11',
+		topics: 'Wave behavior, sound as a physical phenomenon, and wave frequency and amplitude.',
+		lab: 'Experiment 11.1: Frequency and Volume of Sound Waves.',
+	},
+	{
+		week: 25,
+		title: 'Waves II',
+		module: 'Module 11',
+		topics: 'Doppler effect, sound in other media, and frequencies beyond normal hearing.',
+		lab: 'Experiment 11.2: The Doppler Effect.',
+	},
+	{
+		week: 26,
+		title: 'Light, Waves, and Particles',
+		module: 'Module 11',
+		topics: 'Speed of light, light as a wave, light as a particle, and major historical physics contributions.',
+		lab: 'Wave-model comparisons and concept synthesis.',
+	},
+	{
+		week: 27,
+		title: 'Geometric Optics I',
+		module: 'Module 12',
+		topics: 'Reflection, flat mirrors, and spherical mirrors.',
+		lab: 'Experiment 12.1: The Law of Reflection.',
+	},
+	{
+		week: 28,
+		title: 'Geometric Optics II',
+		module: 'Module 12',
+		topics: 'Concave and convex mirror ray tracing, real and virtual images, and refraction.',
+		lab: 'Experiments 12.2 and 12.3.',
+	},
+	{
+		week: 29,
+		title: 'Lenses and the Human Eye',
+		module: 'Module 12',
+		topics: 'Converging lenses, diverging lenses, and human-eye optics.',
+		lab: 'Lens diagrams and image-formation practice.',
+	},
+	{
+		week: 30,
+		title: 'Electric Field and Electric Potential',
+		module: 'Modules 13-14',
+		topics: 'Electric charge, Coulomb\'s law, electric fields, electric potential, potential difference, and capacitors.',
+		lab: 'Experiments 13.1, 13.2, and 14.1.',
+	},
+	{
+		week: 31,
+		title: 'Electric Circuits',
+		module: 'Module 15',
+		topics: 'Resistance, current, power, series and parallel circuits, circuit math, and more complex circuit analysis.',
+		lab: 'Experiments 15.1, 15.2, and 15.3.',
+	},
+	{
+		week: 32,
+		title: 'Magnetism and Electromagnetic Induction',
+		module: 'Module 16',
+		topics: 'Magnetic fields, Earth\'s magnetic field, current-carrying wires, Faraday\'s law, induction, and alternating current.',
+		lab: 'Experiments 16.1 and 16.2 plus final cumulative assessment.',
+	},
+];
+---
+
+<Layout title="Physics Semester 2">
+	<div class="semester-page">
+		<div class="header">
+			<p class="eyebrow">Physics · Semester 2</p>
+			<h1>Energy, Waves, Optics, and Electricity</h1>
+			<p class="subtitle">
+				Semester 2 moves from energy and momentum into oscillations, wave behavior, geometric optics,
+				electrostatics, circuits, and magnetism.
+			</p>
+		</div>
+
+		<div class="overview-grid">
+			<div class="overview-card">
+				<h2>Semester Themes</h2>
+				<ul>
+					<li>Work, energy, power, and thermodynamics</li>
+					<li>Momentum, impulse, and conservation laws</li>
+					<li>Springs, pendulums, and periodic motion</li>
+					<li>Sound, light, reflection, and refraction</li>
+					<li>Electrostatics, circuits, and magnetism</li>
+				</ul>
+			</div>
+			<div class="overview-card">
+				<h2>Module Range</h2>
+				<ul>
+					<li>Module 8 through Module 16</li>
+					<li>Includes experiments 8.1-16.2</li>
+					<li>Stronger emphasis on cumulative algebra application</li>
+					<li>Ends with electricity and magnetism capstone topics</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="weeks">
+			{weeks.map((item) => (
+				<section class="week-card">
+					<div class="week-top">
+						<div class="week-number">{item.week}</div>
+						<div>
+							<p class="module-label">{item.module}</p>
+							<h2>{item.title}</h2>
+						</div>
+					</div>
+					<p><strong>Topics:</strong> {item.topics}</p>
+					<p><strong>Lab / activity:</strong> {item.lab}</p>
+				</section>
+			))}
+		</div>
+
+		<div class="nav-row">
+			<a href="/physics/semester1.html" class="secondary">← Semester 1</a>
+			<a href="/physics.html" class="primary">Physics Overview</a>
+		</div>
+	</div>
+
+	<style>
+		.semester-page {
+			max-width: 1100px;
+			margin: 0 auto;
+			padding: 2rem 1rem 3rem;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			margin: 0 0 0.75rem 0;
+			color: #7c3aed;
+			font-weight: 700;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+		}
+
+		h1 {
+			margin: 0 0 1rem 0;
+			font-size: 2.7rem;
+		}
+
+		.subtitle {
+			margin: 0 auto;
+			max-width: 760px;
+			color: #4b5563;
+			line-height: 1.7;
+		}
+
+		.overview-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 1.25rem;
+			margin-bottom: 2rem;
+		}
+
+		.overview-card,
+		.week-card {
+			background: white;
+			padding: 1.5rem;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+		}
+
+		.overview-card h2,
+		.week-card h2 {
+			margin-top: 0;
+			color: #111827;
+		}
+
+		.overview-card ul {
+			margin: 0;
+			padding-left: 1.2rem;
+			line-height: 1.8;
+			color: #374151;
+		}
+
+		.weeks {
+			display: grid;
+			gap: 1rem;
+		}
+
+		.week-top {
+			display: flex;
+			gap: 1rem;
+			align-items: center;
+			margin-bottom: 0.75rem;
+		}
+
+		.week-number {
+			width: 3rem;
+			height: 3rem;
+			border-radius: 999px;
+			background: #7c3aed;
+			color: white;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 700;
+			font-size: 1.1rem;
+			flex-shrink: 0;
+		}
+
+		.module-label {
+			margin: 0 0 0.2rem 0;
+			color: #7c3aed;
+			font-weight: 700;
+		}
+
+		.week-card p {
+			margin: 0.4rem 0 0 0;
+			line-height: 1.7;
+			color: #374151;
+		}
+
+		.nav-row {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+			margin-top: 2rem;
+		}
+
+		.primary,
+		.secondary {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0.85rem 1.25rem;
+			border-radius: 8px;
+			text-decoration: none;
+			font-weight: 700;
+		}
+
+		.primary {
+			background: #7c3aed;
+			color: white;
+		}
+
+		.secondary {
+			background: #e5e7eb;
+			color: #111827;
+		}
+
+		@media (max-width: 768px) {
+			h1 {
+				font-size: 2.2rem;
+			}
+
+			.nav-row {
+				flex-direction: column;
+			}
+		}
+	</style>
+</Layout>

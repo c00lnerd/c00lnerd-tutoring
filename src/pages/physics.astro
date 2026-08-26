@@ -1,0 +1,247 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const semesters = [
+	{
+		title: 'Semester 1',
+		href: '/physics/semester1.html',
+		badge: 'Weeks 1-16',
+		description: 'Foundations of mechanics: measurement, kinematics, vectors, Newton\'s laws, circular motion, and gravity.',
+		modules: [
+			'Introductory Remarks',
+			'Module 1: Motion in One Dimension',
+			'Module 2: One-Dimensional Motion Equations and Free Fall',
+			'Module 3: Two-Dimensional Vectors',
+			'Module 4: Motion in Two Dimensions',
+			'Module 5: Newton\'s Laws',
+			'Module 6: Applications of Newton\'s Second Law',
+			'Module 7: Uniform Circular Motion and Gravity',
+		],
+		focus: [
+			'Metric system, units, significant figures, and scientific notation',
+			'1D and 2D motion',
+			'Graphical and analytical vectors',
+			'Newtonian mechanics and force analysis',
+			'Circular motion, centripetal force, and gravity',
+		],
+	},
+	{
+		title: 'Semester 2',
+		href: '/physics/semester2.html',
+		badge: 'Weeks 17-32',
+		description: 'Energy, momentum, oscillations, waves, optics, electrostatics, circuits, and magnetism.',
+		modules: [
+			'Module 8: Work and Energy',
+			'Module 9: Momentum',
+			'Module 10: Periodic Motion',
+			'Module 11: Waves',
+			'Module 12: Geometric Optics',
+			'Module 13: Coulomb\'s Law and the Electric Field',
+			'Module 14: Electric Potential',
+			'Module 15: Electric Circuits',
+			'Module 16: Magnetism',
+		],
+		focus: [
+			'Work, power, and the first law of thermodynamics',
+			'Momentum conservation and impulse',
+			'Hooke\'s law, springs, and pendulums',
+			'Sound, light, and wave behavior',
+			'Optics, electrostatics, circuits, and electromagnetism',
+		],
+	},
+];
+---
+
+<Layout title="Physics Curriculum">
+	<div class="physics-page">
+		<section class="hero">
+			<p class="eyebrow">Exploring Creation with Physics · 2-Semester Plan</p>
+			<h1>Physics</h1>
+			<p class="subtitle">
+				A full-year high school physics course built around algebra-based mechanics, waves, optics,
+				electricity, and magnetism with hands-on experiments throughout the year.
+			</p>
+		</section>
+
+		<section class="summary-grid">
+			<div class="summary-card">
+				<h2>Course Snapshot</h2>
+				<ul>
+					<li>32 instructional weeks split into 2 semesters</li>
+					<li>16 core modules plus introductory math and measurement skills</li>
+					<li>Experiment-driven instruction with weekly problem solving</li>
+					<li>Designed for homeschool or tutoring-based pacing</li>
+				</ul>
+			</div>
+			<div class="summary-card">
+				<h2>Main Topics</h2>
+				<ul>
+					<li>Kinematics and Newtonian mechanics</li>
+					<li>Vectors, projectiles, torque, and gravity</li>
+					<li>Energy, momentum, periodic motion, and waves</li>
+					<li>Optics, electrostatics, circuits, and magnetism</li>
+				</ul>
+			</div>
+		</section>
+
+		<section class="semester-section">
+			{semesters.map((semester) => (
+				<article class="semester-card">
+					<div class="semester-header">
+						<div>
+							<p class="badge">{semester.badge}</p>
+							<h2>{semester.title}</h2>
+							<p>{semester.description}</p>
+						</div>
+						<a href={semester.href} class="button">View Semester</a>
+					</div>
+
+					<div class="details-grid">
+						<div>
+							<h3>Modules</h3>
+							<ul>
+								{semester.modules.map((module) => <li>{module}</li>)}
+							</ul>
+						</div>
+						<div>
+							<h3>Focus Areas</h3>
+							<ul>
+								{semester.focus.map((item) => <li>{item}</li>)}
+							</ul>
+						</div>
+					</div>
+				</article>
+			))}
+		</section>
+	</div>
+
+	<style>
+		.physics-page {
+			max-width: 1150px;
+			margin: 0 auto;
+			padding: 2rem 1rem 3rem;
+		}
+
+		.hero {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-weight: 700;
+			color: #2563eb;
+			margin: 0 0 0.75rem 0;
+			font-size: 0.85rem;
+		}
+
+		h1 {
+			font-size: 3rem;
+			margin: 0 0 1rem 0;
+		}
+
+		.subtitle {
+			max-width: 760px;
+			margin: 0 auto;
+			line-height: 1.7;
+			color: #4b5563;
+			font-size: 1.05rem;
+		}
+
+		.summary-grid,
+		.details-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 1.25rem;
+		}
+
+		.summary-grid {
+			margin-bottom: 2rem;
+		}
+
+		.summary-card,
+		.semester-card {
+			background: white;
+			border-radius: 14px;
+			box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+		}
+
+		.semester-section {
+			display: grid;
+			gap: 1.5rem;
+		}
+
+		.semester-header {
+			display: flex;
+			justify-content: space-between;
+			gap: 1rem;
+			align-items: flex-start;
+			margin-bottom: 1.25rem;
+		}
+
+		.badge {
+			display: inline-block;
+			background: #dbeafe;
+			color: #1d4ed8;
+			padding: 0.35rem 0.75rem;
+			border-radius: 999px;
+			font-weight: 700;
+			font-size: 0.85rem;
+			margin: 0 0 0.75rem 0;
+		}
+
+		h2,
+		h3 {
+			color: #111827;
+		}
+
+		h2 {
+			margin: 0 0 0.5rem 0;
+		}
+
+		h3 {
+			margin: 0 0 0.75rem 0;
+			font-size: 1rem;
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 1.2rem;
+			color: #374151;
+			line-height: 1.8;
+		}
+
+		.button {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			background: #2563eb;
+			color: white;
+			text-decoration: none;
+			padding: 0.85rem 1.25rem;
+			border-radius: 8px;
+			font-weight: 700;
+			white-space: nowrap;
+		}
+
+		.button:hover {
+			background: #1d4ed8;
+		}
+
+		@media (max-width: 768px) {
+			h1 {
+				font-size: 2.3rem;
+			}
+
+			.semester-header {
+				flex-direction: column;
+			}
+
+			.button {
+				width: 100%;
+			}
+		}
+	</style>
+</Layout>
