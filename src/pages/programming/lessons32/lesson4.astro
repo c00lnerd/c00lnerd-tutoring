@@ -2,605 +2,365 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 4: Digital I/O Basics - C00lnerd Tutoring">
-    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
-        
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 4: Digital I/O Basics</h1>
-                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Understanding Digital Inputs and Outputs with Arduino</p>
-                <div class="mt-4 p-4 bg-blue-100 rounded-lg">
-                    <p class="text-blue-800 font-medium">🎯 Learning Focus: Digital pins, LEDs, buttons, and basic control</p>
+<Layout title="Lesson 4: Introduction to Functions">
+    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">4</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 4: Introduction to Functions</h1>
+                        <p class="text-gray-600">Organize repeated code into clear, reusable pieces</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
+                    </div>
                 </div>
             </div>
 
-            <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 2rem; color: #1e3a8a;">
-                Build and test these digital input/output circuits in Wokwi first. The simulator is the standard workspace for this stage of the course.
+            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-8">
+                <p class="text-blue-900 font-medium">Use Wokwi for this lesson too. You already practiced variables and calculations in Lesson 3. Now you will learn how to wrap useful code into functions so programs are easier to read and reuse.</p>
             </div>
 
-            <!-- Learning Objectives -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this Lesson, you will:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Understand digital HIGH and LOW states
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Control LEDs with digitalWrite()
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Read button inputs with digitalRead()
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Implement pull-up and pull-down resistors
-                            </li>
+                        <h3 class="text-lg font-semibold text-blue-600 mb-2">By the end of this Lesson, you will:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Understand what a function is and why programmers use functions</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Write simple functions that perform one clear job</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Call functions from <code>setup()</code> and <code>loop()</code></li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Pass values into a function using parameters</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Digital pin modes (INPUT/OUTPUT)
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Voltage levels (0V/5V)
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Current limiting with resistors
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Debouncing techniques
-                            </li>
+                        <h3 class="text-lg font-semibold text-green-600 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Breaking a larger task into smaller steps</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Making code easier to read and edit</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Reusing code instead of copying the same lines again and again</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Preparing for more advanced Arduino programs later</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 1: Arduino IDE Setup & Hardware Connection -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔧 Section 1: Arduino IDE Setup & Hardware Connection</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Installing the Arduino IDE</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Now that you have your Arduino hardware, it's time to install the Arduino IDE (Integrated Development Environment) - the software we'll use to write and upload programs to your Arduino board.
-                    </p>
-                    
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">What is the Arduino IDE?</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• <strong>Text Editor:</strong> Where you write your Arduino code (called "sketches")</li>
-                            <li>• <strong>Compiler:</strong> Translates your code into machine language</li>
-                            <li>• <strong>Uploader:</strong> Sends your compiled program to the Arduino board</li>
-                            <li>• <strong>Serial Monitor:</strong> View messages and data from your Arduino</li>
-                            <li>• <strong>Library Manager:</strong> Install additional code libraries for sensors and components</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Installation Steps:</h4>
-                        <ol style="list-style: decimal; padding-left: 1.5rem; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem;"><strong>Download:</strong> Go to <code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">arduino.cc/software</code> and download the Arduino IDE</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Install:</strong> Run the installer and follow the setup wizard</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Connect:</strong> Plug your Arduino into your computer using the USB cable</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Select Board:</strong> Go to Tools → Board → Arduino Uno (or your specific board)</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Select Port:</strong> Go to Tools → Port → Select the COM port (Windows) or /dev/cu.usbmodem (Mac)</li>
-                            <li style="margin-bottom: 0.5rem;"><strong>Test:</strong> Upload the built-in "Blink" example to verify everything works</li>
-                        </ol>
-                    </div>
-                    
-                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔍 Troubleshooting Common Issues:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• <strong>Port not found:</strong> Try different USB ports, restart the IDE, or install Arduino drivers</li>
-                            <li>• <strong>Upload failed:</strong> Check that the correct board and port are selected</li>
-                            <li>• <strong>Permission denied:</strong> Run Arduino IDE as administrator (Windows) or check permissions (Mac/Linux)</li>
-                            <li>• <strong>Board not recognized:</strong> Install CH340 drivers for clone Arduino boards</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Section 2: Digital Output Basics -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">💡 Section 2: Digital Output Basics</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Digital Signals</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Digital signals have only two states: HIGH (5V) and LOW (0V). This binary nature makes them perfect for controlling devices like LEDs, motors, and relays.
-                    </p>
-                    
-                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Functions:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><code style="background: #bee3f8; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">pinMode(pin, OUTPUT)</code> - Configure pin as output</li>
-                            <li><code style="background: #bee3f8; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">digitalWrite(pin, HIGH)</code> - Set pin to 5V</li>
-                            <li><code style="background: #bee3f8; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">digitalWrite(pin, LOW)</code> - Set pin to 0V</li>
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: What Is a Function?</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function is a named block of code</h3>
+                    <p class="text-gray-700 mb-4">A function is a group of instructions that performs one job. Arduino already gives you two built-in functions: <code>setup()</code> and <code>loop()</code>. In this lesson, you will start making your own functions too.</p>
+
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">Why functions help</h4>
+                        <ul class="space-y-2 text-blue-700">
+                            <li><strong>They reduce repetition:</strong> write the code once and call it many times</li>
+                            <li><strong>They improve readability:</strong> a name like <code>printResult()</code> explains the job</li>
+                            <li><strong>They make editing easier:</strong> change the function once instead of changing repeated code everywhere</li>
+                            <li><strong>They help you think clearly:</strong> each function should do one simple task</li>
                         </ul>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic LED Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Let's start with the classic "Hello World" of electronics - blinking an LED.
-                    </p>
-                    
-                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Circuit Setup:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• LED connected to digital pin 13</li>
-                            <li>• 220Ω resistor in series with LED</li>
-                            <li>• Ground connection to complete circuit</li>
-                        </ul>
-                    </div>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function definition has a pattern</h3>
+                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`returnType functionName(parameters) {
+  // code the function will run
+}`}</pre>
 
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Basic LED Blink Program
-const int ledPin = 13;
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("LED Blink Program Started");
-}
-
-void loop() {
-  digitalWrite(ledPin, HIGH);   // Turn LED on
-  Serial.println("LED ON");
-  delay(1000);                  // Wait 1 second
-  
-  digitalWrite(ledPin, LOW);    // Turn LED off
-  Serial.println("LED OFF");
-  delay(1000);                  // Wait 1 second
-}`}</code></pre>
-                </div>
-            </div>
-
-            <!-- Section 2: Digital Input Basics -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔘 Section 2: Digital Input Basics</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Reading Button States</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Digital inputs allow us to read the state of switches, buttons, and sensors. The Arduino can detect whether a pin is HIGH or LOW.
-                    </p>
-                    
-                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Input Functions:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">pinMode(pin, INPUT)</code> - Configure pin as input</li>
-                            <li><code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">pinMode(pin, INPUT_PULLUP)</code> - Input with internal pull-up</li>
-                            <li><code style="background: #c6f6d5; padding: 0.25rem 0.5rem; border-radius: 4px; font-family: monospace;">digitalRead(pin)</code> - Read pin state (HIGH/LOW)</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Pull-up Resistors</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Pull-up resistors ensure that input pins have a defined state when not connected to anything. Arduino has built-in pull-up resistors we can enable.
-                    </p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Button Input with Pull-up Resistor
-const int buttonPin = 2;
-const int ledPin = 13;
-
-void setup() {
-  pinMode(buttonPin, INPUT_PULLUP);  // Enable internal pull-up
-  pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("Button Input Program Started");
-}
-
-void loop() {
-  int buttonState = digitalRead(buttonPin);
-  
-  if (buttonState == LOW) {  // Button pressed (pull-up inverts logic)
-    digitalWrite(ledPin, HIGH);
-    Serial.println("Button Pressed - LED ON");
-  } else {
-    digitalWrite(ledPin, LOW);
-    Serial.println("Button Released - LED OFF");
-  }
-  
-  delay(50);  // Debounce delay
-}`}</code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 3: Combining Input and Output -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔄 Section 3: Combining Input and Output</h2>
-                
-                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #38b2ac; margin-bottom: 1.5rem;">
-                    <h3 style="color: #2c7a7b; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">🔧 Introduction to Breadboards</h3>
-                    <p style="color: #2c7a7b; line-height: 1.6; margin-bottom: 1rem;">
-                        A breadboard is a reusable platform for building electronic circuits without soldering. It makes connecting components to your Arduino much easier!
-                    </p>
-                    
-                    <div style="background: #b2f5ea; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
-                        <h5 style="color: #2c7a7b; font-weight: bold; margin-bottom: 0.5rem;">How Breadboards Work:</h5>
-                        <ul style="color: #2c7a7b; line-height: 1.6; margin-left: 1rem;">
-                            <li><strong>Rows:</strong> Each numbered row (1-30) has 5 connected holes on each side</li>
-                            <li><strong>Power Rails:</strong> The long strips marked + and - run the full length</li>
-                            <li><strong>Center Gap:</strong> Separates left and right sides of each row</li>
-                            <li><strong>No Connection:</strong> Holes in different rows are not connected</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="background: #b2f5ea; padding: 1rem; border-radius: 6px;">
-                        <h5 style="color: #2c7a7b; font-weight: bold; margin-bottom: 0.5rem;">Breadboard Setup Tips:</h5>
-                        <ul style="color: #2c7a7b; line-height: 1.6; margin-left: 1rem;">
-                            <li>Connect Arduino 5V to the + power rail (red stripe)</li>
-                            <li>Connect Arduino GND to the - power rail (blue/black stripe)</li>
-                            <li>Use jumper wires to connect components to Arduino pins</li>
-                            <li>Keep wires neat and use different colors for organization</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <img src="/images/simple%20breadboard.jpg" alt="Simple breadboard layout" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                        <p style="color: #2c7a7b; font-size: 0.9rem; margin-top: 0.5rem; font-style: italic;">Clean breadboard ready for components</p>
-                    </div>
-                </div>
-
-                <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
-                    <h3 style="color: #742a2a; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">🔌 Push Button Wiring with Breadboard</h3>
-                    
-                    <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
-                        <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Step-by-Step Wiring:</h5>
-                        <ol style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
-                            <li><strong>Set up power rails:</strong> Connect Arduino 5V to breadboard + rail, GND to - rail</li>
-                            <li><strong>Place push button:</strong> Insert button across the center gap (e.g., rows 10-12)</li>
-                            <li><strong>Connect to pin 2:</strong> Wire from Arduino digital pin 2 to one side of button</li>
-                            <li><strong>Connect to ground:</strong> Wire from other side of button to - power rail (GND)</li>
-                            <li><strong>No resistor needed:</strong> The code uses INPUT_PULLUP mode</li>
-                        </ol>
-                    </div>
-                    
-                    <p style="color: #742a2a; font-size: 0.9rem; margin-top: 1rem;">
-                        <strong>💡 Why INPUT_PULLUP works:</strong> This mode connects an internal 20kΩ resistor between the pin and 5V. When the button is pressed, it connects the pin to ground (LOW). When released, the pull-up resistor keeps the pin at 5V (HIGH).
-                    </p>
-                    
-                    <p style="color: #742a2a; font-size: 0.9rem; margin-top: 0.5rem;">
-                        <strong>Note:</strong> The built-in button on the expansion board is connected to reset, not pin 2, so we need an external button for this exercise.
-                    </p>
-                    
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <img src="/images/Lesson 4 section 3 breadboard setup.jpg" alt="Push button wiring setup on breadboard" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                        <p style="color: #742a2a; font-size: 0.9rem; margin-top: 0.5rem; font-style: italic;">Push button connected to pin 2 with breadboard wiring</p>
-                    </div>
-                </div>
-                </div>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Interactive LED Control</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Now let's create more interactive programs that respond to user input and control multiple outputs.
-                    </p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Toggle LED with Button Press
-const int buttonPin = 2;
-const int ledPin = 13;
-
-bool ledState = false;
-bool lastButtonState = HIGH;
-bool currentButtonState = HIGH;
-
-void setup() {
-  pinMode(buttonPin, INPUT_PULLUP);
-  pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("LED Toggle Program Started");
-}
-
-void loop() {
-  currentButtonState = digitalRead(buttonPin);
-  
-  // Check for button press (HIGH to LOW transition)
-  if (lastButtonState == HIGH && currentButtonState == LOW) {
-    ledState = !ledState;  // Toggle LED state
-    digitalWrite(ledPin, ledState);
-    
-    if (ledState) {
-      Serial.println("LED Toggled ON");
-    } else {
-      Serial.println("LED Toggled OFF");
-    }
-    
-    delay(50);  // Simple debounce
-  }
-  
-  lastButtonState = currentButtonState;
-}`}</code></pre>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Multiple LEDs and Patterns</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Let's create more complex patterns using multiple LEDs and timing.
-                    </p>
-                    
-                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
-                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 Multiple LED Wiring with Breadboard</h4>
-                        
-                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
-                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Traffic Light LED Setup:</h5>
-                            <ol style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
-                                <li><strong>Red LED:</strong> Long leg → 220Ω resistor → Arduino pin 11, Short leg → GND rail</li>
-                                <li><strong>Yellow LED:</strong> Long leg → 220Ω resistor → Arduino pin 12, Short leg → GND rail</li>
-                                <li><strong>Green LED:</strong> Long leg → 220Ω resistor → Arduino pin 13, Short leg → GND rail</li>
-                                <li><strong>Push button:</strong> One side → Arduino pin 2, Other side → GND rail</li>
-                                <li><strong>Power rails:</strong> Connect Arduino GND to breadboard - rail</li>
-                            </ol>
+                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Important parts</h4>
+                            <ul class="space-y-2 text-gray-700 text-sm">
+                                <li><strong>returnType:</strong> often <code>void</code> for now</li>
+                                <li><strong>functionName:</strong> the name you choose</li>
+                                <li><strong>parameters:</strong> extra information sent into the function</li>
+                                <li><strong>braces:</strong> the lines that belong to the function</li>
+                            </ul>
                         </div>
-                        
-                        <p style="color: #742a2a; font-size: 0.9rem; margin-top: 1rem;">
-                            <strong>💡 LED Polarity:</strong> LEDs have polarity - the long leg (anode) connects to the positive side through a resistor, and the short leg (cathode) connects to ground.
-                        </p>
-                        
-                        <p style="color: #742a2a; font-size: 0.9rem; margin-top: 0.5rem;">
-                            <strong>⚡ Why 220Ω resistors:</strong> These limit current to protect the LEDs from burning out. Each LED needs its own resistor.
-                        </p>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">What <code>void</code> means</h4>
+                            <p class="text-gray-700 text-sm">For now, most of your functions will use <code>void</code>. That means the function does a job, but it does not send a value back.</p>
+                        </div>
                     </div>
-                    
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <img src="/images/multiple leds and patterns 1.jpg" alt="Multiple LEDs and control buttons wired on breadboard" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                        <p style="color: #742a2a; font-size: 0.9rem; margin-top: 0.5rem; font-style: italic;">Traffic light LEDs with control buttons - complete interactive setup</p>
-                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 2: Your First Custom Function</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Start with a simple printing function</h3>
+                    <p class="text-gray-700 mb-4">Lesson 3 used the Serial Monitor to show results. Instead of writing the same printing lines over and over, we can place them inside a function.</p>
 
                     <div class="relative">
                         <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                             📋 Copy
                         </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Traffic Light Simulator
-const int redPin = 11;
-const int yellowPin = 12;
-const int greenPin = 13;
-const int buttonPin = 2;
-
-void setup() {
-  pinMode(redPin, OUTPUT);
-  pinMode(yellowPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
   Serial.begin(9600);
-  Serial.println("Traffic Light Simulator Started");
+  printWelcome();
 }
 
 void loop() {
-  // Green light
-  digitalWrite(greenPin, HIGH);
-  digitalWrite(yellowPin, LOW);
-  digitalWrite(redPin, LOW);
-  Serial.println("GREEN - Go!");
-  delay(3000);
-  
-  // Yellow light
-  digitalWrite(greenPin, LOW);
-  digitalWrite(yellowPin, HIGH);
-  digitalWrite(redPin, LOW);
-  Serial.println("YELLOW - Caution!");
-  delay(1000);
-  
-  // Red light
-  digitalWrite(greenPin, LOW);
-  digitalWrite(yellowPin, LOW);
-  digitalWrite(redPin, HIGH);
-  Serial.println("RED - Stop!");
-  delay(3000);
-}`}</code></pre>
-                </div>
-            </div>
-
-            <!-- Hands-On Activity -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: Interactive Control Panel</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Build a Simple Control Panel</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Create an interactive control panel with multiple buttons and LEDs that demonstrates digital I/O concepts.
-                    </p>
-                    
-                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Required Components:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• Arduino Uno</li>
-                            <li>• 3 LEDs (Red, Yellow, Green)</li>
-                            <li>• 2 Push buttons</li>
-                            <li>• 3 × 220Ω resistors (for LEDs)</li>
-                            <li>• Breadboard and jumper wires</li>
-                        </ul>
-                    </div>
-
-                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Challenge Tasks:</h4>
-                        <ol class="text-blue-700 space-y-1 list-decimal list-inside">
-                            <li>Wire the circuit according to the schematic</li>
-                            <li>Program button 1 to cycle through LED colors</li>
-                            <li>Program button 2 to create a blinking pattern</li>
-                            <li>Add Serial Monitor feedback for all actions</li>
-                            <li>Implement proper button debouncing</li>
-                        </ol>
-                    </div>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">{`// Control Panel Challenge Solution
-const int redPin = 11;
-const int yellowPin = 12;
-const int greenPin = 13;
-const int button1Pin = 2;
-const int button2Pin = 3;
-
-int currentLED = 0;  // 0=red, 1=yellow, 2=green
-bool blinkMode = false;
-bool lastButton1State = HIGH;
-bool lastButton2State = HIGH;
-
-void setup() {
-  pinMode(redPin, OUTPUT);
-  pinMode(yellowPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(button1Pin, INPUT_PULLUP);
-  pinMode(button2Pin, INPUT_PULLUP);
-  Serial.begin(9600);
-  Serial.println("Control Panel Ready!");
 }
 
-void loop() {
-  // Check button 1 for LED cycling
-  bool button1State = digitalRead(button1Pin);
-  if (lastButton1State == HIGH && button1State == LOW) {
-    currentLED = (currentLED + 1) % 3;
-    Serial.print("Switched to LED: ");
-    Serial.println(currentLED);
-    delay(50);  // Debounce
-  }
-  lastButton1State = button1State;
-  
-  // Check button 2 for blink mode
-  bool button2State = digitalRead(button2Pin);
-  if (lastButton2State == HIGH && button2State == LOW) {
-    blinkMode = !blinkMode;
-    Serial.print("Blink mode: ");
-    Serial.println(blinkMode ? "ON" : "OFF");
-    delay(50);  // Debounce
-  }
-  lastButton2State = button2State;
-  
-  // Control LEDs
-  updateLEDs();
-}
-
-void updateLEDs() {
-  // Turn off all LEDs first
-  digitalWrite(redPin, LOW);
-  digitalWrite(yellowPin, LOW);
-  digitalWrite(greenPin, LOW);
-  
-  // Turn on current LED
-  if (blinkMode && (millis() % 500 < 250)) {
-    // Blink current LED
-    switch(currentLED) {
-      case 0: digitalWrite(redPin, HIGH); break;
-      case 1: digitalWrite(yellowPin, HIGH); break;
-      case 2: digitalWrite(greenPin, HIGH); break;
-    }
-  } else if (!blinkMode) {
-    // Solid current LED
-    switch(currentLED) {
-      case 0: digitalWrite(redPin, HIGH); break;
-      case 1: digitalWrite(yellowPin, HIGH); break;
-      case 2: digitalWrite(greenPin, HIGH); break;
-    }
-  }
+void printWelcome() {
+  Serial.println("Welcome to Lesson 4!");
+  Serial.println("We are learning functions.");
 }`}</code></pre>
-                </div>
-            </div>
-
-            <!-- Assessment and Homework -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-                    <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Lesson 4 Quiz Topics:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                Digital HIGH and LOW states
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                pinMode() configurations
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                digitalWrite() and digitalRead()
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                Pull-up resistor concepts
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                Button debouncing techniques
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignments:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">1.</span>
-                                Complete the control panel project
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">2.</span>
-                                Create a binary counter with 4 LEDs
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">3.</span>
-                                Design a simple alarm system
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">4.</span>
-                                Research different types of switches
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">5.</span>
-                                Practice circuit diagrams and schematics
-                            </li>
-                        </ul>
                     </div>
                 </div>
 
-                <div class="mt-6 p-4 bg-green-50 rounded-lg">
-                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">💡 Pro Tips for Success:</h4>
-                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Always check your wiring before powering on</li>
-                        <li>• Use the Serial Monitor to debug your programs</li>
-                        <li>• Start with simple circuits and add complexity gradually</li>
-                        <li>• Keep a notebook of working circuit configurations</li>
+                <div class="bg-green-50 p-4 rounded-lg mb-4">
+                    <h4 class="font-semibold text-green-800 mb-2">What happens here?</h4>
+                    <ul class="space-y-2 text-green-700">
+                        <li><strong><code>setup()</code> runs once:</strong> it starts Serial communication and then calls <code>printWelcome()</code></li>
+                        <li><strong><code>printWelcome()</code> runs its own code:</strong> it prints two lines</li>
+                        <li><strong>The function name acts like a command:</strong> when Arduino sees <code>printWelcome();</code>, it jumps to that function and runs it</li>
                     </ul>
                 </div>
             </div>
 
-            <!-- Navigation -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 3: Functions Make Repeated Work Easier</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Without a function</h3>
+                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`void setup() {
+  Serial.begin(9600);
+
+  Serial.println("=== Result ===");
+  Serial.print("Answer: ");
+  Serial.println(12);
+
+  Serial.println("=== Result ===");
+  Serial.print("Answer: ");
+  Serial.println(25);
+}`}</pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">With a function</h3>
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+
+  printResult(12);
+  printResult(25);
+}
+
+void loop() {
+}
+
+void printResult(int answer) {
+  Serial.println("=== Result ===");
+  Serial.print("Answer: ");
+  Serial.println(answer);
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-yellow-800 mb-2">New idea: parameters</h4>
+                    <p class="text-yellow-700">The <code>answer</code> variable is a parameter. It receives the value sent into the function. When we call <code>printResult(12);</code>, the function uses <code>12</code>. When we call <code>printResult(25);</code>, the same function uses <code>25</code>.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 4: Functions and Calculations</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Use a function to display a conversion</h3>
+                    <p class="text-gray-700 mb-4">This connects directly to Lesson 3. We still use variables and formulas, but now we organize the output using a function.</p>
+
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+
+  showTemperatureConversion(20.0);
+  showTemperatureConversion(25.0);
+  showTemperatureConversion(30.0);
+}
+
+void loop() {
+}
+
+void showTemperatureConversion(float celsius) {
+  float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
+
+  Serial.print(celsius);
+  Serial.print(" C = ");
+  Serial.print(fahrenheit);
+  Serial.println(" F");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-2">Why this is better</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>The formula is written once</li>
+                            <li>The print format is written once</li>
+                            <li>We can test many values by changing only the function call</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-2">What to notice</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li><code>celsius</code> is the parameter</li>
+                            <li><code>fahrenheit</code> is created inside the function</li>
+                            <li>The function performs both a calculation and clear Serial output</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 5: More Than One Parameter</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function can accept more than one value</h3>
+                    <p class="text-gray-700 mb-4">Sometimes a function needs two or more pieces of information. Here is a simple example that prints a quiz score and percentage.</p>
+
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+  showScore(8, 10);
+}
+
+void loop() {
+}
+
+void showScore(int pointsEarned, int totalPoints) {
+  float percentage = (pointsEarned / 10.0) * 100.0;
+
+  Serial.print("Score: ");
+  Serial.print(pointsEarned);
+  Serial.print("/");
+  Serial.println(totalPoints);
+
+  Serial.print("Percentage: ");
+  Serial.print(percentage);
+  Serial.println("%");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-red-800 mb-2">Common beginner reminders</h4>
+                    <ul class="space-y-2 text-red-700">
+                        <li><strong>Include parentheses when calling a function:</strong> <code>showScore(8, 10);</code></li>
+                        <li><strong>End the call with a semicolon:</strong> it is a statement</li>
+                        <li><strong>Separate parameters with commas:</strong> <code>(value1, value2)</code></li>
+                        <li><strong>Choose clear names:</strong> <code>showScore</code> is more helpful than <code>doThing</code></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity: Build a Function-Based Calculator</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Project goal</h3>
+                    <p class="text-gray-700 mb-4">Create a small calculator-style Arduino program that uses functions to keep the code organized. This should feel like a natural upgrade from Lesson 3.</p>
+
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">Suggested tasks</h4>
+                        <ol class="space-y-2 text-blue-700 list-decimal list-inside">
+                            <li>Create one function that prints a title</li>
+                            <li>Create one function that shows an addition result</li>
+                            <li>Create one function that shows a temperature conversion or percentage</li>
+                            <li>Call those functions from <code>setup()</code></li>
+                            <li>Check the Serial Monitor to make sure the output is clear and readable</li>
+                        </ol>
+                    </div>
+
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+
+  printTitle();
+  showAddition(7, 5);
+  showTemperatureConversion(24.0);
+}
+
+void loop() {
+}
+
+void printTitle() {
+  Serial.println("=== Function Calculator Demo ===");
+}
+
+void showAddition(int firstNumber, int secondNumber) {
+  int sum = firstNumber + secondNumber;
+
+  Serial.print(firstNumber);
+  Serial.print(" + ");
+  Serial.print(secondNumber);
+  Serial.print(" = ");
+  Serial.println(sum);
+}
+
+void showTemperatureConversion(float celsius) {
+  float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
+
+  Serial.print(celsius);
+  Serial.print(" C = ");
+  Serial.print(fahrenheit);
+  Serial.println(" F");
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Assessment & Homework</h2>
+
+                <div class="grid md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-purple-600 mb-2">Lesson 4 Quiz Topics</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>What a function is</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>How to define and call a function</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>What <code>void</code> means</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Using parameters in a function</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Organizing math and Serial output with functions</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-orange-600 mb-2">Homework</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Rewrite one Lesson 3 calculation program using at least two custom functions</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Create a function that prints a formatted score report</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Practice calling the same function with different input values</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 rounded-lg p-4">
+                    <h4 class="font-semibold text-green-800 mb-2">Pro tip</h4>
+                    <p class="text-green-700">If you notice yourself copying the same few lines again and again, that is often a sign that a function could help.</p>
+                </div>
+            </div>
+
             <div class="flex justify-between items-center mt-8">
                 <div>
                     <a href="/programming/lessons32/Lesson3" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ← Lesson 3: Variables & Data Types
+                        ← Lesson 3: Calculations with Variables
                     </a>
                 </div>
                 <div class="text-center">
@@ -619,9 +379,23 @@ void updateLEDs() {
 </Layout>
 
 <script>
-window.copyCode = function(button) {
+declare global {
+    interface Window {
+        copyCode: (button: HTMLButtonElement) => void;
+    }
+}
+
+const lesson4Window = window as Window & typeof globalThis;
+
+lesson4Window.copyCode = function(button: HTMLButtonElement) {
     try {
-        const codeElement = button.parentElement.querySelector('code');
+        const parentElement = button.parentElement;
+        if (!parentElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+
+        const codeElement = parentElement.querySelector('code');
         if (!codeElement) {
             showCopyFeedback(button, false);
             return;
@@ -643,7 +417,7 @@ window.copyCode = function(button) {
     }
 };
 
-function fallbackCopy(text, button) {
+function fallbackCopy(text: string, button: HTMLButtonElement) {
     try {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -665,7 +439,7 @@ function fallbackCopy(text, button) {
     }
 }
 
-function showCopyFeedback(button, success) {
+function showCopyFeedback(button: HTMLButtonElement, success: boolean) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
     
@@ -677,7 +451,7 @@ function showCopyFeedback(button, success) {
         button.style.backgroundColor = '#dc2626';
     }
     
-    setTimeout(() => {
+    setTimeout((): void => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);

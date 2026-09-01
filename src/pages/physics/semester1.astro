@@ -38,6 +38,80 @@ const module1Pacing = [
 	},
 ];
 
+const module2Pacing = [
+	{
+		week: 'Week 4',
+		title: 'Motion Equations and Free Fall I',
+		studentWork: [
+			'Read the first part of Module 2 on the relationships among displacement, velocity, acceleration, and time in one-dimensional motion.',
+			'Build a formula sheet showing when to use each motion equation and identify what each variable represents.',
+			'Work several practice problems solving for missing quantities in constant-acceleration situations.',
+		],
+		mastery: [
+			'Choose appropriate motion equations for constant-acceleration problems.',
+			'Solve for displacement, velocity, acceleration, or time from known information.',
+			'Interpret the meaning of each variable in context instead of just plugging into formulas.',
+		],
+		fridayOverview: 'Review the core motion equations, model how to organize givens and unknowns, and work through representative examples step by step.',
+		experiment: 'Equation setup and problem-solving workshop using real or modeled motion scenarios.',
+		assessment: 'Check the student\'s problem setup process, correct equation-selection errors, and assign a short set of mixed motion-equation problems.',
+	},
+	{
+		week: 'Week 5',
+		title: 'Motion Equations and Free Fall II',
+		studentWork: [
+			'Read the second part of Module 2 on free fall, reaction time, terminal velocity, and the effects of air resistance.',
+			'Complete practice problems involving vertical motion under gravity, including upward and downward motion.',
+			'Prepare notes comparing idealized free fall with real-world falling motion affected by air resistance.',
+		],
+		mastery: [
+			'Apply motion equations specifically to free-fall situations.',
+			'Explain how gravity affects objects in vertical motion.',
+			'Describe reaction time, terminal velocity, and the role of air resistance in real motion.',
+		],
+		fridayOverview: 'Connect constant-acceleration equations to falling objects, review common sign mistakes, and compare textbook free fall with real-world motion.',
+		experiment: 'Experiments 2.1, 2.2, and 2.3 completed during the Friday meeting.',
+		assessment: 'Finish Module 2 with cumulative review questions, discussion of free-fall reasoning, and a short written or verbal check before beginning vectors.',
+	},
+];
+
+const module3Pacing = [
+	{
+		week: 'Week 6',
+		title: 'Two-Dimensional Vectors I',
+		studentWork: [
+			'Read the first part of Module 3 on vectors, graphical vector addition and subtraction, and vector components.',
+			'Draw vectors on graph paper and practice the head-to-tail method for addition and the parallelogram method.',
+			'Resolve simple vectors into horizontal and vertical components using scale diagrams and trigonometry.',
+		],
+		mastery: [
+			'Explain what a vector is and how it differs from a scalar.',
+			'Add and subtract vectors graphically using the head-to-tail and parallelogram methods.',
+			'Find the components of a vector given its magnitude and direction.',
+		],
+		fridayOverview: 'Introduce the idea of quantities with magnitude and direction, demonstrate graphical vector operations, and practice breaking vectors into components together.',
+		experiment: 'Experiment 3.1: Vector Components.',
+		assessment: 'Review the student\'s component calculations, verify graphical methods are being applied correctly, and assign a short practice set on vector components.',
+	},
+	{
+		week: 'Week 7',
+		title: 'Two-Dimensional Vectors II',
+		studentWork: [
+			'Read the second part of Module 3 on analytical vector addition and applying vectors to physical situations.',
+			'Work practice problems using trigonometry to add and subtract vectors without relying on scale drawings.',
+			'Complete a few physical-situation problems where two or more vectors act on the same object.',
+		],
+		mastery: [
+			'Add and subtract vectors analytically using components.',
+			'Calculate the magnitude and direction of a resultant vector.',
+			'Use vectors to describe simple physical situations such as forces or displacements in two dimensions.',
+		],
+		fridayOverview: 'Show how to combine components to find resultants, then work through physical-situation examples where vectors model real quantities in two dimensions.',
+		experiment: 'Experiment 3.2: Vector Addition.',
+		assessment: 'Finish Module 3 with a cumulative review of vector operations and a short written or verbal check before moving into two-dimensional motion.',
+	},
+];
+
 const weeks = [
 	{
 		week: 1,
@@ -201,6 +275,112 @@ const weeks = [
 
 			<div class="module-week-grid">
 				{module1Pacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Module 2: Motion Equations and Free Fall</h2>
+					<p class="module-copy">
+						This pacing block keeps the same homeschool structure with independent weekly work,
+						Friday instruction, and live experiments during your meeting time.
+					</p>
+				</div>
+			</div>
+
+			<div class="module-week-grid">
+				{module2Pacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Module 3: Two-Dimensional Vectors</h2>
+					<p class="module-copy">
+						This pacing block continues the homeschool pattern, with the student studying vectors
+						independently and experiments done during your Friday meeting.
+					</p>
+				</div>
+			</div>
+
+			<div class="module-week-grid">
+				{module3Pacing.map((item) => (
 					<article class="module-week-card">
 						<div class="module-week-heading">
 							<p class="week-tag">{item.week}</p>
