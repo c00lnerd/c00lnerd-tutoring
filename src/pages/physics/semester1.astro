@@ -1,6 +1,28 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 
+const introPacing = [
+	{
+		week: 'Week 1',
+		title: 'Scientific Foundations and Measurement',
+		studentWork: [
+			'Read the Introductory Remarks on measurement, the metric system, and units.',
+			'Practice converting units using the factor-label method with common metric prefixes.',
+			'Review the rules for significant figures and scientific notation, then complete a short exercise set.',
+			'Set up a physics notebook with sections for vocabulary, worked examples, lab notes, and practice problems.',
+		],
+		mastery: [
+			'Use the metric system and convert units with the factor-label method.',
+			'Distinguish between accuracy and precision in measurements.',
+			'Apply the rules for significant figures and scientific notation.',
+			'Understand how units fit into physical equations.',
+		],
+		fridayOverview: 'Introduce the course structure, walk through the metric system and unit conversion, and model how to track units through calculations.',
+		experiment: 'Measurement practice and unit-conversion drills, plus setting up a lab notebook and basic measuring tools.',
+		assessment: 'Review the student\'s conversions and significant-figure work, then assign a short opening check on units, notation, and measurement vocabulary.',
+	},
+];
+
 const module1Pacing = [
 	{
 		week: 'Week 2',
@@ -260,6 +282,60 @@ const weeks = [
 				</ul>
 			</div>
 		</div>
+
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Week 1: Introductory Remarks — Scientific Foundations and Measurement</h2>
+					<p class="module-copy">
+						This opening week establishes the tools needed for the rest of the course:
+						measurement, the metric system, unit conversion, significant figures, scientific notation,
+						and how to keep a good physics notebook.
+					</p>
+				</div>
+			</div>
+
+			<div class="module-week-grid">
+				{introPacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
 
 		<section class="module-detail">
 			<div class="module-detail-header">
