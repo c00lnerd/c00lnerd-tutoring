@@ -1,627 +1,317 @@
----
+﻿---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 5: Analog Inputs & Sensors - C00lnerd Tutoring">
-    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
-        
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 5: Analog Inputs & Sensors</h1>
-                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Reading Analog Values and Working with Sensors</p>
-                <div class="mt-4 p-4 bg-blue-100 rounded-lg">
-                    <p class="text-blue-800 font-medium">🎯 Learning Focus: ADC, analog sensors, and data processing</p>
+<Layout title="Lesson 5: Arduino Hardware Basics">
+    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">5</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 5: Arduino Hardware Basics</h1>
+                        <p class="text-gray-600">Learn the parts, connections, and safety habits that make Arduino projects work</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
+                    </div>
                 </div>
             </div>
 
-            <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 2rem; color: #1e3a8a;">
-                Use Wokwi for these analog input experiments first so you can focus on reading values, mapping data, and debugging with the Serial Monitor before moving to physical parts.
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-8">
+                <p class="text-blue-900 font-medium">Lesson 4 taught you how functions organize code. In Lesson 5, you will connect that code to the real Arduino board, the breadboard, LEDs, buttons, resistors, and jumper wires.</p>
             </div>
 
-            <!-- Learning Objectives -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-8">
                     <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this Lesson, you will:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Understand analog vs digital signals
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Use analogRead() to read sensor values
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Work with potentiometers and light sensors
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-green-500 mr-2">✓</span>
-                                Map and scale analog values
-                            </li>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">By the end of this lesson, you will:</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>Identify the main hardware parts used in simple Arduino projects</li>
+                            <li>Understand the job of the Arduino board, breadboard, resistor, LED, button, and jumper wire</li>
+                            <li>Read a very simple circuit layout and build it carefully</li>
+                            <li>Use safe wiring habits before uploading code</li>
+                            <li>Connect hardware ideas to code you already know from earlier lessons</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Analog-to-Digital Conversion (ADC)
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                10-bit resolution (0-1023)
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Voltage dividers and sensors
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-blue-500 mr-2">•</span>
-                                Data filtering and smoothing
-                            </li>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Key ideas:</h3>
+                        <ul class="space-y-3 text-gray-700">
+                            <li>Power and ground make the circuit possible</li>
+                            <li>Components each have a specific job</li>
+                            <li>Resistors protect parts by limiting current</li>
+                            <li>Digital pins can send or read simple HIGH and LOW signals</li>
+                            <li>Careful wiring prevents confusing bugs</li>
                         </ul>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Section 1: Understanding Analog Signals -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📊 Section 1: Understanding Analog Signals</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Analog vs Digital</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        While digital signals have only two states (HIGH/LOW), analog signals can have any value within a range. Arduino can read analog voltages from 0V to 5V using its Analog-to-Digital Converter (ADC).
-                    </p>
-                    
-                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Arduino ADC Specifications:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• <strong>Resolution:</strong> 10-bit (1024 possible values: 0-1023)</li>
-                            <li>• <strong>Voltage Range:</strong> 0V to 5V (or 3.3V on some boards)</li>
-                            <li>• <strong>Analog Pins:</strong> A0, A1, A2, A3, A4, A5 on Arduino Uno</li>
-                            <li>• <strong>Conversion Time:</strong> ~100 microseconds</li>
-                        </ul>
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">What Hardware Do We Need?</h2>
+                <p class="text-gray-700 mb-4">Before a program can blink an LED or read a button, the Arduino needs real parts connected correctly. Think of the code as instructions and the hardware as the parts that carry out those instructions.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Arduino Uno</h3>
+                        <p class="text-gray-700">The Arduino board runs your program. It sends power, reads inputs, and controls outputs through its pins.</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Breadboard</h3>
+                        <p class="text-gray-700">A breadboard lets you connect parts without soldering. It helps you build and change circuits quickly.</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Jumper Wires</h3>
+                        <p class="text-gray-700">These wires carry electricity between the Arduino, breadboard, and components.</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">LED</h3>
+                        <p class="text-gray-700">An LED lights up when current flows the correct way through it. It is one of the easiest outputs to test.</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Resistor</h3>
+                        <p class="text-gray-700">A resistor limits current. Without one, you can damage an LED or stress an Arduino pin.</p>
+                    </div>
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Pushbutton</h3>
+                        <p class="text-gray-700">A pushbutton gives you a simple input. Pressed and not pressed become values your program can read.</p>
                     </div>
                 </div>
+            </section>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic Analog Reading</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        The <code>analogRead()</code> function returns a value between 0 and 1023, representing the voltage on the analog pin.
-                    </p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Basic Analog Reading
-const int analogPin = A0;
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("Analog Reading Program Started");
-}
-
-void loop() {
-  int sensorValue = analogRead(analogPin);
-  
-  // Convert to voltage (0-5V)
-  float voltage = sensorValue * (5.0 / 1023.0);
-  
-  Serial.print("Raw Value: ");
-  Serial.print(sensorValue);
-  Serial.print(" | Voltage: ");
-  Serial.print(voltage);
-  Serial.println("V");
-  
-  delay(500);
-}`}</code></pre>
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Power, Ground, and Pins</h2>
+                <p class="text-gray-700 mb-4">Most beginner wiring problems come from forgetting one of these three things: a power connection, a ground connection, or the correct pin number in the code.</p>
+                <div class="grid md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-green-800 mb-2">5V</h3>
+                        <p class="text-green-900">Provides power to parts that need voltage from the board.</p>
+                    </div>
+                    <div class="bg-gray-100 border border-gray-300 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">GND</h3>
+                        <p class="text-gray-700">Ground gives electricity a return path. Many circuits fail if ground is missing.</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Digital Pins</h3>
+                        <p class="text-blue-900">Pins like `2`, `7`, or `13` can be used for simple on/off signals.</p>
                     </div>
                 </div>
-            </div>
+                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg text-amber-900">
+                    Match your code to your wiring. If the LED wire is on pin `8`, your code should not say `13`.
+                </div>
+            </section>
 
-            <!-- Section 2: Working with Potentiometers -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🎛️ Section 2: Working with Potentiometers</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Potentiometer Basics</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        A potentiometer is a variable resistor that creates a voltage divider. As you turn the knob, the output voltage changes proportionally.
-                    </p>
-                    
-                    <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Potentiometer Specifications & Connections:</h4>
-                        <div style="background: #f0fdfa; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #5eead4;">
-                            <p style="color: #0f766e; margin-bottom: 0.5rem;"><strong>Recommended Value:</strong> 1kΩ (1000Ω) potentiometer</p>
-                            <p style="color: #0f766e; margin: 0;"><strong>Alternative Values:</strong> 10kΩ or 100kΩ will also work (different sensitivity)</p>
-                        </div>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• <strong>Pin 1:</strong> Connect to 5V</li>
-                            <li>• <strong>Pin 2 (Wiper):</strong> Connect to analog input (A0)</li>
-                            <li>• <strong>Pin 3:</strong> Connect to Ground</li>
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">LED Safety and Resistors</h2>
+                <p class="text-gray-700 mb-4">LEDs are polarized, which means direction matters. The longer leg is usually the positive side. The shorter leg is usually the negative side. A resistor should be in series with the LED to limit current.</p>
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg mb-6">
+                    <h3 class="text-lg font-semibold text-red-800 mb-2">Safety rule</h3>
+                    <p class="text-red-900">Do not connect an LED directly from an Arduino output pin to ground without a resistor.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Common resistor values</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>`220Ω` for a bright, common LED setup</li>
+                            <li>`330Ω` for a slightly dimmer but very safe setup</li>
+                            <li>Either value is a good beginner choice</li>
                         </ul>
                     </div>
+                    <div class="bg-slate-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple LED path</h3>
+                        <p class="text-gray-700">Arduino pin → resistor → LED → ground</p>
+                    </div>
+                </div>
+            </section>
 
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Potentiometer Control LED Brightness
-const int potPin = A0;
-const int ledPin = 9;  // PWM pin for analogWrite
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Your First Real Hardware Output</h2>
+                <p class="text-gray-700 mb-4">This example uses an external LED. It is very similar to the built-in blink idea, but now you are practicing wiring too.</p>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
+                    Wiring: connect a jumper wire from digital pin `8` to a resistor, then to the long leg of the LED. Connect the short leg of the LED to ground.
+                </div>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
 
 void setup() {
   pinMode(ledPin, OUTPUT);
-  Serial.begin(9600);
-  Serial.println("Potentiometer LED Control Started");
 }
 
 void loop() {
-  int potValue = analogRead(potPin);
-  
-  // Map potentiometer value (0-1023) to LED brightness (0-255)
-  int brightness = map(potValue, 0, 1023, 0, 255);
-  
-  analogWrite(ledPin, brightness);
-  
-  Serial.print("Pot Value: ");
-  Serial.print(potValue);
-  Serial.print(" | LED Brightness: ");
-  Serial.println(brightness);
-  
-  delay(100);
-}`}</code></pre>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">The map() Function</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        The <code>map()</code> function is essential for scaling values from one range to another. It's perfect for converting sensor readings to useful output values.
-                    </p>
-                    
-                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">map() Syntax:</h4>
-                        <code style="color: #4a5568;">map(value, fromLow, fromHigh, toLow, toHigh)</code>
-                        <p class="text-gray-600 mt-2">Maps a value from one range to another proportionally</p>
-                    </div>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Multiple Mapping Examples
-const int potPin = A0;
-
-void setup() {
-  Serial.begin(9600);
-  Serial.println("Mapping Examples");
-}
-
-void loop() {
-  int potValue = analogRead(potPin);
-  
-  // Map to different ranges
-  int percentage = map(potValue, 0, 1023, 0, 100);
-  int servoAngle = map(potValue, 0, 1023, 0, 180);
-  int frequency = map(potValue, 0, 1023, 100, 2000);
-  
-  Serial.print("Raw: ");
-  Serial.print(potValue);
-  Serial.print(" | Percentage: ");
-  Serial.print(percentage);
-  Serial.print("% | Servo: ");
-  Serial.print(servoAngle);
-  Serial.print("° | Freq: ");
-  Serial.print(frequency);
-  Serial.println("Hz");
-  
-  delay(200);
-}`}</code></pre>
-                    </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Wiring Diagram Section -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔌 LED Wiring Diagram</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Proper LED Connection with Current-Limiting Resistor</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        When connecting an LED to an Arduino PWM pin, you must <strong>always include a current-limiting resistor</strong> to protect both the LED and the Arduino pin from damage.
-                    </p>
-                    
-                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
-                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">⚠️ Why Resistors Are Essential:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #742a2a; line-height: 1.8;">
-                            <li>• <strong>Current Protection:</strong> Arduino pins can only safely source ~20mA</li>
-                            <li>• <strong>LED Protection:</strong> LEDs have very low internal resistance</li>
-                            <li>• <strong>Without resistor:</strong> Excessive current can damage components</li>
-                            <li>• <strong>Recommended value:</strong> 220Ω resistor for most 5mm LEDs</li>
-                        </ul>
-                    </div>
-
-                    <div style="text-align: center; margin: 2rem 0;">
-                        <img src="/images/previews/lesson5-led-wiring-diagram.png" alt="LED wiring diagram showing proper connection with current-limiting resistor" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
-                        <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem; font-style: italic;">
-                            Proper LED wiring: Arduino PWM pin → Resistor → LED → Ground
-                        </p>
-                    </div>
-
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #1e40af; font-weight: bold; margin-bottom: 1rem;">🧮 Resistor Value Calculation:</h4>
-                        <div style="background: white; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #e5e7eb;">
-                            <p style="color: #374151; margin-bottom: 0.5rem;"><strong>Formula:</strong> R = (Supply Voltage - LED Forward Voltage) / Desired Current</p>
-                            <p style="color: #374151; margin-bottom: 0.5rem;"><strong>For Red LED:</strong> R = (5V - 2V) / 0.015A = 200Ω</p>
-                            <p style="color: #374151; margin: 0;"><strong>Safe Choice:</strong> 220Ω resistor (standard value, good brightness)</p>
-                        </div>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #1e40af; line-height: 1.8;">
-                            <li>• <strong>220Ω:</strong> Most common choice, good brightness</li>
-                            <li>• <strong>330Ω:</strong> Dimmer but very safe for all LED types</li>
-                            <li>• <strong>470Ω:</strong> Very conservative, works with any LED</li>
-                        </ul>
-                    </div>
-
-                    <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px;">
-                        <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">✅ Wiring Checklist:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #065f46; line-height: 1.8;">
-                            <li>• ✓ Resistor connected in series with LED</li>
-                            <li>• ✓ LED polarity correct (long leg = positive/anode)</li>
-                            <li>• ✓ Ground connection completed</li>
-                            <li>• ✓ Clean breadboard connections</li>
-                            <li>• ✓ Appropriate wire colors used</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 3: Data Filtering and Smoothing -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🔧 Section 3: Data Filtering and Smoothing</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Why Filter Sensor Data?</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Raw sensor readings often contain noise and fluctuations. Filtering helps create stable, reliable readings for better control and decision-making.
-                    </p>
-                    
-                    <div style="background: #e0f2fe; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #0288d1;">
-                        <h4 style="color: #01579b; font-weight: bold; margin-bottom: 1rem;">📊 Visualizing Filter Effects with Serial Plotter</h4>
-                        <p style="color: #0277bd; margin-bottom: 1rem;">
-                            <strong>Important:</strong> Use Arduino IDE's <strong>Serial Plotter</strong> (Tools → Serial Plotter) instead of Serial Monitor to see the filtering effects visually. The plotter shows both raw and filtered data as real-time graphs, making it easy to see how filtering smooths out noise and fluctuations.
-                        </p>
-                        <div style="background: #fff3cd; padding: 1rem; border-radius: 6px; margin-bottom: 1rem; border: 1px solid #ffeaa7;">
-                            <p style="color: #856404; margin-bottom: 0.5rem;"><strong>⚠️ Arduino IDE 2.x Serial Plotter Format:</strong></p>
-                            <p style="color: #856404; margin: 0; font-size: 0.9rem;">Newer Arduino IDE versions require <strong>tab-separated or comma-separated values without text labels</strong> for proper plotting. Use format: <code>rawValue\tfiltered</code> or <code>rawValue,filtered</code></p>
-                        </div>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #0277bd; line-height: 1.8;">
-                            <li>• <strong>Raw data:</strong> Shows as a jagged, noisy line</li>
-                            <li>• <strong>Filtered data:</strong> Shows as a smooth, stable line</li>
-                            <li>• <strong>Real-time comparison:</strong> See both lines updating simultaneously</li>
-                        </ul>
-                        
-                        <div style="text-align: center; margin: 1.5rem 0;">
-                            <img src="/images/previews/Lesson5_filtered_data_example.png" alt="Arduino Serial Plotter showing raw sensor data (jagged blue line) vs filtered data (smooth red line) demonstrating the smoothing effect of data filtering" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); border: 2px solid #e3f2fd;" />
-                            <p style="color: #0277bd; font-size: 0.9rem; margin-top: 1rem; font-style: italic;">
-                                <strong>Serial Plotter Example:</strong> Notice how the raw sensor data (jagged line) becomes smooth and stable after filtering (smooth line)
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div style="background: #faf5ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Common Filtering Techniques:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• <strong>Moving Average:</strong> Average of last N readings</li>
-                            <li>• <strong>Exponential Smoothing:</strong> Weighted average favoring recent values</li>
-                            <li>• <strong>Threshold Filtering:</strong> Ignore small changes</li>
-                        </ul>
-                    </div>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Moving Average Filter
-const int sensorPin = A0;
-const int numReadings = 10;
-
-int readings[numReadings];
-int readIndex = 0;
-int total = 0;
-int average = 0;
-
-void setup() {
-  Serial.begin(9600);
-  
-  // Initialize all readings to 0
-  for (int i = 0; i < numReadings; i++) {
-    readings[i] = 0;
-  }
-  
-  Serial.println("Moving Average Filter Started");
-}
-
-void loop() {
-  // Subtract the last reading
-  total = total - readings[readIndex];
-  
-  // Read new value
-  readings[readIndex] = analogRead(sensorPin);
-  
-  // Add new reading to total
-  total = total + readings[readIndex];
-  
-  // Advance to next position
-  readIndex = readIndex + 1;
-  if (readIndex >= numReadings) {
-    readIndex = 0;
-  }
-  
-  // Calculate average
-  average = total / numReadings;
-  
-  // For Serial Monitor (with labels)
-  Serial.print("Raw: ");
-  Serial.print(readings[readIndex == 0 ? numReadings-1 : readIndex-1]);
-  Serial.print(" | Filtered: ");
-  Serial.println(average);
-  
-  // For Serial Plotter (Arduino IDE 2.x format - uncomment these lines)
-  // Serial.print(readings[readIndex == 0 ? numReadings-1 : readIndex-1]);
-  // Serial.print("\t");  // Tab separator
-  // Serial.println(average);
-  
-  delay(100);
-}`}</code></pre>
-                    </div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Simple Exponential Smoothing</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        A simpler alternative that gives more weight to recent readings while still smoothing out noise.
-                    </p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Exponential Smoothing Filter
-const int sensorPin = A0;
-float smoothedValue = 0;
-const float alpha = 0.1;  // Smoothing factor (0-1)
-
-void setup() {
-  Serial.begin(9600);
-  smoothedValue = analogRead(sensorPin);  // Initialize
-  Serial.println("Exponential Smoothing Started");
-}
-
-void loop() {
-  int rawValue = analogRead(sensorPin);
-  
-  // Apply exponential smoothing
-  smoothedValue = (alpha * rawValue) + ((1 - alpha) * smoothedValue);
-  
-  // For Serial Monitor (with labels)
-  Serial.print("Raw: ");
-  Serial.print(rawValue);
-  Serial.print(" | Smoothed: ");
-  Serial.println(smoothedValue);
-  
-  // For Serial Plotter (Arduino IDE 2.x format - uncomment these lines)
-  // Serial.print(rawValue);
-  // Serial.print("\t");  // Tab separator
-  // Serial.println(smoothedValue);
-  
-  delay(100);
-}`}</code></pre>
-                    </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Hands-On Activity -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: Environmental Monitor</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Multi-Sensor Environmental Monitor</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Build a system that monitors light levels and temperature, with automatic responses and data logging.
-                    </p>
-                    
-                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Required Components:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li>• Arduino Uno</li>
-                            <li>• Photoresistor (LDR) - <em style="color: #f59e0b;">Optional for challenge project</em></li>
-                            <li>• TMP36 temperature sensor (or potentiometer for simulation)</li>
-                            <li>• 2 LEDs (different colors)</li>
-                            <li>• 10kΩ resistor, 2 × 220Ω resistors</li>
-                            <li>• Breadboard and jumper wires</li>
-                        </ul>
-                    </div>
-
-                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔧 Optional Challenge Tasks <span style="color: #f59e0b; font-size: 0.9rem;">(Requires LDR)</span>:</h4>
-                        <ol class="text-blue-700 space-y-1 list-decimal list-inside">
-                            <li>Read both light and temperature sensors</li>
-                            <li>Implement moving average filtering</li>
-                            <li>Control LEDs based on sensor thresholds</li>
-                            <li>Display formatted data to Serial Monitor</li>
-                            <li>Add data logging with timestamps</li>
-                        </ol>
-                    </div>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Environmental Monitor Solution
-const int ldrPin = A0;
-const int tempPin = A1;
-const int lightLED = 12;
-const int tempLED = 13;
-
-// Filtering variables
-const int numReadings = 5;
-int lightReadings[numReadings];
-int tempReadings[numReadings];
-int readIndex = 0;
-int lightTotal = 0;
-int tempTotal = 0;
-
-// Thresholds
-const int lightThreshold = 300;
-const float tempThreshold = 25.0;  // Celsius
-
-void setup() {
-  pinMode(lightLED, OUTPUT);
-  pinMode(tempLED, OUTPUT);
-  Serial.begin(9600);
-  
-  // Initialize arrays
-  for (int i = 0; i < numReadings; i++) {
-    lightReadings[i] = 0;
-    tempReadings[i] = 0;
-  }
-  
-  Serial.println("Environmental Monitor Started");
-  Serial.println("Time,Light,Temp(C),Light_LED,Temp_LED");
-}
-
-void loop() {
-  // Read sensors
-  int rawLight = analogRead(ldrPin);
-  int rawTemp = analogRead(tempPin);
-  
-  // Update moving averages
-  lightTotal = lightTotal - lightReadings[readIndex];
-  tempTotal = tempTotal - tempReadings[readIndex];
-  
-  lightReadings[readIndex] = rawLight;
-  tempReadings[readIndex] = rawTemp;
-  
-  lightTotal = lightTotal + lightReadings[readIndex];
-  tempTotal = tempTotal + tempReadings[readIndex];
-  
-  readIndex = (readIndex + 1) % numReadings;
-  
-  // Calculate averages
-  int avgLight = lightTotal / numReadings;
-  int avgTemp = tempTotal / numReadings;
-  
-  // Convert temperature to Celsius
-  float voltage = avgTemp * (5.0 / 1023.0);
-  float temperatureC = (voltage - 0.5) * 100.0;
-  
-  // Control LEDs based on thresholds
-  bool lightLEDState = avgLight < lightThreshold;
-  bool tempLEDState = temperatureC > tempThreshold;
-  
-  digitalWrite(lightLED, lightLEDState);
-  digitalWrite(tempLED, tempLEDState);
-  
-  // Data logging format
-  Serial.print(millis());
-  Serial.print(",");
-  Serial.print(avgLight);
-  Serial.print(",");
-  Serial.print(temperatureC);
-  Serial.print(",");
-  Serial.print(lightLEDState ? "ON" : "OFF");
-  Serial.print(",");
-  Serial.println(tempLEDState ? "ON" : "OFF");
-  
+  digitalWrite(ledPin, HIGH);
+  delay(1000);
+  digitalWrite(ledPin, LOW);
   delay(1000);
 }`}</code></pre>
-                    </div>
-                    </div>
                 </div>
-            </div>
+                <p class="text-gray-700">If the LED does not blink, check three things first: resistor present, LED direction correct, and wire actually on pin `8`.</p>
+            </section>
 
-            <!-- Assessment and Homework -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-                    <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">📊 Lesson 5 Quiz Topics:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                Analog vs digital signals
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                ADC resolution and range
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                analogRead() function
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                map() function usage
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-purple-500 mr-2">•</span>
-                                Sensor interfacing and filtering
-                            </li>
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Reading a Button</h2>
+                <p class="text-gray-700 mb-4">An Arduino program becomes much more interesting when it can read an input. A pushbutton lets your code react to something happening in the real world.</p>
+                <div class="bg-slate-50 p-5 rounded-lg mb-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">What the button does</h3>
+                    <p class="text-gray-700">When you press the button, the circuit changes state. Your code can read that state with `digitalRead()` and decide what to do next.</p>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
+                    Beginner setup: use a button on digital pin `2` and an LED on pin `8`. A common approach is to use `INPUT_PULLUP` so you do not need an extra pull-down resistor.
+                </div>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);
+
+  if (buttonState == LOW) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+}`}</code></pre>
+                </div>
+                <p class="text-gray-700">With `INPUT_PULLUP`, pressed usually reads as `LOW` and not pressed usually reads as `HIGH`. That feels backward at first, so read the code carefully.</p>
+            </section>
+
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Using Functions with Hardware</h2>
+                <p class="text-gray-700 mb-4">Lesson 4 introduced functions. Now you can use them to make hardware programs easier to read. Instead of putting every line inside `loop()`, you can break the program into clear jobs.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+  checkButton();
+}
+
+void checkButton() {
+  int buttonState = digitalRead(buttonPin);
+
+  if (buttonState == LOW) {
+    turnLedOn();
+  } else {
+    turnLedOff();
+  }
+}
+
+void turnLedOn() {
+  digitalWrite(ledPin, HIGH);
+}
+
+void turnLedOff() {
+  digitalWrite(ledPin, LOW);
+}`}</code></pre>
+                </div>
+                <p class="text-gray-700">This code does the same job, but the function names explain the program much more clearly.</p>
+            </section>
+
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Hardware Checklist Before Uploading</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-green-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-green-800 mb-3">Check your circuit</h3>
+                        <ul class="space-y-2 text-green-900">
+                            <li>Ground connected where it should be</li>
+                            <li>Power wire in the correct rail or pin</li>
+                            <li>LED facing the correct direction</li>
+                            <li>Resistor included with the LED</li>
+                            <li>Button placed across the breadboard gap correctly</li>
                         </ul>
                     </div>
-                    <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">🏠 Homework Assignments:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">1.</span>
-                                Complete the environmental monitor project
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">2.</span>
-                                Create a voltage meter using analog input
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">3.</span>
-                                Experiment with different filtering techniques
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">4.</span>
-                                Research other analog sensors (flex, force, etc.)
-                            </li>
-                            <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                                <span class="text-orange-500 mr-2">5.</span>
-                                Design a simple data logger system
-                            </li>
+                    <div class="bg-amber-50 p-5 rounded-lg">
+                        <h3 class="text-lg font-semibold text-amber-800 mb-3">Check your code</h3>
+                        <ul class="space-y-2 text-amber-900">
+                            <li>Pin numbers match the wires</li>
+                            <li>`pinMode()` is set correctly</li>
+                            <li>`digitalWrite()` is only used on output pins</li>
+                            <li>`digitalRead()` is used for the button pin</li>
+                            <li>Functions have clear names and do one small job</li>
                         </ul>
                     </div>
                 </div>
+            </section>
 
-                <div class="mt-6 p-4 bg-green-50 rounded-lg">
-                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">💡 Pro Tips for Success:</h4>
-                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Always check sensor datasheets for proper connections</li>
-                        <li>• <strong>Use the Serial Plotter</strong> to visualize raw vs filtered data - you'll clearly see the smoothing effect!</li>
-                        <li>• Calibrate sensors in your specific environment</li>
-                        <li>• Consider power supply stability for accurate readings</li>
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Hands-On Activity: Build a Button-Controlled LED</h2>
+                <p class="text-gray-700 mb-4">Build a simple circuit where pressing a button turns on an LED. Then improve the code by organizing it with functions.</p>
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg mb-6">
+                    <h3 class="text-lg font-semibold text-yellow-800 mb-2">Required parts</h3>
+                    <ul class="space-y-2 text-yellow-900">
+                        <li>Arduino Uno</li>
+                        <li>Breadboard</li>
+                        <li>1 LED</li>
+                        <li>1 resistor (`220Ω` or `330Ω`)</li>
+                        <li>1 pushbutton</li>
+                        <li>Jumper wires</li>
                     </ul>
                 </div>
-            </div>
+                <div class="bg-slate-50 p-5 rounded-lg mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Activity steps</h3>
+                    <ol class="space-y-2 text-gray-700 list-decimal list-inside">
+                        <li>Place the LED and resistor on the breadboard</li>
+                        <li>Wire the LED to digital pin `8` and ground</li>
+                        <li>Place the button on the breadboard</li>
+                        <li>Wire the button to digital pin `2` and ground</li>
+                        <li>Use `INPUT_PULLUP` in the code</li>
+                        <li>Test the circuit</li>
+                        <li>Refactor the program using functions like `checkButton()`, `turnLedOn()`, and `turnLedOff()`</li>
+                    </ol>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg text-blue-900">
+                    Extension: make the LED blink three times when the button is pressed by writing a new function such as `blinkLedThreeTimes()`.
+                </div>
+            </section>
 
-            <!-- Navigation -->
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Assessment and Homework</h2>
+                <div class="grid md:grid-cols-2 gap-8 mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Lesson 5 quiz topics</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>Main Arduino hardware parts</li>
+                            <li>Power, ground, and digital pins</li>
+                            <li>LED direction and resistor purpose</li>
+                            <li>Button input basics</li>
+                            <li>Using functions in simple hardware programs</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Homework ideas</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>Rebuild the button-controlled LED from memory</li>
+                            <li>Label the job of each part in your circuit</li>
+                            <li>Write one version of the code without functions and one with functions</li>
+                            <li>Practice checking wiring before every upload</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-green-900">
+                    Success in hardware work comes from patience. When something fails, check the wiring, the resistor, the LED direction, and the pin numbers before changing lots of code.
+                </div>
+            </section>
+
             <div class="flex justify-between items-center mt-8">
                 <div>
                     <a href="/programming/lessons32/Lesson4" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ← Lesson 4: Digital I/O Basics
+                        ← Previous: Lesson 4
                     </a>
                 </div>
                 <div class="text-center">
@@ -631,7 +321,7 @@ void loop() {
                 </div>
                 <div>
                     <a href="/programming/lessons32/Lesson6" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Lesson 6: PWM & Analog Outputs →
+                        Next: Lesson 6 →
                     </a>
                 </div>
             </div>
@@ -640,16 +330,30 @@ void loop() {
 </Layout>
 
 <script>
-window.copyCode = function(button) {
+declare global {
+    interface Window {
+        copyCode: (button: HTMLButtonElement) => void;
+    }
+}
+
+const lesson5Window = window as Window & typeof globalThis;
+
+lesson5Window.copyCode = function(button: HTMLButtonElement) {
     try {
-        const codeElement = button.parentElement.querySelector('code');
+        const parentElement = button.parentElement;
+        if (!parentElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+
+        const codeElement = parentElement.querySelector('code');
         if (!codeElement) {
             showCopyFeedback(button, false);
             return;
         }
-        
+
         const codeText = codeElement.textContent || codeElement.innerText;
-        
+
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText).then(() => {
                 showCopyFeedback(button, true);
@@ -664,7 +368,7 @@ window.copyCode = function(button) {
     }
 };
 
-function fallbackCopy(text, button) {
+function fallbackCopy(text: string, button: HTMLButtonElement) {
     try {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -673,23 +377,23 @@ function fallbackCopy(text, button) {
         textarea.style.top = '0';
         textarea.setAttribute('readonly', '');
         document.body.appendChild(textarea);
-        
+
         textarea.select();
         textarea.setSelectionRange(0, 99999);
-        
+
         const successful = document.execCommand('copy');
         document.body.removeChild(textarea);
-        
+
         showCopyFeedback(button, successful);
     } catch (err) {
         showCopyFeedback(button, false);
     }
 }
 
-function showCopyFeedback(button, success) {
+function showCopyFeedback(button: HTMLButtonElement, success: boolean) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
-    
+
     if (success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#10b981';
@@ -697,16 +401,10 @@ function showCopyFeedback(button, success) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
-    
-    setTimeout(() => {
+
+    setTimeout((): void => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);
 }
 </script>
-
-
-
-
-
-
