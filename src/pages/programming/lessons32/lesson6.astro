@@ -1,365 +1,355 @@
----
+﻿---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 6: PWM & Analog Outputs - C00lnerd Tutoring">
-    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
-        
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 6: PWM & Analog Outputs</h1>
-                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Master Pulse Width Modulation and analog output control</p>
-                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
-                    <p class="text-purple-800 font-medium">🎛️ Learn to control brightness, speed, and analog devices</p>
+<Layout title="Lesson 6: Functions with Arduino">
+    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">6</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 6: Functions with Arduino</h1>
+                        <p class="text-gray-600">Organize repeated jobs into clear, reusable blocks of code</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
+                    </div>
                 </div>
             </div>
 
-            <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 2rem; color: #1e3a8a;">
-                Start these PWM and analog output activities in Wokwi so you can safely test brightness, timing, and control logic before wiring real components.
+            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-8">
+                <p class="text-blue-900 font-medium">You already know how Arduino makes decisions with conditionals and repeats actions with loops. Now you will learn how to organize code into functions so a program becomes easier to read, reuse, and improve.</p>
             </div>
 
-            <!-- Learning Objectives -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📚 Learning Objectives</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
                     <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                Understand PWM (Pulse Width Modulation) principles
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                Use analogWrite() for analog output control
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                Control LED brightness and motor speed
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                Create smooth fading and dimming effects
-                            </li>
+                        <h3 class="text-lg font-semibold text-blue-600 mb-2">By the end of this Lesson, you will:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Understand what a function is and why programmers use functions</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Write simple functions that perform one clear job</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Call functions from <code>setup()</code> and <code>loop()</code></li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Pass values into a function using parameters</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                PWM frequency and duty cycle
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                Arduino PWM pins and limitations
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                RGB LED color mixing
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-purple-600 mr-2">•</span>
-                                Servo motor control basics
-                            </li>
+                        <h3 class="text-lg font-semibold text-green-600 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Breaking a larger task into smaller steps</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Making code easier to read and edit</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Reusing code instead of copying the same lines again and again</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Preparing for more advanced Arduino programs later</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 1: Understanding PWM -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🌊 Section 1: Understanding PWM</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">What is PWM?</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Pulse Width Modulation (PWM) is a technique used to simulate analog output using digital signals. 
-                        Instead of providing a continuous voltage like true analog output, PWM rapidly switches between 
-                        HIGH (5V) and LOW (0V) states.
-                    </p>
-                    
-                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key PWM Concepts:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><strong>Duty Cycle:</strong> Percentage of time the signal is HIGH</li>
-                            <li><strong>Frequency:</strong> How fast the switching occurs (typically 490Hz or 980Hz)</li>
-                            <li><strong>Average Voltage:</strong> Effective voltage based on duty cycle</li>
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: What Is a Function?</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function is a named block of code</h3>
+                    <p class="text-gray-700 mb-4">A function is a group of instructions that performs one job. Arduino already gives you two built-in functions: <code>setup()</code> and <code>loop()</code>. In this lesson, you will start making your own functions too.</p>
+
+                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-blue-800 mb-2">Why functions help</h4>
+                        <ul class="space-y-2 text-blue-700">
+                            <li><strong>They reduce repetition:</strong> write the code once and call it many times</li>
+                            <li><strong>They improve readability:</strong> a name like <code>printResult()</code> explains the job</li>
+                            <li><strong>They make editing easier:</strong> change the function once instead of changing repeated code everywhere</li>
+                            <li><strong>They help you think clearly:</strong> each function should do one simple task</li>
                         </ul>
                     </div>
                 </div>
 
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">PWM on Arduino</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Arduino Uno has 6 PWM-capable pins: 3, 5, 6, 9, 10, and 11 (marked with ~ symbol). 
-                        These pins can output PWM signals with values from 0 (0% duty cycle) to 255 (100% duty cycle).
-                    </p>
-                    
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">PWM Value Examples:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><strong>0:</strong> Always LOW (0V average)</li>
-                            <li><strong>64:</strong> 25% duty cycle (1.25V average)</li>
-                            <li><strong>128:</strong> 50% duty cycle (2.5V average)</li>
-                            <li><strong>192:</strong> 75% duty cycle (3.75V average)</li>
-                            <li><strong>255:</strong> Always HIGH (5V average)</li>
-                        </ul>
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function definition has a pattern</h3>
+                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`returnType functionName(parameters) {
+  // code the function will run
+}`}</pre>
+
+                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">Important parts</h4>
+                            <ul class="space-y-2 text-gray-700 text-sm">
+                                <li><strong>returnType:</strong> often <code>void</code> for now</li>
+                                <li><strong>functionName:</strong> the name you choose</li>
+                                <li><strong>parameters:</strong> extra information sent into the function</li>
+                                <li><strong>braces:</strong> the lines that belong to the function</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h4 class="font-semibold text-gray-800 mb-2">What <code>void</code> means</h4>
+                            <p class="text-gray-700 text-sm">For now, most of your functions will use <code>void</code>. That means the function does a job, but it does not send a value back.</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Section 2: analogWrite() Function -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">⚡ Section 2: analogWrite() Function</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Basic analogWrite() Syntax</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        The analogWrite() function generates PWM signals on compatible pins. It takes two parameters: 
-                        the pin number and the PWM value (0-255).
-                    </p>
-                    
-                    <div class="bg-gray-100 p-4 rounded-lg mb-4">
-                        <h4 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">analogWrite() Syntax:</h4>
-                        <code style="color: #4a5568; font-family: 'Courier New', monospace;">analogWrite(pinNumber, pwmValue)</code>
-                        <p class="text-gray-600 mt-2">Generates PWM signal on specified pin (0-255 range)</p>
-                        
-                        <div style="margin-top: 1rem; padding: 1rem; background: #f9fafb; border-radius: 6px; border-left: 3px solid #6b7280;">
-                            <h5 style="font-weight: 600; color: #374151; margin-bottom: 0.5rem;">PWM Value Examples:</h5>
-                            <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.6; font-family: 'Courier New', monospace; font-size: 0.9rem;">
-                                <li>• <strong>0</strong> = LED off (0% brightness)</li>
-                                <li>• <strong>64</strong> = LED dim (25% brightness)</li>
-                                <li>• <strong>128</strong> = LED medium (50% brightness)</li>
-                                <li>• <strong>255</strong> = LED full brightness (100%)</li>
-                            </ul>
-                        </div>
-                    </div>
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 2: Your First Custom Function</h2>
 
-                    <div style="margin-bottom: 1.5rem;">
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">LED Brightness Control</h3>
-                        <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                            One of the most common uses of PWM is controlling LED brightness. Here's a complete example 
-                            that gradually fades an LED in and out:
-                        </p>
-                        
-                        <!-- Wiring Diagram -->
-                        <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin: 1rem 0;">
-                            <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 0.5rem;">
-                                <i class="fas fa-plug" style="color: #3182ce; margin-right: 0.5rem;"></i>Wiring Diagram
-                            </h4>
-                            <div style="text-align: center; margin: 1rem 0;">
-                                <img src="/images/Lesson6_single_led_pwm.png" alt="LED PWM Wiring Diagram" style="max-width: 100%; height: auto; border-radius: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                            </div>
-                            <p style="color: #4a5568; font-size: 0.9rem; margin-top: 0.5rem;">
-                                <strong>Wiring:</strong> Connect the LED's long leg (anode) to pin 9 through a 220Ω resistor, and the short leg (cathode) to GND.
-                            </p>
-                        </div>
-                        
-                        <div class="relative">
-                            <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                                📋 Copy
-                            </button>
-                            <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// LED Fading Example
-const int ledPin = 9;  // PWM pin
-int brightness = 0;    // LED brightness
-int fadeAmount = 5;    // How much to change brightness
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Start with a simple printing function</h3>
+                    <p class="text-gray-700 mb-4">You have already used the Serial Monitor many times. Instead of writing the same printing lines over and over, you can place them inside a function.</p>
 
-void setup() {
-  Serial.begin(9600);
-}
-
-void loop() {
-  // Set LED brightness
-  analogWrite(ledPin, brightness);
-  
-  // Print current brightness
-  Serial.print("Brightness: ");
-  Serial.println(brightness);
-  
-  // Change brightness for next iteration
-  brightness = brightness + fadeAmount;
-  
-  // Reverse direction at the ends
-  if (brightness <= 0 || brightness >= 255) {
-    fadeAmount = -fadeAmount;
-  }
-  
-  delay(30);  // Small delay for smooth fading
-}`}</code></pre>
-                        </div>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Color Mixing with PWM</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        RGB LEDs contain three separate LEDs (Red, Green, Blue) that can be controlled independently 
-                        using PWM. By mixing different intensities of these colors, you can create millions of colors.
-                    </p>
-                    
-                    <div style="background: #fffbeb; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Common RGB Colors:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><strong>Red:</strong> (255, 0, 0)</li>
-                            <li><strong>Green:</strong> (0, 255, 0)</li>
-                            <li><strong>Blue:</strong> (0, 0, 255)</li>
-                            <li><strong>White:</strong> (255, 255, 255)</li>
-                            <li><strong>Purple:</strong> (255, 0, 255)</li>
-                            <li><strong>Yellow:</strong> (255, 255, 0)</li>
-                            <li><strong>Cyan:</strong> (0, 255, 255)</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">RGB LED Control Code</h3>
-                    
-                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
-                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 RGB LED Wiring Instructions</h4>
-                        <p style="color: #742a2a; line-height: 1.6; margin-bottom: 1rem;">
-                            Before running the RGB LED code, you need to connect an RGB LED properly:
-                        </p>
-                        
-                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">
-                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Common Cathode RGB LED Wiring:</h5>
-                            <ul style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
-                                <li><strong>Red pin → 220Ω resistor → Digital pin 9</strong></li>
-                                <li><strong>Green pin → 220Ω resistor → Digital pin 10</strong></li>
-                                <li><strong>Blue pin → 220Ω resistor → Digital pin 11</strong></li>
-                                <li><strong>Common cathode (longest pin) → GND</strong></li>
-                            </ul>
-                        </div>
-                        
-                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
-                            <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">Alternative: Use Built-in RGB LED</h5>
-                            <p style="color: #742a2a; line-height: 1.6;">
-                                If your expansion board has a built-in RGB LED, check its pin connections and modify the pin numbers in the code accordingly.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <div style="text-align: center; margin: 2rem 0;">
-                        <img src="/images/previews/Lesson6_multicolor_led_pwm.png" alt="RGB LED wiring diagram showing proper connections with current-limiting resistors to Arduino PWM pins 9, 10, and 11" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);" />
-                        <p style="color: #6b7280; font-size: 0.9rem; margin-top: 1rem; font-style: italic;">
-                            RGB LED Wiring: Red → Pin 9, Green → Pin 10, Blue → Pin 11 (each with 220Ω resistor)
-                        </p>
-                    </div>
-                    
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Here's an example that cycles through different colors on an RGB LED:
-                    </p>
-                    
                     <div class="relative">
                         <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                             📋 Copy
                         </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// RGB LED Color Cycling
-const int redPin = 9;    // Red LED pin
-const int greenPin = 10; // Green LED pin
-const int bluePin = 11;  // Blue LED pin
-
-void setup() {
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
   Serial.begin(9600);
-  Serial.println("RGB LED Color Demo");
+  printWelcome();
 }
 
 void loop() {
-  // Red
-  setColor(255, 0, 0);
-  Serial.println("Red");
-  delay(1000);
-  
-  // Green
-  setColor(0, 255, 0);
-  Serial.println("Green");
-  delay(1000);
-  
-  // Blue
-  setColor(0, 0, 255);
-  Serial.println("Blue");
-  delay(1000);
-  
-  // Purple
-  setColor(255, 0, 255);
-  Serial.println("Purple");
-  delay(1000);
-  
-  // Off
-  setColor(0, 0, 0);
-  Serial.println("Off");
-  delay(1000);
 }
 
-// Function to set RGB color
-void setColor(int red, int green, int blue) {
-  analogWrite(redPin, red);
-  analogWrite(greenPin, green);
-  analogWrite(bluePin, blue);
+void printWelcome() {
+  Serial.println("Welcome to Lesson 6!");
+  Serial.println("We are learning functions.");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg mb-4">
+                    <h4 class="font-semibold text-green-800 mb-2">What happens here?</h4>
+                    <ul class="space-y-2 text-green-700">
+                        <li><strong><code>setup()</code> runs once:</strong> it starts Serial communication and then calls <code>printWelcome()</code></li>
+                        <li><strong><code>printWelcome()</code> runs its own code:</strong> it prints two lines</li>
+                        <li><strong>The function name acts like a command:</strong> when Arduino sees <code>printWelcome();</code>, it jumps to that function and runs it</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 3: Functions Make Repeated Work Easier</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Without a function</h3>
+                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`void setup() {
+  Serial.begin(9600);
+
+  Serial.println("=== Result ===");
+  Serial.print("Answer: ");
+  Serial.println(12);
+
+  Serial.println("=== Result ===");
+  Serial.print("Answer: ");
+  Serial.println(25);
+}`}</pre>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">With a function</h3>
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+
+  printResult(12);
+  printResult(25);
+}
+
+void loop() {
+}
+
+void printResult(int answer) {
+  Serial.println("=== Result ===");
+  Serial.print("Answer: ");
+  Serial.println(answer);
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h4 class="font-semibold text-yellow-800 mb-2">New idea: parameters</h4>
+                    <p class="text-yellow-700">The <code>answer</code> variable is a parameter. It receives the value sent into the function. When you call <code>printResult(12);</code>, the function uses <code>12</code>. When you call <code>printResult(25);</code>, the same function uses <code>25</code>.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 4: Functions and Calculations</h2>
+
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Use a function to display a conversion</h3>
+                    <p class="text-gray-700 mb-4">This connects back to variables and formulas. You still use variables and calculations, but now you organize the work using a function.</p>
+
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+
+  showTemperatureConversion(20.0);
+  showTemperatureConversion(25.0);
+  showTemperatureConversion(30.0);
+}
+
+void loop() {
+}
+
+void showTemperatureConversion(float celsius) {
+  float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
+
+  Serial.print(celsius);
+  Serial.print(" C = ");
+  Serial.print(fahrenheit);
+  Serial.println(" F");
+}`}</code></pre>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-2">Why this is better</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>The formula is written once</li>
+                            <li>The print format is written once</li>
+                            <li>You can test many values by changing only the function call</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-gray-800 mb-2">What to notice</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li><code>celsius</code> is the parameter</li>
+                            <li><code>fahrenheit</code> is created inside the function</li>
+                            <li>The function performs both a calculation and clear Serial output</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 5: Functions with Hardware</h2>
+                <p class="text-gray-700 mb-4">Functions are especially helpful with Arduino hardware because they let you give clear names to repeated actions. Instead of repeating `digitalWrite()` lines, you can create functions like <code>turnLedOn()</code> and <code>turnLedOff()</code>.</p>
+
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+  checkButton();
+}
+
+void checkButton() {
+  int buttonState = digitalRead(buttonPin);
+
+  if (buttonState == LOW) {
+    turnLedOn();
+  } else {
+    turnLedOff();
+  }
+}
+
+void turnLedOn() {
+  digitalWrite(ledPin, HIGH);
+}
+
+void turnLedOff() {
+  digitalWrite(ledPin, LOW);
 }`}</code></pre>
                 </div>
-            </div>
 
-            <!-- Hands-On Activity -->
-            <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">🛠️ Hands-On Activity: PWM Control Panel</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: Interactive PWM Demonstration</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Create a program that demonstrates PWM control using the Serial Monitor as a control interface. 
-                        This kit-independent activity will help you understand PWM principles through simulation and code.
-                    </p>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Instructions</h3>
-                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li>Create a PWM control program with Serial Monitor interface</li>
-                        <li>Include commands for LED brightness (L0-L255)</li>
-                        <li>Add motor speed control simulation (M0-M255)</li>
-                        <li>Implement RGB color control (R/G/B commands)</li>
-                        <li>Test different PWM values and observe the effects</li>
-                        <li>Create a demo mode that cycles through different settings</li>
-                    </ol>
+                <div class="bg-green-50 p-4 rounded-lg mt-4">
+                    <h4 class="font-semibold text-green-800 mb-2">Why this code is clearer</h4>
+                    <ul class="space-y-2 text-green-700">
+                        <li><strong><code>loop()</code></strong> stays short and easy to read</li>
+                        <li><strong><code>checkButton()</code></strong> describes the decision job</li>
+                        <li><strong><code>turnLedOn()</code> and <code>turnLedOff()</code></strong> describe the output jobs</li>
+                    </ul>
                 </div>
             </div>
 
-            <!-- Assessment & Homework -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1rem;">📝 Assessment & Homework</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
-                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                        <li>What PWM value would give you 75% brightness on an LED?</li>
-                        <li>Which Arduino pins support PWM output?</li>
-                        <li>What RGB values would create a yellow color?</li>
-                        <li>Why can't you connect a motor directly to an Arduino pin?</li>
-                        <li>What is the frequency range of Arduino PWM signals?</li>
-                    </ol>
-                </div>
-
-                <div class="text-center">
-                    <a href="/programming/quizzes32/Lesson6" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Take Lesson 6 Quiz →
-                    </a>
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 6: Common Beginner Mistakes</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 1</h3>
+                        <p class="text-red-700 text-sm">Forgetting the parentheses when calling a function.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 2</h3>
+                        <p class="text-red-700 text-sm">Using a function name that does not describe the job clearly.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 3</h3>
+                        <p class="text-red-700 text-sm">Copying repeated code instead of placing it in a function.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 4</h3>
+                        <p class="text-red-700 text-sm">Trying to make one function do too many different jobs.</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Navigation -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity: Function-Based LED Program</h2>
+                <p class="text-gray-700 mb-4">Build or simulate a button-controlled LED program that uses functions. Your program should:</p>
+                <div class="bg-yellow-50 p-4 rounded-lg mb-4 text-yellow-900">
+                    <ul class="space-y-2">
+                        <li>Use a function to check the button</li>
+                        <li>Use one function to turn the LED on</li>
+                        <li>Use one function to turn the LED off</li>
+                        <li>Keep <code>loop()</code> short and easy to read</li>
+                    </ul>
+                </div>
+                <p class="text-gray-700">Extension: add another function that blinks the LED three times when the button is pressed.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Assessment and Homework</h2>
+                <div class="grid md:grid-cols-2 gap-8 mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Lesson 6 quiz topics</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>What a function is</li>
+                            <li>How to define and call a function</li>
+                            <li>What <code>void</code> means</li>
+                            <li>What parameters do</li>
+                            <li>How functions help with hardware code</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Homework ideas</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>Write one function that prints a welcome message</li>
+                            <li>Write one function that prints a score using a parameter</li>
+                            <li>Rewrite a repeated LED action using a function</li>
+                            <li>Be ready to use functions in bigger projects later</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-green-900">
+                    Good programmers name functions clearly and let each function do one simple job.
+                </div>
+            </div>
+
             <div class="flex justify-between items-center mt-8">
                 <div>
                     <a href="/programming/lessons32/Lesson5" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
                         ← Previous: Lesson 5
                     </a>
                 </div>
-                <div>
-                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Course Overview
+                <div class="text-center">
+                    <a href="/programming/quizzes32/Lesson6" style="background-color: #7c3aed; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Quiz 📝
                     </a>
                 </div>
                 <div>
-                    <a href="/programming/lessons32/Lesson10" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Lesson 10 →
+                    <a href="/programming/lessons32/Lesson7" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Lesson 7 →
                     </a>
                 </div>
             </div>
@@ -368,16 +358,30 @@ void setColor(int red, int green, int blue) {
 </Layout>
 
 <script>
-window.copyCode = function(button) {
+declare global {
+    interface Window {
+        copyCode: (button: HTMLButtonElement) => void;
+    }
+}
+
+const lesson6Window = window as Window & typeof globalThis;
+
+lesson6Window.copyCode = function(button: HTMLButtonElement) {
     try {
-        const codeElement = button.parentElement.querySelector('code');
+        const parentElement = button.parentElement;
+        if (!parentElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+
+        const codeElement = parentElement.querySelector('code');
         if (!codeElement) {
             showCopyFeedback(button, false);
             return;
         }
-        
+
         const codeText = codeElement.textContent || codeElement.innerText;
-        
+
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText).then(() => {
                 showCopyFeedback(button, true);
@@ -392,7 +396,7 @@ window.copyCode = function(button) {
     }
 };
 
-function fallbackCopy(text, button) {
+function fallbackCopy(text: string, button: HTMLButtonElement) {
     try {
         const textarea = document.createElement('textarea');
         textarea.value = text;
@@ -401,23 +405,23 @@ function fallbackCopy(text, button) {
         textarea.style.top = '0';
         textarea.setAttribute('readonly', '');
         document.body.appendChild(textarea);
-        
+
         textarea.select();
         textarea.setSelectionRange(0, 99999);
-        
+
         const successful = document.execCommand('copy');
         document.body.removeChild(textarea);
-        
+
         showCopyFeedback(button, successful);
     } catch (err) {
         showCopyFeedback(button, false);
     }
 }
 
-function showCopyFeedback(button, success) {
+function showCopyFeedback(button: HTMLButtonElement, success: boolean) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
-    
+
     if (success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#10b981';
@@ -425,11 +429,10 @@ function showCopyFeedback(button, success) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
-    
-    setTimeout(() => {
+
+    setTimeout((): void => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);
 }
 </script>
-
