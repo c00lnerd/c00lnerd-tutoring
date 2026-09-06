@@ -2,22 +2,22 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 5: Arduino Hardware Basics">
+<Layout title="Lesson 5: Loops and Repetition with Arduino">
     <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
         <div class="container mx-auto px-4 max-w-4xl">
             <div class="text-center mb-8">
                 <div class="flex items-center justify-center mb-4">
                     <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">5</div>
                     <div class="text-left">
-                        <h1 class="text-3xl font-bold text-gray-800">Lesson 5: Arduino Hardware Basics</h1>
-                        <p class="text-gray-600">Learn the parts, connections, and safety habits that make Arduino projects work</p>
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 5: Loops and Repetition with Arduino</h1>
+                        <p class="text-gray-600">Use `loop()` and `for` loops to repeat actions clearly and on purpose</p>
                         <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
                     </div>
                 </div>
             </div>
 
             <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg mb-8">
-                <p class="text-blue-900 font-medium">Lesson 4 taught you how functions organize code. In Lesson 5, you will connect that code to the real Arduino board, the breadboard, LEDs, buttons, resistors, and jumper wires.</p>
+                <p class="text-blue-900 font-medium">Lesson 4 taught you how to make decisions with `if` and `else`. Now you will learn how Arduino repeats actions. Repetition is one of the most important ideas in programming because computers are very good at doing the same kind of task again and again.</p>
             </div>
 
             <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
@@ -26,232 +26,191 @@ import Layout from '../../../layouts/Layout.astro';
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-3">By the end of this lesson, you will:</h3>
                         <ul class="space-y-3 text-gray-700">
-                            <li>Identify the main hardware parts used in simple Arduino projects</li>
-                            <li>Understand the job of the Arduino board, breadboard, resistor, LED, button, and jumper wire</li>
-                            <li>Read a very simple circuit layout and build it carefully</li>
-                            <li>Use safe wiring habits before uploading code</li>
-                            <li>Connect hardware ideas to code you already know from earlier lessons</li>
+                            <li>Understand that `loop()` automatically repeats forever</li>
+                            <li>Use a `for` loop to repeat an action a specific number of times</li>
+                            <li>Trace what happens during each repetition</li>
+                            <li>Combine loops with LEDs, delays, and simple conditionals</li>
+                            <li>Recognize when repeated code should become a loop</li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-3">Key ideas:</h3>
                         <ul class="space-y-3 text-gray-700">
-                            <li>Power and ground make the circuit possible</li>
-                            <li>Components each have a specific job</li>
-                            <li>Resistors protect parts by limiting current</li>
-                            <li>Digital pins can send or read simple HIGH and LOW signals</li>
-                            <li>Careful wiring prevents confusing bugs</li>
+                            <li>Repetition saves time and reduces repeated code</li>
+                            <li>`loop()` is built into every Arduino sketch</li>
+                            <li>`for` loops are useful when you know how many times to repeat</li>
+                            <li>A loop variable changes as the repetitions continue</li>
+                            <li>Loops often work together with `if` statements</li>
                         </ul>
                     </div>
                 </div>
             </section>
 
             <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">What Hardware Do We Need?</h2>
-                <p class="text-gray-700 mb-4">Before a program can blink an LED or read a button, the Arduino needs real parts connected correctly. Think of the code as instructions and the hardware as the parts that carry out those instructions.</p>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Arduino Uno</h3>
-                        <p class="text-gray-700">The Arduino board runs your program. It sends power, reads inputs, and controls outputs through its pins.</p>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Breadboard</h3>
-                        <p class="text-gray-700">A breadboard lets you connect parts without soldering. It helps you build and change circuits quickly.</p>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Jumper Wires</h3>
-                        <p class="text-gray-700">These wires carry electricity between the Arduino, breadboard, and components.</p>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">LED</h3>
-                        <p class="text-gray-700">An LED lights up when current flows the correct way through it. It is one of the easiest outputs to test.</p>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Resistor</h3>
-                        <p class="text-gray-700">A resistor limits current. Without one, you can damage an LED or stress an Arduino pin.</p>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Pushbutton</h3>
-                        <p class="text-gray-700">A pushbutton gives you a simple input. Pressed and not pressed become values your program can read.</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">Power, Ground, and Pins</h2>
-                <p class="text-gray-700 mb-4">Most beginner wiring problems come from forgetting one of these three things: a power connection, a ground connection, or the correct pin number in the code.</p>
-                <div class="grid md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-green-50 border border-green-200 p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold text-green-800 mb-2">5V</h3>
-                        <p class="text-green-900">Provides power to parts that need voltage from the board.</p>
-                    </div>
-                    <div class="bg-gray-100 border border-gray-300 p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">GND</h3>
-                        <p class="text-gray-700">Ground gives electricity a return path. Many circuits fail if ground is missing.</p>
-                    </div>
-                    <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-                        <h3 class="text-lg font-semibold text-blue-800 mb-2">Digital Pins</h3>
-                        <p class="text-blue-900">Pins like `2`, `7`, or `13` can be used for simple on/off signals.</p>
-                    </div>
-                </div>
-                <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-lg text-amber-900">
-                    Match your code to your wiring. If the LED wire is on pin `8`, your code should not say `13`.
-                </div>
-            </section>
-
-            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">LED Safety and Resistors</h2>
-                <p class="text-gray-700 mb-4">LEDs are polarized, which means direction matters. The longer leg is usually the positive side. The shorter leg is usually the negative side. A resistor should be in series with the LED to limit current.</p>
-                <div class="bg-red-50 border-l-4 border-red-400 p-4 rounded-lg mb-6">
-                    <h3 class="text-lg font-semibold text-red-800 mb-2">Safety rule</h3>
-                    <p class="text-red-900">Do not connect an LED directly from an Arduino output pin to ground without a resistor.</p>
-                </div>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Common resistor values</h3>
-                        <ul class="space-y-2 text-gray-700">
-                            <li>`220Ω` for a bright, common LED setup</li>
-                            <li>`330Ω` for a slightly dimmer but very safe setup</li>
-                            <li>Either value is a good beginner choice</li>
-                        </ul>
-                    </div>
-                    <div class="bg-slate-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple LED path</h3>
-                        <p class="text-gray-700">Arduino pin → resistor → LED → ground</p>
-                    </div>
-                </div>
-            </section>
-
-            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">Your First Real Hardware Output</h2>
-                <p class="text-gray-700 mb-4">This example uses an external LED. It is very similar to the built-in blink idea, but now you are practicing wiring too.</p>
-                <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
-                    Wiring: connect a jumper wire from digital pin `8` to a resistor, then to the long leg of the LED. Connect the short leg of the LED to ground.
-                </div>
-                <div class="relative">
-                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                        📋 Copy
-                    </button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-}
-
-void loop() {
-  digitalWrite(ledPin, HIGH);
-  delay(1000);
-  digitalWrite(ledPin, LOW);
-  delay(1000);
-}`}</code></pre>
-                </div>
-                <p class="text-gray-700">If the LED does not blink, check three things first: resistor present, LED direction correct, and wire actually on pin `8`.</p>
-            </section>
-
-            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">Reading a Button</h2>
-                <p class="text-gray-700 mb-4">An Arduino program becomes much more interesting when it can read an input. A pushbutton lets your code react to something happening in the real world.</p>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">What Does `loop()` Do?</h2>
+                <p class="text-gray-700 mb-4">Every basic Arduino sketch has `setup()` and `loop()`. `setup()` runs once when the program starts. `loop()` runs again and again for as long as the board has power.</p>
                 <div class="bg-slate-50 p-5 rounded-lg mb-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">What the button does</h3>
-                    <p class="text-gray-700">When you press the button, the circuit changes state. Your code can read that state with `digitalRead()` and decide what to do next.</p>
-                </div>
-                <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
-                    Beginner setup: use a button on digital pin `2` and an LED on pin `8`. A common approach is to use `INPUT_PULLUP` so you do not need an extra pull-down resistor.
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">Simple idea</h3>
+                    <p class="text-gray-700">If you place a line of code inside `loop()`, Arduino does not run it only one time. It keeps repeating that code over and over.</p>
                 </div>
                 <div class="relative">
                     <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
                         📋 Copy
                     </button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
-const int buttonPin = 2;
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
 }
 
 void loop() {
-  int buttonState = digitalRead(buttonPin);
-
-  if (buttonState == LOW) {
-    digitalWrite(ledPin, HIGH);
-  } else {
-    digitalWrite(ledPin, LOW);
-  }
+  Serial.println("Arduino is repeating this line.");
+  delay(1000);
 }`}</code></pre>
                 </div>
-                <p class="text-gray-700">With `INPUT_PULLUP`, pressed usually reads as `LOW` and not pressed usually reads as `HIGH`. That feels backward at first, so read the code carefully.</p>
+                <p class="text-gray-700">This message prints once each second because `loop()` keeps starting over after it reaches the end.</p>
             </section>
 
             <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">Using Functions with Hardware</h2>
-                <p class="text-gray-700 mb-4">Lesson 4 introduced functions. Now you can use them to make hardware programs easier to read. Instead of putting every line inside `loop()`, you can break the program into clear jobs.</p>
-                <div class="relative">
-                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                        📋 Copy
-                    </button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
-const int buttonPin = 2;
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
-}
-
-void loop() {
-  checkButton();
-}
-
-void checkButton() {
-  int buttonState = digitalRead(buttonPin);
-
-  if (buttonState == LOW) {
-    turnLedOn();
-  } else {
-    turnLedOff();
-  }
-}
-
-void turnLedOn() {
-  digitalWrite(ledPin, HIGH);
-}
-
-void turnLedOff() {
-  digitalWrite(ledPin, LOW);
-}`}</code></pre>
-                </div>
-                <p class="text-gray-700">This code does the same job, but the function names explain the program much more clearly.</p>
-            </section>
-
-            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">Hardware Checklist Before Uploading</h2>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Why Loops Matter</h2>
+                <p class="text-gray-700 mb-4">Without loops, you would have to write the same lines again and again. That becomes messy very quickly.</p>
                 <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-green-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-green-800 mb-3">Check your circuit</h3>
-                        <ul class="space-y-2 text-green-900">
-                            <li>Ground connected where it should be</li>
-                            <li>Power wire in the correct rail or pin</li>
-                            <li>LED facing the correct direction</li>
-                            <li>Resistor included with the LED</li>
-                            <li>Button placed across the breadboard gap correctly</li>
-                        </ul>
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-600 mb-3">Without a loop</h3>
+                        <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`digitalWrite(ledPin, HIGH);
+delay(500);
+digitalWrite(ledPin, LOW);
+delay(500);
+digitalWrite(ledPin, HIGH);
+delay(500);
+digitalWrite(ledPin, LOW);
+delay(500);`}</pre>
                     </div>
-                    <div class="bg-amber-50 p-5 rounded-lg">
-                        <h3 class="text-lg font-semibold text-amber-800 mb-3">Check your code</h3>
-                        <ul class="space-y-2 text-amber-900">
-                            <li>Pin numbers match the wires</li>
-                            <li>`pinMode()` is set correctly</li>
-                            <li>`digitalWrite()` is only used on output pins</li>
-                            <li>`digitalRead()` is used for the button pin</li>
-                            <li>Functions have clear names and do one small job</li>
-                        </ul>
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-600 mb-3">With a loop</h3>
+                        <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`for (int i = 0; i < 2; i++) {
+  digitalWrite(ledPin, HIGH);
+  delay(500);
+  digitalWrite(ledPin, LOW);
+  delay(500);
+}`}</pre>
                     </div>
                 </div>
             </section>
 
             <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-600 mb-4">Hands-On Activity: Build a Button-Controlled LED</h2>
-                <p class="text-gray-700 mb-4">Build a simple circuit where pressing a button turns on an LED. Then improve the code by organizing it with functions.</p>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Understanding a `for` Loop</h2>
+                <p class="text-gray-700 mb-4">A `for` loop repeats a block of code a specific number of times. It is very useful when you already know how many repetitions you want.</p>
+                <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`for (starting value; condition; change) {
+  // code to repeat
+}`}</pre>
+                <div class="grid md:grid-cols-3 gap-4 mt-4">
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">Start</h3>
+                        <p class="text-gray-700 text-sm">`int i = 0` creates the loop variable and gives it a starting value.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">Condition</h3>
+                        <p class="text-gray-700 text-sm">`i < 5` means “keep going while `i` is less than 5.”</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">Change</h3>
+                        <p class="text-gray-700 text-sm">`i++` adds 1 after each repetition.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Blink an LED Five Times</h2>
+                <p class="text-gray-700 mb-4">This is a classic beginner use of a `for` loop. The code repeats the blink pattern exactly five times.</p>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
+                    Use an LED on pin `8` with a resistor to ground.
+                </div>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop() {
+  for (int i = 0; i < 5; i++) {
+    digitalWrite(ledPin, HIGH);
+    delay(300);
+    digitalWrite(ledPin, LOW);
+    delay(300);
+  }
+
+  delay(2000);
+}`}</code></pre>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg mt-4">
+                    <h3 class="font-semibold text-green-800 mb-2">What to notice</h3>
+                    <ul class="space-y-2 text-green-700">
+                        <li>The blink code runs five times because `i` takes the values `0, 1, 2, 3, 4`</li>
+                        <li>When `i` becomes `5`, the condition `i < 5` is false</li>
+                        <li>Then the program continues to the next line after the loop</li>
+                    </ul>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Loops and Conditionals Together</h2>
+                <p class="text-gray-700 mb-4">Loops and conditionals often work together. For example, a button can decide whether an LED should blink multiple times.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        �� Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);
+
+  if (buttonState == LOW) {
+    for (int i = 0; i < 3; i++) {
+      digitalWrite(ledPin, HIGH);
+      delay(200);
+      digitalWrite(ledPin, LOW);
+      delay(200);
+    }
+  }
+}`}</code></pre>
+                </div>
+                <p class="text-gray-700">Here the button decision uses `if`, and the repeated blinking uses a `for` loop.</p>
+            </section>
+
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Common Beginner Mistakes</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 1</h3>
+                        <p class="text-red-700 text-sm">Forgetting that `loop()` already repeats forever.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 2</h3>
+                        <p class="text-red-700 text-sm">Writing a `for` loop condition that never becomes false.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 3</h3>
+                        <p class="text-red-700 text-sm">Not tracing the loop variable one step at a time.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 4</h3>
+                        <p class="text-red-700 text-sm">Repeating many lines manually instead of using a loop.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Hands-On Activity: Button Makes the LED Blink</h2>
+                <p class="text-gray-700 mb-4">Build a simple circuit where pressing the button makes the LED blink three times. If the button is not pressed, the LED stays off.</p>
                 <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg mb-6">
                     <h3 class="text-lg font-semibold text-yellow-800 mb-2">Required parts</h3>
                     <ul class="space-y-2 text-yellow-900">
@@ -266,17 +225,16 @@ void turnLedOff() {
                 <div class="bg-slate-50 p-5 rounded-lg mb-6">
                     <h3 class="text-lg font-semibold text-gray-800 mb-3">Activity steps</h3>
                     <ol class="space-y-2 text-gray-700 list-decimal list-inside">
-                        <li>Place the LED and resistor on the breadboard</li>
-                        <li>Wire the LED to digital pin `8` and ground</li>
-                        <li>Place the button on the breadboard</li>
+                        <li>Wire the LED to digital pin `8` and ground through a resistor</li>
                         <li>Wire the button to digital pin `2` and ground</li>
-                        <li>Use `INPUT_PULLUP` in the code</li>
-                        <li>Test the circuit</li>
-                        <li>Refactor the program using functions like `checkButton()`, `turnLedOn()`, and `turnLedOff()`</li>
+                        <li>Set the button pin to `INPUT_PULLUP`</li>
+                        <li>Use `if` to check whether the button is pressed</li>
+                        <li>Use a `for` loop to blink the LED three times</li>
+                        <li>Test the circuit and count the blinks carefully</li>
                     </ol>
                 </div>
                 <div class="bg-blue-50 p-4 rounded-lg text-blue-900">
-                    Extension: make the LED blink three times when the button is pressed by writing a new function such as `blinkLedThreeTimes()`.
+                    Extension: change the loop so the LED blinks five times, then change the speed by editing the delay values.
                 </div>
             </section>
 
@@ -286,25 +244,25 @@ void turnLedOff() {
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-3">Lesson 5 quiz topics</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li>Main Arduino hardware parts</li>
-                            <li>Power, ground, and digital pins</li>
-                            <li>LED direction and resistor purpose</li>
-                            <li>Button input basics</li>
-                            <li>Using functions in simple hardware programs</li>
+                            <li>What `loop()` does</li>
+                            <li>How a `for` loop works</li>
+                            <li>Tracing the loop variable</li>
+                            <li>Using loops with LEDs and delays</li>
+                            <li>Combining loops with `if` statements</li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-xl font-semibold text-gray-800 mb-3">Homework ideas</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li>Rebuild the button-controlled LED from memory</li>
-                            <li>Label the job of each part in your circuit</li>
-                            <li>Write one version of the code without functions and one with functions</li>
-                            <li>Practice checking wiring before every upload</li>
+                            <li>Write a `for` loop that prints numbers 1 through 5</li>
+                            <li>Change a blink loop from 3 repetitions to 10</li>
+                            <li>Explain in words what `i++` means</li>
+                            <li>Practice deciding when you need repetition in a program</li>
                         </ul>
                     </div>
                 </div>
                 <div class="bg-green-50 p-4 rounded-lg text-green-900">
-                    Success in hardware work comes from patience. When something fails, check the wiring, the resistor, the LED direction, and the pin numbers before changing lots of code.
+                    When a program repeats the same task many times, stop and ask: should this be a loop?
                 </div>
             </section>
 

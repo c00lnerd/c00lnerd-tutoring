@@ -1,23 +1,23 @@
----
+﻿---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 4: Introduction to Functions">
+<Layout title="Lesson 4: Conditional Statements with Arduino">
     <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
         <div class="container mx-auto px-4 max-w-4xl">
             <div class="text-center mb-8">
                 <div class="flex items-center justify-center mb-4">
                     <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">4</div>
                     <div class="text-left">
-                        <h1 class="text-3xl font-bold text-gray-800">Lesson 4: Introduction to Functions</h1>
-                        <p class="text-gray-600">Organize repeated code into clear, reusable pieces</p>
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 4: Conditional Statements with Arduino</h1>
+                        <p class="text-gray-600">Teach your program how to make decisions with `if`, `else`, and comparisons</p>
                         <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
                     </div>
                 </div>
             </div>
 
             <div class="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-8">
-                <p class="text-blue-900 font-medium">Use Wokwi for this lesson too. You already practiced variables and calculations in Lesson 3. Now you will learn how to wrap useful code into functions so programs are easier to read and reuse.</p>
+                <p class="text-blue-900 font-medium">You already know variables, calculations, and Serial output. Now it is time to make your programs choose between different actions. Conditional statements let Arduino decide what to do based on a value or situation.</p>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
@@ -26,341 +26,266 @@ import Layout from '../../../layouts/Layout.astro';
                     <div>
                         <h3 class="text-lg font-semibold text-blue-600 mb-2">By the end of this Lesson, you will:</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Understand what a function is and why programmers use functions</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Write simple functions that perform one clear job</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Call functions from <code>setup()</code> and <code>loop()</code></li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Pass values into a function using parameters</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Understand what `if` and `else` do in Arduino code</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Use comparison operators like `==`, `!=`, `<`, `>`, `<=`, and `>=`</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Write simple decision-making code with the Serial Monitor</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Control an LED differently depending on a button state or a value</li>
                         </ul>
                     </div>
                     <div>
                         <h3 class="text-lg font-semibold text-green-600 mb-2">Skills Developed:</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Breaking a larger task into smaller steps</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Making code easier to read and edit</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Reusing code instead of copying the same lines again and again</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Preparing for more advanced Arduino programs later</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Tracing program flow step by step</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Testing different outcomes using values and inputs</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Reading conditions carefully</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Preparing for loops, functions, and hardware control later</li>
                         </ul>
                     </div>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: What Is a Function?</h2>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function is a named block of code</h3>
-                    <p class="text-gray-700 mb-4">A function is a group of instructions that performs one job. Arduino already gives you two built-in functions: <code>setup()</code> and <code>loop()</code>. In this lesson, you will start making your own functions too.</p>
-
-                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                        <h4 class="font-semibold text-blue-800 mb-2">Why functions help</h4>
-                        <ul class="space-y-2 text-blue-700">
-                            <li><strong>They reduce repetition:</strong> write the code once and call it many times</li>
-                            <li><strong>They improve readability:</strong> a name like <code>printResult()</code> explains the job</li>
-                            <li><strong>They make editing easier:</strong> change the function once instead of changing repeated code everywhere</li>
-                            <li><strong>They help you think clearly:</strong> each function should do one simple task</li>
-                        </ul>
-                    </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: What Is a Conditional Statement?</h2>
+                <p class="text-gray-700 mb-4">A conditional statement tells the program to check whether something is true. If it is true, one block of code runs. If it is false, a different block can run instead.</p>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">Everyday idea</h3>
+                    <p class="text-blue-900">If it is raining, bring an umbrella. Else, leave the umbrella at home. Arduino code works the same way: it checks a condition and then decides which action to take.</p>
                 </div>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function definition has a pattern</h3>
-                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`returnType functionName(parameters) {
-  // code the function will run
+                <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`if (condition) {
+  // code to run if the condition is true
+} else {
+  // code to run if the condition is false
 }`}</pre>
-
-                    <div class="grid md:grid-cols-2 gap-4 mt-4">
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-800 mb-2">Important parts</h4>
-                            <ul class="space-y-2 text-gray-700 text-sm">
-                                <li><strong>returnType:</strong> often <code>void</code> for now</li>
-                                <li><strong>functionName:</strong> the name you choose</li>
-                                <li><strong>parameters:</strong> extra information sent into the function</li>
-                                <li><strong>braces:</strong> the lines that belong to the function</li>
-                            </ul>
-                        </div>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h4 class="font-semibold text-gray-800 mb-2">What <code>void</code> means</h4>
-                            <p class="text-gray-700 text-sm">For now, most of your functions will use <code>void</code>. That means the function does a job, but it does not send a value back.</p>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 2: Your First Custom Function</h2>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Start with a simple printing function</h3>
-                    <p class="text-gray-700 mb-4">Lesson 3 used the Serial Monitor to show results. Instead of writing the same printing lines over and over, we can place them inside a function.</p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
-  Serial.begin(9600);
-  printWelcome();
-}
-
-void loop() {
-}
-
-void printWelcome() {
-  Serial.println("Welcome to Lesson 4!");
-  Serial.println("We are learning functions.");
-}`}</code></pre>
-                    </div>
-                </div>
-
-                <div class="bg-green-50 p-4 rounded-lg mb-4">
-                    <h4 class="font-semibold text-green-800 mb-2">What happens here?</h4>
-                    <ul class="space-y-2 text-green-700">
-                        <li><strong><code>setup()</code> runs once:</strong> it starts Serial communication and then calls <code>printWelcome()</code></li>
-                        <li><strong><code>printWelcome()</code> runs its own code:</strong> it prints two lines</li>
-                        <li><strong>The function name acts like a command:</strong> when Arduino sees <code>printWelcome();</code>, it jumps to that function and runs it</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 3: Functions Make Repeated Work Easier</h2>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Without a function</h3>
-                    <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`void setup() {
-  Serial.begin(9600);
-
-  Serial.println("=== Result ===");
-  Serial.print("Answer: ");
-  Serial.println(12);
-
-  Serial.println("=== Result ===");
-  Serial.print("Answer: ");
-  Serial.println(25);
-}`}</pre>
-                </div>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">With a function</h3>
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
-  Serial.begin(9600);
-
-  printResult(12);
-  printResult(25);
-}
-
-void loop() {
-}
-
-void printResult(int answer) {
-  Serial.println("=== Result ===");
-  Serial.print("Answer: ");
-  Serial.println(answer);
-}`}</code></pre>
-                    </div>
-                </div>
-
-                <div class="bg-yellow-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-yellow-800 mb-2">New idea: parameters</h4>
-                    <p class="text-yellow-700">The <code>answer</code> variable is a parameter. It receives the value sent into the function. When we call <code>printResult(12);</code>, the function uses <code>12</code>. When we call <code>printResult(25);</code>, the same function uses <code>25</code>.</p>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 4: Functions and Calculations</h2>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Use a function to display a conversion</h3>
-                    <p class="text-gray-700 mb-4">This connects directly to Lesson 3. We still use variables and formulas, but now we organize the output using a function.</p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
-  Serial.begin(9600);
-
-  showTemperatureConversion(20.0);
-  showTemperatureConversion(25.0);
-  showTemperatureConversion(30.0);
-}
-
-void loop() {
-}
-
-void showTemperatureConversion(float celsius) {
-  float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
-
-  Serial.print(celsius);
-  Serial.print(" C = ");
-  Serial.print(fahrenheit);
-  Serial.println(" F");
-}`}</code></pre>
-                    </div>
-                </div>
-
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 2: Comparison Operators</h2>
+                <p class="text-gray-700 mb-4">A condition usually compares two values. These comparison operators help Arduino decide if something is true or false.</p>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-gray-800 mb-2">Why this is better</h4>
+                        <h3 class="font-semibold text-gray-800 mb-2">Useful operators</h3>
                         <ul class="space-y-2 text-gray-700 text-sm">
-                            <li>The formula is written once</li>
-                            <li>The print format is written once</li>
-                            <li>We can test many values by changing only the function call</li>
+                            <li><code>==</code> means equal to</li>
+                            <li><code>!=</code> means not equal to</li>
+                            <li><code>&lt;</code> means less than</li>
+                            <li><code>&gt;</code> means greater than</li>
+                            <li><code>&lt;=</code> means less than or equal to</li>
+                            <li><code>&gt;=</code> means greater than or equal to</li>
                         </ul>
                     </div>
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h4 class="font-semibold text-gray-800 mb-2">What to notice</h4>
-                        <ul class="space-y-2 text-gray-700 text-sm">
-                            <li><code>celsius</code> is the parameter</li>
-                            <li><code>fahrenheit</code> is created inside the function</li>
-                            <li>The function performs both a calculation and clear Serial output</li>
-                        </ul>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-yellow-800 mb-2">Important detail</h3>
+                        <p class="text-yellow-700 text-sm"><code>=</code> assigns a value. <code>==</code> compares two values. Beginners often mix these up, so read conditions carefully.</p>
                     </div>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 5: More Than One Parameter</h2>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">A function can accept more than one value</h3>
-                    <p class="text-gray-700 mb-4">Sometimes a function needs two or more pieces of information. Here is a simple example that prints a quiz score and percentage.</p>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 3: A First `if` Statement</h2>
+                <p class="text-gray-700 mb-4">Start with a simple value in a variable. Then let the program decide what message to print.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
   Serial.begin(9600);
-  showScore(8, 10);
+
+  int score = 85;
+
+  if (score >= 70) {
+    Serial.println("You passed.");
+  }
 }
 
 void loop() {
-}
-
-void showScore(int pointsEarned, int totalPoints) {
-  float percentage = (pointsEarned / 10.0) * 100.0;
-
-  Serial.print("Score: ");
-  Serial.print(pointsEarned);
-  Serial.print("/");
-  Serial.println(totalPoints);
-
-  Serial.print("Percentage: ");
-  Serial.print(percentage);
-  Serial.println("%");
 }`}</code></pre>
-                    </div>
                 </div>
-
-                <div class="bg-red-50 p-4 rounded-lg">
-                    <h4 class="font-semibold text-red-800 mb-2">Common beginner reminders</h4>
-                    <ul class="space-y-2 text-red-700">
-                        <li><strong>Include parentheses when calling a function:</strong> <code>showScore(8, 10);</code></li>
-                        <li><strong>End the call with a semicolon:</strong> it is a statement</li>
-                        <li><strong>Separate parameters with commas:</strong> <code>(value1, value2)</code></li>
-                        <li><strong>Choose clear names:</strong> <code>showScore</code> is more helpful than <code>doThing</code></li>
+                <div class="bg-green-50 p-4 rounded-lg mt-4">
+                    <h3 class="font-semibold text-green-800 mb-2">What happens?</h3>
+                    <ul class="space-y-2 text-green-700">
+                        <li><strong>The program stores `85` in `score`</strong></li>
+                        <li><strong>It checks `score >= 70`</strong></li>
+                        <li><strong>That condition is true</strong>, so the message prints</li>
                     </ul>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity: Build a Function-Based Calculator</h2>
-
-                <div class="mb-6">
-                    <h3 class="text-xl font-semibold text-blue-600 mb-3">Project goal</h3>
-                    <p class="text-gray-700 mb-4">Create a small calculator-style Arduino program that uses functions to keep the code organized. This should feel like a natural upgrade from Lesson 3.</p>
-
-                    <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                        <h4 class="font-semibold text-blue-800 mb-2">Suggested tasks</h4>
-                        <ol class="space-y-2 text-blue-700 list-decimal list-inside">
-                            <li>Create one function that prints a title</li>
-                            <li>Create one function that shows an addition result</li>
-                            <li>Create one function that shows a temperature conversion or percentage</li>
-                            <li>Call those functions from <code>setup()</code></li>
-                            <li>Check the Serial Monitor to make sure the output is clear and readable</li>
-                        </ol>
-                    </div>
-
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 4: Using `if` and `else`</h2>
+                <p class="text-gray-700 mb-4">An `if` statement can also include an `else` block. That gives the program a different action when the condition is false.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
   Serial.begin(9600);
 
-  printTitle();
-  showAddition(7, 5);
-  showTemperatureConversion(24.0);
+  int temperature = 62;
+
+  if (temperature > 75) {
+    Serial.println("It is warm.");
+  } else {
+    Serial.println("It is not warm.");
+  }
 }
 
 void loop() {
-}
-
-void printTitle() {
-  Serial.println("=== Function Calculator Demo ===");
-}
-
-void showAddition(int firstNumber, int secondNumber) {
-  int sum = firstNumber + secondNumber;
-
-  Serial.print(firstNumber);
-  Serial.print(" + ");
-  Serial.print(secondNumber);
-  Serial.print(" = ");
-  Serial.println(sum);
-}
-
-void showTemperatureConversion(float celsius) {
-  float fahrenheit = (celsius * 9.0 / 5.0) + 32.0;
-
-  Serial.print(celsius);
-  Serial.print(" C = ");
-  Serial.print(fahrenheit);
-  Serial.println(" F");
 }`}</code></pre>
+                </div>
+                <p class="text-gray-700">Only one of these blocks runs each time the program checks the condition.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 5: More Than Two Choices with `else if`</h2>
+                <p class="text-gray-700 mb-4">Sometimes a program needs more than just yes or no. `else if` lets you check another condition if the first one is false.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
+
+  int score = 92;
+
+  if (score >= 90) {
+    Serial.println("Grade: A");
+  } else if (score >= 80) {
+    Serial.println("Grade: B");
+  } else if (score >= 70) {
+    Serial.println("Grade: C");
+  } else {
+    Serial.println("Keep practicing.");
+  }
+}
+
+void loop() {
+}`}</code></pre>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-lg mt-4">
+                    <h3 class="font-semibold text-gray-800 mb-2">Order matters</h3>
+                    <p class="text-gray-700 text-sm">Arduino checks from top to bottom. As soon as one condition is true, it runs that block and skips the rest.</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 6: Using Conditionals with Hardware</h2>
+                <p class="text-gray-700 mb-4">Decision-making becomes even more useful when the program reacts to a real input. A button can tell the Arduino when to turn an LED on or off.</p>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
+                    This example uses a button on pin `2` and an LED on pin `8`. The button uses `INPUT_PULLUP`, so pressed usually reads as `LOW`.
+                </div>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int ledPin = 8;
+const int buttonPin = 2;
+
+void setup() {
+  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+}
+
+void loop() {
+  int buttonState = digitalRead(buttonPin);
+
+  if (buttonState == LOW) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
+}`}</code></pre>
+                </div>
+                <p class="text-gray-700">This is a real Arduino decision: if the button is pressed, the LED turns on. Else, it stays off.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 7: Common Beginner Mistakes</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 1</h3>
+                        <p class="text-red-700 text-sm">Using <code>=</code> instead of <code>==</code> in a condition.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 2</h3>
+                        <p class="text-red-700 text-sm">Forgetting that `INPUT_PULLUP` usually reads `LOW` when pressed.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 3</h3>
+                        <p class="text-red-700 text-sm">Expecting every `if` block to run even after a true condition was already found in an `else if` chain.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 4</h3>
+                        <p class="text-red-700 text-sm">Not checking the actual value in the Serial Monitor while debugging.</p>
                     </div>
                 </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Assessment & Homework</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity: Pass, Retry, or Excellent</h2>
+                <p class="text-gray-700 mb-4">Write a program that stores a score in a variable and prints one of three messages:</p>
+                <div class="bg-yellow-50 p-4 rounded-lg mb-4 text-yellow-900">
+                    <ul class="space-y-2">
+                        <li>If the score is `90` or higher, print `Excellent work!`</li>
+                        <li>Else if the score is `70` or higher, print `You passed.`</li>
+                        <li>Else, print `Try again.`</li>
+                    </ul>
+                </div>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`void setup() {
+  Serial.begin(9600);
 
-                <div class="grid md:grid-cols-2 gap-4 mb-6">
+  int score = 76;
+
+  if (score >= 90) {
+    Serial.println("Excellent work!");
+  } else if (score >= 70) {
+    Serial.println("You passed.");
+  } else {
+    Serial.println("Try again.");
+  }
+}
+
+void loop() {
+}`}</code></pre>
+                </div>
+                <p class="text-gray-700 mt-4">Extension: change the value of `score` and predict what will print before you run the program.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Assessment and Homework</h2>
+                <div class="grid md:grid-cols-2 gap-8 mb-6">
                     <div>
-                        <h3 class="text-lg font-semibold text-purple-600 mb-2">Lesson 4 Quiz Topics</h3>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Lesson 4 quiz topics</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>What a function is</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>How to define and call a function</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>What <code>void</code> means</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Using parameters in a function</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-purple-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Organizing math and Serial output with functions</li>
+                            <li>What `if`, `else`, and `else if` do</li>
+                            <li>Comparison operators</li>
+                            <li>How program flow changes based on a condition</li>
+                            <li>Simple button and LED decision-making</li>
+                            <li>Common conditional mistakes</li>
                         </ul>
                     </div>
                     <div>
-                        <h3 class="text-lg font-semibold text-orange-600 mb-2">Homework</h3>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Homework ideas</h3>
                         <ul class="space-y-2 text-gray-700">
-                            <li class="flex items-start"><span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Rewrite one Lesson 3 calculation program using at least two custom functions</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Create a function that prints a formatted score report</li>
-                            <li class="flex items-start"><span class="w-2 h-2 bg-orange-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Practice calling the same function with different input values</li>
+                            <li>Write two small `if`/`else` programs using different numbers</li>
+                            <li>Change conditions and predict what will happen before running the code</li>
+                            <li>Practice reading button logic with `INPUT_PULLUP`</li>
+                            <li>Be ready to learn counted repetition and loops in Lesson 5</li>
                         </ul>
                     </div>
                 </div>
-
-                <div class="bg-green-50 rounded-lg p-4">
-                    <h4 class="font-semibold text-green-800 mb-2">Pro tip</h4>
-                    <p class="text-green-700">If you notice yourself copying the same few lines again and again, that is often a sign that a function could help.</p>
+                <div class="bg-green-50 p-4 rounded-lg text-green-900">
+                    Strong programmers trace the condition carefully: what value do I have, what comparison am I making, and which block will run?
                 </div>
             </div>
 
             <div class="flex justify-between items-center mt-8">
                 <div>
                     <a href="/programming/lessons32/Lesson3" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ← Lesson 3: Calculations with Variables
+                        ← Previous: Lesson 3
                     </a>
                 </div>
                 <div class="text-center">
@@ -370,7 +295,7 @@ void showTemperatureConversion(float celsius) {
                 </div>
                 <div>
                     <a href="/programming/lessons32/Lesson5" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Lesson 5: Analog Inputs & Sensors →
+                        Next: Lesson 5 →
                     </a>
                 </div>
             </div>
@@ -400,9 +325,9 @@ lesson4Window.copyCode = function(button: HTMLButtonElement) {
             showCopyFeedback(button, false);
             return;
         }
-        
+
         const codeText = codeElement.textContent || codeElement.innerText;
-        
+
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText).then(() => {
                 showCopyFeedback(button, true);
@@ -426,13 +351,13 @@ function fallbackCopy(text: string, button: HTMLButtonElement) {
         textarea.style.top = '0';
         textarea.setAttribute('readonly', '');
         document.body.appendChild(textarea);
-        
+
         textarea.select();
         textarea.setSelectionRange(0, 99999);
-        
+
         const successful = document.execCommand('copy');
         document.body.removeChild(textarea);
-        
+
         showCopyFeedback(button, successful);
     } catch (err) {
         showCopyFeedback(button, false);
@@ -442,7 +367,7 @@ function fallbackCopy(text: string, button: HTMLButtonElement) {
 function showCopyFeedback(button: HTMLButtonElement, success: boolean) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
-    
+
     if (success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#10b981';
@@ -450,16 +375,10 @@ function showCopyFeedback(button: HTMLButtonElement, success: boolean) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
-    
+
     setTimeout((): void => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);
 }
 </script>
-
-
-
-
-
-
