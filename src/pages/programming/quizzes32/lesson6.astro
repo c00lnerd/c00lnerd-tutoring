@@ -1,260 +1,158 @@
----
+﻿---
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Week 6 Quiz: PWM & Analog Outputs - C00lnerd Tutoring">
+<Layout title="Lesson 6 Quiz: Functions with Arduino">
     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-        
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 6 Quiz: PWM & Analog Outputs</h1>
-                <p class="text-xl text-gray-600">Test your understanding of Pulse Width Modulation and analog output control</p>
-                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
-                    <p class="text-purple-800 font-medium">?? 10 questions covering PWM, analogWrite(), and output control</p>
-                </div>
-            </div>
-
-            <!-- Student Information -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-purple-800 mb-6">Student Information</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="quiz6StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                        <input type="text" id="quiz6StudentName" name="studentName" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
-                    </div>
-                    <div>
-                        <label for="quiz6StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                        <input type="email" id="quiz6StudentEmail" name="studentEmail" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">Q6</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 6 Quiz: Functions with Arduino</h1>
+                        <p class="text-gray-600">Test your understanding of defining, calling, and using simple functions in Arduino code</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Quiz Questions -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Quiz Instructions</h2>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <ul class="space-y-2 text-blue-800">
+                        <li>This quiz covers material from Lesson 6: Functions with Arduino</li>
+                        <li>Answer all questions to the best of your ability</li>
+                        <li>Your responses will be emailed to your instructor for review</li>
+                        <li>Take your time and think carefully about each answer</li>
+                        <li>You can review the lesson material if needed before submitting</li>
+                    </ul>
+                </div>
+            </div>
+
             <form id="quizForm" autocomplete="off" class="space-y-8">
-                <!-- Question 1 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: PWM Range</h3>
-                    <p class="text-gray-700 mb-4">What is the range of values that can be used with analogWrite() on Arduino?</p>
-                    <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="A" class="mr-3">
-                            <span>A) 0 to 100</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="B" class="mr-3">
-                            <span>B) 0 to 255</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="C" class="mr-3">
-                            <span>C) 0 to 1023</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="D" class="mr-3">
-                            <span>D) 0 to 5</span>
-                        </label>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Student Information</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="quiz6StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                            <input type="text" id="quiz6StudentName" name="studentName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="quiz6StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input type="email" id="quiz6StudentEmail" name="studentEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Question 2 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: PWM Pins</h3>
-                    <p class="text-gray-700 mb-4">Which pins on Arduino Uno support PWM output?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 1: What is a function?</h3>
+                    <p class="text-gray-600 mb-4">What is a function in Arduino programming?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="A" class="mr-3">
-                            <span>A) All digital pins (0-13)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="B" class="mr-3">
-                            <span>B) Pins 3, 5, 6, 9, 10, 11 (marked with ~)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="C" class="mr-3">
-                            <span>C) Only analog pins A0-A5</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="D" class="mr-3">
-                            <span>D) Pins 0, 1, 2, 4, 7, 8</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="A" class="mr-3"><span>A) A special wire on the Arduino board</span></label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="B" class="mr-3"><span>B) A named block of code that performs a job</span></label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="C" class="mr-3"><span>C) A kind of resistor</span></label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="D" class="mr-3"><span>D) A value stored in memory</span></label>
                     </div>
                 </div>
 
-                <!-- Question 3 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Duty Cycle</h3>
-                    <p class="text-gray-700 mb-4">What does a 75% duty cycle mean in PWM?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 2: Built-In Functions</h3>
+                    <p class="text-gray-600 mb-4">Which two functions are already part of every basic Arduino sketch?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="A" class="mr-3">
-                            <span>A) Signal is HIGH 25% of the time</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="B" class="mr-3">
-                            <span>B) Signal is HIGH 75% of the time</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="C" class="mr-3">
-                            <span>C) Signal frequency is 75 Hz</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="D" class="mr-3">
-                            <span>D) Signal voltage is 3.75V</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="A" class="mr-3"><span>A) begin() and stop()</span></label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="B" class="mr-3"><span>B) setup() and loop()</span></label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="C" class="mr-3"><span>C) start() and run()</span></label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="D" class="mr-3"><span>D) input() and output()</span></label>
                     </div>
                 </div>
 
-                <!-- Question 4 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Average Voltage</h3>
-                    <p class="text-gray-700 mb-4">If analogWrite(pin, 128) is used on a 5V system, what is the average voltage output?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 3: Calling a Function</h3>
+                    <p class="text-gray-600 mb-4">Which line correctly calls a function named <code>printWelcome</code>?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="A" class="mr-3">
-                            <span>A) 1.25V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="B" class="mr-3">
-                            <span>B) 2.5V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="C" class="mr-3">
-                            <span>C) 3.75V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="D" class="mr-3">
-                            <span>D) 5V</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="A" class="mr-3"><span>A) printWelcome;</span></label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="B" class="mr-3"><span>B) printWelcome()</span></label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="C" class="mr-3"><span>C) printWelcome();</span></label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="D" class="mr-3"><span>D) call printWelcome();</span></label>
                     </div>
                 </div>
 
-                <!-- Question 5 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: RGB Color</h3>
-                    <p class="text-gray-700 mb-4">What RGB values (Red, Green, Blue) would create a yellow color?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 4: Understanding <code>void</code></h3>
+                    <p class="text-gray-600 mb-4">What does <code>void</code> usually mean at the beginning of a beginner function definition?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="A" class="mr-3">
-                            <span>A) (255, 0, 0)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="B" class="mr-3">
-                            <span>B) (0, 255, 0)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="C" class="mr-3">
-                            <span>C) (255, 255, 0)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="D" class="mr-3">
-                            <span>D) (0, 255, 255)</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="A" class="mr-3"><span>A) The function runs forever</span></label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="B" class="mr-3"><span>B) The function uses decimal numbers</span></label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="C" class="mr-3"><span>C) The function does a job but does not return a value</span></label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="D" class="mr-3"><span>D) The function can only be used inside loop()</span></label>
                     </div>
                 </div>
 
-                <!-- Question 6 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Motor Control Safety</h3>
-                    <p class="text-gray-700 mb-4">Why should you never connect a motor directly to an Arduino pin?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 5: Parameters</h3>
+                    <p class="text-gray-600 mb-4">What is a parameter in a function like <code>void printResult(int answer)</code>?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="A" class="mr-3">
-                            <span>A) Motors don't work with digital signals</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="B" class="mr-3">
-                            <span>B) Motors require more current than Arduino pins can provide</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="C" class="mr-3">
-                            <span>C) Motors only work with analog pins</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="D" class="mr-3">
-                            <span>D) Motors need 12V to operate</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="A" class="mr-3"><span>A) A comment explaining the code</span></label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="B" class="mr-3"><span>B) A value the function receives when it is called</span></label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="C" class="mr-3"><span>C) A built-in Arduino pin mode</span></label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="D" class="mr-3"><span>D) A special type of loop</span></label>
                     </div>
                 </div>
 
-                <!-- Question 7 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: PWM Frequency</h3>
-                    <p class="text-gray-700 mb-4">What is the typical PWM frequency on Arduino Uno?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 6: Reading a Function Call</h3>
+                    <p class="text-gray-600 mb-4">If the code says <code>showTemperatureConversion(25.0);</code>, what value is being sent into the function?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="A" class="mr-3">
-                            <span>A) 50 Hz</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="B" class="mr-3">
-                            <span>B) 490 Hz or 980 Hz</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="C" class="mr-3">
-                            <span>C) 1000 Hz</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="D" class="mr-3">
-                            <span>D) 16 MHz</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="A" class="mr-3"><span>A) 5.0</span></label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="B" class="mr-3"><span>B) 20.0</span></label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="C" class="mr-3"><span>C) 25.0</span></label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="D" class="mr-3"><span>D) 32.0</span></label>
                     </div>
                 </div>
 
-                <!-- Question 8 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: LED Fading</h3>
-                    <p class="text-gray-700 mb-4">In a fading LED program, what happens when the brightness variable reaches 255?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 7: Why Use Functions?</h3>
+                    <p class="text-gray-600 mb-4">Which is the best reason to use functions in a beginner Arduino program?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="A" class="mr-3">
-                            <span>A) The program stops</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="B" class="mr-3">
-                            <span>B) The fade direction reverses</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="C" class="mr-3">
-                            <span>C) The LED turns off</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="D" class="mr-3">
-                            <span>D) The brightness resets to 0</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="A" class="mr-3"><span>A) They make wires connect automatically</span></label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="B" class="mr-3"><span>B) They replace all variables</span></label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="C" class="mr-3"><span>C) They help organize and reuse repeated code</span></label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="D" class="mr-3"><span>D) They remove the need for setup()</span></label>
                     </div>
                 </div>
 
-                <!-- Question 9: Short Answer -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: PWM Applications</h3>
-                    <p class="text-gray-700 mb-4">Describe three practical applications of PWM in electronics projects and explain why PWM is useful for each application.</p>
-                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
-                              placeholder="Write your answer here..."></textarea>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 8: Code Analysis</h3>
+                    <p class="text-gray-600 mb-4">What does this function do?<br><code>void printResult(int answer) &#123; Serial.println(answer); &#125;</code></p>
+                    <div class="space-y-2">
+                        <label class="flex items-center"><input type="radio" name="q8" value="A" class="mr-3"><span>A) It reads a button input</span></label>
+                        <label class="flex items-center"><input type="radio" name="q8" value="B" class="mr-3"><span>B) It prints the value sent into it</span></label>
+                        <label class="flex items-center"><input type="radio" name="q8" value="C" class="mr-3"><span>C) It changes the Arduino voltage</span></label>
+                        <label class="flex items-center"><input type="radio" name="q8" value="D" class="mr-3"><span>D) It creates a new loop</span></label>
+                    </div>
                 </div>
 
-                <!-- Question 10: Short Answer -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: RGB Color Mixing</h3>
-                    <p class="text-gray-700 mb-4">Explain how RGB color mixing works with PWM. How would you create a purple color, and what PWM values would you use for each color channel?</p>
-                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
-                              placeholder="Write your answer here..."></textarea>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 9: Code Analysis</h3>
+                    <p class="text-gray-600 mb-4">Explain what happens when <code>showAddition(7, 5);</code> calls a function that adds the two numbers and prints the answer.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your answer here..."></textarea>
                 </div>
 
-                <!-- Submit Button -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 10: Function-Based Arduino Program</h3>
+                    <p class="text-gray-600 mb-4">Describe a simple Arduino program that uses functions. What functions did you make, what values or hardware did they use, and what did the program do?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your answer here..."></textarea>
+                </div>
+
                 <div class="text-center">
-                    <button type="submit" id="submitBtn" 
-                            style="background-color: #7c3aed; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
-                        Submit Quiz
-                    </button>
+                    <button type="submit" id="submitBtn" style="background-color: #10b981; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">Submit Quiz</button>
                 </div>
             </form>
         </div>
 
-        <!-- Quiz Results Display -->
         <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
             <div class="bg-white rounded-lg shadow-lg p-8">
-                <h2 class="text-2xl font-bold text-center mb-6 text-purple-800">?? Your Quiz Results</h2>
+                <h2 class="text-2xl font-bold text-center mb-6 text-purple-800">Your Quiz Results</h2>
                 <div id="resultsContent"></div>
                 <div class="text-center mt-6">
                     <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
@@ -263,79 +161,69 @@ import Layout from '../../../layouts/Layout.astro';
         </div>
 
         <div class="max-w-4xl mx-auto px-4 py-8">
-            <!-- Navigation -->
             <div class="flex justify-between items-center mt-8">
                 <div>
-                    <a href="/programming/lessons32/week6" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ? Back to Week 6 Lesson
-                    </a>
+                    <a href="/programming/lessons32/Lesson6" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">← Back to Lesson 6</a>
                 </div>
                 <div>
-                    <a href="/programming/lessons32/week7" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Week 7 Lesson ?
-                    </a>
+                    <a href="/programming/lessons32/Lesson7" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">Next: Lesson 7 →</a>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- EmailJS Script -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
-window.onload = function() { generateCaptcha(); };
-    // CAPTCHA variables
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script is:inline>
     let captchaAnswer = 0;
-    
+    let emailjsReady = false;
+
     function generateCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
         captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2;
+
+        const captchaQuestion = document.getElementById('captcha-question');
+        if (captchaQuestion) {
+            captchaQuestion.textContent = `What is ${num1} + ${num2}?`;
         }
     }
-    
+
     function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const captchaInput = document.getElementById('captcha');
         const errorDiv = document.getElementById('captcha-error');
-        
+        const userAnswer = parseInt(captchaInput?.value, 10);
+
+        if (!captchaInput) {
+            return true;
+        }
+
         if (userAnswer !== captchaAnswer) {
             if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
+            generateCaptcha();
+            captchaInput.value = '';
             return false;
         }
-        
+
         if (errorDiv) errorDiv.style.display = 'none';
         return true;
     }
-    
-    // Security validation function
+
     function validateSecurity() {
-        // Check honeypot field (should be empty)
         const honeypot = document.getElementById('website');
         if (honeypot && honeypot.value) {
             console.log('Spam bot detected via honeypot');
             alert('Security check failed. Please try again.');
             return false;
         }
-        
-        // Rate limiting check
+
         const lastSubmission = localStorage.getItem('lastQuizStart');
         const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
+        if (lastSubmission && (now - parseInt(lastSubmission, 10)) < 30000) {
             alert('Please wait 30 seconds between quiz attempts.');
             return false;
         }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
+
+        const emailInput = document.getElementById('quiz6StudentEmail');
         if (emailInput && emailInput.value) {
             const email = emailInput.value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -343,302 +231,244 @@ window.onload = function() { generateCaptcha(); };
                 alert('Please enter a valid email address.');
                 return false;
             }
-            
-            // Block common spam domains
+
             const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
+            const domain = email.split('@')[1]?.toLowerCase();
+            if (domain && spamDomains.includes(domain)) {
                 alert('Please use a permanent email address.');
                 return false;
             }
         }
-        
-        return true;
-    }</script>
-    <script is:inline>
-window.onload = function() { generateCaptcha(); };
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
+
         if (!validateCaptcha()) {
             return false;
         }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
+
+        localStorage.setItem('lastQuizStart', now.toString());
         return true;
     }
-        // Quiz data with correct answers
-        const quizData = {
-            correctAnswers: {
-                q1: 'B', // 0 to 255
-                q2: 'B', // Pins 3, 5, 6, 9, 10, 11 (marked with ~)
-                q3: 'B', // Signal is HIGH 75% of the time
-                q4: 'B', // 2.5V (128/255 * 5V � 2.5V)
-                q5: 'C', // (255, 255, 0) - yellow
-                q6: 'B', // Motors require more current than Arduino pins can provide
-                q7: 'B', // 490 Hz or 980 Hz
-                q8: 'B'  // The fade direction reverses
-            },
-            questionText: {
-                q1: "What is the range of values that can be used with analogWrite() on Arduino?",
-                q2: "Which pins on Arduino Uno support PWM output?",
-                q3: "What does a 75% duty cycle mean in PWM?",
-                q4: "If analogWrite(pin, 128) is used on a 5V system, what is the average voltage output?",
-                q5: "What RGB values (Red, Green, Blue) would create a yellow color?",
-                q6: "Why should you never connect a motor directly to an Arduino pin?",
-                q7: "What is the typical PWM frequency on Arduino Uno?",
-                q8: "In a fading LED program, what happens when the brightness variable reaches 255?",
-                q9: "Describe three practical applications of PWM in electronics projects and explain why PWM is useful for each application.",
-                q10: "Explain how RGB color mixing works with PWM. How would you create a purple color, and what PWM values would you use for each color channel?"
+
+    window.addEventListener('load', function() {
+        if (document.getElementById('captcha-question')) {
+            generateCaptcha();
+        }
+
+        if (typeof window.emailjs !== 'undefined') {
+            window.emailjs.init('ct_s19oZHppLy9BlW');
+            emailjsReady = true;
+            console.log('EmailJS initialized successfully');
+        } else {
+            console.error('EmailJS failed to load');
+        }
+    });
+
+    const quizData = {
+        correctAnswers: {
+            q1: 'B',
+            q2: 'B',
+            q3: 'C',
+            q4: 'C',
+            q5: 'B',
+            q6: 'C',
+            q7: 'C',
+            q8: 'B'
+        },
+        questionText: {
+            q1: 'What is a function?',
+            q2: 'Built-In Functions',
+            q3: 'Calling a Function',
+            q4: 'Understanding void',
+            q5: 'Parameters',
+            q6: 'Reading a Function Call',
+            q7: 'Why Use Functions?',
+            q8: 'Code Analysis',
+            q9: 'Code Analysis',
+            q10: 'Function-Based Arduino Program'
+        }
+    };
+
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (!validateSecurity()) {
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        const formData = new FormData(this);
+        const studentName = document.getElementById('quiz6StudentName').value;
+        const studentEmail = document.getElementById('quiz6StudentEmail').value;
+        const results = [];
+        let score = 0;
+        const totalQuestions = 8;
+
+        for (let i = 1; i <= 8; i++) {
+            const questionKey = `q${i}`;
+            const studentAnswer = formData.get(questionKey);
+            const correctAnswer = quizData.correctAnswers[questionKey];
+            const isCorrect = studentAnswer === correctAnswer;
+
+            if (isCorrect) score++;
+
+            results.push({
+                question: quizData.questionText[questionKey],
+                studentAnswer: studentAnswer || 'No answer',
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect
+            });
+        }
+
+        results.push({
+            question: quizData.questionText.q9,
+            studentAnswer: formData.get('q9') || 'No answer provided',
+            isShortAnswer: true
+        });
+
+        results.push({
+            question: quizData.questionText.q10,
+            studentAnswer: formData.get('q10') || 'No answer provided',
+            isShortAnswer: true
+        });
+
+        const percentage = Math.round((score / totalQuestions) * 100);
+
+        let message = `LESSON 6 QUIZ RESULTS - Functions with Arduino\n\n`;
+        message += `Student: ${studentName}\n`;
+        message += `Email: ${studentEmail}\n`;
+        message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
+        message += `DETAILED RESULTS:\n`;
+        message += `==================\n\n`;
+
+        results.forEach((result, index) => {
+            if (result.isShortAnswer) {
+                message += `${result.question}:\n`;
+                message += `Answer: ${result.studentAnswer}\n\n`;
+            } else {
+                const status = result.isCorrect ? 'CORRECT' : 'INCORRECT';
+                message += `Q${index + 1}: ${result.question}\n`;
+                message += `Student Answer: ${result.studentAnswer}\n`;
+                message += `Correct Answer: ${result.correctAnswer}\n`;
+                message += `Status: ${status}\n\n`;
             }
+        });
+
+        message += `PERFORMANCE ANALYSIS:\n`;
+        message += `=====================\n`;
+        if (percentage >= 90) {
+            message += `EXCELLENT! Excellent understanding of beginner functions and code organization.\n`;
+            message += `The student is ready to use functions in larger Arduino programs.\n`;
+        } else if (percentage >= 80) {
+            message += `VERY GOOD! Solid understanding of defining and calling functions.\n`;
+            message += `The student shows good progress with parameters and reusable code.\n`;
+        } else if (percentage >= 70) {
+            message += `GOOD! Basic function ideas are understood, with some areas for more practice.\n`;
+            message += `Recommend reviewing parameters, function calls, and clear function names.\n`;
+        } else if (percentage >= 60) {
+            message += `NEEDS IMPROVEMENT! Some understanding is present, but function structure needs reinforcement.\n`;
+            message += `Suggest more practice writing small functions that do one job.\n`;
+        } else {
+            message += `REQUIRES ATTENTION! More guided practice is needed with functions and code tracing.\n`;
+            message += `Recommend reviewing how custom functions are defined and called from setup() and loop().\n`;
+        }
+
+        message += `\nNext Steps: Practice writing small reusable functions and prepare for later hardware projects.\n`;
+        message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+
+        let grade = 'F';
+        if (percentage >= 90) grade = 'A';
+        else if (percentage >= 80) grade = 'B';
+        else if (percentage >= 70) grade = 'C';
+        else if (percentage >= 60) grade = 'D';
+
+        const resultsHTML = `
+            <div style="text-align: center; margin-bottom: 1rem;">
+                <div style="font-size: 2rem; font-weight: bold; color: #4a148c;">${score}/${totalQuestions} (${percentage}%)</div>
+                <div style="font-size: 1.5rem; font-weight: bold; color: #4a148c;">Grade: ${grade}</div>
+                <div style="margin-top: 1rem; padding: 1rem; background: #e8f5e8; border-radius: 6px; color: #2e7d32; font-weight: bold;">
+                    Lesson 6: Functions with Arduino
+                </div>
+            </div>
+            <div style="text-align: left;">
+                ${results.map((r, index) => {
+                    if (r.isShortAnswer) {
+                        return `
+                            <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                                <strong>${r.question}:</strong><br>
+                                <strong>Your answer:</strong> ${r.studentAnswer}
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                            <strong>Question ${index + 1}:</strong> ${r.isCorrect ? 'Correct' : 'Incorrect'}<br>
+                            <strong>Your answer:</strong> ${r.studentAnswer}<br>
+                            <strong>Correct answer:</strong> ${r.correctAnswer}
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+
+        document.getElementById('resultsContent').innerHTML = resultsHTML;
+        document.getElementById('quizResults').style.display = 'block';
+        document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+
+        if (!emailjsReady || typeof window.emailjs === 'undefined') {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Quiz';
+            alert('Email service is not available. Please refresh the page and try again.');
+            return;
+        }
+
+        const sheetsPayload = {
+            studentName: studentName,
+            studentEmail: studentEmail,
+            week: 'Lesson 6',
+            topic: 'Functions with Arduino',
+            score: score,
+            totalPoints: 10,
+            percentage: percentage,
+            grade: grade,
+            timestamp: new Date().toISOString()
         };
 
-        document.getElementById('quizForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const studentName = document.getElementById('quiz6StudentName').value;
-            const studentEmail = document.getElementById('quiz6StudentEmail').value;
-            
-            if (!studentName || !studentEmail) {
-                alert('Please fill in your name and email address.');
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            
-            const formData = new FormData(this);
-            const results = [];
-            let score = 0;
-            const totalQuestions = 8; // Multiple choice questions only for scoring
-            
-            // Check multiple choice answers (q1-q8)
-            for (let i = 1; i <= 8; i++) {
-                const questionKey = `q${i}`;
-                const userAnswer = formData.get(questionKey);
-                const correctAnswer = quizData.correctAnswers[questionKey];
-                const isCorrect = userAnswer === correctAnswer;
-                
-                if (isCorrect) score++;
-                
-                results.push({
-                    question: quizData.questionText[questionKey],
-                    userAnswer: userAnswer || 'No answer provided',
-                    correctAnswer: correctAnswer,
-                    isCorrect: isCorrect
-                });
-            }
-            
-            // Add short answer questions
-            results.push({
-                question: quizData.questionText.q9,
-                studentAnswer: formData.get('q9') || 'No answer provided',
-                isShortAnswer: true
-            });
-            
-            results.push({
-                question: quizData.questionText.q10,
-                studentAnswer: formData.get('q10') || 'No answer provided',
-                isShortAnswer: true
-            });
-            
-            const percentage = Math.round((score / totalQuestions) * 100);
-            
-            // Build detailed message
-            let message = `WEEK 6 QUIZ RESULTS - PWM & Analog Outputs\n\n`;
-            message += `Student: ${studentName}\n`;
-            message += `Email: ${studentEmail}\n`;
-            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
-            
-            message += `DETAILED RESULTS:\n`;
-            message += `==================\n\n`;
-            
-            results.forEach((result, index) => {
-                if (result.isShortAnswer) {
-                    message += `${result.question}:\n`;
-                    message += `Answer: ${result.studentAnswer}\n\n`;
-                } else {
-                    const status = result.isCorrect ? '? CORRECT' : '? INCORRECT';
-                    message += `Q${index + 1}: ${result.question}\n`;
-                    message += `Student Answer: ${result.userAnswer}\n`;
-                    message += `Correct Answer: ${result.correctAnswer}\n`;
-                    message += `Status: ${status}\n\n`;
-                }
-            });
-            
-            message += `PERFORMANCE ANALYSIS:\n`;
-            message += `====================\n`;
-            if (percentage >= 90) {
-                message += `?? EXCELLENT! Outstanding understanding of PWM and analog output control.\n`;
-                message += `Student demonstrates mastery of duty cycles, RGB mixing, and practical applications.\n`;
-            } else if (percentage >= 80) {
-                message += `?? VERY GOOD! Strong grasp of PWM fundamentals and output control.\n`;
-                message += `Student shows solid understanding with minor areas for review.\n`;
-            } else if (percentage >= 70) {
-                message += `?? GOOD! Basic understanding of PWM concepts with room for improvement.\n`;
-                message += `Recommend additional practice with analogWrite() and color mixing.\n`;
-            } else if (percentage >= 60) {
-                message += `?? NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
-                message += `Focus on PWM pin identification, duty cycle calculations, and safety considerations.\n`;
-            } else {
-                message += `?? REQUIRES ATTENTION! Limited understanding of PWM and analog output concepts.\n`;
-                message += `Recommend reviewing lesson materials and hands-on practice with PWM projects.\n`;
-            }
-            
-            message += `\nNext Steps: Practice with PWM projects and prepare for Week 7: Serial Communication\n`;
-            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
-            
-            // Display results to student
-            let grade = 'F';
-            if (percentage >= 90) grade = 'A';
-            else if (percentage >= 80) grade = 'B';
-            else if (percentage >= 70) grade = 'C';
-            else if (percentage >= 60) grade = 'D';
-            
-            const resultsHTML = `
-                <div style="text-align: center; margin-bottom: 1rem;">
-                    <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${totalQuestions} (${percentage}%)</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
-                    <div style="margin-top: 1rem; padding: 1rem; background: #f3e8ff; border-radius: 6px; color: #7c3aed; font-weight: bold;">
-                        ??? Week 6: PWM & Analog Outputs
-                    </div>
-                </div>
-                <div style="text-align: left;">
-                    ${results.map((r, index) => {
-                        if (r.isShortAnswer) {
-                            return `
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
-                                    <strong>${r.question}:</strong><br>
-                                    <strong>Your answer:</strong> ${r.studentAnswer}
-                                </div>
-                            `;
-                        } else {
-                            return `
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '?' : '?'}<br>
-                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
-                                    <strong>Correct answer:</strong> ${r.correctAnswer}
-                                </div>
-                            `;
-                        }
-                    }).join('')}
-                </div>
-            `;
-            
-            document.getElementById('resultsContent').innerHTML = resultsHTML;
-            document.getElementById('quizResults').style.display = 'block';
-            
-            // Scroll to results
-            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
-            
-            // Send email using EmailJS
-            // Check if EmailJS is available
-            if (typeof window.emailjs === 'undefined') {
-                alert('Email service is not available. Please refresh the page and try again.');
-                return;
-            }
-            
-            // Initialize EmailJS right before sending
-            window.emailjs.init('ct_s19oZHppLy9BlW');
-            
-            window.emailjs.send('service_kaw1xkh', 'template_io02xtm', {
-                to_email: 'chuck@c00lnerd.com',
-                from_name: 'C00lnerd Quiz System',
-                from_email: 'chuck@c00lnerd.com',
-                
-                message: message,
-                subject: `Week 6 Arduino Quiz - ${studentName} (${percentage}%)`
-            }).then(function(response) {
-                console.log('Quiz results sent successfully!', response.status, response.text);
-                alert('Quiz results sent successfully!');
-                
-                // Log to Google Sheets
-                console.log('Logging quiz results to Google Sheets...');
-                fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        studentName: studentName,
-                        studentEmail: studentEmail,
-                        week: 'Week 6',
-                        topic: 'PWM & Analog Outputs',
-                        score: score,
-                        totalPoints: 8,
-                        percentage: percentage,
-                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
-                        timestamp: new Date().toISOString()
-                    })
-                })
+        function logQuizToGoogleSheets() {
+            console.log('Logging quiz results to Google Sheets...');
+            return fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sheetsPayload)
+            })
                 .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
                 .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
-                
-                submitBtn.textContent = 'Quiz Submitted ?';
-                submitBtn.style.backgroundColor = '#7c3aed';
-            }).catch(function(error) {
-                console.log('Failed to send quiz results...', error);
+        }
+
+        window.emailjs.send('service_kaw1xkh', 'template_io02xtm', {
+            to_email: 'chuck@c00lnerd.com',
+            from_name: 'C00lnerd Quiz System',
+            from_email: 'chuck@c00lnerd.com',
+            message: message,
+            subject: `Lesson 6 Arduino Quiz - ${studentName} (${percentage}%)`
+        }).then(function(response) {
+            console.log('Quiz results sent successfully!', response.status, response.text);
+            alert('Quiz submitted successfully!');
+            return logQuizToGoogleSheets();
+        }, function(error) {
+            console.log('Failed to send quiz results...', error);
+            return logQuizToGoogleSheets().then(function() {
                 alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Quiz';
             });
+        }).finally(function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Quiz';
         });
+    });
     </script>
 </Layout>
-
-
-
