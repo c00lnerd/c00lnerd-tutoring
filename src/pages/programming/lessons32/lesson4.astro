@@ -170,6 +170,31 @@ void loop() {
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
                 <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 6: Using Conditionals with Hardware</h2>
                 <p class="text-gray-700 mb-4">Decision-making becomes even more useful when the program reacts to a real input. A button can tell the Arduino when to turn an LED on or off.</p>
+                <div class="bg-white border border-blue-100 rounded-lg p-5 mb-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Hardware setup: wire the button and LED first</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg text-blue-900">
+                            <h4 class="font-semibold mb-2">LED wiring</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li>Connect a jumper wire from Arduino pin <code>8</code> to a <code>220Ω</code> resistor</li>
+                                <li>Connect the resistor to the <strong>long leg</strong> of the LED</li>
+                                <li>Connect the <strong>short leg</strong> of the LED to <code>GND</code></li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg text-green-900">
+                            <h4 class="font-semibold mb-2">Button wiring</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li>Place the pushbutton across the center gap of the breadboard</li>
+                                <li>Connect one side of the button to Arduino pin <code>2</code></li>
+                                <li>Connect the other side of the button to <code>GND</code></li>
+                                <li>Because the code uses <code>INPUT_PULLUP</code>, you do <strong>not</strong> need an extra resistor for the button</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg mt-4 text-yellow-900">
+                        When the button is <strong>not pressed</strong>, pin <code>2</code> reads <code>HIGH</code>. When the button <strong>is pressed</strong>, it connects to <code>GND</code>, so pin <code>2</code> reads <code>LOW</code>.
+                    </div>
+                </div>
                 <div class="bg-blue-50 p-4 rounded-lg mb-4 text-blue-900">
                     This example uses a button on pin `2` and an LED on pin `8`. The button uses `INPUT_PULLUP`, so pressed usually reads as `LOW`.
                 </div>
