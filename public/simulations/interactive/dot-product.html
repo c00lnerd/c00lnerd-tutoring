@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dot Product Tool</title>
+<title>Matrix Dot Product Tool</title>
 <style>
   :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
   body { margin:0; background:#f5f7fb; color:#172033; }
@@ -14,13 +14,13 @@
   .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:18px; }
   .controls label { font-weight:600; }
   .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
-  .vectors { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:22px; }
-  .vector-block { text-align:center; }
-  .vector-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
-  .vector { display:flex; flex-direction:column; gap:8px; padding:8px 14px; position:relative; min-width:90px; }
-  .vector:before,.vector:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
-  .vector:before { left:0; border-left:2px solid #172033; }
-  .vector:after { right:0; border-right:2px solid #172033; }
+  .matrices { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:22px; }
+  .matrix-block { text-align:center; }
+  .matrix-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+  .matrix { display:grid; gap:8px; padding:8px 14px; position:relative; }
+  .matrix:before,.matrix:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
+  .matrix:before { left:0; border-left:2px solid #172033; }
+  .matrix:after { right:0; border-right:2px solid #172033; }
   input, .cell {
     width:68px; height:48px; box-sizing:border-box; text-align:center;
     font-size:1.05rem; border-radius:8px; border:1px solid #c8cfda; background:#fff;
@@ -36,37 +36,38 @@
   .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
   .formula { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
   @media (max-width:650px) {
+    .matrix { gap:6px; padding:6px 10px; }
     input,.cell { width:56px; height:44px; }
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Dot Product Tool</h1>
-  <p class="sub">Choose a vector size, enter vectors A and B, then calculate A · B.</p>
+  <h1>Matrix Dot Product Tool</h1>
+  <p class="sub">Choose a size, enter two full matrices A and B, then calculate their dot product.</p>
 
   <div class="panel">
     <div class="controls">
-      <label for="sizeSelect">Vector size:</label>
+      <label for="sizeSelect">Matrix size:</label>
       <select id="sizeSelect" onchange="setSize()">
-        <option value="2">2 components</option>
-        <option value="3" selected>3 components</option>
+        <option value="2">2 × 2</option>
+        <option value="3" selected>3 × 3</option>
       </select>
     </div>
 
-    <div class="vectors">
-      <div class="vector-block">
-        <div class="vector-label">A</div>
-        <div id="A" class="vector"></div>
+    <div class="matrices">
+      <div class="matrix-block">
+        <div class="matrix-label">A</div>
+        <div id="A" class="matrix"></div>
       </div>
       <div class="symbol">·</div>
-      <div class="vector-block">
-        <div class="vector-label">B</div>
-        <div id="B" class="vector"></div>
+      <div class="matrix-block">
+        <div class="matrix-label">B</div>
+        <div id="B" class="matrix"></div>
       </div>
       <div class="symbol">=</div>
-      <div class="vector-block">
-        <div class="vector-label">A · B</div>
+      <div class="matrix-block">
+        <div class="matrix-label">A · B</div>
         <div id="C" class="cell">0</div>
       </div>
     </div>
@@ -79,29 +80,30 @@
 
     <div id="steps" class="steps"></div>
 
-    <p class="formula">For 2-D: A · B = a₁b₁ + a₂b₂<br>For 3-D: A · B = a₁b₁ + a₂b₂ + a₃b₃</p>
+    <p class="formula">A · B = a<sub>11</sub>b<sub>11</sub> + a<sub>12</sub>b<sub>12</sub> + a<sub>13</sub>b<sub>13</sub> + ... + a<sub>nn</sub>b<sub>nn</sub></p>
   </div>
 </div>
 
 <script>
 let N = 3;
 
-function buildInputVector(id) {
+function buildInputMatrix(id) {
   const el = document.getElementById(id);
   el.innerHTML = '';
-  for (let i = 0; i < N; i++) {
+  el.style.gridTemplateColumns = `repeat(${N}, 72px)`;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
     const inp = document.createElement('input');
     inp.type = 'number';
     inp.step = 'any';
     inp.value = '0';
-    inp.id = `${id}-${i}`;
-    inp.setAttribute('aria-label', `${id} component ${i + 1}`);
+    inp.id = `${id}-${r}-${c}`;
+    inp.setAttribute('aria-label', `${id} row ${r + 1} column ${c + 1}`);
     el.appendChild(inp);
   }
 }
 
-function val(id, i) {
-  return Number(document.getElementById(`${id}-${i}`).value) || 0;
+function val(id, r, c) {
+  return Number(document.getElementById(`${id}-${r}-${c}`).value) || 0;
 }
 
 function fmt(x) {
@@ -111,44 +113,41 @@ function fmt(x) {
 
 function setSize() {
   N = Number(document.getElementById('sizeSelect').value);
-  buildInputVector('A');
-  buildInputVector('B');
+  buildInputMatrix('A');
+  buildInputMatrix('B');
   document.getElementById('C').textContent = '0';
   document.getElementById('steps').innerHTML = '';
 }
 
 function calculate() {
   const products = [];
-  const aValues = [];
-  const bValues = [];
+  const labels = [];
   let result = 0;
 
-  for (let i = 0; i < N; i++) {
-    const a = val('A', i);
-    const b = val('B', i);
-    aValues.push(fmt(a));
-    bValues.push(fmt(b));
-    products.push(`${fmt(a)} × ${fmt(b)}`);
-    result += a * b;
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const a = val('A', r, c);
+      const b = val('B', r, c);
+      products.push(`${fmt(a)} × ${fmt(b)}`);
+      labels.push(`a<sub>${r + 1}${c + 1}</sub>b<sub>${r + 1}${c + 1}</sub>`);
+      result += a * b;
+    }
   }
 
   document.getElementById('C').textContent = fmt(result);
 
-  const stepParts = [];
-  for (let i = 0; i < N; i++) {
-    stepParts.push(`(${aValues[i]})(${bValues[i]})`);
-  }
-  const step = `A · B = ${products.join(' + ')} = ${stepParts.join(' + ')} = ${fmt(result)}`;
+  const firstLine = `A · B = ${products.join(' + ')} = ${fmt(result)}`;
 
   document.getElementById('steps').innerHTML =
-    '<h2>Dot product calculation</h2>' +
-    `<div class="step">${step}</div>`;
+    '<h2>Element-by-element calculation</h2>' +
+    `<div class="step">${firstLine}</div>` +
+    `<div class="step">Terms: ${labels.join(' + ')}</div>`;
 }
 
 function clearAll() {
   ['A', 'B'].forEach(id => {
-    for (let i = 0; i < N; i++) {
-      document.getElementById(`${id}-${i}`).value = 0;
+    for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+      document.getElementById(`${id}-${r}-${c}`).value = 0;
     }
   });
   document.getElementById('C').textContent = '0';
@@ -158,15 +157,15 @@ function clearAll() {
 function fillExample() {
   let A, B;
   if (N === 2) {
-    A = [3, 4];
-    B = [1, 2];
+    A = [[1, 2], [3, 4]];
+    B = [[5, 6], [7, 8]];
   } else {
-    A = [1, 2, 3];
-    B = [4, 5, 6];
+    A = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+    B = [[9, 8, 7], [6, 5, 4], [3, 2, 1]];
   }
-  for (let i = 0; i < N; i++) {
-    document.getElementById(`A-${i}`).value = A[i];
-    document.getElementById(`B-${i}`).value = B[i];
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = A[r][c];
+    document.getElementById(`B-${r}-${c}`).value = B[r][c];
   }
   calculate();
 }
