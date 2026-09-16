@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Determinant Calculator</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin:0; background:#f5f7fb; color:#172033; }
+  .wrap { max-width:1000px; margin:32px auto; padding:0 18px; }
+  h1 { margin-bottom:6px; }
+  .sub { color:#586174; margin-top:0; }
+  .panel { background:white; border-radius:14px; padding:22px; box-shadow:0 4px 18px rgba(0,0,0,.08); }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:18px; }
+  .controls label { font-weight:600; }
+  .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .matrix-area { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:22px; }
+  .matrix-block { text-align:center; }
+  .matrix-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+  .matrix { display:grid; gap:8px; padding:8px 14px; position:relative; }
+  .matrix:before,.matrix:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
+  .matrix:before { left:0; border-left:2px solid #172033; }
+  .matrix:after { right:0; border-right:2px solid #172033; }
+  input, .cell {
+    width:68px; height:48px; box-sizing:border-box; text-align:center;
+    font-size:1.05rem; border-radius:8px; border:1px solid #c8cfda; background:#fff;
+  }
+  .cell { display:flex; align-items:center; justify-content:center; background:#eef3ff; font-weight:700; min-width:80px; padding:0 12px; }
+  .symbol { font-size:2rem; font-weight:600; }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:24px 0 8px; }
+  button { border:0; border-radius:9px; padding:11px 18px; font-size:1rem; cursor:pointer; }
+  .primary { background:#2457d6; color:white; }
+  .secondary { background:#e8edf7; color:#172033; }
+  .steps { margin-top:22px; }
+  .steps h2 { font-size:1.15rem; }
+  .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .formula { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
+  @media (max-width:650px) {
+    .matrix { gap:6px; padding:6px 10px; }
+    input,.cell { width:56px; height:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Determinant Calculator</h1>
+  <p class="sub">Choose a size, enter the matrix, then calculate its determinant.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="sizeSelect">Matrix size:</label>
+      <select id="sizeSelect" onchange="setSize()">
+        <option value="2">2 × 2</option>
+        <option value="3" selected>3 × 3</option>
+        <option value="4">4 × 4</option>
+      </select>
+    </div>
+
+    <div class="matrix-area">
+      <div class="matrix-block">
+        <div class="matrix-label">A</div>
+        <div id="A" class="matrix"></div>
+      </div>
+      <div class="symbol">→</div>
+      <div class="matrix-block">
+        <div class="matrix-label">det(A)</div>
+        <div id="C" class="cell">0</div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculate()">Calculate</button>
+      <button class="secondary" onclick="fillExample()">Example</button>
+      <button class="secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div id="steps" class="steps"></div>
+
+    <p class="formula" id="formulaHint">
+      For 2×2: det(A) = ad − bc
+    </p>
+  </div>
+</div>
+
+<script>
+let N = 3;
+
+const hints = {
+  2: 'For 2×2: det(A) = ad − bc',
+  3: 'For 3×3: det(A) = a(ei − fh) − b(di − fg) + c(dh − eg)',
+  4: 'For 4×4: det(A) = expansion by minors along the first row'
+};
+
+function buildInputMatrix() {
+  const el = document.getElementById('A');
+  el.innerHTML = '';
+  el.style.gridTemplateColumns = `repeat(${N}, 72px)`;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const inp = document.createElement('input');
+    inp.type = 'number';
+    inp.step = 'any';
+    inp.value = '0';
+    inp.id = `A-${r}-${c}`;
+    inp.setAttribute('aria-label', `A row ${r + 1} column ${c + 1}`);
+    el.appendChild(inp);
+  }
+}
+
+function getMatrix() {
+  const M = [];
+  for (let r = 0; r < N; r++) {
+    M[r] = [];
+    for (let c = 0; c < N; c++) {
+      M[r][c] = Number(document.getElementById(`A-${r}-${c}`).value) || 0;
+    }
+  }
+  return M;
+}
+
+function fmt(x) {
+  if (Math.abs(x - Math.round(x)) < 1e-10) return String(Math.round(x));
+  return Number(x.toFixed(6)).toString();
+}
+
+function det2(M) {
+  const a = M[0][0], b = M[0][1], c = M[1][0], d = M[1][1];
+  const result = a * d - b * c;
+  const text = `(${fmt(a)})(${fmt(d)}) − (${fmt(b)})(${fmt(c)}) = ${fmt(result)}`;
+  return { value: result, steps: [text] };
+}
+
+function det3(M) {
+  const a = M[0][0], b = M[0][1], c = M[0][2];
+  const d = M[1][0], e = M[1][1], f = M[1][2];
+  const g = M[2][0], h = M[2][1], i = M[2][2];
+
+  const term1 = a * (e * i - f * h);
+  const term2 = b * (d * i - f * g);
+  const term3 = c * (d * h - e * g);
+  const result = term1 - term2 + term3;
+
+  const steps = [];
+  steps.push(`a(ei − fh) = (${fmt(a)})[(${fmt(e)})(${fmt(i)}) − (${fmt(f)})(${fmt(h)}))] = ${fmt(term1)}`);
+  steps.push(`−b(di − fg) = −(${fmt(b)})[(${fmt(d)})(${fmt(i)}) − (${fmt(f)})(${fmt(g)}))] = ${fmt(-term2)}`);
+  steps.push(`+c(dh − eg) = +(${fmt(c)})[(${fmt(d)})(${fmt(h)}) − (${fmt(e)})(${fmt(g)}))] = ${fmt(term3)}`);
+  steps.push(`det(A) = ${fmt(term1)} + ${fmt(-term2)} + ${fmt(term3)} = ${fmt(result)}`);
+
+  return { value: result, steps };
+}
+
+function minor(M, row, col) {
+  const m = [];
+  for (let r = 0; r < M.length; r++) {
+    if (r === row) continue;
+    const newRow = [];
+    for (let c = 0; c < M.length; c++) {
+      if (c === col) continue;
+      newRow.push(M[r][c]);
+    }
+    m.push(newRow);
+  }
+  return m;
+}
+
+function determinant(M) {
+  const n = M.length;
+  if (n === 1) return { value: M[0][0], steps: [`det([${fmt(M[0][0])}]) = ${fmt(M[0][0])}`] };
+
+  if (n === 2) return det2(M);
+
+  let total = 0;
+  const steps = [];
+  const terms = [];
+
+  for (let c = 0; c < n; c++) {
+    const minorM = minor(M, 0, c);
+    const minorDet = determinant(minorM);
+    const sign = (c % 2 === 0) ? 1 : -1;
+    const coefficient = M[0][c];
+    const product = coefficient * minorDet.value;
+    const signedProduct = sign * product;
+    total += signedProduct;
+
+    const signSymbol = sign === 1 ? '+' : '−';
+    const signDisplay = sign === 1 ? '' : '−';
+    steps.push(`${signSymbol} a<sub>1${c + 1}</sub> · det(M<sub>1${c + 1}</sub>) = ${signDisplay}(${fmt(coefficient)})(${fmt(minorDet.value)}) = ${fmt(signedProduct)}`);
+    terms.push(fmt(signedProduct));
+  }
+
+  const stepsOut = steps.concat([`det(A) = ${terms.join(' + ')} = ${fmt(total)}`]);
+  return { value: total, steps: stepsOut };
+}
+
+function setSize() {
+  N = Number(document.getElementById('sizeSelect').value);
+  buildInputMatrix();
+  document.getElementById('C').textContent = '0';
+  document.getElementById('steps').innerHTML = '';
+  document.getElementById('formulaHint').textContent = hints[N];
+}
+
+function calculate() {
+  const M = getMatrix();
+  let result, steps;
+
+  if (N === 2) {
+    ({ value: result, steps } = det2(M));
+  } else if (N === 3) {
+    ({ value: result, steps } = det3(M));
+  } else {
+    ({ value: result, steps } = determinant(M));
+  }
+
+  document.getElementById('C').textContent = fmt(result);
+
+  document.getElementById('steps').innerHTML =
+    '<h2>Calculation steps</h2>' +
+    steps.map(s => `<div class="step">${s}</div>`).join('');
+}
+
+function clearAll() {
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = 0;
+  }
+  document.getElementById('C').textContent = '0';
+  document.getElementById('steps').innerHTML = '';
+}
+
+function fillExample() {
+  let M;
+  if (N === 2) {
+    M = [[4, 7], [2, 6]];
+  } else if (N === 3) {
+    M = [[1, 2, 3], [0, 1, 4], [5, 6, 0]];
+  } else {
+    M = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]];
+  }
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = M[r][c];
+  }
+  calculate();
+}
+
+setSize();
+</script>
+</body>
+</html>
