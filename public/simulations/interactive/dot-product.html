@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dot Product Tool</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin:0; background:#f5f7fb; color:#172033; }
+  .wrap { max-width:1000px; margin:32px auto; padding:0 18px; }
+  h1 { margin-bottom:6px; }
+  .sub { color:#586174; margin-top:0; }
+  .panel { background:white; border-radius:14px; padding:22px; box-shadow:0 4px 18px rgba(0,0,0,.08); }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:18px; }
+  .controls label { font-weight:600; }
+  .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .vectors { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:22px; }
+  .vector-block { text-align:center; }
+  .vector-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+  .vector { display:flex; flex-direction:column; gap:8px; padding:8px 14px; position:relative; min-width:90px; }
+  .vector:before,.vector:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
+  .vector:before { left:0; border-left:2px solid #172033; }
+  .vector:after { right:0; border-right:2px solid #172033; }
+  input, .cell {
+    width:68px; height:48px; box-sizing:border-box; text-align:center;
+    font-size:1.05rem; border-radius:8px; border:1px solid #c8cfda; background:#fff;
+  }
+  .cell { display:flex; align-items:center; justify-content:center; background:#eef3ff; font-weight:700; min-width:80px; padding:0 12px; }
+  .symbol { font-size:2rem; font-weight:600; }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:24px 0 8px; }
+  button { border:0; border-radius:9px; padding:11px 18px; font-size:1rem; cursor:pointer; }
+  .primary { background:#2457d6; color:white; }
+  .secondary { background:#e8edf7; color:#172033; }
+  .steps { margin-top:22px; }
+  .steps h2 { font-size:1.15rem; }
+  .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .formula { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
+  @media (max-width:650px) {
+    input,.cell { width:56px; height:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Dot Product Tool</h1>
+  <p class="sub">Choose a vector size, enter vectors A and B, then calculate A · B.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="sizeSelect">Vector size:</label>
+      <select id="sizeSelect" onchange="setSize()">
+        <option value="2">2 components</option>
+        <option value="3" selected>3 components</option>
+      </select>
+    </div>
+
+    <div class="vectors">
+      <div class="vector-block">
+        <div class="vector-label">A</div>
+        <div id="A" class="vector"></div>
+      </div>
+      <div class="symbol">·</div>
+      <div class="vector-block">
+        <div class="vector-label">B</div>
+        <div id="B" class="vector"></div>
+      </div>
+      <div class="symbol">=</div>
+      <div class="vector-block">
+        <div class="vector-label">A · B</div>
+        <div id="C" class="cell">0</div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculate()">Calculate</button>
+      <button class="secondary" onclick="fillExample()">Example</button>
+      <button class="secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div id="steps" class="steps"></div>
+
+    <p class="formula">For 2-D: A · B = a₁b₁ + a₂b₂<br>For 3-D: A · B = a₁b₁ + a₂b₂ + a₃b₃</p>
+  </div>
+</div>
+
+<script>
+let N = 3;
+
+function buildInputVector(id) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  for (let i = 0; i < N; i++) {
+    const inp = document.createElement('input');
+    inp.type = 'number';
+    inp.step = 'any';
+    inp.value = '0';
+    inp.id = `${id}-${i}`;
+    inp.setAttribute('aria-label', `${id} component ${i + 1}`);
+    el.appendChild(inp);
+  }
+}
+
+function val(id, i) {
+  return Number(document.getElementById(`${id}-${i}`).value) || 0;
+}
+
+function fmt(x) {
+  if (Math.abs(x - Math.round(x)) < 1e-10) return String(Math.round(x));
+  return Number(x.toFixed(6)).toString();
+}
+
+function setSize() {
+  N = Number(document.getElementById('sizeSelect').value);
+  buildInputVector('A');
+  buildInputVector('B');
+  document.getElementById('C').textContent = '0';
+  document.getElementById('steps').innerHTML = '';
+}
+
+function calculate() {
+  const products = [];
+  const aValues = [];
+  const bValues = [];
+  let result = 0;
+
+  for (let i = 0; i < N; i++) {
+    const a = val('A', i);
+    const b = val('B', i);
+    aValues.push(fmt(a));
+    bValues.push(fmt(b));
+    products.push(`${fmt(a)} × ${fmt(b)}`);
+    result += a * b;
+  }
+
+  document.getElementById('C').textContent = fmt(result);
+
+  const stepParts = [];
+  for (let i = 0; i < N; i++) {
+    stepParts.push(`(${aValues[i]})(${bValues[i]})`);
+  }
+  const step = `A · B = ${products.join(' + ')} = ${stepParts.join(' + ')} = ${fmt(result)}`;
+
+  document.getElementById('steps').innerHTML =
+    '<h2>Dot product calculation</h2>' +
+    `<div class="step">${step}</div>`;
+}
+
+function clearAll() {
+  ['A', 'B'].forEach(id => {
+    for (let i = 0; i < N; i++) {
+      document.getElementById(`${id}-${i}`).value = 0;
+    }
+  });
+  document.getElementById('C').textContent = '0';
+  document.getElementById('steps').innerHTML = '';
+}
+
+function fillExample() {
+  let A, B;
+  if (N === 2) {
+    A = [3, 4];
+    B = [1, 2];
+  } else {
+    A = [1, 2, 3];
+    B = [4, 5, 6];
+  }
+  for (let i = 0; i < N; i++) {
+    document.getElementById(`A-${i}`).value = A[i];
+    document.getElementById(`B-${i}`).value = B[i];
+  }
+  calculate();
+}
+
+setSize();
+</script>
+</body>
+</html>
