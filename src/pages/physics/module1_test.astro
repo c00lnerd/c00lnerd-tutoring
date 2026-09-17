@@ -379,22 +379,23 @@ import Layout from '../../layouts/Layout.astro';
 			});
 
 			const templateParams = {
-				to_email: 'chuck@c00lnerd.com',
 				from_name: 'C00lnerd Physics Test System',
-				from_email: 'chuck@c00lnerd.com',
-				reply_to: studentEmail,
+				student_email: studentEmail,
+				to_name: 'Instructor',
 				subject: `Physics Module 1 Test - ${studentName}`,
-				message: message
+				submission_date: now,
+				message: message,
+				reply_to: studentEmail
 			};
 
-			emailjs.send('service_kaw1xkh', 'template_io02xtm', templateParams)
+			emailjs.send('service_ot1jg6s', 'template_0nxqbk8', templateParams)
 				.then(function(response) {
-					console.log('Email sent:', response);
+					console.log('Email sent:', response.status, response.text);
 					document.getElementById('module1Test').style.display = 'none';
 					document.getElementById('results').style.display = 'block';
 					document.getElementById('email-status').textContent = 'Your test has been submitted and emailed to your instructor.';
 				}, function(error) {
-					console.error('Email error:', error);
+					console.error('Email error:', error.status, error.text);
 					alert('There was an error sending your test. Please check your internet connection and try again.');
 				});
 		});
