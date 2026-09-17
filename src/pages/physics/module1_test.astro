@@ -1,0 +1,559 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physics Module 1 Test">
+	<div class="container">
+		<div class="header">
+			<p class="eyebrow">Exploring Creation with Physics</p>
+			<h1>Physics Module 1 Test</h1>
+			<p class="subtitle">Motion in One Dimension</p>
+		</div>
+
+		<form id="module1Test" autocomplete="off">
+			<div class="card">
+				<h2>Student Information</h2>
+				<div class="form-row">
+					<label>
+						Full Name
+						<input type="text" id="studentName" required>
+					</label>
+					<label>
+						Email Address
+						<input type="email" id="studentEmail" required>
+					</label>
+				</div>
+				<input type="text" id="website" style="display: none;" tabindex="-1" autocomplete="off">
+			</div>
+
+			<div class="card captcha-card">
+				<label>
+					Security Check: What is <span id="captcha-question"></span>?
+					<input type="number" id="captcha" required>
+				</label>
+				<div id="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 1</h3>
+				<p>The acceleration of a car is zero. Does this mean that its velocity is also zero?</p>
+				<input type="text" id="q1" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 2</h3>
+				<p>If the velocity of a plane is reported as 100 m/sec and its acceleration is reported as -10 m/sec&sup2;, is the plane speeding up or slowing down?</p>
+				<input type="text" id="q2" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 3</h3>
+				<p>What is the difference between speed and velocity?</p>
+				<textarea id="q3" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 4</h3>
+				<p>A physicist measures the instantaneous velocity of an object in three different places along its journey. The velocities were 2 m/sec, 4 m/sec, and 8 m/sec. She then measures the object's average velocity throughout the journey. Which of the following values is most likely to be that average velocity: 1 m/sec, 3 m/sec, or 16 m/sec?</p>
+				<input type="text" id="q4" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 5</h3>
+				<p>A person is walking in an airport at a constant velocity of 1.3 m/sec. What is the person's acceleration?</p>
+				<input type="text" id="q5" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 6</h3>
+				<p>A football player receives a kickoff and runs 98 yards straight into the end zone. After spiking the ball and doing his dance, he turns around and runs 31 yards back to his teammates. How much distance did he travel? What was his final displacement?</p>
+				<div class="form-row">
+					<label>
+						Distance
+						<input type="text" id="q6a" class="answer-input" required>
+					</label>
+					<label>
+						Displacement
+						<input type="text" id="q6b" class="answer-input" required>
+					</label>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 7</h3>
+				<p>A car is traveling down a one-lane country road at 21 miles/hour. Up ahead, a truck is traveling the opposite direction at 15 miles/hour. If they are 0.20 miles apart, how long will it be before they run into each other, assuming neither one of them slows down?</p>
+				<input type="text" id="q7" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 8</h3>
+				<p>A car starts at rest and accelerates as quickly as possible. If the acceleration is 1.2 m/sec&sup2; and the car accelerates for 10.0 seconds, what will the car's final velocity be?</p>
+				<input type="text" id="q8" class="answer-input" required>
+			</div>
+
+			<div class="card graph-section">
+				<p class="section-note">Questions 9-12 refer to the figure below.</p>
+				<div class="graph-block">
+					<p class="graph-title">A car's motion is described by the following position-versus-time graph:</p>
+					<canvas id="positionGraph" width="500" height="300"></canvas>
+					<p class="graph-label">Position (m) vs Time (s)</p>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 9</h3>
+				<p>What is the car's velocity at 13.0 seconds?</p>
+				<input type="text" id="q9" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 10</h3>
+				<p>Is the car's velocity larger at 11.2 seconds or 8.0 seconds?</p>
+				<input type="text" id="q10" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 11</h3>
+				<p>What is the car's velocity at 16.0 seconds?</p>
+				<input type="text" id="q11" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 12</h3>
+				<p>How many times does the car change direction?</p>
+				<input type="text" id="q12" class="answer-input" required>
+			</div>
+
+			<div class="card graph-section">
+				<p class="section-note">Questions 13-15 refer to the figure below.</p>
+				<div class="graph-block">
+					<p class="graph-title">Consider an object whose motion is given by the following velocity-versus-time graph:</p>
+					<canvas id="velocityGraph" width="500" height="300"></canvas>
+					<p class="graph-label">Velocity (m/s) vs Time (s)</p>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 13</h3>
+				<p>What is the object's acceleration at 2.0 seconds?</p>
+				<input type="text" id="q13" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 14</h3>
+				<p>What is the object's acceleration at 8.0 seconds?</p>
+				<input type="text" id="q14" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 15</h3>
+				<p>Over what time intervals does the object speed up?</p>
+				<input type="text" id="q15" class="answer-input" required>
+			</div>
+
+			<button type="submit" class="submit-button">Submit Test</button>
+		</form>
+
+		<div id="results" style="display: none;" class="card">
+			<h2>Test Submitted</h2>
+			<p id="email-status">Your answers have been sent to your instructor.</p>
+			<button type="button" class="submit-button" onclick="window.location.reload()">Take Again</button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+
+	<script is:inline>
+		let captchaAnswer = 0;
+
+		function toCanvasX(x, width, left, right) {
+			return left + (x / 20) * (width - left - right);
+		}
+
+		function toCanvasY(y, height, top, bottom, yMin, yMax) {
+			return top + (yMax - y) / (yMax - yMin) * (height - top - bottom);
+		}
+
+		function drawGraph(canvasId, points, yMin, yMax, yStep, title) {
+			const canvas = document.getElementById(canvasId);
+			if (!canvas) return;
+			const ctx = canvas.getContext('2d');
+			const w = canvas.width;
+			const h = canvas.height;
+			const margin = 40;
+
+			ctx.clearRect(0, 0, w, h);
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(0, 0, w, h);
+
+			ctx.strokeStyle = '#e5e7eb';
+			ctx.lineWidth = 1;
+
+			// Vertical grid lines (every 1 second)
+			for (let t = 0; t <= 20; t++) {
+				const x = toCanvasX(t, w, margin, margin);
+				ctx.beginPath();
+				ctx.moveTo(x, margin);
+				ctx.lineTo(x, h - margin);
+				ctx.stroke();
+			}
+
+			// Horizontal grid lines (yStep)
+			for (let y = yMin; y <= yMax; y += yStep) {
+				const yc = toCanvasY(y, h, margin, margin, yMin, yMax);
+				ctx.beginPath();
+				ctx.moveTo(margin, yc);
+				ctx.lineTo(w - margin, yc);
+				ctx.stroke();
+			}
+
+			// Axes
+			ctx.strokeStyle = '#374151';
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(margin, h - margin);
+			ctx.lineTo(w - margin, h - margin);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(margin, margin);
+			ctx.lineTo(margin, h - margin);
+			ctx.stroke();
+
+			// Axis labels
+			ctx.fillStyle = '#374151';
+			ctx.font = '12px Arial';
+			ctx.textAlign = 'center';
+			for (let t = 0; t <= 20; t += 5) {
+				const x = toCanvasX(t, w, margin, margin);
+				ctx.fillText(t.toString(), x, h - margin + 18);
+			}
+			ctx.textAlign = 'right';
+			for (let y = yMin; y <= yMax; y += yStep) {
+				const yc = toCanvasY(y, h, margin, margin, yMin, yMax);
+				ctx.fillText(y.toString(), margin - 8, yc + 4);
+			}
+
+			// Axis titles
+			ctx.save();
+			ctx.translate(14, h / 2);
+			ctx.rotate(-Math.PI / 2);
+			ctx.textAlign = 'center';
+			ctx.fillText(title, 0, 0);
+			ctx.restore();
+			ctx.textAlign = 'center';
+			ctx.fillText('Time (s)', w / 2, h - 10);
+
+			// Plot curve
+			ctx.beginPath();
+			ctx.strokeStyle = '#2563eb';
+			ctx.lineWidth = 3;
+			points.forEach((p, i) => {
+				const x = toCanvasX(p[0], w, margin, margin);
+				const y = toCanvasY(p[1], h, margin, margin, yMin, yMax);
+				if (i === 0) ctx.moveTo(x, y);
+				else ctx.lineTo(x, y);
+			});
+			ctx.stroke();
+		}
+
+		function generateCaptcha() {
+			const num1 = Math.floor(Math.random() * 10) + 1;
+			const num2 = Math.floor(Math.random() * 10) + 1;
+			captchaAnswer = num1 + num2;
+			document.getElementById('captcha-question').textContent = `${num1} + ${num2}`;
+		}
+
+		function validateCaptcha() {
+			const userAnswer = parseInt(document.getElementById('captcha').value);
+			const errorDiv = document.getElementById('captcha-error');
+			if (userAnswer !== captchaAnswer) {
+				errorDiv.style.display = 'block';
+				generateCaptcha();
+				document.getElementById('captcha').value = '';
+				return false;
+			}
+			errorDiv.style.display = 'none';
+			return true;
+		}
+
+		function validateSecurity() {
+			const honeypot = document.getElementById('website');
+			if (honeypot && honeypot.value) {
+				console.log('Spam bot detected via honeypot');
+				alert('Security check failed. Please try again.');
+				return false;
+			}
+
+			const lastSubmission = localStorage.getItem('lastQuizStart');
+			const now = Date.now();
+			if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+				alert('Please wait 30 seconds between attempts.');
+				return false;
+			}
+			localStorage.setItem('lastQuizStart', now.toString());
+
+			if (!validateCaptcha()) {
+				return false;
+			}
+
+			const email = document.getElementById('studentEmail').value;
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				return false;
+			}
+
+			const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+			const domain = email.split('@')[1].toLowerCase();
+			if (spamDomains.includes(domain)) {
+				alert('Please use a permanent email address.');
+				return false;
+			}
+
+			return true;
+		}
+
+		window.onload = function() {
+			try {
+				emailjs.init('ct_s19oZHppLy9BlW');
+			} catch (e) {
+				console.error('EmailJS init failed:', e);
+			}
+			generateCaptcha();
+
+			const positionPoints = [
+				[0, 15], [1, 13.8], [2, 12.2], [3, 10.1], [4, 7.5],
+				[5, 4.6], [6, 0], [7, 1.2], [8, 2.8], [9, 4.6],
+				[10, 6.4], [11, 8.4], [12, 11.2], [13, 13], [14, 11.5],
+				[15, 8.5], [16, 4.8], [17, 0.5], [18, -5], [19, -2.8], [20, 0]
+			];
+			drawGraph('positionGraph', positionPoints, -5, 20, 5, 'Position (m)');
+
+			const velocityPoints = [
+				[0, 0], [1, 1], [2, 2], [3, 3], [4, 4],
+				[5, 5], [6, 6], [7, 6], [8, 6], [9, 6],
+				[10, 6], [11, 5], [12, 3.7], [13, 1], [14, 0.5],
+				[15, 0], [16, -2.5], [17, -4], [18, -4], [19, -2], [20, 0]
+			];
+			drawGraph('velocityGraph', velocityPoints, -4, 8, 2, 'Velocity (m/s)');
+		};
+
+		document.getElementById('module1Test').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			if (!validateSecurity()) {
+				return;
+			}
+
+			const studentName = document.getElementById('studentName').value.trim();
+			const studentEmail = document.getElementById('studentEmail').value.trim();
+			const now = new Date().toLocaleString();
+
+			const answers = [
+				['Question 1', document.getElementById('q1').value.trim()],
+				['Question 2', document.getElementById('q2').value.trim()],
+				['Question 3', document.getElementById('q3').value.trim()],
+				['Question 4', document.getElementById('q4').value.trim()],
+				['Question 5', document.getElementById('q5').value.trim()],
+				['Question 6 - Distance', document.getElementById('q6a').value.trim()],
+				['Question 6 - Displacement', document.getElementById('q6b').value.trim()],
+				['Question 7', document.getElementById('q7').value.trim()],
+				['Question 8', document.getElementById('q8').value.trim()],
+				['Question 9', document.getElementById('q9').value.trim()],
+				['Question 10', document.getElementById('q10').value.trim()],
+				['Question 11', document.getElementById('q11').value.trim()],
+				['Question 12', document.getElementById('q12').value.trim()],
+				['Question 13', document.getElementById('q13').value.trim()],
+				['Question 14', document.getElementById('q14').value.trim()],
+				['Question 15', document.getElementById('q15').value.trim()]
+			];
+
+			let message = `PHYSICS MODULE 1 TEST SUBMISSION\n`;
+			message += `Submitted: ${now}\n\n`;
+			message += `Student: ${studentName}\n`;
+			message += `Student Email: ${studentEmail}\n\n`;
+			message += `ANSWERS:\n`;
+			answers.forEach((item, index) => {
+				message += `\n${index + 1}. ${item[0]}\n   ${item[1]}\n`;
+			});
+
+			const templateParams = {
+				to_email: 'chuck@c00lnerd.com',
+				from_name: 'C00lnerd Physics Test System',
+				from_email: 'chuck@c00lnerd.com',
+				reply_to: studentEmail,
+				subject: `Physics Module 1 Test - ${studentName}`,
+				message: message
+			};
+
+			emailjs.send('service_kaw1xkh', 'template_io02xtm', templateParams)
+				.then(function(response) {
+					console.log('Email sent:', response);
+					document.getElementById('module1Test').style.display = 'none';
+					document.getElementById('results').style.display = 'block';
+					document.getElementById('email-status').textContent = 'Your test has been submitted and emailed to your instructor.';
+				}, function(error) {
+					console.error('Email error:', error);
+					alert('There was an error sending your test. Please check your internet connection and try again.');
+				});
+		});
+	</script>
+
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
+			font-family: Arial, sans-serif;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-weight: 700;
+			color: #2563eb;
+			font-size: 0.85rem;
+			margin: 0 0 0.5rem 0;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.2rem;
+			color: #111827;
+		}
+
+		.subtitle {
+			color: #4b5563;
+			font-size: 1.1rem;
+			margin: 0.5rem 0 0 0;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+			margin-bottom: 1.25rem;
+		}
+
+		.card h2,
+		.card h3 {
+			margin: 0 0 0.75rem 0;
+			color: #111827;
+		}
+
+		.card p {
+			color: #374151;
+			line-height: 1.6;
+			margin: 0 0 1rem 0;
+		}
+
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+
+		@media (min-width: 600px) {
+			.form-row {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			color: #374151;
+			font-size: 0.95rem;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="number"],
+		textarea,
+		.answer-input {
+			width: 100%;
+			padding: 0.75rem;
+			margin-top: 0.35rem;
+			border: 1px solid #d1d5db;
+			border-radius: 6px;
+			font-size: 1rem;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
+
+		.answer-input {
+			max-width: 100%;
+		}
+
+		.captcha-card label {
+			display: block;
+		}
+
+		#captcha-error {
+			color: #dc2626;
+			margin-top: 0.5rem;
+			font-weight: 600;
+		}
+
+		.section-note {
+			font-weight: 700;
+			color: #1d4ed8;
+			margin-bottom: 1rem;
+		}
+
+		.graph-block {
+			text-align: center;
+		}
+
+		.graph-title {
+			font-weight: 600;
+			color: #111827;
+			margin-bottom: 0.75rem;
+		}
+
+		canvas {
+			width: 100%;
+			max-width: 500px;
+			height: auto;
+			border: 1px solid #d1d5db;
+			border-radius: 8px;
+			background: white;
+		}
+
+		.graph-label {
+			font-size: 0.9rem;
+			color: #6b7280;
+			margin-top: 0.5rem;
+			margin-bottom: 0;
+		}
+
+		.submit-button {
+			display: inline-block;
+			width: 100%;
+			padding: 1rem;
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: white;
+			background: #2563eb;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-top: 1rem;
+		}
+
+		.submit-button:hover {
+			background: #1d4ed8;
+		}
+
+		#results {
+			text-align: center;
+		}
+	</style>
+</Layout>
