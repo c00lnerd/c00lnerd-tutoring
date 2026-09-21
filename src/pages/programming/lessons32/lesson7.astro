@@ -1,0 +1,395 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Lesson 7: Sensors and Analog Input with Arduino">
+    <main class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">7</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 7: Sensors and Analog Input with Arduino</h1>
+                        <p class="text-gray-600">Use Arduino to read changing values from the real world</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 border-l-4 border-blue-500 rounded-r-lg p-4 mb-8">
+                <p class="text-blue-900 font-medium">You already know how to make decisions with conditionals, repeat actions with loops, and organize code with functions. Now you will learn how Arduino reads information from sensors so your programs can react to the outside world.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Learning Objectives</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-blue-600 mb-2">By the end of this Lesson, you will:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Understand what a sensor does in an Arduino project</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Explain the difference between digital input and analog input</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Use <code>analogRead()</code> to read values from a sensor</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Print changing sensor values to the Serial Monitor</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-green-600 mb-2">Skills Developed:</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Reading hardware input step by step</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Using the Serial Monitor for testing and debugging</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Connecting simple sensor circuits safely</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-green-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Preparing for sensor-controlled projects later</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 1: What Is a Sensor?</h2>
+                <p class="text-gray-700 mb-4">A sensor is a component that measures something in the environment and sends that information to Arduino. Some sensors measure light, temperature, motion, sound, or position.</p>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">Everyday idea</h3>
+                    <p class="text-blue-900">A button tells Arduino whether it is pressed or not. A potentiometer tells Arduino how far a knob is turned. A light sensor tells Arduino how bright it is. Sensors help the program know what is happening outside the code.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">Examples of beginner sensors</h3>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li><strong>Button:</strong> pressed or not pressed</li>
+                            <li><strong>Potentiometer:</strong> knob position</li>
+                            <li><strong>Photoresistor:</strong> light level</li>
+                            <li><strong>Temperature sensor:</strong> hot or cold</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">What Arduino does with a sensor</h3>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>Read the sensor value</li>
+                            <li>Store it in a variable</li>
+                            <li>Print it or compare it</li>
+                            <li>Use it to control hardware later</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 2: Digital Input vs Analog Input</h2>
+                <p class="text-gray-700 mb-4">Some inputs only have two possible states. Other inputs can change through a wide range of values.</p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-yellow-800 mb-2">Digital input</h3>
+                        <p class="text-yellow-700 text-sm mb-2">Digital input is usually just one of two states:</p>
+                        <ul class="space-y-2 text-yellow-700 text-sm">
+                            <li><code>HIGH</code></li>
+                            <li><code>LOW</code></li>
+                        </ul>
+                        <p class="text-yellow-700 text-sm mt-2">A button is a common digital input because it is either pressed or not pressed.</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-green-800 mb-2">Analog input</h3>
+                        <p class="text-green-700 text-sm mb-2">Analog input can change smoothly through many values.</p>
+                        <ul class="space-y-2 text-green-700 text-sm">
+                            <li>A potentiometer can turn a little or a lot</li>
+                            <li>A light sensor can see dim or bright light</li>
+                            <li>The reading is not just yes or no</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg mt-4 text-blue-900">
+                    On many Arduino boards, analog input pins are labeled <code>A0</code>, <code>A1</code>, <code>A2</code>, and so on. These pins are used with <code>analogRead()</code>.
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 3: Reading an Analog Value</h2>
+                <p class="text-gray-700 mb-4">Arduino uses <code>analogRead()</code> to measure a value from an analog pin. On most beginner Arduino boards, the value is usually between <code>0</code> and <code>1023</code>.</p>
+                <pre class="text-green-400 whitespace-pre-wrap bg-gray-900 p-4 rounded text-sm overflow-x-auto">{`int sensorValue = analogRead(A0);`}</pre>
+                <div class="grid md:grid-cols-2 gap-4 mt-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">What the reading means</h3>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li><code>0</code> means very low input voltage</li>
+                            <li><code>1023</code> means very high input voltage</li>
+                            <li>Values in between show different levels</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">Important note</h3>
+                        <p class="text-gray-700 text-sm">The value is not usually the final real-world unit yet. For example, a light sensor reading is just a number until you decide how to use it.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 4: Potentiometer Wiring Setup</h2>
+                <p class="text-gray-700 mb-4">A potentiometer is a great first analog sensor because it is stable, easy to wire, and easy to test. Turning the knob changes the value Arduino reads.</p>
+                <div class="bg-white border border-blue-100 rounded-lg p-5 mb-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-3">Hardware setup: potentiometer on <code>A0</code></h3>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg text-blue-900">
+                            <h4 class="font-semibold mb-2">Left pin</h4>
+                            <p class="text-sm">Connect one outer pin of the potentiometer to <code>5V</code>.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg text-green-900">
+                            <h4 class="font-semibold mb-2">Middle pin</h4>
+                            <p class="text-sm">Connect the middle pin to analog pin <code>A0</code>.</p>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg text-yellow-900">
+                            <h4 class="font-semibold mb-2">Right pin</h4>
+                            <p class="text-sm">Connect the other outer pin to <code>GND</code>.</p>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg mt-4 text-gray-700 text-sm">
+                        If the values change in the opposite direction from what you expect, that is okay. The two outside pins can be swapped, and the potentiometer will still work.
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 5: Print Sensor Values to the Serial Monitor</h2>
+                <p class="text-gray-700 mb-4">Before using a sensor to control hardware, it is smart to print the readings so you can see what the sensor is doing.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int sensorPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int sensorValue = analogRead(sensorPin);
+  Serial.println(sensorValue);
+  delay(200);
+}`}</code></pre>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg mt-4">
+                    <h3 class="font-semibold text-green-800 mb-2">What happens?</h3>
+                    <ul class="space-y-2 text-green-700">
+                        <li><strong><code>analogRead(sensorPin)</code></strong> gets the current sensor reading</li>
+                        <li><strong><code>Serial.println(sensorValue)</code></strong> shows the value in the Serial Monitor</li>
+                        <li><strong><code>delay(200)</code></strong> slows the printing so the values are easier to read</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 6: Using Functions with a Sensor</h2>
+                <p class="text-gray-700 mb-4">You just learned functions in Lesson 6, so now you can use them to keep sensor code organized.</p>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int sensorPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  showSensorReading();
+  delay(200);
+}
+
+void showSensorReading() {
+  int sensorValue = analogRead(sensorPin);
+  Serial.print("Sensor reading: ");
+  Serial.println(sensorValue);
+}`}</code></pre>
+                </div>
+                <div class="bg-blue-50 p-4 rounded-lg mt-4 text-blue-900">
+                    This version does the same job, but the function name <code>showSensorReading()</code> makes the program easier to read.
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 7: Reading and Understanding the Numbers</h2>
+                <p class="text-gray-700 mb-4">The most important beginner skill here is learning to watch the numbers change and connect them to what the sensor is doing.</p>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">If you use a potentiometer</h3>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>Turn the knob slowly</li>
+                            <li>Watch the values rise and fall</li>
+                            <li>Near one end, the value should be close to <code>0</code></li>
+                            <li>Near the other end, the value should be close to <code>1023</code></li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-2">If you use a light sensor later</h3>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li>Cover the sensor and uncover it</li>
+                            <li>Compare darker and brighter readings</li>
+                            <li>Notice that the values may not stay perfectly still</li>
+                            <li>Real sensors often change a little bit all the time</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 8: Common Beginner Mistakes</h2>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 1</h3>
+                        <p class="text-red-700 text-sm">Using a digital pin number like <code>2</code> when the sensor should be connected to an analog pin like <code>A0</code>.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 2</h3>
+                        <p class="text-red-700 text-sm">Forgetting to open the Serial Monitor after uploading the program.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 3</h3>
+                        <p class="text-red-700 text-sm">Printing values too quickly and making the output hard to read.</p>
+                    </div>
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <h3 class="font-semibold text-red-800 mb-2">Mistake 4</h3>
+                        <p class="text-red-700 text-sm">Assuming a sensor value must always be exactly the same every time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Hands-On Activity: Explore a Potentiometer</h2>
+                <p class="text-gray-700 mb-4">Build the potentiometer circuit and run a program that prints the value from <code>A0</code>. Then test what happens as you turn the knob.</p>
+                <div class="bg-yellow-50 p-4 rounded-lg mb-4 text-yellow-900">
+                    <ul class="space-y-2">
+                        <li>Predict what values you might see before you start</li>
+                        <li>Turn the knob to one end and record the reading</li>
+                        <li>Turn it to the middle and record the reading</li>
+                        <li>Turn it to the other end and record the reading</li>
+                    </ul>
+                </div>
+                <p class="text-gray-700">Extension: write a function that prints <code>Low</code>, <code>Medium</code>, or <code>High</code> depending on the sensor value.</p>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Assessment and Homework</h2>
+                <div class="grid md:grid-cols-2 gap-8 mb-6">
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Lesson 7 quiz topics</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>What sensors do</li>
+                            <li>Digital input vs analog input</li>
+                            <li>How <code>analogRead()</code> works</li>
+                            <li>Why readings often range from <code>0</code> to <code>1023</code></li>
+                            <li>How to test a sensor with the Serial Monitor</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Homework ideas</h3>
+                        <ul class="space-y-2 text-gray-700">
+                            <li>Practice explaining the difference between digital and analog input</li>
+                            <li>Trace what each line in the sensor reading code does</li>
+                            <li>Record several real potentiometer readings and compare them</li>
+                            <li>Be ready to use sensor values in decisions next</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg text-green-900">
+                    Good programmers do not guess what a sensor is doing. They read the values, test the hardware, and observe the pattern.
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center mt-8">
+                <div>
+                    <a href="/programming/lessons32/Lesson6" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Lesson 6
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a href="/programming/quizzes32/Lesson7" style="background-color: #7c3aed; color: white; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: 500; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Take Quiz 📝
+                    </a>
+                </div>
+                <div>
+                    <a href="/programming/lessons32/Lesson8" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Lesson 8 →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+</Layout>
+
+<script>
+declare global {
+    interface Window {
+        copyCode: (button: HTMLButtonElement) => void;
+    }
+}
+
+const lesson7Window = window as Window & typeof globalThis;
+
+lesson7Window.copyCode = function(button: HTMLButtonElement) {
+    try {
+        const parentElement = button.parentElement;
+        if (!parentElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+
+        const codeElement = parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+
+        const codeText = codeElement.textContent || codeElement.innerText;
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text: string, button: HTMLButtonElement) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button: HTMLButtonElement, success: boolean) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+
+    setTimeout((): void => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
