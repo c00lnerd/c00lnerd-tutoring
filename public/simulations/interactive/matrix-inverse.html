@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matrix Inverse Tool</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin:0; background:#f5f7fb; color:#172033; }
+  .wrap { max-width:1100px; margin:32px auto; padding:0 18px; }
+  h1 { margin-bottom:6px; }
+  .sub { color:#586174; margin-top:0; }
+  .panel { background:white; border-radius:14px; padding:22px; box-shadow:0 4px 18px rgba(0,0,0,.08); }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:18px; }
+  .controls label { font-weight:600; }
+  .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .matrix-area { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:22px; }
+  .matrix-block { text-align:center; }
+  .matrix-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+  .matrix { display:grid; gap:8px; padding:8px 14px; position:relative; }
+  .matrix:before,.matrix:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
+  .matrix:before { left:0; border-left:2px solid #172033; }
+  .matrix:after { right:0; border-right:2px solid #172033; }
+  input, .cell {
+    width:74px; height:48px; box-sizing:border-box; text-align:center;
+    font-size:1.05rem; border-radius:8px; border:1px solid #c8cfda; background:#fff;
+  }
+  .cell { display:flex; align-items:center; justify-content:center; background:#eef3ff; font-weight:700; min-width:74px; }
+  .symbol { font-size:2rem; font-weight:600; }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:24px 0 8px; }
+  button { border:0; border-radius:9px; padding:11px 18px; font-size:1rem; cursor:pointer; }
+  .primary { background:#2457d6; color:white; }
+  .secondary { background:#e8edf7; color:#172033; }
+  .steps { margin-top:22px; }
+  .steps h2 { font-size:1.15rem; }
+  .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .note { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
+  .error { margin-top:18px; padding:12px 14px; background:#fff1f2; color:#9f1239; border:1px solid #fecdd3; border-radius:10px; text-align:center; font-weight:600; display:none; }
+  @media (max-width:700px) {
+    .matrix { gap:6px; padding:6px 10px; }
+    input,.cell { width:58px; height:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Matrix Inverse Tool</h1>
+  <p class="sub">Choose a size, enter a `2 × 2` or `3 × 3` matrix, then calculate its inverse step by step.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="sizeSelect">Matrix size:</label>
+      <select id="sizeSelect" onchange="setSize()">
+        <option value="2">2 × 2</option>
+        <option value="3" selected>3 × 3</option>
+      </select>
+    </div>
+
+    <div class="matrix-area">
+      <div class="matrix-block">
+        <div class="matrix-label">A</div>
+        <div id="A" class="matrix"></div>
+      </div>
+      <div class="symbol">→</div>
+      <div class="matrix-block">
+        <div class="matrix-label">A<sup>-1</sup></div>
+        <div id="C" class="matrix"></div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculateInverse()">Calculate Inverse</button>
+      <button class="secondary" onclick="fillExample()">Example</button>
+      <button class="secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div id="error" class="error"></div>
+    <div id="steps" class="steps"></div>
+
+    <p class="note" id="formulaHint">For 2×2: A<sup>-1</sup> = (1 / det(A)) [ d  -b ; -c  a ], when det(A) ≠ 0</p>
+  </div>
+</div>
+
+<script>
+let N = 3;
+
+const hints = {
+  2: 'For 2×2: A^-1 = (1 / det(A)) [ d  -b ; -c  a ], when det(A) ≠ 0',
+  3: 'For 3×3: A^-1 = (1 / det(A)) · adj(A), where adj(A) is the transpose of the cofactor matrix'
+};
+
+function buildInputMatrix() {
+  const el = document.getElementById('A');
+  el.innerHTML = '';
+  el.style.gridTemplateColumns = `repeat(${N}, 78px)`;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const inp = document.createElement('input');
+    inp.type = 'number';
+    inp.step = 'any';
+    inp.value = '0';
+    inp.id = `A-${r}-${c}`;
+    inp.setAttribute('aria-label', `A row ${r + 1} column ${c + 1}`);
+    el.appendChild(inp);
+  }
+}
+
+function buildResultMatrix() {
+  const el = document.getElementById('C');
+  el.innerHTML = '';
+  el.style.gridTemplateColumns = `repeat(${N}, 78px)`;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const d = document.createElement('div');
+    d.className = 'cell';
+    d.id = `C-${r}-${c}`;
+    d.textContent = '0';
+    el.appendChild(d);
+  }
+}
+
+function getMatrix() {
+  const M = [];
+  for (let r = 0; r < N; r++) {
+    M[r] = [];
+    for (let c = 0; c < N; c++) {
+      M[r][c] = Number(document.getElementById(`A-${r}-${c}`).value) || 0;
+    }
+  }
+  return M;
+}
+
+function fmt(x) {
+  if (Math.abs(x - Math.round(x)) < 1e-10) return String(Math.round(x));
+  return Number(x.toFixed(6)).toString();
+}
+
+function setResultMatrix(M) {
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      document.getElementById(`C-${r}-${c}`).textContent = fmt(M[r][c]);
+    }
+  }
+}
+
+function clearResultMatrix() {
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      document.getElementById(`C-${r}-${c}`).textContent = '0';
+    }
+  }
+}
+
+function showError(message) {
+  const error = document.getElementById('error');
+  error.textContent = message;
+  error.style.display = 'block';
+}
+
+function hideError() {
+  const error = document.getElementById('error');
+  error.textContent = '';
+  error.style.display = 'none';
+}
+
+function det2(M) {
+  return M[0][0] * M[1][1] - M[0][1] * M[1][0];
+}
+
+function minor(M, row, col) {
+  const m = [];
+  for (let r = 0; r < M.length; r++) {
+    if (r === row) continue;
+    const newRow = [];
+    for (let c = 0; c < M.length; c++) {
+      if (c === col) continue;
+      newRow.push(M[r][c]);
+    }
+    m.push(newRow);
+  }
+  return m;
+}
+
+function determinant(M) {
+  const n = M.length;
+  if (n === 1) return M[0][0];
+  if (n === 2) return det2(M);
+
+  let total = 0;
+  for (let c = 0; c < n; c++) {
+    const sign = c % 2 === 0 ? 1 : -1;
+    total += sign * M[0][c] * determinant(minor(M, 0, c));
+  }
+  return total;
+}
+
+function transpose(M) {
+  const out = [];
+  for (let r = 0; r < M.length; r++) {
+    out[r] = [];
+    for (let c = 0; c < M.length; c++) {
+      out[r][c] = M[c][r];
+    }
+  }
+  return out;
+}
+
+function scalarMultiply(M, k) {
+  return M.map(row => row.map(value => value * k));
+}
+
+function inverse2(M) {
+  const a = M[0][0], b = M[0][1], c = M[1][0], d = M[1][1];
+  const det = det2(M);
+  if (Math.abs(det) < 1e-10) {
+    return { invertible: false, det, steps: [`det(A) = (${fmt(a)})(${fmt(d)}) − (${fmt(b)})(${fmt(c)}) = 0`] };
+  }
+
+  const adj = [[d, -b], [-c, a]];
+  const inverse = scalarMultiply(adj, 1 / det);
+  const steps = [
+    `det(A) = (${fmt(a)})(${fmt(d)}) − (${fmt(b)})(${fmt(c)}) = ${fmt(det)}`,
+    `Swap the main diagonal entries and negate the off-diagonal entries: [[${fmt(d)}, ${fmt(-b)}], [${fmt(-c)}, ${fmt(a)}]]`,
+    `Multiply each entry by 1 / det(A) = 1 / ${fmt(det)}`,
+    `A^-1 = (1 / ${fmt(det)}) · [[${fmt(d)}, ${fmt(-b)}], [${fmt(-c)}, ${fmt(a)}]]`
+  ];
+  return { invertible: true, det, inverse, steps };
+}
+
+function inverse3(M) {
+  const det = determinant(M);
+  const steps = [];
+  if (Math.abs(det) < 1e-10) {
+    return { invertible: false, det, steps: ['det(A) = 0, so the matrix is not invertible.'] };
+  }
+
+  steps.push(`det(A) = ${fmt(det)}`);
+
+  const cofactor = [];
+  for (let r = 0; r < 3; r++) {
+    cofactor[r] = [];
+    for (let c = 0; c < 3; c++) {
+      const sub = minor(M, r, c);
+      const subDet = det2(sub);
+      const sign = (r + c) % 2 === 0 ? 1 : -1;
+      const value = sign * subDet;
+      cofactor[r][c] = value;
+      steps.push(`C${r + 1}${c + 1} = ${sign === 1 ? '' : '-'}det([[${fmt(sub[0][0])}, ${fmt(sub[0][1])}], [${fmt(sub[1][0])}, ${fmt(sub[1][1])}]]) = ${fmt(value)}`);
+    }
+  }
+
+  const adj = transpose(cofactor);
+  steps.push(`adj(A) is the transpose of the cofactor matrix.`);
+
+  const inverse = scalarMultiply(adj, 1 / det);
+  steps.push(`Multiply each entry of adj(A) by 1 / det(A) = 1 / ${fmt(det)}.`);
+
+  return { invertible: true, det, cofactor, adj, inverse, steps };
+}
+
+function setSize() {
+  N = Number(document.getElementById('sizeSelect').value);
+  buildInputMatrix();
+  buildResultMatrix();
+  clearResultMatrix();
+  hideError();
+  document.getElementById('steps').innerHTML = '';
+  document.getElementById('formulaHint').textContent = hints[N];
+}
+
+function calculateInverse() {
+  hideError();
+  const M = getMatrix();
+  const result = N === 2 ? inverse2(M) : inverse3(M);
+
+  if (!result.invertible) {
+    clearResultMatrix();
+    showError('This matrix does not have an inverse because its determinant is 0.');
+    document.getElementById('steps').innerHTML = '<h2>Calculation steps</h2>' + result.steps.map(s => `<div class="step">${s}</div>`).join('');
+    return;
+  }
+
+  setResultMatrix(result.inverse);
+  let extra = '';
+
+  if (N === 3) {
+    const cofactorRows = result.cofactor.map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
+    const adjRows = result.adj.map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
+    extra = `<div class="step">Cofactor matrix: ${cofactorRows}</div><div class="step">adj(A): ${adjRows}</div>`;
+  }
+
+  document.getElementById('steps').innerHTML =
+    '<h2>Calculation steps</h2>' +
+    result.steps.map(s => `<div class="step">${s}</div>`).join('') +
+    extra;
+}
+
+function clearAll() {
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = 0;
+  }
+  clearResultMatrix();
+  hideError();
+  document.getElementById('steps').innerHTML = '';
+}
+
+function fillExample() {
+  const M = N === 2
+    ? [[4, 7], [2, 6]]
+    : [[1, 2, 3], [0, 1, 4], [5, 6, 0]];
+
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = M[r][c];
+  }
+  calculateInverse();
+}
+
+setSize();
+</script>
+</body>
+</html>
