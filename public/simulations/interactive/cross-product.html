@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cross Product Tool</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin:0; background:#f5f7fb; color:#172033; }
+  .wrap { max-width:1100px; margin:32px auto; padding:0 18px; }
+  h1 { margin-bottom:6px; }
+  .sub { color:#586174; margin-top:0; }
+  .panel { background:white; border-radius:14px; padding:22px; box-shadow:0 4px 18px rgba(0,0,0,.08); }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:18px; }
+  .controls label { font-weight:600; }
+  .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .vectors { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:22px; }
+  .vector-block { text-align:center; }
+  .vector-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+  .vector { display:grid; gap:8px; padding:8px 14px; position:relative; }
+  .vector:before,.vector:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
+  .vector:before { left:0; border-left:2px solid #172033; }
+  .vector:after { right:0; border-right:2px solid #172033; }
+  input, .cell {
+    width:74px; height:48px; box-sizing:border-box; text-align:center;
+    font-size:1.05rem; border-radius:8px; border:1px solid #c8cfda; background:#fff;
+  }
+  .cell { display:flex; align-items:center; justify-content:center; background:#eef3ff; font-weight:700; min-width:74px; padding:0 10px; }
+  .symbol { font-size:2rem; font-weight:600; }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:24px 0 8px; }
+  button { border:0; border-radius:9px; padding:11px 18px; font-size:1rem; cursor:pointer; }
+  .primary { background:#2457d6; color:white; }
+  .secondary { background:#e8edf7; color:#172033; }
+  .scalar-result { display:flex; justify-content:center; }
+  .steps { margin-top:22px; }
+  .steps h2 { font-size:1.15rem; }
+  .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .results { margin-top:22px; }
+  .result-card { padding:14px 16px; margin:10px 0; background:#eef3ff; border-radius:10px; }
+  .note { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
+  @media (max-width:700px) {
+    .vector { gap:6px; padding:6px 10px; }
+    input,.cell { width:58px; height:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Cross Product Tool</h1>
+  <p class="sub">Choose `2D` or `3D`, enter vectors `A` and `B`, then calculate the cross product step by step.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="dimensionSelect">Dimension:</label>
+      <select id="dimensionSelect" onchange="setDimension()">
+        <option value="2">2D</option>
+        <option value="3" selected>3D</option>
+      </select>
+    </div>
+
+    <div class="vectors">
+      <div class="vector-block">
+        <div class="vector-label">A</div>
+        <div id="A" class="vector"></div>
+      </div>
+      <div class="symbol">×</div>
+      <div class="vector-block">
+        <div class="vector-label">B</div>
+        <div id="B" class="vector"></div>
+      </div>
+      <div class="symbol">=</div>
+      <div class="vector-block">
+        <div class="vector-label" id="resultLabel">A × B</div>
+        <div id="resultContainer"></div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculate()">Calculate</button>
+      <button class="secondary" onclick="fillExample()">Example</button>
+      <button class="secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div id="results" class="results"></div>
+    <div id="steps" class="steps"></div>
+
+    <p class="note" id="formulaHint">For 2D: A × B = a₁b₂ − a₂b₁, which is the z-component of the 3D cross product.</p>
+  </div>
+</div>
+
+<script>
+let N = 3;
+
+const hints = {
+  2: 'For 2D: A × B = a₁b₂ − a₂b₁, which is the z-component of the 3D cross product.',
+  3: 'For 3D: A × B = [a₂b₃ − a₃b₂, a₃b₁ − a₁b₃, a₁b₂ − a₂b₁].'
+};
+
+function fmt(x) {
+  if (Math.abs(x - Math.round(x)) < 1e-10) return String(Math.round(x));
+  return Number(x.toFixed(6)).toString();
+}
+
+function buildVector(id) {
+  const el = document.getElementById(id);
+  el.innerHTML = '';
+  el.style.gridTemplateColumns = '1fr';
+  for (let i = 0; i < N; i++) {
+    const inp = document.createElement(id === 'C' ? 'div' : 'input');
+    if (id === 'C') {
+      inp.className = 'cell';
+      inp.textContent = '0';
+    } else {
+      inp.type = 'number';
+      inp.step = 'any';
+      inp.value = '0';
+      inp.setAttribute('aria-label', `${id} entry ${i + 1}`);
+    }
+    inp.id = `${id}-${i}`;
+    el.appendChild(inp);
+  }
+}
+
+function buildResultArea() {
+  const container = document.getElementById('resultContainer');
+  container.innerHTML = '';
+
+  if (N === 2) {
+    const scalar = document.createElement('div');
+    scalar.className = 'scalar-result';
+    scalar.innerHTML = '<div id="C-scalar" class="cell">0</div>';
+    container.appendChild(scalar);
+    return;
+  }
+
+  const resultVector = document.createElement('div');
+  resultVector.id = 'C';
+  resultVector.className = 'vector';
+  container.appendChild(resultVector);
+  buildVector('C');
+}
+
+function setDimension() {
+  N = Number(document.getElementById('dimensionSelect').value);
+  buildVector('A');
+  buildVector('B');
+  buildResultArea();
+  document.getElementById('formulaHint').textContent = hints[N];
+  document.getElementById('resultLabel').textContent = N === 2 ? 'A × B (z-component)' : 'A × B';
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('steps').innerHTML = '';
+}
+
+function val(id, index) {
+  return Number(document.getElementById(`${id}-${index}`).value) || 0;
+}
+
+function setResult(values) {
+  if (N === 2) {
+    document.getElementById('C-scalar').textContent = fmt(values[0]);
+    return;
+  }
+  for (let i = 0; i < N; i++) {
+    document.getElementById(`C-${i}`).textContent = fmt(values[i]);
+  }
+}
+
+function calculate2D() {
+  const ax = val('A', 0);
+  const ay = val('A', 1);
+  const bx = val('B', 0);
+  const by = val('B', 1);
+  const z = ax * by - ay * bx;
+
+  setResult([z]);
+
+  document.getElementById('results').innerHTML = [
+    '<h2>Results</h2>',
+    `<div class="result-card"><strong>Scalar cross product</strong><div>${fmt(z)}</div></div>`,
+    `<div class="result-card"><strong>Equivalent 3D vector</strong><div>[0, 0, ${fmt(z)}]</div></div>`
+  ].join('');
+
+  document.getElementById('steps').innerHTML = [
+    '<h2>Calculation steps</h2>',
+    `<div class="step">A = [${fmt(ax)}, ${fmt(ay)}], B = [${fmt(bx)}, ${fmt(by)}]</div>`,
+    `<div class="step">A × B = a₁b₂ − a₂b₁ = (${fmt(ax)})(${fmt(by)}) − (${fmt(ay)})(${fmt(bx)})</div>`,
+    `<div class="step">A × B = ${fmt(ax * by)} − ${fmt(ay * bx)} = ${fmt(z)}</div>`
+  ].join('');
+}
+
+function calculate3D() {
+  const ax = val('A', 0);
+  const ay = val('A', 1);
+  const az = val('A', 2);
+  const bx = val('B', 0);
+  const by = val('B', 1);
+  const bz = val('B', 2);
+
+  const cx = ay * bz - az * by;
+  const cy = az * bx - ax * bz;
+  const cz = ax * by - ay * bx;
+
+  setResult([cx, cy, cz]);
+
+  document.getElementById('results').innerHTML = [
+    '<h2>Results</h2>',
+    `<div class="result-card"><strong>Cross product vector</strong><div>[${fmt(cx)}, ${fmt(cy)}, ${fmt(cz)}]</div></div>`
+  ].join('');
+
+  document.getElementById('steps').innerHTML = [
+    '<h2>Calculation steps</h2>',
+    `<div class="step">A = [${fmt(ax)}, ${fmt(ay)}, ${fmt(az)}], B = [${fmt(bx)}, ${fmt(by)}, ${fmt(bz)}]</div>`,
+    `<div class="step">x-component: a₂b₃ − a₃b₂ = (${fmt(ay)})(${fmt(bz)}) − (${fmt(az)})(${fmt(by)}) = ${fmt(cx)}</div>`,
+    `<div class="step">y-component: a₃b₁ − a₁b₃ = (${fmt(az)})(${fmt(bx)}) − (${fmt(ax)})(${fmt(bz)}) = ${fmt(cy)}</div>`,
+    `<div class="step">z-component: a₁b₂ − a₂b₁ = (${fmt(ax)})(${fmt(by)}) − (${fmt(ay)})(${fmt(bx)}) = ${fmt(cz)}</div>`,
+    `<div class="step">A × B = [${fmt(cx)}, ${fmt(cy)}, ${fmt(cz)}]</div>`
+  ].join('');
+}
+
+function calculate() {
+  if (N === 2) {
+    calculate2D();
+  } else {
+    calculate3D();
+  }
+}
+
+function clearAll() {
+  ['A', 'B'].forEach(id => {
+    for (let i = 0; i < N; i++) {
+      document.getElementById(`${id}-${i}`).value = 0;
+    }
+  });
+  if (N === 2) {
+    document.getElementById('C-scalar').textContent = '0';
+  } else {
+    for (let i = 0; i < N; i++) {
+      document.getElementById(`C-${i}`).textContent = '0';
+    }
+  }
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('steps').innerHTML = '';
+}
+
+function fillExample() {
+  let A, B;
+  if (N === 2) {
+    A = [3, 4];
+    B = [2, 5];
+  } else {
+    A = [2, -1, 3];
+    B = [1, 4, 0];
+  }
+
+  for (let i = 0; i < N; i++) {
+    document.getElementById(`A-${i}`).value = A[i];
+    document.getElementById(`B-${i}`).value = B[i];
+  }
+  calculate();
+}
+
+setDimension();
+</script>
+</body>
+</html>
