@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eigenvalue and Eigenvector Tool</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin:0; background:#f5f7fb; color:#172033; }
+  .wrap { max-width:1100px; margin:32px auto; padding:0 18px; }
+  h1 { margin-bottom:6px; }
+  .sub { color:#586174; margin-top:0; }
+  .panel { background:white; border-radius:14px; padding:22px; box-shadow:0 4px 18px rgba(0,0,0,.08); }
+  .controls { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:18px; }
+  .controls label { font-weight:600; }
+  .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .matrix-area { display:flex; justify-content:center; margin-bottom:20px; }
+  .matrix-block { text-align:center; }
+  .matrix-label { font-weight:700; font-size:1.15rem; margin-bottom:8px; }
+  .matrix { display:grid; gap:8px; padding:8px 14px; position:relative; }
+  .matrix:before,.matrix:after { content:""; position:absolute; top:0; bottom:0; width:8px; border-top:2px solid #172033; border-bottom:2px solid #172033; }
+  .matrix:before { left:0; border-left:2px solid #172033; }
+  .matrix:after { right:0; border-right:2px solid #172033; }
+  input {
+    width:74px; height:48px; box-sizing:border-box; text-align:center;
+    font-size:1.05rem; border-radius:8px; border:1px solid #c8cfda; background:#fff;
+  }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:24px 0 8px; }
+  button { border:0; border-radius:9px; padding:11px 18px; font-size:1rem; cursor:pointer; }
+  .primary { background:#2457d6; color:white; }
+  .secondary { background:#e8edf7; color:#172033; }
+  .steps { margin-top:22px; }
+  .steps h2, .results h2 { font-size:1.15rem; }
+  .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .results { margin-top:22px; }
+  .result-card { padding:14px 16px; margin:10px 0; background:#eef3ff; border-radius:10px; }
+  .result-card strong { display:block; margin-bottom:6px; }
+  .note { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
+  .warning { margin-top:18px; padding:12px 14px; background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; border-radius:10px; text-align:center; font-weight:600; display:none; }
+  @media (max-width:700px) {
+    .matrix { gap:6px; padding:6px 10px; }
+    input { width:58px; height:44px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Eigenvalue and Eigenvector Tool</h1>
+  <p class="sub">Choose a `2 × 2` or `3 × 3` matrix, calculate its eigenvalues, and then see a corresponding eigenvector for each real eigenvalue.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="sizeSelect">Matrix size:</label>
+      <select id="sizeSelect" onchange="setSize()">
+        <option value="2">2 × 2</option>
+        <option value="3" selected>3 × 3</option>
+      </select>
+    </div>
+
+    <div class="matrix-area">
+      <div class="matrix-block">
+        <div class="matrix-label">A</div>
+        <div id="A" class="matrix"></div>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculate()">Calculate</button>
+      <button class="secondary" onclick="fillExample()">Example</button>
+      <button class="secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <div id="warning" class="warning"></div>
+    <div id="results" class="results"></div>
+    <div id="steps" class="steps"></div>
+
+    <p class="note" id="formulaHint">For 2×2: solve det(A − λI) = 0, then solve (A − λI)v = 0 for each eigenvalue.</p>
+  </div>
+</div>
+
+<script>
+let N = 3;
+const EPS = 1e-9;
+
+const hints = {
+  2: 'For 2×2: solve det(A − λI) = 0, then solve (A − λI)v = 0 for each eigenvalue.',
+  3: 'For 3×3: build the characteristic polynomial det(A − λI) = 0, solve for λ, then solve (A − λI)v = 0.'
+};
+
+function buildInputMatrix() {
+  const el = document.getElementById('A');
+  el.innerHTML = '';
+  el.style.gridTemplateColumns = `repeat(${N}, 78px)`;
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    const inp = document.createElement('input');
+    inp.type = 'number';
+    inp.step = 'any';
+    inp.value = '0';
+    inp.id = `A-${r}-${c}`;
+    inp.setAttribute('aria-label', `A row ${r + 1} column ${c + 1}`);
+    el.appendChild(inp);
+  }
+}
+
+function getMatrix() {
+  const M = [];
+  for (let r = 0; r < N; r++) {
+    M[r] = [];
+    for (let c = 0; c < N; c++) {
+      M[r][c] = Number(document.getElementById(`A-${r}-${c}`).value) || 0;
+    }
+  }
+  return M;
+}
+
+function fmt(x) {
+  if (Math.abs(x) < 1e-10) return '0';
+  if (Math.abs(x - Math.round(x)) < 1e-10) return String(Math.round(x));
+  return Number(x.toFixed(6)).toString();
+}
+
+function fmtComplex(z) {
+  if (Math.abs(z.im) < 1e-9) return fmt(z.re);
+  const realPart = Math.abs(z.re) < 1e-9 ? '' : fmt(z.re);
+  const imagValue = fmt(Math.abs(z.im));
+  const imagPart = `${Math.abs(Math.abs(z.im) - 1) < 1e-9 ? '' : imagValue}i`;
+  if (!realPart) return z.im >= 0 ? imagPart : `-${imagPart}`;
+  return `${realPart} ${z.im >= 0 ? '+' : '−'} ${imagPart}`;
+}
+
+function nearZero(x) {
+  return Math.abs(x) < EPS;
+}
+
+function showWarning(message) {
+  const el = document.getElementById('warning');
+  el.textContent = message;
+  el.style.display = 'block';
+}
+
+function hideWarning() {
+  const el = document.getElementById('warning');
+  el.textContent = '';
+  el.style.display = 'none';
+}
+
+function clearOutput() {
+  document.getElementById('results').innerHTML = '';
+  document.getElementById('steps').innerHTML = '';
+  hideWarning();
+}
+
+function determinant2(M) {
+  return M[0][0] * M[1][1] - M[0][1] * M[1][0];
+}
+
+function determinant3(M) {
+  const a = M[0][0], b = M[0][1], c = M[0][2];
+  const d = M[1][0], e = M[1][1], f = M[1][2];
+  const g = M[2][0], h = M[2][1], i = M[2][2];
+  return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g);
+}
+
+function principalMinorSum3(M) {
+  const a = M[0][0], b = M[0][1], c = M[0][2];
+  const d = M[1][0], e = M[1][1], f = M[1][2];
+  const g = M[2][0], h = M[2][1], i = M[2][2];
+  return (a * e - b * d) + (a * i - c * g) + (e * i - f * h);
+}
+
+function quadraticEigenvalues2(M) {
+  const trace = M[0][0] + M[1][1];
+  const det = determinant2(M);
+  const disc = trace * trace - 4 * det;
+  const steps = [
+    `trace(A) = ${fmt(M[0][0])} + ${fmt(M[1][1])} = ${fmt(trace)}`,
+    `det(A) = (${fmt(M[0][0])})(${fmt(M[1][1])}) − (${fmt(M[0][1])})(${fmt(M[1][0])}) = ${fmt(det)}`,
+    `Characteristic equation: λ² − (${fmt(trace)})λ + (${fmt(det)}) = 0`,
+    `Discriminant = trace² − 4det = ${fmt(disc)}`
+  ];
+
+  if (disc >= -EPS) {
+    const safeDisc = disc < 0 ? 0 : disc;
+    const root = Math.sqrt(safeDisc);
+    const l1 = (trace + root) / 2;
+    const l2 = (trace - root) / 2;
+    steps.push(`Eigenvalues: λ = (${fmt(trace)} ± √${fmt(safeDisc)}) / 2`);
+    return {
+      trace,
+      det,
+      roots: [
+        { re: l1, im: 0 },
+        { re: l2, im: 0 }
+      ],
+      steps
+    };
+  }
+
+  const real = trace / 2;
+  const imag = Math.sqrt(-disc) / 2;
+  steps.push(`Eigenvalues are complex because the discriminant is negative.`);
+  return {
+    trace,
+    det,
+    roots: [
+      { re: real, im: imag },
+      { re: real, im: -imag }
+    ],
+    steps
+  };
+}
+
+function solveCubicRealAndComplex(a, b, c) {
+  const p = b - (a * a) / 3;
+  const q = (2 * a * a * a) / 27 - (a * b) / 3 + c;
+  const disc = (q * q) / 4 + (p * p * p) / 27;
+  const shift = -a / 3;
+
+  if (disc > EPS) {
+    const sqrtDisc = Math.sqrt(disc);
+    const u = Math.cbrt(-q / 2 + sqrtDisc);
+    const v = Math.cbrt(-q / 2 - sqrtDisc);
+    const realRoot = u + v + shift;
+    const realPart = -(u + v) / 2 + shift;
+    const imagPart = (Math.sqrt(3) / 2) * (u - v);
+    return [
+      { re: realRoot, im: 0 },
+      { re: realPart, im: imagPart },
+      { re: realPart, im: -imagPart }
+    ];
+  }
+
+  if (Math.abs(disc) <= EPS) {
+    const u = Math.cbrt(-q / 2);
+    return [
+      { re: 2 * u + shift, im: 0 },
+      { re: -u + shift, im: 0 },
+      { re: -u + shift, im: 0 }
+    ];
+  }
+
+  const r = Math.sqrt(-p * p * p / 27);
+  const phi = Math.acos(-q / (2 * r));
+  const m = 2 * Math.sqrt(-p / 3);
+  return [
+    { re: m * Math.cos(phi / 3) + shift, im: 0 },
+    { re: m * Math.cos((phi + 2 * Math.PI) / 3) + shift, im: 0 },
+    { re: m * Math.cos((phi + 4 * Math.PI) / 3) + shift, im: 0 }
+  ];
+}
+
+function characteristicData3(M) {
+  const trace = M[0][0] + M[1][1] + M[2][2];
+  const s2 = principalMinorSum3(M);
+  const det = determinant3(M);
+  const roots = solveCubicRealAndComplex(-trace, s2, -det).sort((x, y) => x.re - y.re || x.im - y.im);
+  const steps = [
+    `trace(A) = ${fmt(trace)}`,
+    `Sum of principal 2×2 minors = ${fmt(s2)}`,
+    `det(A) = ${fmt(det)}`,
+    `Characteristic equation: λ³ − (${fmt(trace)})λ² + (${fmt(s2)})λ − (${fmt(det)}) = 0`
+  ];
+  return { trace, s2, det, roots, steps };
+}
+
+function subtractLambdaI(M, lambda) {
+  const B = [];
+  for (let r = 0; r < M.length; r++) {
+    B[r] = [];
+    for (let c = 0; c < M.length; c++) {
+      B[r][c] = M[r][c] - (r === c ? lambda : 0);
+    }
+  }
+  return B;
+}
+
+function normalizeVector(v) {
+  const maxAbs = Math.max(...v.map(x => Math.abs(x)));
+  if (maxAbs < EPS) return v;
+  return v.map(x => x / maxAbs).map(x => Math.abs(x) < EPS ? 0 : x);
+}
+
+function eigenvector2(M, lambda) {
+  const B = subtractLambdaI(M, lambda);
+  const r1 = B[0];
+  const r2 = B[1];
+  let v;
+
+  if (!nearZero(r1[0]) || !nearZero(r1[1])) {
+    v = [-r1[1], r1[0]];
+  } else if (!nearZero(r2[0]) || !nearZero(r2[1])) {
+    v = [-r2[1], r2[0]];
+  } else {
+    v = [1, 0];
+  }
+
+  return normalizeVector(v);
+}
+
+function cross(u, v) {
+  return [
+    u[1] * v[2] - u[2] * v[1],
+    u[2] * v[0] - u[0] * v[2],
+    u[0] * v[1] - u[1] * v[0]
+  ];
+}
+
+function vectorNorm(v) {
+  return Math.sqrt(v.reduce((sum, x) => sum + x * x, 0));
+}
+
+function rrefNullVector3(B) {
+  const M = B.map(row => row.slice());
+  const rows = 3;
+  const cols = 3;
+  let lead = 0;
+  const pivots = [];
+
+  for (let r = 0; r < rows && lead < cols; r++) {
+    let i = r;
+    while (i < rows && Math.abs(M[i][lead]) < EPS) i++;
+    if (i === rows) {
+      lead++;
+      r--;
+      continue;
+    }
+    [M[i], M[r]] = [M[r], M[i]];
+    const pivot = M[r][lead];
+    for (let c = 0; c < cols; c++) M[r][c] /= pivot;
+    for (let rr = 0; rr < rows; rr++) {
+      if (rr === r) continue;
+      const factor = M[rr][lead];
+      for (let c = 0; c < cols; c++) M[rr][c] -= factor * M[r][c];
+    }
+    pivots.push(lead);
+    lead++;
+  }
+
+  const freeCols = [0, 1, 2].filter(c => !pivots.includes(c));
+  if (freeCols.length === 0) return [1, 0, 0];
+
+  const free = freeCols[freeCols.length - 1];
+  const v = [0, 0, 0];
+  v[free] = 1;
+
+  for (let r = pivots.length - 1; r >= 0; r--) {
+    const pivotCol = pivots[r];
+    let sum = 0;
+    for (let c = pivotCol + 1; c < cols; c++) sum += M[r][c] * v[c];
+    v[pivotCol] = -sum;
+  }
+
+  return normalizeVector(v);
+}
+
+function eigenvector3(M, lambda) {
+  const B = subtractLambdaI(M, lambda);
+  const candidates = [
+    cross(B[0], B[1]),
+    cross(B[0], B[2]),
+    cross(B[1], B[2])
+  ].sort((x, y) => vectorNorm(y) - vectorNorm(x));
+
+  if (vectorNorm(candidates[0]) > EPS) return normalizeVector(candidates[0]);
+  return rrefNullVector3(B);
+}
+
+function formatVector(v) {
+  return `[${v.map(fmt).join(', ')}]`;
+}
+
+function renderResults(items) {
+  const html = ['<h2>Results</h2>'];
+  items.forEach(item => {
+    html.push('<div class="result-card">');
+    html.push(`<strong>${item.title}</strong>`);
+    html.push(`<div>${item.body}</div>`);
+    html.push('</div>');
+  });
+  document.getElementById('results').innerHTML = html.join('');
+}
+
+function calculate() {
+  clearOutput();
+  const M = getMatrix();
+  const resultItems = [];
+  const stepLines = [];
+  let complexCount = 0;
+
+  if (N === 2) {
+    const data = quadraticEigenvalues2(M);
+    stepLines.push(...data.steps);
+
+    data.roots.forEach((root, index) => {
+      const label = `Eigenvalue ${index + 1}: λ = ${fmtComplex(root)}`;
+      if (Math.abs(root.im) < 1e-9) {
+        const vec = eigenvector2(M, root.re);
+        resultItems.push({ title: label, body: `Eigenvector: v = ${formatVector(vec)}` });
+      } else {
+        complexCount++;
+        resultItems.push({ title: label, body: 'Complex eigenvalue. Real eigenvector is not shown in this tool.' });
+      }
+    });
+  } else {
+    const data = characteristicData3(M);
+    stepLines.push(...data.steps);
+
+    data.roots.forEach((root, index) => {
+      const label = `Eigenvalue ${index + 1}: λ = ${fmtComplex(root)}`;
+      if (Math.abs(root.im) < 1e-9) {
+        const vec = eigenvector3(M, root.re);
+        const shifted = subtractLambdaI(M, root.re).map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
+        resultItems.push({ title: label, body: `Solve (A − λI)v = 0 with A − λI = ${shifted}<br>Eigenvector: v = ${formatVector(vec)}` });
+      } else {
+        complexCount++;
+        resultItems.push({ title: label, body: 'Complex eigenvalue. Real eigenvector is not shown in this tool.' });
+      }
+    });
+  }
+
+  if (complexCount > 0) {
+    showWarning('Some eigenvalues are complex. This tool displays real eigenvectors only for real eigenvalues.');
+  }
+
+  renderResults(resultItems);
+  document.getElementById('steps').innerHTML = '<h2>Calculation steps</h2>' + stepLines.map(s => `<div class="step">${s}</div>`).join('');
+}
+
+function clearAll() {
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = 0;
+  }
+  clearOutput();
+}
+
+function fillExample() {
+  const M = N === 2
+    ? [[4, 1], [2, 3]]
+    : [[6, 2, 1], [0, 3, 0], [0, 0, 2]];
+
+  for (let r = 0; r < N; r++) for (let c = 0; c < N; c++) {
+    document.getElementById(`A-${r}-${c}`).value = M[r][c];
+  }
+  calculate();
+}
+
+function setSize() {
+  N = Number(document.getElementById('sizeSelect').value);
+  buildInputMatrix();
+  clearOutput();
+  document.getElementById('formulaHint').textContent = hints[N];
+}
+
+setSize();
+</script>
+</body>
+</html>
