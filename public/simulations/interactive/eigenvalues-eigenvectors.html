@@ -287,6 +287,72 @@ function normalizeVector(v) {
   return v.map(x => x / maxAbs).map(x => Math.abs(x) < EPS ? 0 : x);
 }
 
+function sameRealEigenvalue(a, b) {
+  return Math.abs(a - b) < 1e-6;
+}
+
+function vectorsEqual(u, v) {
+  return u.length === v.length && u.every((value, index) => Math.abs(value - v[index]) < 1e-6);
+}
+
+function addUniqueVector(vectors, candidate) {
+  const normalized = normalizeVector(candidate);
+  if (vectorNorm(normalized) < EPS) return;
+  const negated = normalized.map(value => -value);
+  const exists = vectors.some(vector => vectorsEqual(vector, normalized) || vectorsEqual(vector, negated));
+  if (!exists) vectors.push(normalized);
+}
+
+function nullspaceBasis(B) {
+  const M = B.map(row => row.slice());
+  const rows = M.length;
+  const cols = M[0].length;
+  let lead = 0;
+  const pivots = [];
+
+  for (let r = 0; r < rows && lead < cols; r++) {
+    let i = r;
+    while (i < rows && Math.abs(M[i][lead]) < EPS) i++;
+    if (i === rows) {
+      lead++;
+      r--;
+      continue;
+    }
+
+    [M[i], M[r]] = [M[r], M[i]];
+    const pivot = M[r][lead];
+    for (let c = 0; c < cols; c++) M[r][c] /= pivot;
+    for (let rr = 0; rr < rows; rr++) {
+      if (rr === r) continue;
+      const factor = M[rr][lead];
+      for (let c = 0; c < cols; c++) M[rr][c] -= factor * M[r][c];
+    }
+
+    pivots.push(lead);
+    lead++;
+  }
+
+  const freeCols = Array.from({ length: cols }, (_, index) => index).filter(c => !pivots.includes(c));
+  if (freeCols.length === 0) return [];
+
+  const basis = [];
+  freeCols.forEach(free => {
+    const v = Array(cols).fill(0);
+    v[free] = 1;
+
+    for (let r = pivots.length - 1; r >= 0; r--) {
+      const pivotCol = pivots[r];
+      let sum = 0;
+      for (let c = pivotCol + 1; c < cols; c++) sum += M[r][c] * v[c];
+      v[pivotCol] = -sum;
+    }
+
+    addUniqueVector(basis, v);
+  });
+
+  return basis;
+}
+
 function eigenvector2(M, lambda) {
   const B = subtractLambdaI(M, lambda);
   const r1 = B[0];
@@ -317,47 +383,8 @@ function vectorNorm(v) {
 }
 
 function rrefNullVector3(B) {
-  const M = B.map(row => row.slice());
-  const rows = 3;
-  const cols = 3;
-  let lead = 0;
-  const pivots = [];
-
-  for (let r = 0; r < rows && lead < cols; r++) {
-    let i = r;
-    while (i < rows && Math.abs(M[i][lead]) < EPS) i++;
-    if (i === rows) {
-      lead++;
-      r--;
-      continue;
-    }
-    [M[i], M[r]] = [M[r], M[i]];
-    const pivot = M[r][lead];
-    for (let c = 0; c < cols; c++) M[r][c] /= pivot;
-    for (let rr = 0; rr < rows; rr++) {
-      if (rr === r) continue;
-      const factor = M[rr][lead];
-      for (let c = 0; c < cols; c++) M[rr][c] -= factor * M[r][c];
-    }
-    pivots.push(lead);
-    lead++;
-  }
-
-  const freeCols = [0, 1, 2].filter(c => !pivots.includes(c));
-  if (freeCols.length === 0) return [1, 0, 0];
-
-  const free = freeCols[freeCols.length - 1];
-  const v = [0, 0, 0];
-  v[free] = 1;
-
-  for (let r = pivots.length - 1; r >= 0; r--) {
-    const pivotCol = pivots[r];
-    let sum = 0;
-    for (let c = pivotCol + 1; c < cols; c++) sum += M[r][c] * v[c];
-    v[pivotCol] = -sum;
-  }
-
-  return normalizeVector(v);
+  const basis = nullspaceBasis(B);
+  return basis.length > 0 ? basis[0] : [1, 0, 0];
 }
 
 function eigenvector3(M, lambda) {
@@ -370,6 +397,37 @@ function eigenvector3(M, lambda) {
 
   if (vectorNorm(candidates[0]) > EPS) return normalizeVector(candidates[0]);
   return rrefNullVector3(B);
+}
+
+function eigenspaceBasis2(M, lambda) {
+  const basis = nullspaceBasis(subtractLambdaI(M, lambda));
+  if (basis.length > 0) return basis;
+  return [eigenvector2(M, lambda)];
+}
+
+function eigenspaceBasis3(M, lambda) {
+  const B = subtractLambdaI(M, lambda);
+  const basis = [];
+  addUniqueVector(basis, cross(B[0], B[1]));
+  addUniqueVector(basis, cross(B[0], B[2]));
+  addUniqueVector(basis, cross(B[1], B[2]));
+  nullspaceBasis(B).forEach(vector => addUniqueVector(basis, vector));
+  if (basis.length > 0) return basis;
+  return [eigenvector3(M, lambda)];
+}
+
+function groupRealEigenvalues(roots) {
+  const groups = [];
+  roots.forEach(root => {
+    if (Math.abs(root.im) >= 1e-9) return;
+    const existing = groups.find(group => sameRealEigenvalue(group.lambda, root.re));
+    if (existing) {
+      existing.multiplicity += 1;
+    } else {
+      groups.push({ lambda: root.re, multiplicity: 1 });
+    }
+  });
+  return groups;
 }
 
 function formatVector(v) {
@@ -462,14 +520,22 @@ function calculate() {
 
     data.roots.forEach((root, index) => {
       const label = `Eigenvalue ${index + 1}: λ = ${fmtComplex(root)}`;
-      if (Math.abs(root.im) < 1e-9) {
-        const vec = eigenvector2(M, root.re);
-        resultItems.push({ title: label, body: `Eigenvector: v = ${formatVector(vec)}` });
-        eigenPairs.push({ lambda: root.re, vector: vec });
-      } else {
+      if (Math.abs(root.im) >= 1e-9) {
         complexCount++;
         resultItems.push({ title: label, body: 'Complex eigenvalue. Real eigenvector is not shown in this tool.' });
+      } else {
+        resultItems.push({ title: label, body: 'Included below in the eigenspace basis output.' });
       }
+    });
+
+    groupRealEigenvalues(data.roots).forEach(group => {
+      const basis = eigenspaceBasis2(M, group.lambda);
+      const listed = basis.map(vector => formatVector(vector)).join(', ');
+      resultItems.push({
+        title: `Eigenspace for λ = ${fmt(group.lambda)}`,
+        body: `Multiplicity: ${group.multiplicity}<br>Basis vector${basis.length === 1 ? '' : 's'}: ${listed}`
+      });
+      basis.forEach(vector => eigenPairs.push({ lambda: group.lambda, vector }));
     });
   } else {
     const data = characteristicData3(M);
@@ -477,15 +543,23 @@ function calculate() {
 
     data.roots.forEach((root, index) => {
       const label = `Eigenvalue ${index + 1}: λ = ${fmtComplex(root)}`;
-      if (Math.abs(root.im) < 1e-9) {
-        const vec = eigenvector3(M, root.re);
-        const shifted = subtractLambdaI(M, root.re).map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
-        resultItems.push({ title: label, body: `Solve (A − λI)v = 0 with A − λI = ${shifted}<br>Eigenvector: v = ${formatVector(vec)}` });
-        eigenPairs.push({ lambda: root.re, vector: vec });
-      } else {
+      if (Math.abs(root.im) >= 1e-9) {
         complexCount++;
         resultItems.push({ title: label, body: 'Complex eigenvalue. Real eigenvector is not shown in this tool.' });
+      } else {
+        resultItems.push({ title: label, body: 'Included below in the eigenspace basis output.' });
       }
+    });
+
+    groupRealEigenvalues(data.roots).forEach(group => {
+      const shifted = subtractLambdaI(M, group.lambda).map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
+      const basis = eigenspaceBasis3(M, group.lambda);
+      const listed = basis.map(vector => formatVector(vector)).join(', ');
+      resultItems.push({
+        title: `Eigenspace for λ = ${fmt(group.lambda)}`,
+        body: `Solve (A − λI)v = 0 with A − λI = ${shifted}<br>Multiplicity: ${group.multiplicity}<br>Basis vector${basis.length === 1 ? '' : 's'}: ${listed}`
+      });
+      basis.forEach(vector => eigenPairs.push({ lambda: group.lambda, vector }));
     });
   }
 
