@@ -369,6 +369,67 @@ function formatVector(v) {
   return `[${v.map(fmt).join(', ')}]`;
 }
 
+function formatMatrix(M) {
+  return M.map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
+}
+
+function columnsToMatrix(vectors) {
+  const out = [];
+  for (let r = 0; r < vectors[0].length; r++) {
+    out[r] = [];
+    for (let c = 0; c < vectors.length; c++) {
+      out[r][c] = vectors[c][r];
+    }
+  }
+  return out;
+}
+
+function diagonalMatrix(values) {
+  const out = [];
+  for (let r = 0; r < values.length; r++) {
+    out[r] = [];
+    for (let c = 0; c < values.length; c++) {
+      out[r][c] = r === c ? values[r] : 0;
+    }
+  }
+  return out;
+}
+
+function tryBuildDiagonalization(resultItems, eigenPairs) {
+  if (eigenPairs.length !== N) {
+    resultItems.push({
+      title: 'Diagonalization',
+      body: 'A transform matrix and diagonal matrix are not shown because there are not enough real eigenvectors to form a full basis.'
+    });
+    return;
+  }
+
+  const P = columnsToMatrix(eigenPairs.map(pair => pair.vector));
+  const D = diagonalMatrix(eigenPairs.map(pair => pair.lambda));
+  const detP = N === 2 ? determinant2(P) : determinant3(P);
+
+  if (Math.abs(detP) < EPS) {
+    resultItems.push({
+      title: 'Diagonalization',
+      body: 'The real eigenvectors found do not form an invertible transform matrix, so diagonalization is not shown for this matrix.'
+    });
+    return;
+  }
+
+  resultItems.push({
+    title: 'Transform matrix P',
+    body: `Use the eigenvectors as columns of P: ${formatMatrix(P)}`
+  });
+  resultItems.push({
+    title: 'Diagonal matrix D',
+    body: `Place the matching eigenvalues on the diagonal: ${formatMatrix(D)}`
+  });
+  resultItems.push({
+    title: 'Diagonalization relationship',
+    body: `A = P D P<sup>-1</sup> and D = P<sup>-1</sup> A P` 
+  });
+}
+
 function renderResults(items) {
   const html = ['<h2>Results</h2>'];
   items.forEach(item => {
@@ -386,6 +447,7 @@ function calculate() {
   const resultItems = [];
   const stepLines = [];
   let complexCount = 0;
+  const eigenPairs = [];
 
   if (N === 2) {
     const data = quadraticEigenvalues2(M);
@@ -396,6 +458,7 @@ function calculate() {
       if (Math.abs(root.im) < 1e-9) {
         const vec = eigenvector2(M, root.re);
         resultItems.push({ title: label, body: `Eigenvector: v = ${formatVector(vec)}` });
+        eigenPairs.push({ lambda: root.re, vector: vec });
       } else {
         complexCount++;
         resultItems.push({ title: label, body: 'Complex eigenvalue. Real eigenvector is not shown in this tool.' });
@@ -411,6 +474,7 @@ function calculate() {
         const vec = eigenvector3(M, root.re);
         const shifted = subtractLambdaI(M, root.re).map(row => `[${row.map(fmt).join(', ')}]`).join(' ');
         resultItems.push({ title: label, body: `Solve (A − λI)v = 0 with A − λI = ${shifted}<br>Eigenvector: v = ${formatVector(vec)}` });
+        eigenPairs.push({ lambda: root.re, vector: vec });
       } else {
         complexCount++;
         resultItems.push({ title: label, body: 'Complex eigenvalue. Real eigenvector is not shown in this tool.' });
@@ -421,6 +485,8 @@ function calculate() {
   if (complexCount > 0) {
     showWarning('Some eigenvalues are complex. This tool displays real eigenvectors only for real eigenvalues.');
   }
+
+  tryBuildDiagonalization(resultItems, eigenPairs);
 
   renderResults(resultItems);
   document.getElementById('steps').innerHTML = '<h2>Calculation steps</h2>' + stepLines.map(s => `<div class="step">${s}</div>`).join('');
