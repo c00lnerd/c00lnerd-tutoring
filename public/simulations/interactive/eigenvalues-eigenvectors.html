@@ -35,6 +35,7 @@
   .results { margin-top:22px; }
   .result-card { padding:14px 16px; margin:10px 0; background:#eef3ff; border-radius:10px; }
   .result-card strong { display:block; margin-bottom:6px; }
+  .placeholder-card { background:#f7f9fc; color:#586174; border:1px dashed #c8cfda; }
   .note { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
   .warning { margin-top:18px; padding:12px 14px; background:#fff7ed; color:#9a3412; border:1px solid #fed7aa; border-radius:10px; text-align:center; font-weight:600; display:none; }
   @media (max-width:700px) {
@@ -46,7 +47,7 @@
 <body>
 <div class="wrap">
   <h1>Eigenvalue and Eigenvector Tool</h1>
-  <p class="sub">Choose a `2 × 2` or `3 × 3` matrix, calculate its eigenvalues, and then see a corresponding eigenvector for each real eigenvalue.</p>
+  <p class="sub">Choose a `2 × 2` or `3 × 3` matrix, calculate its eigenvalues, then see real eigenvectors, the transform matrix `P`, and the diagonal matrix `D` when diagonalization is possible.</p>
 
   <div class="panel">
     <div class="controls">
@@ -71,10 +72,16 @@
     </div>
 
     <div id="warning" class="warning"></div>
-    <div id="results" class="results"></div>
+    <div id="results" class="results">
+      <h2>Results</h2>
+      <div class="result-card placeholder-card">
+        <strong>After you calculate</strong>
+        <div>This tool will show eigenvalues, eigenvectors, the transform matrix <code>P</code>, and the diagonal matrix <code>D</code> when the matrix can be diagonalized.</div>
+      </div>
+    </div>
     <div id="steps" class="steps"></div>
 
-    <p class="note" id="formulaHint">For 2×2: solve det(A − λI) = 0, then solve (A − λI)v = 0 for each eigenvalue.</p>
+    <p class="note" id="formulaHint">For 2×2: solve det(A − λI) = 0, then solve (A − λI)v = 0 for each eigenvalue. If there are enough independent real eigenvectors, the tool also forms <code>P</code> and <code>D</code>.</p>
   </div>
 </div>
 
@@ -83,8 +90,8 @@ let N = 3;
 const EPS = 1e-9;
 
 const hints = {
-  2: 'For 2×2: solve det(A − λI) = 0, then solve (A − λI)v = 0 for each eigenvalue.',
-  3: 'For 3×3: build the characteristic polynomial det(A − λI) = 0, solve for λ, then solve (A − λI)v = 0.'
+  2: 'For 2×2: solve det(A − λI) = 0, then solve (A − λI)v = 0 for each eigenvalue. If there are enough independent real eigenvectors, the tool also forms P and D.',
+  3: 'For 3×3: build the characteristic polynomial det(A − λI) = 0, solve for λ, then solve (A − λI)v = 0. If there are enough independent real eigenvectors, the tool also forms P and D.'
 };
 
 function buildInputMatrix() {
@@ -145,7 +152,7 @@ function hideWarning() {
 }
 
 function clearOutput() {
-  document.getElementById('results').innerHTML = '';
+  document.getElementById('results').innerHTML = '<h2>Results</h2><div class="result-card placeholder-card"><strong>After you calculate</strong><div>This tool will show eigenvalues, eigenvectors, the transform matrix <code>P</code>, and the diagonal matrix <code>D</code> when the matrix can be diagonalized.</div></div>';
   document.getElementById('steps').innerHTML = '';
   hideWarning();
 }
