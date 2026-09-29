@@ -145,6 +145,19 @@
 		}
 		.formula-box p {
 			margin-bottom: 0.5rem;
+			font-size: 1.1rem;
+		}
+		.formula-box .math-large {
+			font-size: 1.3rem;
+		}
+		.triangle-container {
+			display: flex;
+			justify-content: center;
+			margin: 2rem 0;
+		}
+		.triangle-svg {
+			max-width: 300px;
+			height: auto;
 		}
 		table {
 			width: 100%;
@@ -208,6 +221,17 @@
 			.formula-box {
 				background: #334155;
 			}
+			.triangle-svg text {
+				fill: #f1f5f9;
+			}
+			.triangle-svg polygon,
+			.triangle-svg polyline,
+			.triangle-svg path {
+				stroke: #60a5fa;
+			}
+			.triangle-svg text[fill="#dc2626"] {
+				fill: #f87171;
+			}
 		}
 	</style>
 </head>
@@ -246,25 +270,30 @@
 			<h2>Trigonometry</h2>
 
 			<h3>Basic Definitions</h3>
+
+			<div class="triangle-container">
+				<img src="/images/right-triangle-trig.png" alt="Right triangle with trigonometric labels" class="triangle-svg">
+			</div>
+
 			<table>
 				<tr>
 					<th>Function</th>
 					<th>Definition</th>
 				</tr>
 				<tr>
-					<td>\(\sin(\alpha)\)</td>
-					<td>\(\frac{a}{c}\)</td>
+					<td class="math-large">\(\sin(\alpha)\)</td>
+					<td class="math-large">\(\frac{a}{c}\)</td>
 				</tr>
 				<tr>
-					<td>\(\cos(\alpha)\)</td>
-					<td>\(\frac{b}{c}\)</td>
+					<td class="math-large">\(\cos(\alpha)\)</td>
+					<td class="math-large">\(\frac{b}{c}\)</td>
 				</tr>
 				<tr>
-					<td>\(\tan(\alpha)\)</td>
-					<td>\(\frac{a}{b}\)</td>
+					<td class="math-large">\(\tan(\alpha)\)</td>
+					<td class="math-large">\(\frac{a}{b}\)</td>
 				</tr>
 			</table>
-			<p style="font-style: italic; color: #64748b; margin-bottom: 2rem;">Where \(a\) is the opposite side, \(b\) is the adjacent side, and \(c\) is the hypotenuse of a right triangle.</p>
+			<p style="font-style: italic; color: #64748b; margin-bottom: 2rem; font-size: 1rem;">Where \(a\) is the opposite side, \(b\) is the adjacent side, and \(c\) is the hypotenuse of a right triangle.</p>
 
 			<h3>Basic Identities</h3>
 			<div class="grid-3">
@@ -751,6 +780,10 @@
 			},
 			options: {
 				skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+			},
+			svg: {
+				fontCache: 'global',
+				scale: 1.2
 			}
 		};
 	</script>
