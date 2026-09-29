@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Precalculus Reference Sheet | C00lnerd Tutoring</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			font-family: 'Inter', system-ui, sans-serif;
+			line-height: 1.6;
+			background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+			min-height: 100vh;
+		}
+		nav {
+			background: white;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			position: sticky;
+			top: 0;
+			z-index: 50;
+		}
+		.nav-content {
+			max-width: 80rem;
+			margin: 0 auto;
+			padding: 0 1rem;
+		}
+		.nav-inner {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			height: 4rem;
+		}
+		.logo {
+			font-size: 1.5rem;
+			font-weight: bold;
+			color: #2563eb;
+			text-decoration: none;
+		}
+		.nav-links {
+			display: flex;
+			gap: 1rem;
+		}
+		.nav-links a {
+			color: #374151;
+			text-decoration: none;
+			padding: 0.5rem 0.75rem;
+			border-radius: 0.375rem;
+			font-size: 0.875rem;
+			font-weight: 500;
+			transition: color 0.2s;
+		}
+		.nav-links a:hover {
+			color: #2563eb;
+		}
+		.nav-links a.active {
+			color: #2563eb;
+		}
+		.container {
+			max-width: 80rem;
+			margin: 0 auto;
+			padding: 3rem 1rem;
+		}
+		h1 {
+			font-size: 2.25rem;
+			font-weight: bold;
+			color: #0f172a;
+			margin-bottom: 1rem;
+		}
+		.subtitle {
+			font-size: 1.125rem;
+			color: #475569;
+			margin-bottom: 2rem;
+		}
+		.nav-card {
+			background: white;
+			border-radius: 0.5rem;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			padding: 1.5rem;
+			margin-bottom: 2rem;
+		}
+		.nav-card h2 {
+			font-size: 1.25rem;
+			font-weight: 600;
+			color: #0f172a;
+			margin-bottom: 1rem;
+		}
+		.nav-grid {
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+			gap: 1rem;
+		}
+		@media (min-width: 768px) {
+			.nav-grid {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+		@media (min-width: 1024px) {
+			.nav-grid {
+				grid-template-columns: repeat(3, 1fr);
+			}
+		}
+		.nav-grid a {
+			color: #2563eb;
+			text-decoration: none;
+			padding: 0.5rem;
+			border-radius: 0.375rem;
+			transition: all 0.2s;
+		}
+		.nav-grid a:hover {
+			color: #1d4ed8;
+			background: #eff6ff;
+		}
+		.section {
+			background: white;
+			border-radius: 0.5rem;
+			box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+			padding: 2rem;
+			margin-bottom: 2rem;
+		}
+		.section h2 {
+			font-size: 1.875rem;
+			font-weight: bold;
+			color: #0f172a;
+			margin-bottom: 1.5rem;
+			padding-bottom: 0.5rem;
+			border-bottom: 2px solid #2563eb;
+		}
+		.section h3 {
+			font-size: 1.5rem;
+			font-weight: 600;
+			color: #1e293b;
+			margin-bottom: 1rem;
+		}
+		.formula-box {
+			background: #f8fafc;
+			padding: 1rem;
+			border-radius: 0.375rem;
+			margin-bottom: 2rem;
+		}
+		.formula-box p {
+			margin-bottom: 0.5rem;
+		}
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			margin-bottom: 2rem;
+		}
+		table th, table td {
+			border: 1px solid #cbd5e1;
+			padding: 0.75rem;
+			text-align: left;
+		}
+		table th {
+			background: #f8fafc;
+			font-weight: 600;
+		}
+		table tr:nth-child(even) {
+			background: #f8fafc;
+		}
+		.grid-3 {
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+			gap: 1rem;
+		}
+		@media (min-width: 768px) {
+			.grid-3 {
+				grid-template-columns: repeat(3, 1fr);
+			}
+		}
+		.grid-2 {
+			display: grid;
+			grid-template-columns: repeat(1, 1fr);
+			gap: 1rem;
+		}
+		@media (min-width: 768px) {
+			.grid-2 {
+				grid-template-columns: repeat(2, 1fr);
+			}
+		}
+		@media (prefers-color-scheme: dark) {
+			body {
+				background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+			}
+			nav {
+				background: #1e293b;
+			}
+			.nav-card, .section, .formula-box {
+				background: #1e293b;
+			}
+			h1, h2, h3, .nav-card h2 {
+				color: #f1f5f9;
+			}
+			.subtitle, .nav-links a {
+				color: #cbd5e1;
+			}
+			table th, table td {
+				border-color: #475569;
+			}
+			table th, table tr:nth-child(even) {
+				background: #334155;
+			}
+			.formula-box {
+				background: #334155;
+			}
+		}
+	</style>
+</head>
+<body>
+	<nav>
+		<div class="nav-content">
+			<div class="nav-inner">
+				<a href="/" class="logo">C00lnerd</a>
+				<div class="nav-links">
+					<a href="/">Home</a>
+					<a href="/precalc/reference-sheet.html" class="active">Precalculus Reference</a>
+				</div>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+		<h1>Precalculus Reference Sheet</h1>
+		<p class="subtitle">A comprehensive reference guide for precalculus concepts including trigonometry, complex numbers, combinatorics, limits, and derivatives.</p>
+
+		<!-- Table of Contents -->
+		<nav class="nav-card">
+			<h2>Quick Navigation</h2>
+			<div class="nav-grid">
+				<a href="#trigonometry">Trigonometry</a>
+				<a href="#complex-numbers">Complex Numbers</a>
+				<a href="#combinatorics">Combinatorics</a>
+				<a href="#limits">Limits</a>
+				<a href="#derivatives">Derivatives</a>
+				<a href="#si-prefixes">SI Prefixes</a>
+			</div>
+		</nav>
+
+		<!-- TRIGONOMETRY SECTION -->
+		<section id="trigonometry" class="section">
+			<h2>Trigonometry</h2>
+
+			<h3>Basic Definitions</h3>
+			<table>
+				<tr>
+					<th>Function</th>
+					<th>Definition</th>
+				</tr>
+				<tr>
+					<td>\(\sin(\alpha)\)</td>
+					<td>\(\frac{a}{c}\)</td>
+				</tr>
+				<tr>
+					<td>\(\cos(\alpha)\)</td>
+					<td>\(\frac{b}{c}\)</td>
+				</tr>
+				<tr>
+					<td>\(\tan(\alpha)\)</td>
+					<td>\(\frac{a}{b}\)</td>
+				</tr>
+			</table>
+			<p style="font-style: italic; color: #64748b; margin-bottom: 2rem;">Where \(a\) is the opposite side, \(b\) is the adjacent side, and \(c\) is the hypotenuse of a right triangle.</p>
+
+			<h3>Basic Identities</h3>
+			<div class="grid-3">
+				<div class="formula-box">
+					<p>\(\sin(x) = \frac{1}{\csc(x)}\)</p>
+					<p>\(\csc(x) = \frac{1}{\sin(x)}\)</p>
+					<p>\(\tan(x) = \frac{\sin(x)}{\cos(x)}\)</p>
+				</div>
+				<div class="formula-box">
+					<p>\(\cos(x) = \frac{1}{\sec(x)}\)</p>
+					<p>\(\sec(x) = \frac{1}{\cos(x)}\)</p>
+					<p>\(\cot(x) = \frac{\cos(x)}{\sin(x)}\)</p>
+				</div>
+				<div class="formula-box">
+					<p>\(\tan(x) = \frac{1}{\cot(x)}\)</p>
+					<p>\(\cot(x) = \frac{1}{\tan(x)}\)</p>
+				</div>
+			</div>
+
+			<h3>Pythagorean Identities</h3>
+			<div class="grid-3">
+				<div class="formula-box">
+					<p style="font-weight: 600;">Primary Identity</p>
+					<p>\(\sin^2(x) + \cos^2(x) = 1\)</p>
+					<p>\(\sin^2(x) = 1 - \cos^2(x)\)</p>
+					<p>\(\cos^2(x) = 1 - \sin^2(x)\)</p>
+				</div>
+				<div class="formula-box">
+					<p style="font-weight: 600;">Cosecant Identity</p>
+					<p>\(\csc^2(x) - \cot^2(x) = 1\)</p>
+					<p>\(\csc^2(x) = 1 + \cot^2(x)\)</p>
+					<p>\(\cot^2(x) = \csc^2(x) - 1\)</p>
+				</div>
+				<div class="formula-box">
+					<p style="font-weight: 600;">Secant Identity</p>
+					<p>\(\sec^2(x) - \tan^2(x) = 1\)</p>
+					<p>\(\sec^2(x) = 1 + \tan^2(x)\)</p>
+					<p>\(\tan^2(x) = \sec^2(x) - 1\)</p>
+				</div>
+			</div>
+
+			<h3>Sum and Difference Identities</h3>
+			<div class="formula-box">
+				<p>\(\sin(x \pm y) = \sin(x)\cos(y) \pm \cos(x)\sin(y)\)</p>
+				<p>\(\cos(x \pm y) = \cos(x)\cos(y) \mp \sin(x)\sin(y)\)</p>
+				<p>\(\tan(x \pm y) = \frac{\tan(x) \pm \tan(y)}{1 \mp \tan(x)\tan(y)}\)</p>
+			</div>
+
+			<h3>Cofunction Identities</h3>
+			<div class="grid-2">
+				<div class="formula-box">
+					<p>\(\sin\left(\frac{\pi}{2} - x\right) = \cos(x)\)</p>
+					<p>\(\cos\left(\frac{\pi}{2} - x\right) = \sin(x)\)</p>
+					<p>\(\tan\left(\frac{\pi}{2} - x\right) = \cot(x)\)</p>
+				</div>
+				<div class="formula-box">
+					<p>\(\sec\left(\frac{\pi}{2} - x\right) = \csc(x)\)</p>
+					<p>\(\csc\left(\frac{\pi}{2} - x\right) = \sec(x)\)</p>
+					<p>\(\cot\left(\frac{\pi}{2} - x\right) = \tan(x)\)</p>
+				</div>
+			</div>
+			<div class="formula-box" style="margin-top: 1rem;">
+				<p>\(\sin\left(x \pm \frac{\pi}{2}\right) = \pm \cos(x)\)</p>
+				<p>\(\cos\left(x \pm \frac{\pi}{2}\right) = \mp \sin(x)\)</p>
+			</div>
+
+			<h3>Double Angle Identities</h3>
+			<div class="formula-box">
+				<p>\(\sin(2x) = 2\sin(x)\cos(x)\)</p>
+				<p>\(\cos(2x) = \cos^2(x) - \sin^2(x) = 1 - 2\sin^2(x) = 2\cos^2(x) - 1\)</p>
+				<p>\(\tan(2x) = \frac{2\tan(x)}{1 - \tan^2(x)}\)</p>
+				<p>\(\sin^2(x) = \frac{1 - \cos(2x)}{2}\)</p>
+				<p>\(\cos^2(x) = \frac{1 + \cos(2x)}{2}\)</p>
+				<p>\(\tan^2(x) = \frac{1 - \cos(2x)}{1 + \cos(2x)}\)</p>
+			</div>
+
+			<h3>Half Angle Identities</h3>
+			<div class="formula-box">
+				<p>\(\sin\left(\frac{x}{2}\right) = \pm \sqrt{\frac{1 - \cos(x)}{2}}\)</p>
+				<p>\(\cos\left(\frac{x}{2}\right) = \pm \sqrt{\frac{1 + \cos(x)}{2}}\)</p>
+				<p>\(\tan\left(\frac{x}{2}\right) = \pm \sqrt{\frac{1 - \cos(x)}{1 + \cos(x)}} = \frac{\sin(x)}{1 + \cos(x)} = \frac{1 - \cos(x)}{\sin(x)}\)</p>
+			</div>
+
+			<h3>Product to Sum and Sum to Product Identities</h3>
+			<div class="grid-2">
+				<div class="formula-box">
+					<p style="font-weight: 600;">Product to Sum</p>
+					<p>\(\sin(x)\sin(y) = \frac{1}{2}[\cos(x-y) - \cos(x+y)]\)</p>
+					<p>\(\cos(x)\cos(y) = \frac{1}{2}[\cos(x-y) + \cos(x+y)]\)</p>
+					<p>\(\sin(x)\cos(y) = \frac{1}{2}[\sin(x+y) + \sin(x-y)]\)</p>
+				</div>
+				<div class="formula-box">
+					<p style="font-weight: 600;">Sum to Product</p>
+					<p>\(\sin(x) + \sin(y) = 2\sin\left(\frac{x+y}{2}\right)\cos\left(\frac{x-y}{2}\right)\)</p>
+					<p>\(\cos(x) + \cos(y) = 2\cos\left(\frac{x+y}{2}\right)\cos\left(\frac{x-y}{2}\right)\)</p>
+					<p>\(\sin(x) - \sin(y) = 2\cos\left(\frac{x+y}{2}\right)\sin\left(\frac{x-y}{2}\right)\)</p>
+				</div>
+			</div>
+
+			<h3>Inverse Trigonometric Functions</h3>
+			<div class="formula-box">
+				<p>\(\sin^{-1}(x) = \arcsin(x)\), where \(x = \sin(y)\)</p>
+				<p>\(\cos^{-1}(x) = \arccos(x)\), where \(x = \cos(y)\)</p>
+				<p>\(\tan^{-1}(x) = \arctan(x)\), where \(x = \tan(y)\)</p>
+			</div>
+			<div class="formula-box">
+				<p>\(\sin(\sin^{-1}(x)) = x\)</p>
+				<p>\(\cos(\cos^{-1}(x)) = x\)</p>
+				<p>\(\tan(\tan^{-1}(x)) = x\)</p>
+			</div>
+
+			<h3>Law of Sines</h3>
+			<div class="formula-box">
+				<p>\(\frac{a}{\sin(A)} = \frac{b}{\sin(B)} = \frac{c}{\sin(C)} = 2R\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Where \(R\) is the radius of the circumcircle of the triangle</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Area Formulas</p>
+				<p>\(\text{Area} = \frac{1}{2}bc\sin(A) = \frac{1}{2}ab\sin(C) = \frac{1}{2}ac\sin(B)\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Use Law of Sines for:</p>
+				<p>AAS, ASA, SSA (ambiguous case)</p>
+			</div>
+
+			<h3>Law of Cosines</h3>
+			<div class="formula-box">
+				<p>\(a^2 = b^2 + c^2 - 2bc\cos(A)\)</p>
+				<p>\(\cos(A) = \frac{b^2 + c^2 - a^2}{2bc}\)</p>
+				<p>\(A = \cos^{-1}\left(\frac{b^2 + c^2 - a^2}{2bc}\right)\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Use Law of Cosines for:</p>
+				<p>SAS, SSS</p>
+			</div>
+
+			<h3>Heron's Formula</h3>
+			<div class="formula-box">
+				<p>Semi-perimeter: \(s = \frac{a + b + c}{2}\)</p>
+				<p>\(\text{Area} = \sqrt{s(s-a)(s-b)(s-c)}\)</p>
+				<p>Inradius: \(r = \frac{\sqrt{(s-a)(s-b)(s-c)}}{s}\)</p>
+			</div>
+		</section>
+
+		<!-- COMPLEX NUMBERS SECTION -->
+		<section id="complex-numbers" class="section">
+			<h2>Complex Numbers</h2>
+
+			<h3>Basic Definition</h3>
+			<div class="formula-box">
+				<p>A complex number: \(Z = a + bi\)</p>
+				<p>Where \(a\) is the real part and \(b\) is the imaginary part</p>
+			</div>
+
+			<h3>Absolute Value (Modulus)</h3>
+			<div class="formula-box">
+				<p>\(|Z| = |a + bi| = \sqrt{a^2 + b^2}\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Example: \(|3 + 4i| = \sqrt{3^2 + 4^2} = \sqrt{25} = 5\)</p>
+			</div>
+
+			<h3>Trigonometric (Polar) Notation</h3>
+			<div class="formula-box">
+				<p>\(a = r\cos(\theta)\)</p>
+				<p>\(b = r\sin(\theta)\)</p>
+				<p>\(r = |Z| = \sqrt{a^2 + b^2}\) (distance to origin)</p>
+				<p>\(a + bi = r(\cos(\theta) + i\sin(\theta)) = r\text{cis}(\theta)\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Example: \(4 + 4i = 4\sqrt{2}\text{cis}\left(\frac{\pi}{4}\right)\)</p>
+			</div>
+
+			<h3>Complex Multiplication</h3>
+			<div class="formula-box">
+				<p>\(r_1\text{cis}(\theta_1) \cdot r_2\text{cis}(\theta_2) = r_1r_2\text{cis}(\theta_1 + \theta_2)\)</p>
+			</div>
+
+			<h3>Complex Division</h3>
+			<div class="formula-box">
+				<p>\(\frac{r_1\text{cis}(\theta_1)}{r_2\text{cis}(\theta_2)} = \frac{r_1}{r_2}\text{cis}(\theta_1 - \theta_2)\)</p>
+			</div>
+
+			<h3>DeMoivre's Theorem</h3>
+			<div class="formula-box">
+				<p>\((r\text{cis}(\theta))^n = r^n\text{cis}(n\theta)\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Example: \((1+i)^9 = \sqrt{2}\text{cis}(45°)^9 = 2^{9/2}\text{cis}(405°) = 16\sqrt{2}\text{cis}(45°) = 16 + 16i\)</p>
+			</div>
+
+			<h3>Nth Roots of Complex Numbers</h3>
+			<div class="formula-box">
+				<p>\((r\text{cis}(\theta))^{1/n} = r^{1/n}\text{cis}\left(\frac{\theta + k \cdot 360°}{n}\right)\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Where \(k = 0, 1, 2, \ldots, n-1\)</p>
+			</div>
+		</section>
+
+		<!-- COMBINATORICS SECTION -->
+		<section id="combinatorics" class="section">
+			<h2>Combinatorics</h2>
+
+			<h3>Fundamental Counting Principle</h3>
+			<div class="formula-box">
+				<p>If an event can be performed in \(n_1\) ways, a second in \(n_2\) ways, etc., then the total number of ways is:</p>
+				<p style="font-weight: 600;">\(n_1 \cdot n_2 \cdot n_3 \cdot \ldots \cdot n_k\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Example: A 5-digit number has \(10 \cdot 10 \cdot 10 \cdot 10 \cdot 10 = 100,000\) combinations</p>
+			</div>
+
+			<h3>Permutations</h3>
+			<div class="formula-box" style="margin-bottom: 1rem;">
+				<p style="font-weight: 600;">Permutation of all n objects:</p>
+				<p>\(_nP_n = n(n-1)(n-2)\ldots(3)(2)(1) = n!\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Permutations of n objects taken k at a time:</p>
+				<p>\(_nP_k = \frac{n!}{(n-k)!}\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Order matters (abc ≠ bac)</p>
+			</div>
+
+			<h3>Combinations</h3>
+			<div class="formula-box">
+				<p>\(_nC_k = \binom{n}{k} = \frac{n!}{k!(n-k)!}\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Order does not matter (abc = bac = cab)</p>
+			</div>
+
+			<h3>Pascal's Triangle & Binomial Coefficients</h3>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Used to expand \((a + b)^n\):</p>
+				<p>\((a + b)^0 = 1\)</p>
+				<p>\((a + b)^1 = a + b\)</p>
+				<p>\((a + b)^2 = a^2 + 2ab + b^2\)</p>
+				<p>\((a + b)^3 = a^3 + 3a^2b + 3ab^2 + b^3\)</p>
+				<p>\((a + b)^4 = a^4 + 4a^3b + 6a^2b^2 + 4ab^3 + b^4\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Key Identity:</p>
+				<p>\(\binom{n}{k} = \binom{n}{n-k}\)</p>
+			</div>
+		</section>
+
+		<!-- LIMITS SECTION -->
+		<section id="limits" class="section">
+			<h2>Limits</h2>
+
+			<h3>Theorem 1: Linear Function Limit</h3>
+			<div class="formula-box">
+				<p>If \(f(x) = mx + b\), then \(\lim_{x \to a} f(x) = ma + b\)</p>
+			</div>
+
+			<h3>Theorem 2: Uniqueness</h3>
+			<div class="formula-box">
+				<p>If \(f(x)\) has a limit as \(x\) approaches \(a\), that limit is unique.</p>
+			</div>
+
+			<h3>Theorem 3: Limit of Sums</h3>
+			<div class="formula-box">
+				<p>If \(\lim_{x \to a} f(x) = L_1\) and \(\lim_{x \to a} g(x) = L_2\), then \(\lim_{x \to a} [f(x) + g(x)] = L_1 + L_2\)</p>
+			</div>
+
+			<h3>Theorem 4: Limit of Products</h3>
+			<div class="formula-box">
+				<p>If \(\lim_{x \to a} f(x) = L_1\) and \(\lim_{x \to a} g(x) = L_2\), then \(\lim_{x \to a} [f(x) \cdot g(x)] = L_1 \cdot L_2\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Corollary 1:</p>
+				<p>\(\lim_{x \to a} [k \cdot f(x)] = k \cdot L_1\) (where \(k\) is a constant)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Corollary 2:</p>
+				<p>\(\lim_{x \to a} x^n = a^n\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Corollary 3:</p>
+				<p>If \(f(x) = c_0x^n + c_1x^{n-1} + c_2x^{n-2} + \ldots + c_n\), then \(\lim_{x \to a} f(x) = c_0a^n + c_1a^{n-1} + c_2a^{n-2} + \ldots + c_n\)</p>
+			</div>
+
+			<h3>Theorem 5: Limit of Quotients</h3>
+			<div class="formula-box">
+				<p>If \(\lim_{x \to a} g(x) = L \neq 0\), then \(\lim_{x \to a} \frac{1}{g(x)} = \frac{1}{L}\)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Corollary 1:</p>
+				<p>If \(\lim_{x \to a} f(x) = L_1\) and \(\lim_{x \to a} g(x) = L_2 \neq 0\), then \(\lim_{x \to a} \frac{f(x)}{g(x)} = \frac{L_1}{L_2}\)</p>
+			</div>
+		</section>
+
+		<!-- DERIVATIVES SECTION -->
+		<section id="derivatives" class="section">
+			<h2>Derivatives</h2>
+
+			<h3>Definition of the Derivative</h3>
+			<div class="formula-box">
+				<p>\(\frac{df(x)}{dx} = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Also written as \(f'(x)\) (Lagrange notation)</p>
+			</div>
+			<div class="formula-box">
+				<p style="font-weight: 600;">Example: \(f(x) = x^2\)</p>
+				<p>\(\frac{df}{dx} = \lim_{h \to 0} \frac{(x+h)^2 - x^2}{h} = \lim_{h \to 0} \frac{x^2 + 2xh + h^2 - x^2}{h} = \lim_{h \to 0} \frac{2xh + h^2}{h} = \lim_{h \to 0} (2x + h) = 2x\)</p>
+			</div>
+
+			<h3>Basic Derivative Identities</h3>
+			<div class="grid-2">
+				<div class="formula-box">
+					<p>\(\frac{d}{dx}(k) = 0\) (constant)</p>
+					<p>\(\frac{d}{dx}(x^n) = nx^{n-1}\)</p>
+					<p>\(\frac{d}{dx}(\sin x) = \cos x\)</p>
+					<p>\(\frac{d}{dx}(\cos x) = -\sin x\)</p>
+					<p>\(\frac{d}{dx}(\tan x) = \sec^2 x\)</p>
+				</div>
+				<div class="formula-box">
+					<p>\(\frac{d}{dx}(\ln x) = \frac{1}{x}, \quad x > 0\)</p>
+					<p>\(\frac{d}{dx}(\sec x) = \sec x \tan x\)</p>
+					<p>\(\frac{d}{dx}(\arcsin x) = \frac{1}{\sqrt{1-x^2}}\)</p>
+					<p>\(\frac{d}{dx}(\arccos x) = -\frac{1}{\sqrt{1-x^2}}\)</p>
+					<p>\(\frac{d}{dx}(\arctan x) = \frac{1}{1+x^2}\)</p>
+				</div>
+			</div>
+			<div class="formula-box">
+				<p>\(\frac{d}{dx}(a^x) = \ln(a) \cdot a^x\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Proof: Take logarithm of \(y = a^x\) and use implicit differentiation</p>
+			</div>
+
+			<h3>Constant Multiple Rule</h3>
+			<div class="formula-box">
+				<p>\(\frac{d}{dx}[k \cdot f(x)] = k \cdot \frac{d}{dx}f(x)\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Example: \(\frac{d}{dx}(5\sin x) = 5\cos x\)</p>
+			</div>
+
+			<h3>Product Rule</h3>
+			<div class="formula-box">
+				<p>\(\frac{d}{dx}[f(x) \cdot g(x)] = f(x) \cdot \frac{d}{dx}g(x) + \frac{d}{dx}f(x) \cdot g(x)\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Or: \((fg)' = f'g + g'f\)</p>
+			</div>
+
+			<h3>Quotient Rule</h3>
+			<div class="formula-box">
+				<p>\(\frac{d}{dx}\left[\frac{f(x)}{g(x)}\right] = \frac{\frac{d}{dx}f(x) \cdot g(x) - f(x) \cdot \frac{d}{dx}g(x)}{g^2(x)}\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Or: \(\left(\frac{f}{g}\right)' = \frac{f'g - g'f}{g^2}\)</p>
+			</div>
+
+			<h3>Reciprocal Rule</h3>
+			<div class="formula-box">
+				<p>\(\frac{d}{dx}\left[\frac{1}{f(x)}\right] = -\frac{\frac{d}{dx}f(x)}{f^2(x)}\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Or: \(\left(\frac{1}{f}\right)' = -\frac{f'}{f^2}\) (derived from quotient rule)</p>
+			</div>
+
+			<h3>Chain Rule</h3>
+			<div class="formula-box">
+				<p>\([f(g(x))]' = f'(g(x)) \cdot g'(x)\)</p>
+				<p style="font-style: italic; font-size: 0.875rem;">Example: \(\frac{d}{dx}[\sin(x^3)] = \cos(x^3) \cdot 3x^2 = 3x^2\cos(x^3)\)</p>
+			</div>
+
+			<h3>Practice Problems</h3>
+			<div class="formula-box">
+				<p>1. \(f(x) = 6x^2 + 7x\)</p>
+				<p>2. \(g(t) = (4t^2 - 3t + 2)^{-2}\)</p>
+				<p>3. \(y = \frac{3}{1-8z}\)</p>
+				<p>4. \(R(w) = \csc(7w)\)</p>
+				<p>5. \(G(x) = 2\sin(3x) + \tan(x)\)</p>
+				<p>6. \(h(u) = \tan(4 + 10u)\)</p>
+				<p>7. \(f(t) = 5 + e^{4t} + t^7\)</p>
+				<p>8. \(g(x) = e^{1-\cos x}\)</p>
+				<p>9. \(H(z) = \frac{2}{1-6z}\)</p>
+				<p>10. \(u(t) = \tan^{-1}(3t-1)\)</p>
+			</div>
+		</section>
+
+		<!-- SI PREFIXES SECTION -->
+		<section id="si-prefixes" class="section">
+			<h2>SI Prefixes and Powers of 10</h2>
+
+			<table>
+				<tr>
+					<th>Prefix</th>
+					<th>Multiple</th>
+					<th>Symbol</th>
+				</tr>
+				<tr>
+					<td>yotta</td>
+					<td>\(10^{24}\)</td>
+					<td>Y</td>
+				</tr>
+				<tr>
+					<td>zetta</td>
+					<td>\(10^{21}\)</td>
+					<td>Z</td>
+				</tr>
+				<tr>
+					<td>exa</td>
+					<td>\(10^{18}\)</td>
+					<td>E</td>
+				</tr>
+				<tr>
+					<td>peta</td>
+					<td>\(10^{15}\)</td>
+					<td>P</td>
+				</tr>
+				<tr>
+					<td>tera</td>
+					<td>\(10^{12}\)</td>
+					<td>T</td>
+				</tr>
+				<tr>
+					<td>giga</td>
+					<td>\(10^{9}\)</td>
+					<td>G</td>
+				</tr>
+				<tr>
+					<td>mega</td>
+					<td>\(10^{6}\)</td>
+					<td>M</td>
+				</tr>
+				<tr>
+					<td>kilo</td>
+					<td>\(10^{3}\)</td>
+					<td>k</td>
+				</tr>
+				<tr>
+					<td>hecto</td>
+					<td>\(10^{2}\)</td>
+					<td>h</td>
+				</tr>
+				<tr>
+					<td>deca</td>
+					<td>\(10^{1}\)</td>
+					<td>da</td>
+				</tr>
+				<tr>
+					<td>deci</td>
+					<td>\(10^{-1}\)</td>
+					<td>d</td>
+				</tr>
+				<tr>
+					<td>centi</td>
+					<td>\(10^{-2}\)</td>
+					<td>c</td>
+				</tr>
+				<tr>
+					<td>milli</td>
+					<td>\(10^{-3}\)</td>
+					<td>m</td>
+				</tr>
+				<tr>
+					<td>micro</td>
+					<td>\(10^{-6}\)</td>
+					<td>μ</td>
+				</tr>
+				<tr>
+					<td>nano</td>
+					<td>\(10^{-9}\)</td>
+					<td>n</td>
+				</tr>
+				<tr>
+					<td>pico</td>
+					<td>\(10^{-12}\)</td>
+					<td>p</td>
+				</tr>
+				<tr>
+					<td>femto</td>
+					<td>\(10^{-15}\)</td>
+					<td>f</td>
+				</tr>
+				<tr>
+					<td>atto</td>
+					<td>\(10^{-18}\)</td>
+					<td>a</td>
+				</tr>
+				<tr>
+					<td>zepto</td>
+					<td>\(10^{-21}\)</td>
+					<td>z</td>
+				</tr>
+				<tr>
+					<td>yocto</td>
+					<td>\(10^{-24}\)</td>
+					<td>y</td>
+				</tr>
+			</table>
+		</section>
+	</div>
+
+	<script>
+		// MathJax configuration for rendering LaTeX
+		window.MathJax = {
+			tex: {
+				inlineMath: [['\\(', '\\)']],
+				displayMath: [['\\[', '\\]']],
+				processEscapes: true
+			},
+			options: {
+				skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+			}
+		};
+	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</body>
+</html>
