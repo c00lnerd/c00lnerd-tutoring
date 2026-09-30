@@ -30,6 +30,7 @@ import Layout from '../../../layouts/Layout.astro';
                             <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Explain the difference between digital input and analog input</li>
                             <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Use <code>analogRead()</code> to read values from a sensor</li>
                             <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Print changing sensor values to the Serial Monitor</li>
+                            <li class="flex items-start"><span class="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></span>Use the Serial Plotter to see sensor values as a live graph</li>
                         </ul>
                     </div>
                     <div>
@@ -176,7 +177,55 @@ void loop() {
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 6: Using Functions with a Sensor</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 6: Visualize Sensor Values with the Serial Plotter</h2>
+                <p class="text-gray-700 mb-4">The Arduino IDE has another useful tool called the Serial Plotter. Instead of showing numbers as text, it draws a live graph of your sensor values. This makes it easy to see patterns and changes over time.</p>
+                <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                    <h3 class="text-lg font-semibold text-blue-800 mb-2">How to open the Serial Plotter</h3>
+                    <ol class="space-y-2 text-blue-900 list-decimal list-inside">
+                        <li>Upload your program to Arduino</li>
+                        <li>In the Arduino IDE, look for the magnifying glass icon with a small graph line (next to the Serial Monitor icon)</li>
+                        <li>Click the Serial Plotter icon, or go to <strong>Tools → Serial Plotter</strong></li>
+                        <li>The plotter window will open and start drawing a live graph</li>
+                    </ol>
+                </div>
+                <div class="relative">
+                    <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                        📋 Copy
+                    </button>
+                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`const int sensorPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int sensorValue = analogRead(sensorPin);
+  Serial.println(sensorValue);
+  delay(50);
+}`}</code></pre>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg mt-4">
+                    <h3 class="font-semibold text-green-800 mb-2">What the plotter shows</h3>
+                    <ul class="space-y-2 text-green-700">
+                        <li><strong>Horizontal axis:</strong> time (the graph moves from right to left)</li>
+                        <li><strong>Vertical axis:</strong> the sensor value (0 to 1023)</li>
+                        <li><strong>Line color:</strong> blue for the first value printed</li>
+                        <li><strong>Live updates:</strong> the graph updates continuously as new values arrive</li>
+                    </ul>
+                </div>
+                <div class="bg-yellow-50 p-4 rounded-lg mt-4 text-yellow-900">
+                    <h3 class="font-semibold mb-2">Tips for using the Serial Plotter</h3>
+                    <ul class="space-y-2">
+                        <li>Use <code>Serial.println()</code> with one value at a time for a single line graph</li>
+                        <li>A smaller <code>delay()</code> (like 50ms) makes the graph update faster</li>
+                        <li>You can plot multiple values by printing them with spaces instead of newlines</li>
+                        <li>The Serial Plotter uses the same baud rate as the Serial Monitor (usually 9600)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 7: Using Functions with a Sensor</h2>
                 <p class="text-gray-700 mb-4">You just learned functions in Lesson 6, so now you can use them to keep sensor code organized.</p>
                 <div class="relative">
                     <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
@@ -205,7 +254,7 @@ void showSensorReading() {
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 7: Reading and Understanding the Numbers</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 8: Reading and Understanding the Numbers</h2>
                 <p class="text-gray-700 mb-4">The most important beginner skill here is learning to watch the numbers change and connect them to what the sensor is doing.</p>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="bg-gray-50 p-4 rounded-lg">
@@ -230,7 +279,7 @@ void showSensorReading() {
             </div>
 
             <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 8: Common Beginner Mistakes</h2>
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Section 9: Common Beginner Mistakes</h2>
                 <div class="grid md:grid-cols-2 gap-4">
                     <div class="bg-red-50 p-4 rounded-lg">
                         <h3 class="font-semibold text-red-800 mb-2">Mistake 1</h3>
@@ -276,6 +325,7 @@ void showSensorReading() {
                             <li>How <code>analogRead()</code> works</li>
                             <li>Why readings often range from <code>0</code> to <code>1023</code></li>
                             <li>How to test a sensor with the Serial Monitor</li>
+                            <li>How to use the Serial Plotter to visualize sensor values</li>
                         </ul>
                     </div>
                     <div>
@@ -284,6 +334,7 @@ void showSensorReading() {
                             <li>Practice explaining the difference between digital and analog input</li>
                             <li>Trace what each line in the sensor reading code does</li>
                             <li>Record several real potentiometer readings and compare them</li>
+                            <li>Try the Serial Plotter with your potentiometer and describe what you see</li>
                             <li>Be ready to use sensor values in decisions next</li>
                         </ul>
                     </div>
