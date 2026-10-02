@@ -1,0 +1,392 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physics Module 2 Test">
+	<div class="container">
+		<div class="header">
+			<p class="eyebrow">Exploring Creation with Physics</p>
+			<h1>Physics Module 2 Test</h1>
+			<p class="subtitle">Motion Equations and Free Fall</p>
+		</div>
+
+		<form id="module2Test" autocomplete="off">
+			<div class="card">
+				<h2>Student Information</h2>
+				<div class="form-row">
+					<label>
+						Full Name
+						<input type="text" id="studentName" required>
+					</label>
+					<label>
+						Email Address
+						<input type="email" id="studentEmail" required>
+					</label>
+				</div>
+				<input type="text" id="website" style="display: none;" tabindex="-1" autocomplete="off">
+			</div>
+
+			<div class="card captcha-card">
+				<label>
+					Security Check: What is <span id="captcha-question"></span>?
+					<input type="number" id="captcha" required>
+				</label>
+				<div id="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 1</h3>
+				<p>A car accelerates from rest at a constant rate of 3.0 m/s&sup2;. How long will it take the car to reach a speed of 12.0 m/s?</p>
+				<input type="text" id="q1" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 2</h3>
+				<p>A car accelerates from rest at a constant rate of 3.0 m/s&sup2;. How far will the car travel in the time it takes to reach a speed of 12.0 m/s?</p>
+				<input type="text" id="q2" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 3</h3>
+				<p>A car is traveling at 20.0 m/s when the driver applies the brakes. If the car decelerates at a constant rate of 4.0 m/s&sup2;, how long will it take the car to come to a stop?</p>
+				<input type="text" id="q3" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 4</h3>
+				<p>A car is traveling at 20.0 m/s when the driver applies the brakes. If the car decelerates at a constant rate of 4.0 m/s&sup2;, how far will the car travel before coming to a stop?</p>
+				<input type="text" id="q4" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 5</h3>
+				<p>A ball is thrown straight up with an initial velocity of 15.0 m/s. How long will it take the ball to reach its maximum height?</p>
+				<input type="text" id="q5" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 6</h3>
+				<p>A ball is thrown straight up with an initial velocity of 15.0 m/s. What will be the ball's maximum height?</p>
+				<input type="text" id="q6" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 7</h3>
+				<p>A ball is thrown straight up with an initial velocity of 15.0 m/s. How long will it take the ball to return to its starting point?</p>
+				<input type="text" id="q7" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 8</h3>
+				<p>A ball is dropped from rest from a height of 45.0 m. How long will it take the ball to reach the ground?</p>
+				<input type="text" id="q8" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 9</h3>
+				<p>A ball is dropped from rest from a height of 45.0 m. What will be the ball's velocity just before it hits the ground?</p>
+				<input type="text" id="q9" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 10</h3>
+				<p>A ball is thrown straight down with an initial velocity of 10.0 m/s from a height of 45.0 m. How long will it take the ball to reach the ground?</p>
+				<input type="text" id="q10" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 11</h3>
+				<p>A ball is thrown straight down with an initial velocity of 10.0 m/s from a height of 45.0 m. What will be the ball's velocity just before it hits the ground?</p>
+				<input type="text" id="q11" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 12</h3>
+				<p>A ball is thrown straight up with an initial velocity of 20.0 m/s. How long will it take the ball to reach its maximum height?</p>
+				<input type="text" id="q12" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 13</h3>
+				<p>A ball is thrown straight up with an initial velocity of 20.0 m/s. What will be the ball's maximum height?</p>
+				<input type="text" id="q13" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 14</h3>
+				<p>A ball is thrown straight up with an initial velocity of 20.0 m/s. How long will it take the ball to return to its starting point?</p>
+				<input type="text" id="q14" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 15</h3>
+				<p>A ball is thrown straight up with an initial velocity of 20.0 m/s. What will be the ball's velocity when it returns to its starting point?</p>
+				<input type="text" id="q15" class="answer-input" required>
+			</div>
+
+			<button type="submit" class="submit-button">Submit Test</button>
+		</form>
+
+		<div id="results" style="display: none;" class="card">
+			<h2>Test Submitted</h2>
+			<p id="email-status">Your answers have been sent to your instructor.</p>
+			<button type="button" class="submit-button" onclick="window.location.reload()">Take Again</button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+
+	<script is:inline>
+		let captchaAnswer = 0;
+
+		function generateCaptcha() {
+			const num1 = Math.floor(Math.random() * 10) + 1;
+			const num2 = Math.floor(Math.random() * 10) + 1;
+			captchaAnswer = num1 + num2;
+			document.getElementById('captcha-question').textContent = `${num1} + ${num2}`;
+		}
+
+		function validateCaptcha() {
+			const userAnswer = parseInt(document.getElementById('captcha').value);
+			const errorDiv = document.getElementById('captcha-error');
+			if (userAnswer !== captchaAnswer) {
+				errorDiv.style.display = 'block';
+				generateCaptcha();
+				document.getElementById('captcha').value = '';
+				return false;
+			}
+			errorDiv.style.display = 'none';
+			return true;
+		}
+
+		function validateSecurity() {
+			const honeypot = document.getElementById('website');
+			if (honeypot && honeypot.value) {
+				console.log('Spam bot detected via honeypot');
+				alert('Security check failed. Please try again.');
+				return false;
+			}
+
+			const lastSubmission = localStorage.getItem('lastQuizStart');
+			const now = Date.now();
+			if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+				alert('Please wait 30 seconds between attempts.');
+				return false;
+			}
+			localStorage.setItem('lastQuizStart', now.toString());
+
+			if (!validateCaptcha()) {
+				return false;
+			}
+
+			const email = document.getElementById('studentEmail').value;
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				return false;
+			}
+
+			const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+			const domain = email.split('@')[1].toLowerCase();
+			if (spamDomains.includes(domain)) {
+				alert('Please use a permanent email address.');
+				return false;
+			}
+
+			return true;
+		}
+
+		window.onload = function() {
+			try {
+				emailjs.init('ct_s19oZHppLy9BlW');
+			} catch (e) {
+				console.error('EmailJS init failed:', e);
+			}
+			generateCaptcha();
+		};
+
+		document.getElementById('module2Test').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			if (!validateSecurity()) {
+				return;
+			}
+
+			const studentName = document.getElementById('studentName').value.trim();
+			const studentEmail = document.getElementById('studentEmail').value.trim();
+			const now = new Date().toLocaleString();
+
+			const answers = [
+				['Question 1', document.getElementById('q1').value.trim()],
+				['Question 2', document.getElementById('q2').value.trim()],
+				['Question 3', document.getElementById('q3').value.trim()],
+				['Question 4', document.getElementById('q4').value.trim()],
+				['Question 5', document.getElementById('q5').value.trim()],
+				['Question 6', document.getElementById('q6').value.trim()],
+				['Question 7', document.getElementById('q7').value.trim()],
+				['Question 8', document.getElementById('q8').value.trim()],
+				['Question 9', document.getElementById('q9').value.trim()],
+				['Question 10', document.getElementById('q10').value.trim()],
+				['Question 11', document.getElementById('q11').value.trim()],
+				['Question 12', document.getElementById('q12').value.trim()],
+				['Question 13', document.getElementById('q13').value.trim()],
+				['Question 14', document.getElementById('q14').value.trim()],
+				['Question 15', document.getElementById('q15').value.trim()]
+			];
+
+			let message = `PHYSICS MODULE 2 TEST SUBMISSION\n`;
+			message += `Submitted: ${now}\n\n`;
+			message += `Student: ${studentName}\n`;
+			message += `Student Email: ${studentEmail}\n\n`;
+			message += `ANSWERS:\n`;
+			answers.forEach((item, index) => {
+				message += `\n${index + 1}. ${item[0]}\n   ${item[1]}\n`;
+			});
+
+			const templateParams = {
+				to_email: 'chuck@c00lnerd.com',
+				from_name: 'C00lnerd Quiz System',
+				from_email: 'chuck@c00lnerd.com',
+				message: message,
+				subject: `Physics Module 2 Test - ${studentName}`
+			};
+
+			window.emailjs.send('service_kaw1xkh', 'template_io02xtm', templateParams)
+				.then(function(response) {
+					console.log('Email sent:', response.status, response.text);
+					document.getElementById('module2Test').style.display = 'none';
+					document.getElementById('results').style.display = 'block';
+					document.getElementById('email-status').textContent = 'Your test has been submitted and emailed to your instructor.';
+				}, function(error) {
+					console.error('Email error:', error);
+					if (error && error.text) console.error('Error details:', error.text);
+					alert('There was an error sending your test. Please check your internet connection and try again.');
+				});
+		});
+	</script>
+
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
+			font-family: Arial, sans-serif;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-weight: 700;
+			color: #2563eb;
+			font-size: 0.85rem;
+			margin: 0 0 0.5rem 0;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.2rem;
+			color: #111827;
+		}
+
+		.subtitle {
+			color: #4b5563;
+			font-size: 1.1rem;
+			margin: 0.5rem 0 0 0;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+			margin-bottom: 1.25rem;
+		}
+
+		.card h2,
+		.card h3 {
+			margin: 0 0 0.75rem 0;
+			color: #111827;
+		}
+
+		.card p {
+			color: #374151;
+			line-height: 1.6;
+			margin: 0 0 1rem 0;
+		}
+
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+
+		@media (min-width: 600px) {
+			.form-row {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			color: #374151;
+			font-size: 0.95rem;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="number"],
+		textarea,
+		.answer-input {
+			width: 100%;
+			padding: 0.75rem;
+			margin-top: 0.35rem;
+			border: 1px solid #d1d5db;
+			border-radius: 6px;
+			font-size: 1rem;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
+
+		.answer-input {
+			max-width: 100%;
+		}
+
+		.captcha-card label {
+			display: block;
+		}
+
+		#captcha-error {
+			color: #dc2626;
+			margin-top: 0.5rem;
+			font-weight: 600;
+		}
+
+		.submit-button {
+			display: inline-block;
+			width: 100%;
+			padding: 1rem;
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: white;
+			background: #2563eb;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-top: 1rem;
+		}
+
+		.submit-button:hover {
+			background: #1d4ed8;
+		}
+
+		#results {
+			text-align: center;
+		}
+	</style>
+</Layout>
