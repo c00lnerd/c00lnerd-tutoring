@@ -287,9 +287,61 @@ import Layout from '../../../layouts/Layout.astro';
         }
 
         hasSolution(numbers) {
-            // Simple check - in a full implementation, this would use a more sophisticated algorithm
-            // For now, we'll assume most combinations have solutions
-            return true;
+            const ops = ['+', '-', '*', '/'];
+            const permutations = this.getAllPermutations(numbers);
+
+            for (const perm of permutations) {
+                for (const op1 of ops) {
+                    for (const op2 of ops) {
+                        for (const op3 of ops) {
+                            try {
+                                if (this.calculate(this.calculate(this.calculate(perm[0], op1, perm[1]), op2, perm[2]), op3, perm[3]) === 24) return true;
+                            } catch (e) {}
+                            try {
+                                if (this.calculate(this.calculate(perm[0], op1, this.calculate(perm[1], op2, perm[2])), op3, perm[3]) === 24) return true;
+                            } catch (e) {}
+                            try {
+                                if (this.calculate(perm[0], op1, this.calculate(this.calculate(perm[1], op2, perm[2]), op3, perm[3])) === 24) return true;
+                            } catch (e) {}
+                            try {
+                                if (this.calculate(perm[0], op1, this.calculate(perm[1], op2, this.calculate(perm[2], op3, perm[3]))) === 24) return true;
+                            } catch (e) {}
+                            try {
+                                if (this.calculate(this.calculate(perm[0], op1, perm[1]), op2, this.calculate(perm[2], op3, perm[3])) === 24) return true;
+                            } catch (e) {}
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        calculate(a, op, b) {
+            switch (op) {
+                case '+': return a + b;
+                case '-': return a - b;
+                case '*': return a * b;
+                case '/':
+                    if (Math.abs(b) < 0.0001) throw new Error("Division by zero");
+                    return a / b;
+            }
+        }
+
+        getAllPermutations(array) {
+            const result = [];
+            function permute(arr, m = []) {
+                if (arr.length === 0) {
+                    result.push(m);
+                } else {
+                    for (let i = 0; i < arr.length; i++) {
+                        const curr = [...arr];
+                        const next = curr.splice(i, 1);
+                        permute(curr, m.concat(next));
+                    }
+                }
+            }
+            permute(array);
+            return result;
         }
     }
 
