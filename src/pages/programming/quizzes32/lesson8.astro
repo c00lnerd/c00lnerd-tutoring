@@ -2,259 +2,157 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Week 8 Quiz: Introduction to Arduino Hardware - C00lnerd Tutoring">
+<Layout title="Lesson 8 Quiz: Sensor-Controlled Outputs with Arduino">
     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-        
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 8 Quiz: Introduction to Arduino Hardware</h1>
-                <p class="text-xl text-gray-600">Test your understanding of Arduino boards, components, and hardware concepts</p>
-                <div class="mt-4 p-4 bg-orange-100 rounded-lg">
-                    <p class="text-orange-800 font-medium">?? 10 questions covering Arduino hardware, power, pins, and expansion</p>
-                </div>
-            </div>
-
-            <!-- Student Information -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-orange-800 mb-6">Student Information</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label for="quiz8StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                        <input type="text" id="quiz8StudentName" name="studentName" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
-                    </div>
-                    <div>
-                        <label for="quiz8StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                        <input type="email" id="quiz8StudentEmail" name="studentEmail" required 
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-8">
+                <div class="flex items-center justify-center mb-4">
+                    <div class="bg-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center font-bold text-2xl mr-4">Q8</div>
+                    <div class="text-left">
+                        <h1 class="text-3xl font-bold text-gray-800">Lesson 8 Quiz: Sensor-Controlled Outputs with Arduino</h1>
+                        <p class="text-gray-600">Test your understanding of using sensor values to control outputs like LEDs</p>
+                        <p class="text-sm text-blue-600 font-medium">32-Lesson Course • Semester 1</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Quiz Questions -->
+            <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Quiz Instructions</h2>
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <ul class="space-y-2 text-blue-800">
+                        <li>This quiz covers material from Lesson 8: Sensor-Controlled Outputs with Arduino</li>
+                        <li>Answer all questions to the best of your ability</li>
+                        <li>Your responses will be emailed to your instructor for review</li>
+                        <li>Take your time and think carefully about each answer</li>
+                        <li>You can review the lesson material if needed before submitting</li>
+                    </ul>
+                </div>
+            </div>
+
             <form id="quizForm" autocomplete="off" class="space-y-8">
-                <!-- Question 1 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Operating Voltage</h3>
-                    <p class="text-gray-700 mb-4">What is the operating voltage of Arduino Uno?</p>
-                    <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="A" class="mr-3">
-                            <span>A) 3.3V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="B" class="mr-3">
-                            <span>B) 5V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="C" class="mr-3">
-                            <span>C) 9V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q1" value="D" class="mr-3">
-                            <span>D) 12V</span>
-                        </label>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">Student Information</h3>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="quiz8StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                            <input type="text" id="quiz8StudentName" name="studentName" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label for="quiz8StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input type="email" id="quiz8StudentEmail" name="studentEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Question 2 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: Digital I/O Pins</h3>
-                    <p class="text-gray-700 mb-4">How many digital I/O pins does Arduino Uno have?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 1: Sensor-Controlled Pattern</h3>
+                    <p class="text-gray-600 mb-4">What is the correct pattern for using a sensor to control an output?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="A" class="mr-3">
-                            <span>A) 6</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="B" class="mr-3">
-                            <span>B) 14</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="C" class="mr-3">
-                            <span>C) 20</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q2" value="D" class="mr-3">
-                            <span>D) 54</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="A" class="mr-3"><span>A) Act → read → decide</span></label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="B" class="mr-3"><span>B) Read → decide → act</span></label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="C" class="mr-3"><span>C) Decide → read → act</span></label>
+                        <label class="flex items-center"><input type="radio" name="q1" value="D" class="mr-3"><span>D) Read → act → decide</span></label>
                     </div>
                 </div>
 
-                <!-- Question 3 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Input Voltage Range</h3>
-                    <p class="text-gray-700 mb-4">What is the recommended external power input voltage range for Arduino Uno?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 2: Threshold Value</h3>
+                    <p class="text-gray-600 mb-4">In the code <code>if (sensorValue > 500)</code>, what does 500 represent?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="A" class="mr-3">
-                            <span>A) 3-5V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="B" class="mr-3">
-                            <span>B) 5-9V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="C" class="mr-3">
-                            <span>C) 7-12V</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q3" value="D" class="mr-3">
-                            <span>D) 12-24V</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="A" class="mr-3"><span>A) The sensor pin number</span></label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="B" class="mr-3"><span>B) The threshold that decides when to change the output</span></label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="C" class="mr-3"><span>C) The LED brightness value</span></label>
+                        <label class="flex items-center"><input type="radio" name="q2" value="D" class="mr-3"><span>D) The delay time in milliseconds</span></label>
                     </div>
                 </div>
 
-                <!-- Question 4 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: PWM Pins</h3>
-                    <p class="text-gray-700 mb-4">Which pins on Arduino Uno support PWM output?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 3: LED Control</h3>
+                    <p class="text-gray-600 mb-4">If <code>sensorValue = 700</code> and the code is <code>if (sensorValue > 500) { digitalWrite(ledPin, HIGH); } else { digitalWrite(ledPin, LOW); }</code>, what happens?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="A" class="mr-3">
-                            <span>A) All digital pins (0-13)</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="B" class="mr-3">
-                            <span>B) Pins 3, 5, 6, 9, 10, 11</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="C" class="mr-3">
-                            <span>C) Only analog pins A0-A5</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q4" value="D" class="mr-3">
-                            <span>D) Pins 0, 1, 2, 4, 7, 8</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="A" class="mr-3"><span>A) The LED turns off</span></label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="B" class="mr-3"><span>B) The LED turns on</span></label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="C" class="mr-3"><span>C) The LED blinks</span></label>
+                        <label class="flex items-center"><input type="radio" name="q3" value="D" class="mr-3"><span>D) Nothing happens</span></label>
                     </div>
                 </div>
 
-                <!-- Question 5 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: Microcontroller</h3>
-                    <p class="text-gray-700 mb-4">What microcontroller does Arduino Uno use?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 4: pinMode for LED</h3>
+                    <p class="text-gray-600 mb-4">What must you include in <code>setup()</code> to control an LED on pin 13?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="A" class="mr-3">
-                            <span>A) ATmega168</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="B" class="mr-3">
-                            <span>B) ATmega328P</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="C" class="mr-3">
-                            <span>C) ATmega2560</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q5" value="D" class="mr-3">
-                            <span>D) ATmega32u4</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="A" class="mr-3"><span>A) <code>pinMode(13, INPUT)</code></span></label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="B" class="mr-3"><span>B) <code>pinMode(13, OUTPUT)</code></span></label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="C" class="mr-3"><span>C) <code>pinMode(A0, OUTPUT)</code></span></label>
+                        <label class="flex items-center"><input type="radio" name="q4" value="D" class="mr-3"><span>D) Nothing is needed</span></label>
                     </div>
                 </div>
 
-                <!-- Question 6 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Current Limits</h3>
-                    <p class="text-gray-700 mb-4">What is the maximum current that each Arduino pin can safely source or sink?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 5: Multiple Thresholds</h3>
+                    <p class="text-gray-600 mb-4">How can you create three response levels (Low, Medium, High) from a sensor reading?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="A" class="mr-3">
-                            <span>A) 20mA</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="B" class="mr-3">
-                            <span>B) 40mA</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="C" class="mr-3">
-                            <span>C) 100mA</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q6" value="D" class="mr-3">
-                            <span>D) 500mA</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="A" class="mr-3"><span>A) Use three separate sensors</span></label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="B" class="mr-3"><span>B) Use multiple if/else statements with different thresholds</span></label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="C" class="mr-3"><span>C) Use three different analog pins</span></label>
+                        <label class="flex items-center"><input type="radio" name="q5" value="D" class="mr-3"><span>D) It's not possible</span></label>
                     </div>
                 </div>
 
-                <!-- Question 7 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Arduino Shields</h3>
-                    <p class="text-gray-700 mb-4">What is the main advantage of using Arduino shields?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 6: Functions with Sensors</h3>
+                    <p class="text-gray-600 mb-4">What is a benefit of using functions like <code>turnOnLED()</code> and <code>turnOffLED()</code>?</p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="A" class="mr-3">
-                            <span>A) They make Arduino run faster</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="B" class="mr-3">
-                            <span>B) They provide plug-and-play functionality without complex wiring</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="C" class="mr-3">
-                            <span>C) They increase the memory capacity</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q7" value="D" class="mr-3">
-                            <span>D) They reduce power consumption</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="A" class="mr-3"><span>A) It makes the code run faster</span></label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="B" class="mr-3"><span>B) It organizes code and makes it easier to read</span></label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="C" class="mr-3"><span>C) It uses less memory</span></label>
+                        <label class="flex items-center"><input type="radio" name="q6" value="D" class="mr-3"><span>D) It is required for sensors to work</span></label>
                     </div>
                 </div>
 
-                <!-- Question 8 -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Arduino Models</h3>
-                    <p class="text-gray-700 mb-4">Which Arduino model is best suited for projects requiring many I/O pins?</p>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 7: Loop with Sensor</h3>
+                    <p class="text-gray-600 mb-4">What does this code do?<br><code>for (int i = 0; i < 5; i++) { sum += analogRead(sensorPin); delay(50); }</code></p>
                     <div class="space-y-2">
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="A" class="mr-3">
-                            <span>A) Arduino Nano</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="B" class="mr-3">
-                            <span>B) Arduino Uno</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="C" class="mr-3">
-                            <span>C) Arduino Mega 2560</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="radio" name="q8" value="D" class="mr-3">
-                            <span>D) Arduino Leonardo</span>
-                        </label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="A" class="mr-3"><span>A) It takes one sensor reading</span></label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="B" class="mr-3"><span>B) It takes 5 sensor readings and adds them together</span></label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="C" class="mr-3"><span>C) It turns the LED on 5 times</span></label>
+                        <label class="flex items-center"><input type="radio" name="q7" value="D" class="mr-3"><span>D) It reads from 5 different pins</span></label>
                     </div>
                 </div>
 
-                <!-- Question 9: Short Answer -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Power Safety</h3>
-                    <p class="text-gray-700 mb-4">Explain three important safety considerations when powering an Arduino board. Include voltage limits, current limits, and polarity concerns.</p>
-                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" 
-                              placeholder="Write your answer here..."></textarea>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 8: Code Analysis</h3>
+                    <p class="text-gray-600 mb-4">What does this line do?<br><code>int sensorValue = analogRead(sensorPin);</code></p>
+                    <div class="space-y-2">
+                        <label class="flex items-center"><input type="radio" name="q8" value="A" class="mr-3"><span>A) It stores the sensor reading in a variable</span></label>
+                        <label class="flex items-center"><input type="radio" name="q8" value="B" class="mr-3"><span>B) It sends a value to the sensor</span></label>
+                        <label class="flex items-center"><input type="radio" name="q8" value="C" class="mr-3"><span>C) It turns on the LED</span></label>
+                        <label class="flex items-center"><input type="radio" name="q8" value="D" class="mr-3"><span>D) It prints the sensor value</span></label>
+                    </div>
                 </div>
 
-                <!-- Question 10: Short Answer -->
-                <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Board Selection</h3>
-                    <p class="text-gray-700 mb-4">You're designing a wearable fitness tracker that needs to be very small and monitor heart rate, steps, and temperature. Which Arduino board would you choose and why? Consider size, power consumption, and I/O requirements.</p>
-                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500" 
-                              placeholder="Write your answer here..."></textarea>
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 9: Threshold Selection</h3>
+                    <p class="text-gray-600 mb-4">Explain how you would choose a good threshold value for a light sensor that turns on an LED when it gets dark.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your answer here..."></textarea>
                 </div>
 
-                <!-- Submit Button -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3">Question 10: Sensor-Controlled Project</h3>
+                    <p class="text-gray-600 mb-4">Describe a sensor-controlled project you could build. What sensor would you use, what would it detect, and what output would it control?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Write your answer here..."></textarea>
+                </div>
+
                 <div class="text-center">
-                    <button type="submit" id="submitBtn" 
-                            style="background-color: #ea580c; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
-                        Submit Quiz
-                    </button>
+                    <button type="submit" id="submitBtn" style="background-color: #10b981; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">Submit Quiz</button>
                 </div>
             </form>
         </div>
 
-        <!-- Quiz Results Display -->
         <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
             <div class="bg-white rounded-lg shadow-lg p-8">
-                <h2 class="text-2xl font-bold text-center mb-6 text-orange-800">?? Your Quiz Results</h2>
+                <h2 class="text-2xl font-bold text-center mb-6 text-purple-800">Your Quiz Results</h2>
                 <div id="resultsContent"></div>
                 <div class="text-center mt-6">
                     <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
@@ -263,79 +161,69 @@ import Layout from '../../../layouts/Layout.astro';
         </div>
 
         <div class="max-w-4xl mx-auto px-4 py-8">
-            <!-- Navigation -->
             <div class="flex justify-between items-center mt-8">
                 <div>
-                    <a href="/programming/lessons32/week8" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ? Back to Week 8 Lesson
-                    </a>
+                    <a href="/programming/lessons32/Lesson8" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">← Back to Lesson 8</a>
                 </div>
                 <div>
-                    <a href="/programming/lessons32/week9" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Week 9 Lesson ?
-                    </a>
+                    <a href="/programming/lessons32/Lesson9" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">Next: Lesson 9 →</a>
                 </div>
             </div>
         </div>
-    </main>
+    </div>
 
-    <!-- EmailJS Script -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
-window.onload = function() { generateCaptcha(); };
-    // CAPTCHA variables
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script is:inline>
     let captchaAnswer = 0;
-    
+    let emailjsReady = false;
+
     function generateCaptcha() {
         const num1 = Math.floor(Math.random() * 10) + 1;
         const num2 = Math.floor(Math.random() * 10) + 1;
         captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2;
+
+        const captchaQuestion = document.getElementById('captcha-question');
+        if (captchaQuestion) {
+            captchaQuestion.textContent = `What is ${num1} + ${num2}?`;
         }
     }
-    
+
     function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
+        const captchaInput = document.getElementById('captcha');
         const errorDiv = document.getElementById('captcha-error');
-        
+        const userAnswer = parseInt(captchaInput?.value, 10);
+
+        if (!captchaInput) {
+            return true;
+        }
+
         if (userAnswer !== captchaAnswer) {
             if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
+            generateCaptcha();
+            captchaInput.value = '';
             return false;
         }
-        
+
         if (errorDiv) errorDiv.style.display = 'none';
         return true;
     }
-    
-    // Security validation function
+
     function validateSecurity() {
-        // Check honeypot field (should be empty)
         const honeypot = document.getElementById('website');
         if (honeypot && honeypot.value) {
             console.log('Spam bot detected via honeypot');
             alert('Security check failed. Please try again.');
             return false;
         }
-        
-        // Rate limiting check
+
         const lastSubmission = localStorage.getItem('lastQuizStart');
         const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
+        if (lastSubmission && (now - parseInt(lastSubmission, 10)) < 30000) {
             alert('Please wait 30 seconds between quiz attempts.');
             return false;
         }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
+
+        const emailInput = document.getElementById('quiz8StudentEmail');
         if (emailInput && emailInput.value) {
             const email = emailInput.value;
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -343,319 +231,204 @@ window.onload = function() { generateCaptcha(); };
                 alert('Please enter a valid email address.');
                 return false;
             }
-            
-            // Block common spam domains
+
             const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
+            const domain = email.split('@')[1]?.toLowerCase();
+            if (domain && spamDomains.includes(domain)) {
                 alert('Please use a permanent email address.');
                 return false;
             }
         }
-        
-        return true;
-    }</script>
-    <script is:inline>
-window.onload = function() { generateCaptcha(); };
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
+
         if (!validateCaptcha()) {
             return false;
         }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
+
+        localStorage.setItem('lastQuizStart', now.toString());
         return true;
     }
-        // Quiz data with correct answers
-        const quizData = {
-            correctAnswers: {
-                q1: 'B', // 5V
-                q2: 'B', // 14
-                q3: 'C', // 7-12V
-                q4: 'B', // Pins 3, 5, 6, 9, 10, 11
-                q5: 'B', // ATmega328P
-                q6: 'B', // 40mA
-                q7: 'B', // They provide plug-and-play functionality without complex wiring
-                q8: 'C'  // Arduino Mega 2560
-            },
-            questionText: {
-                q1: "What is the operating voltage of Arduino Uno?",
-                q2: "How many digital I/O pins does Arduino Uno have?",
-                q3: "What is the recommended external power input voltage range for Arduino Uno?",
-                q4: "Which pins on Arduino Uno support PWM output?",
-                q5: "What microcontroller does Arduino Uno use?",
-                q6: "What is the maximum current that each Arduino pin can safely source or sink?",
-                q7: "What is the main advantage of using Arduino shields?",
-                q8: "Which Arduino model is best suited for projects requiring many I/O pins?",
-                q9: "Explain three important safety considerations when powering an Arduino board. Include voltage limits, current limits, and polarity concerns.",
-                q10: "You're designing a wearable fitness tracker that needs to be very small and monitor heart rate, steps, and temperature. Which Arduino board would you choose and why? Consider size, power consumption, and I/O requirements."
+
+    window.addEventListener('load', function() {
+        if (document.getElementById('captcha-question')) {
+            generateCaptcha();
+        }
+
+        if (typeof window.emailjs !== 'undefined') {
+            window.emailjs.init('ct_s19oZHppLy9BlW');
+            emailjsReady = true;
+            console.log('EmailJS initialized successfully');
+        } else {
+            console.error('EmailJS failed to load');
+        }
+    });
+
+    const quizData = {
+        correctAnswers: {
+            q1: 'B',
+            q2: 'B',
+            q3: 'B',
+            q4: 'B',
+            q5: 'B',
+            q6: 'B',
+            q7: 'B',
+            q8: 'A'
+        },
+        questionText: {
+            q1: 'Sensor-Controlled Pattern',
+            q2: 'Threshold Value',
+            q3: 'LED Control',
+            q4: 'pinMode for LED',
+            q5: 'Multiple Thresholds',
+            q6: 'Functions with Sensors',
+            q7: 'Loop with Sensor',
+            q8: 'Code Analysis',
+            q9: 'Threshold Selection',
+            q10: 'Sensor-Controlled Project'
+        }
+    };
+
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        if (!validateSecurity()) {
+            return;
+        }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Submitting...';
+
+        const formData = new FormData(this);
+        const studentName = document.getElementById('quiz8StudentName').value;
+        const studentEmail = document.getElementById('quiz8StudentEmail').value;
+        const results = [];
+        let score = 0;
+        const totalQuestions = 8;
+
+        for (let i = 1; i <= 8; i++) {
+            const questionKey = `q${i}`;
+            const studentAnswer = formData.get(questionKey);
+            const correctAnswer = quizData.correctAnswers[questionKey];
+            const isCorrect = studentAnswer === correctAnswer;
+
+            if (isCorrect) score++;
+
+            results.push({
+                question: quizData.questionText[questionKey],
+                studentAnswer: studentAnswer || 'No answer',
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect
+            });
+        }
+
+        results.push({
+            question: quizData.questionText.q9,
+            studentAnswer: formData.get('q9') || 'No answer provided',
+            isShortAnswer: true
+        });
+
+        results.push({
+            question: quizData.questionText.q10,
+            studentAnswer: formData.get('q10') || 'No answer provided',
+            isShortAnswer: true
+        });
+
+        const percentage = Math.round((score / totalQuestions) * 100);
+
+        let message = `LESSON 8 QUIZ RESULTS - Sensor-Controlled Outputs with Arduino\n\n`;
+        message += `Student: ${studentName}\n`;
+        message += `Email: ${studentEmail}\n`;
+        message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
+        message += `DETAILED RESULTS:\n`;
+        message += `==================\n\n`;
+
+        results.forEach((result, index) => {
+            if (result.isShortAnswer) {
+                message += `${result.question}:\n`;
+                message += `Answer: ${result.studentAnswer}\n\n`;
+            } else {
+                const status = result.isCorrect ? 'CORRECT' : 'INCORRECT';
+                message += `Q${index + 1}: ${result.question}\n`;
+                message += `Student Answer: ${result.studentAnswer}\n`;
+                message += `Correct Answer: ${result.correctAnswer}\n`;
+                message += `Status: ${status}\n\n`;
             }
+        });
+
+        message += `PERFORMANCE ANALYSIS:\n`;
+        message += `=====================\n`;
+        if (percentage >= 90) {
+            message += `EXCELLENT! Excellent understanding of sensor-controlled outputs and Arduino programming.\n`;
+            message += `The student is ready to build more complex sensor-controlled projects.\n`;
+        } else if (percentage >= 80) {
+            message += `VERY GOOD! Solid understanding of sensor thresholds and output control.\n`;
+            message += `The student is ready for more advanced sensor projects.\n`;
+        } else if (percentage >= 70) {
+            message += `GOOD! Basic concepts are understood, but some areas need more practice.\n`;
+            message += `Recommend reviewing threshold selection and LED wiring.\n`;
+        } else if (percentage >= 60) {
+            message += `NEEDS IMPROVEMENT! Some understanding is present, but sensor-controlled outputs need reinforcement.\n`;
+            message += `Suggest more practice with conditionals and sensor thresholds.\n`;
+        } else {
+            message += `REQUIRES ATTENTION! More guided practice is needed with sensor-controlled outputs.\n`;
+            message += `Recommend reviewing the lesson material and trying the hands-on activity.\n`;
+        }
+
+        message += `\nNext Steps: Practice building sensor-controlled projects and prepare to integrate multiple sensors and outputs.\n`;
+        message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+
+        let grade = 'F';
+        if (percentage >= 90) grade = 'A';
+        else if (percentage >= 80) grade = 'B';
+        else if (percentage >= 70) grade = 'C';
+        else if (percentage >= 60) grade = 'D';
+
+        const sheetsPayload = {
+            studentName: studentName,
+            studentEmail: studentEmail,
+            week: 'Lesson 8',
+            topic: 'Sensor-Controlled Outputs with Arduino',
+            score: score,
+            totalPoints: 10,
+            percentage: percentage,
+            grade: grade,
+            timestamp: new Date().toISOString()
         };
 
-        document.getElementById('quizForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const studentName = document.getElementById('quiz8StudentName').value;
-            const studentEmail = document.getElementById('quiz8StudentEmail').value;
-            
-            if (!studentName || !studentEmail) {
-                alert('Please fill in your name and email address.');
-                return;
-            }
+        function logQuizToGoogleSheets() {
+            console.log('Logging quiz results to Google Sheets...');
+            return fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(sheetsPayload)
+            })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+        }
 
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
-            
-            const formData = new FormData(this);
-            const results = [];
-            let score = 0;
-            const totalQuestions = 8; // Multiple choice questions only for scoring
-            
-            // Check multiple choice answers (q1-q8)
-            for (let i = 1; i <= 8; i++) {
-                const questionKey = `q${i}`;
-                const userAnswer = formData.get(questionKey);
-                const correctAnswer = quizData.correctAnswers[questionKey];
-                const isCorrect = userAnswer === correctAnswer;
-                
-                if (isCorrect) score++;
-                
-                results.push({
-                    question: quizData.questionText[questionKey],
-                    userAnswer: userAnswer || 'No answer provided',
-                    correctAnswer: correctAnswer,
-                    isCorrect: isCorrect
-                });
-            }
-            
-            // Add short answer questions
-            results.push({
-                question: quizData.questionText.q9,
-                studentAnswer: formData.get('q9') || 'No answer provided',
-                isShortAnswer: true
-            });
-            
-            results.push({
-                question: quizData.questionText.q10,
-                studentAnswer: formData.get('q10') || 'No answer provided',
-                isShortAnswer: true
-            });
-            
-            const percentage = Math.round((score / totalQuestions) * 100);
-            
-            // Build detailed message
-            let message = `WEEK 8 QUIZ RESULTS - Introduction to Arduino Hardware\n\n`;
-            message += `Student: ${studentName}\n`;
-            message += `Email: ${studentEmail}\n`;
-            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
-            
-            message += `DETAILED RESULTS:\n`;
-            message += `==================\n\n`;
-            
-            results.forEach((result, index) => {
-                if (result.isShortAnswer) {
-                    message += `${result.question}:\n`;
-                    message += `Answer: ${result.studentAnswer}\n\n`;
-                } else {
-                    const status = result.isCorrect ? '? CORRECT' : '? INCORRECT';
-                    message += `Q${index + 1}: ${result.question}\n`;
-                    message += `Student Answer: ${result.userAnswer}\n`;
-                    message += `Correct Answer: ${result.correctAnswer}\n`;
-                    message += `Status: ${status}\n\n`;
-                }
-            });
-            
-            message += `PERFORMANCE ANALYSIS:\n`;
-            message += `====================\n`;
-            if (percentage >= 90) {
-                message += `?? EXCELLENT! Outstanding understanding of Arduino hardware and components.\n`;
-                message += `Student demonstrates mastery of board specifications, power requirements, and hardware selection.\n`;
-            } else if (percentage >= 80) {
-                message += `?? VERY GOOD! Strong grasp of Arduino hardware fundamentals.\n`;
-                message += `Student shows solid understanding with minor areas for review.\n`;
-            } else if (percentage >= 70) {
-                message += `?? GOOD! Basic understanding of Arduino hardware with room for improvement.\n`;
-                message += `Recommend additional practice with board specifications and power calculations.\n`;
-            } else if (percentage >= 60) {
-                message += `?? NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
-                message += `Focus on Arduino pin configurations, voltage requirements, and safety considerations.\n`;
-            } else {
-                message += `?? REQUIRES ATTENTION! Limited understanding of Arduino hardware concepts.\n`;
-                message += `Recommend reviewing lesson materials and hands-on exploration of Arduino boards.\n`;
-            }
-            
-            message += `\nNext Steps: Prepare for hands-on hardware projects and Week 9: Basic Sensors\n`;
-            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
-            
-            // Display results to student
-            let grade = 'F';
-            if (percentage >= 90) grade = 'A';
-            else if (percentage >= 80) grade = 'B';
-            else if (percentage >= 70) grade = 'C';
-            else if (percentage >= 60) grade = 'D';
-            
-            const resultsHTML = `
-                <div style="text-align: center; margin-bottom: 1rem;">
-                    <div style="font-size: 2rem; font-weight: bold; color: #ea580c;">${score}/${totalQuestions} (${percentage}%)</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #ea580c;">Grade: ${grade}</div>
-                    <div style="margin-top: 1rem; padding: 1rem; background: #fed7aa; border-radius: 6px; color: #ea580c; font-weight: bold;">
-                        ?? Week 8: Introduction to Arduino Hardware
-                    </div>
-                </div>
-                <div style="text-align: left;">
-                    ${results.map((r, index) => {
-                        if (r.isShortAnswer) {
-                            return `
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
-                                    <strong>${r.question}:</strong><br>
-                                    <strong>Your answer:</strong> ${r.studentAnswer}
-                                </div>
-                            `;
-                        } else {
-                            return `
-                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '?' : '?'}<br>
-                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
-                                    <strong>Correct answer:</strong> ${r.correctAnswer}
-                                </div>
-                            `;
-                        }
-                    }).join('')}
-                </div>
-            `;
-            
-            document.getElementById('resultsContent').innerHTML = resultsHTML;
-            document.getElementById('quizResults').style.display = 'block';
-            
-            // Scroll to results
-            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
-            
-            // Send email using EmailJS
-            // Check if EmailJS is available
-            if (typeof window.emailjs === 'undefined') {
-                alert('Email service is not available. Please refresh the page and try again.');
-                return;
-            }
-            
-            // Initialize EmailJS right before sending
-            window.emailjs.init('ct_s19oZHppLy9BlW');
-            
-            window.emailjs.send('service_kaw1xkh', 'template_io02xtm', {
-                to_email: 'chuck@c00lnerd.com',
-                from_name: 'C00lnerd Quiz System',
-                from_email: 'chuck@c00lnerd.com',
-                
-                message: message,
-                subject: `Week 8 Arduino Quiz - ${studentName} (${percentage}%)`
-            }).then(function(response) {
-                console.log('Quiz results sent successfully!', response.status, response.text);
-                alert('Quiz results sent successfully!');
-                
-                // Log to Google Sheets
-                console.log('Logging quiz results to Google Sheets...');
-                fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        studentName: studentName,
-                        studentEmail: studentEmail,
-                        week: 'Week 8',
-                        topic: 'Introduction to Arduino Hardware',
-                        score: score,
-                        totalPoints: totalQuestions,
-                        percentage: percentage,
-                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
-                        timestamp: new Date().toISOString()
-                    })
-                })
-                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
-                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
-                
-            }, function(error) {
-                console.log('Failed to send quiz results...', error);
-                // Log to Google Sheets
-                console.log('Logging quiz results to Google Sheets...');
-                fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        studentName: studentName,
-                        studentEmail: studentEmail,
-                        week: 'Week 8',
-                        topic: 'Introduction to Arduino Hardware',
-                        score: score,
-                        totalPoints: totalQuestions,
-                        percentage: percentage,
-                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
-                        timestamp: new Date().toISOString()
-                    })
-                })
-                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
-                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
-                
+        window.emailjs.send('service_kaw1xkh', 'template_io02xtm', {
+            to_email: 'chuck@c00lnerd.com',
+            from_name: 'C00lnerd Quiz System',
+            from_email: 'chuck@c00lnerd.com',
+            message: message,
+            subject: `Lesson 8 Arduino Quiz - ${studentName} (${percentage}%)`
+        }).then(function(response) {
+            console.log('Quiz results sent successfully!', response.status, response.text);
+            alert('Quiz submitted successfully!');
+            return logQuizToGoogleSheets();
+        }, function(error) {
+            console.log('Failed to send quiz results...', error);
+            return logQuizToGoogleSheets().then(function() {
                 alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
             });
+        }).finally(function() {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Submit Quiz';
         });
+    });
     </script>
 </Layout>
 
