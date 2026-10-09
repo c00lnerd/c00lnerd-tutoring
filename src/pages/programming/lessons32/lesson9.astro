@@ -14,6 +14,29 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             </div>
 
+            <!-- Lesson 8 Recap: Ultrasonic Sensor + Filtering -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">🔁 Lesson 8 Recap: Ultrasonic Distance + Filtering</h2>
+
+                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                    Lesson 8 introduced sensors by using an ultrasonic distance sensor. In Lesson 9, we expand your
+                    sensor toolkit (digital + analog inputs), but we’ll keep distance as a real sensor example.
+                </p>
+
+                <div style="background: #e0f2fe; padding: 1rem; border-radius: 8px; border-left: 4px solid #0284c7; margin-bottom: 1.5rem;">
+                    <h4 style="color: #075985; font-weight: bold; margin-bottom: 0.5rem;">Key Idea</h4>
+                    <p style="color: #075985; margin: 0; line-height: 1.6;">
+                        Sensors can be noisy. Filtering (like a moving average) makes readings more stable.
+                    </p>
+                </div>
+
+                <ul style="margin-left: 1.5rem; line-height: 1.8; color: #4a5568;">
+                    <li><strong>Raw distance:</strong> can jump around due to reflections and noise</li>
+                    <li><strong>Filtered distance:</strong> average the last N readings for a smoother value</li>
+                    <li><strong>Next step:</strong> combine distance + buttons + potentiometer into one dashboard</li>
+                </ul>
+            </div>
+
             <div style="background: #eff6ff; border-left: 4px solid #2563eb; padding: 1rem 1.25rem; border-radius: 8px; margin-bottom: 2rem; color: #1e3a8a;">
                 Use Wokwi as your default workspace for these sensor and input experiments so you can debug readings and Serial Monitor output before switching to physical components.
             </div>
@@ -243,7 +266,8 @@ void loop() {
                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
                         <li>Implement button input with proper debouncing</li>
                         <li>Read potentiometer values and convert to percentages</li>
-                        <li>Simulate light sensor readings</li>
+                        <li>Add ultrasonic distance (from Lesson 8) and display it in mm</li>
+                        <li>Optionally filter the ultrasonic distance with a moving average</li>
                         <li>Create a user-friendly Serial Monitor dashboard</li>
                         <li>Add interactive commands for settings</li>
                     </ol>
@@ -275,8 +299,8 @@ void loop() {
             <!-- Navigation -->
             <div class="flex justify-between items-center mt-8">
                 <div>
-                    <a href="/programming/lessons32/Lesson6" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ← Previous: Lesson 6
+                    <a href="/programming/lessons32/lesson8" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Previous: Lesson 8
                     </a>
                 </div>
                 <div>
@@ -285,7 +309,7 @@ void loop() {
                     </a>
                 </div>
                 <div>
-                    <a href="/programming/lessons32/Lesson10" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    <a href="/programming/lessons32/lesson10" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
                         Next: Lesson 10 →
                     </a>
                 </div>
