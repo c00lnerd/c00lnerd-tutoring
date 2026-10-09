@@ -1,0 +1,593 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physics Module 3 Test">
+	<div class="container">
+		<div class="header">
+			<p class="eyebrow">Exploring Creation with Physics</p>
+			<h1>Physics Module 3 Test</h1>
+			<p class="subtitle">Two-Dimensional Vectors</p>
+		</div>
+
+		<form id="module3Test" autocomplete="off">
+			<div class="card">
+				<h2>Student Information</h2>
+				<div class="form-row">
+					<label>
+						Full Name
+						<input type="text" id="studentName" required>
+					</label>
+					<label>
+						Email Address
+						<input type="email" id="studentEmail" required>
+					</label>
+				</div>
+				<input type="text" id="website" style="display: none;" tabindex="-1" autocomplete="off">
+			</div>
+
+			<div class="card captcha-card">
+				<label>
+					Security Check: What is <span id="captcha-question"></span>?
+					<input type="number" id="captcha" required>
+				</label>
+				<div id="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
+			</div>
+
+			<div class="card graph-section">
+				<p class="section-note">Questions 1-7 refer to the figure below.</p>
+				<div class="graph-block">
+					<canvas id="vectorFigure" width="400" height="320"></canvas>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 1</h3>
+				<p>Which vector has the largest magnitude?</p>
+				<input type="text" id="q1" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 2</h3>
+				<p>Which vector has the largest angle?</p>
+				<input type="text" id="q2" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 3</h3>
+				<p>If an airplane is traveling southeast, which vector would be most likely to represent its velocity?</p>
+				<input type="text" id="q3" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 4</h3>
+				<p>If A is the acceleration of an object and B is its velocity, would the object be speeding up or slowing down?</p>
+				<input type="text" id="q4" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 5</h3>
+				<p>Graphically add vectors A and C. Describe the resultant vector (its direction and roughly how its length compares to A and C).</p>
+				<textarea id="q5" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 6</h3>
+				<p>Draw the vector that would represent &minus;C. Describe the vector you drew.</p>
+				<textarea id="q6" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 7</h3>
+				<p>Graphically subtract vector C from vector B. Describe the resultant vector.</p>
+				<textarea id="q7" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 8</h3>
+				<p>Why do we graphically add and subtract vectors when we can do so analytically?</p>
+				<textarea id="q8" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card graph-section">
+				<p class="section-note">Question 9 refers to the figure below.</p>
+				<div class="graph-block">
+					<p class="graph-title">An airplane is flying in a northeasterly wind as shown below:</p>
+					<canvas id="airplaneFigure" width="560" height="260"></canvas>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 9</h3>
+				<p>Draw the vector that represents the velocity which the pilot should maintain so that the airplane can arrive at the airport due east of its present location. Describe the vector you drew.</p>
+				<textarea id="q9" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 10</h3>
+				<p>Vector A has a magnitude of 3.2 m and a direction of 15 degrees. What are its x- and y-components?</p>
+				<div class="form-row">
+					<label>
+						x-component
+						<input type="text" id="q10a" class="answer-input" required>
+					</label>
+					<label>
+						y-component
+						<input type="text" id="q10b" class="answer-input" required>
+					</label>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 11</h3>
+				<p>The velocity vector of a bike has an x-component of 1.7 m/sec and a y-component of &minus;1.1 m/sec. What are the magnitude and direction of the velocity vector?</p>
+				<div class="form-row">
+					<label>
+						Magnitude
+						<input type="text" id="q11a" class="answer-input" required>
+					</label>
+					<label>
+						Direction
+						<input type="text" id="q11b" class="answer-input" required>
+					</label>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 12</h3>
+				<p>Vector A has a magnitude of 31.1 m at an angle of 60.0 degrees, and vector B has a magnitude of 11.4 m at an angle of 290.0 degrees. What is the sum of these two vectors?</p>
+				<input type="text" id="q12" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 13</h3>
+				<p>A hiker travels 1.8 miles with a heading of 150.0 degrees and then 3.2 miles at a heading of 350.0 degrees. What is the hiker's final displacement relative to his starting point?</p>
+				<input type="text" id="q13" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 14</h3>
+				<p>A boat travels across a wide river. If the boat can travel at a speed of 15 mph and its pilot heads in a direction of 130.0 degrees, while the current's velocity is 2.1 mph at a heading of 200.0 degrees, what will be the final velocity of the boat?</p>
+				<input type="text" id="q14" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 15</h3>
+				<p>A plane heads due north (&theta; = 90.0&deg;) at a speed of 200.0 mph. If the wind's velocity is southeast (315&deg;) at 15.0 mph, what will be the actual velocity of the plane?</p>
+				<input type="text" id="q15" class="answer-input" required>
+			</div>
+
+			<button type="submit" class="submit-button">Submit Test</button>
+		</form>
+
+		<div id="results" style="display: none;" class="card">
+			<h2>Test Submitted</h2>
+			<p id="email-status">Your answers have been sent to your instructor.</p>
+			<button type="button" class="submit-button" onclick="window.location.reload()">Take Again</button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+
+	<script is:inline>
+		let captchaAnswer = 0;
+
+		function generateCaptcha() {
+			const num1 = Math.floor(Math.random() * 10) + 1;
+			const num2 = Math.floor(Math.random() * 10) + 1;
+			captchaAnswer = num1 + num2;
+			document.getElementById('captcha-question').textContent = `${num1} + ${num2}`;
+		}
+
+		function validateCaptcha() {
+			const userAnswer = parseInt(document.getElementById('captcha').value);
+			const errorDiv = document.getElementById('captcha-error');
+			if (userAnswer !== captchaAnswer) {
+				errorDiv.style.display = 'block';
+				generateCaptcha();
+				document.getElementById('captcha').value = '';
+				return false;
+			}
+			errorDiv.style.display = 'none';
+			return true;
+		}
+
+		function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+			const headLength = 12;
+			const angle = Math.atan2(y2 - y1, x2 - x1);
+			ctx.strokeStyle = color;
+			ctx.fillStyle = color;
+			ctx.lineWidth = width;
+			ctx.beginPath();
+			ctx.moveTo(x1, y1);
+			ctx.lineTo(x2, y2);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(x2, y2);
+			ctx.lineTo(x2 - headLength * Math.cos(angle - Math.PI / 6), y2 - headLength * Math.sin(angle - Math.PI / 6));
+			ctx.lineTo(x2 - headLength * Math.cos(angle + Math.PI / 6), y2 - headLength * Math.sin(angle + Math.PI / 6));
+			ctx.closePath();
+			ctx.fill();
+		}
+
+		function drawVectorFigure() {
+			const canvas = document.getElementById('vectorFigure');
+			if (!canvas) return;
+			const ctx = canvas.getContext('2d');
+			const w = canvas.width;
+			const h = canvas.height;
+			const cx = w / 2;
+			const cy = h / 2;
+
+			ctx.clearRect(0, 0, w, h);
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(0, 0, w, h);
+
+			// Coordinate axes
+			ctx.strokeStyle = '#374151';
+			ctx.lineWidth = 1.5;
+			ctx.beginPath();
+			ctx.moveTo(20, cy);
+			ctx.lineTo(w - 20, cy);
+			ctx.stroke();
+			ctx.beginPath();
+			ctx.moveTo(cx, 20);
+			ctx.lineTo(cx, h - 20);
+			ctx.stroke();
+
+			// Vector A: northeast, longest (~45 deg)
+			drawArrow(ctx, cx, cy, cx + 110, cy - 110, '#111827', 2.5);
+			// Vector B: southwest, shortest (~200 deg)
+			drawArrow(ctx, cx, cy, cx - 65, cy + 25, '#111827', 4);
+			// Vector C: southeast, medium (~-25 deg)
+			drawArrow(ctx, cx, cy, cx + 95, cy + 40, '#111827', 2.5);
+
+			// Labels
+			ctx.fillStyle = '#111827';
+			ctx.font = 'bold italic 18px Arial';
+			ctx.fillText('A', cx + 80, cy - 80);
+			ctx.fillText('B', cx - 95, cy + 45);
+			ctx.fillText('C', cx + 70, cy + 75);
+		}
+
+		function drawAirplaneFigure() {
+			const canvas = document.getElementById('airplaneFigure');
+			if (!canvas) return;
+			const ctx = canvas.getContext('2d');
+			const w = canvas.width;
+			const h = canvas.height;
+
+			ctx.clearRect(0, 0, w, h);
+			ctx.fillStyle = '#ffffff';
+			ctx.fillRect(0, 0, w, h);
+
+			const planeX = 90;
+			const planeY = 170;
+
+			// Wind vector (northeasterly) above the plane
+			drawArrow(ctx, planeX + 140, 60, planeX + 200, 20, '#111827', 2);
+			ctx.fillStyle = '#111827';
+			ctx.font = '16px Arial';
+			ctx.fillText('V', planeX + 210, 28);
+			ctx.font = 'italic 11px Arial';
+			ctx.fillText('wind', planeX + 222, 32);
+
+			// Airplane (simple silhouette: fuselage + wings)
+			ctx.strokeStyle = '#111827';
+			ctx.fillStyle = '#111827';
+			ctx.lineWidth = 2;
+			ctx.beginPath();
+			ctx.moveTo(planeX - 40, planeY);
+			ctx.lineTo(planeX + 35, planeY - 8);
+			ctx.lineTo(planeX + 45, planeY - 6);
+			ctx.lineTo(planeX + 35, planeY + 4);
+			ctx.lineTo(planeX - 30, planeY + 8);
+			ctx.closePath();
+			ctx.fill();
+			// Wing
+			ctx.beginPath();
+			ctx.moveTo(planeX - 5, planeY - 4);
+			ctx.lineTo(planeX + 10, planeY - 30);
+			ctx.lineTo(planeX + 20, planeY - 28);
+			ctx.lineTo(planeX + 10, planeY - 4);
+			ctx.closePath();
+			ctx.fill();
+
+			// V_plane = ? label
+			ctx.font = 'italic 16px Arial';
+			ctx.fillText('V', planeX - 45, planeY - 45);
+			ctx.font = 'italic 11px Arial';
+			ctx.fillText('plane', planeX - 35, planeY - 45);
+			ctx.font = '16px Arial';
+			ctx.fillText('= ?', planeX + 15, planeY - 45);
+
+			// Dashed line for V_final pointing due east to airport
+			ctx.strokeStyle = '#6b7280';
+			ctx.lineWidth = 1.5;
+			ctx.setLineDash([6, 5]);
+			ctx.beginPath();
+			ctx.moveTo(planeX + 50, planeY + 20);
+			ctx.lineTo(w - 130, planeY + 20);
+			ctx.stroke();
+			ctx.setLineDash([]);
+			drawArrow(ctx, w - 150, planeY + 20, w - 128, planeY + 20, '#6b7280', 1.5);
+			ctx.fillStyle = '#6b7280';
+			ctx.font = '16px Arial';
+			ctx.fillText('V', planeX + 200, planeY + 55);
+			ctx.font = 'italic 11px Arial';
+			ctx.fillText('final', planeX + 212, planeY + 59);
+
+			// Airport (small tower/building) to the east
+			const ax = w - 110;
+			const ay = planeY + 20;
+			ctx.fillStyle = '#111827';
+			ctx.fillRect(ax, ay - 12, 30, 12);
+			ctx.beginPath();
+			ctx.moveTo(ax + 10, ay - 12);
+			ctx.lineTo(ax + 18, ay - 30);
+			ctx.lineTo(ax + 26, ay - 12);
+			ctx.closePath();
+			ctx.fill();
+			ctx.font = '12px Arial';
+			ctx.fillText('Airport', ax - 5, ay + 18);
+		}
+
+		function validateSecurity() {
+			const honeypot = document.getElementById('website');
+			if (honeypot && honeypot.value) {
+				console.log('Spam bot detected via honeypot');
+				alert('Security check failed. Please try again.');
+				return false;
+			}
+
+			const lastSubmission = localStorage.getItem('lastQuizStart');
+			const now = Date.now();
+			if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+				alert('Please wait 30 seconds between attempts.');
+				return false;
+			}
+			localStorage.setItem('lastQuizStart', now.toString());
+
+			if (!validateCaptcha()) {
+				return false;
+			}
+
+			const email = document.getElementById('studentEmail').value;
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				return false;
+			}
+
+			const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+			const domain = email.split('@')[1].toLowerCase();
+			if (spamDomains.includes(domain)) {
+				alert('Please use a permanent email address.');
+				return false;
+			}
+
+			return true;
+		}
+
+		window.onload = function() {
+			try {
+				emailjs.init('ct_s19oZHppLy9BlW');
+			} catch (e) {
+				console.error('EmailJS init failed:', e);
+			}
+			generateCaptcha();
+			drawVectorFigure();
+			drawAirplaneFigure();
+		};
+
+		document.getElementById('module3Test').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			if (!validateSecurity()) {
+				return;
+			}
+
+			const studentName = document.getElementById('studentName').value.trim();
+			const studentEmail = document.getElementById('studentEmail').value.trim();
+			const now = new Date().toLocaleString();
+
+			const answers = [
+				['Question 1', document.getElementById('q1').value.trim()],
+				['Question 2', document.getElementById('q2').value.trim()],
+				['Question 3', document.getElementById('q3').value.trim()],
+				['Question 4', document.getElementById('q4').value.trim()],
+				['Question 5', document.getElementById('q5').value.trim()],
+				['Question 6', document.getElementById('q6').value.trim()],
+				['Question 7', document.getElementById('q7').value.trim()],
+				['Question 8', document.getElementById('q8').value.trim()],
+				['Question 9', document.getElementById('q9').value.trim()],
+				['Question 10 (x-component)', document.getElementById('q10a').value.trim()],
+				['Question 10 (y-component)', document.getElementById('q10b').value.trim()],
+				['Question 11 (magnitude)', document.getElementById('q11a').value.trim()],
+				['Question 11 (direction)', document.getElementById('q11b').value.trim()],
+				['Question 12', document.getElementById('q12').value.trim()],
+				['Question 13', document.getElementById('q13').value.trim()],
+				['Question 14', document.getElementById('q14').value.trim()],
+				['Question 15', document.getElementById('q15').value.trim()]
+			];
+
+			let message = `PHYSICS MODULE 3 TEST SUBMISSION\n`;
+			message += `Submitted: ${now}\n\n`;
+			message += `Student: ${studentName}\n`;
+			message += `Student Email: ${studentEmail}\n\n`;
+			message += `ANSWERS:\n`;
+			answers.forEach((item, index) => {
+				message += `\n${item[0]}\n   ${item[1]}\n`;
+			});
+
+			const templateParams = {
+				to_email: 'chuck@c00lnerd.com',
+				from_name: 'C00lnerd Quiz System',
+				from_email: 'chuck@c00lnerd.com',
+				message: message,
+				subject: `Physics Module 3 Test - ${studentName}`
+			};
+
+			window.emailjs.send('service_kaw1xkh', 'template_io02xtm', templateParams)
+				.then(function(response) {
+					console.log('Email sent:', response.status, response.text);
+					document.getElementById('module3Test').style.display = 'none';
+					document.getElementById('results').style.display = 'block';
+					document.getElementById('email-status').textContent = 'Your test has been submitted and emailed to your instructor.';
+				}, function(error) {
+					console.error('Email error:', error);
+					if (error && error.text) console.error('Error details:', error.text);
+					alert('There was an error sending your test. Please check your internet connection and try again.');
+				});
+		});
+	</script>
+
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
+			font-family: Arial, sans-serif;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-weight: 700;
+			color: #2563eb;
+			font-size: 0.85rem;
+			margin: 0 0 0.5rem 0;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.2rem;
+			color: #111827;
+		}
+
+		.subtitle {
+			color: #4b5563;
+			font-size: 1.1rem;
+			margin: 0.5rem 0 0 0;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+			margin-bottom: 1.25rem;
+		}
+
+		.card h2,
+		.card h3 {
+			margin: 0 0 0.75rem 0;
+			color: #111827;
+		}
+
+		.card p {
+			color: #374151;
+			line-height: 1.6;
+			margin: 0 0 1rem 0;
+		}
+
+		.graph-section {
+			background: #f8fafc;
+		}
+
+		.section-note {
+			font-weight: 700;
+			color: #1f2937;
+		}
+
+		.graph-block {
+			text-align: center;
+		}
+
+		.graph-title {
+			font-weight: 600;
+		}
+
+		canvas {
+			border: 1px solid #d1d5db;
+			border-radius: 8px;
+			background: white;
+			max-width: 100%;
+		}
+
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+
+		@media (min-width: 600px) {
+			.form-row {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			color: #374151;
+			font-size: 0.95rem;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="number"],
+		textarea,
+		.answer-input {
+			width: 100%;
+			padding: 0.75rem;
+			margin-top: 0.35rem;
+			border: 1px solid #d1d5db;
+			border-radius: 6px;
+			font-size: 1rem;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
+
+		.answer-input {
+			max-width: 100%;
+		}
+
+		.captcha-card label {
+			display: block;
+		}
+
+		#captcha-error {
+			color: #dc2626;
+			margin-top: 0.5rem;
+			font-weight: 600;
+		}
+
+		.submit-button {
+			display: inline-block;
+			width: 100%;
+			padding: 1rem;
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: white;
+			background: #2563eb;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-top: 1rem;
+		}
+
+		.submit-button:hover {
+			background: #1d4ed8;
+		}
+
+		#results {
+			text-align: center;
+		}
+	</style>
+</Layout>
