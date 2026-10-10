@@ -57,7 +57,7 @@ import Layout from '../../../layouts/Layout.astro';
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
-                                Learn to read digital and analog sensor values
+                                Use an ultrasonic distance sensor (HC-SR04) to measure distance
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
@@ -65,7 +65,7 @@ import Layout from '../../../layouts/Layout.astro';
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
-                                Work with potentiometers and variable resistors
+                                Use a potentiometer as a live "threshold knob" (setpoint)
                             </li>
                         </ul>
                     </div>
@@ -74,19 +74,19 @@ import Layout from '../../../layouts/Layout.astro';
                         <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
-                                Digital vs analog sensors
+                                Time-of-flight distance measurement
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
-                                Pull-up and pull-down resistors
+                                Digital inputs with pull-ups and debouncing
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
-                                Signal conditioning and filtering
+                                Thresholds, levels, and smoothing (averaging)
                             </li>
                             <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
                                 <span class="text-blue-600 mr-2">•</span>
-                                Sensor calibration and mapping
+                                Mapping analog values to useful ranges (setpoints)
                             </li>
                         </ul>
                     </div>
@@ -129,19 +129,91 @@ import Layout from '../../../layouts/Layout.astro';
                 </div>
             </div>
 
-            <!-- Section 2: Digital Input Devices -->
+            <!-- Section 2: Ultrasonic Distance Sensor (HC-SR04) -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-800 mb-6">🔘 Section 2: Digital Input Devices</h2>
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">� Section 2: Ultrasonic Distance Sensor (HC-SR04)</h2>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How it works</h3>
+                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
+                        The HC-SR04 measures distance by sending an ultrasonic "ping" and timing how long it takes for
+                        the echo to return. Arduino measures that time and converts it into distance.
+                    </p>
+
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 HC-SR04 Wiring</h4>
+                        <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
+                            <ul style="color: #742a2a; line-height: 1.6; margin-left: 1rem;">
+                                <li><strong>VCC → 5V</strong></li>
+                                <li><strong>GND → GND</strong></li>
+                                <li><strong>TRIG → pin 9</strong></li>
+                                <li><strong>ECHO → pin 10</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">⚠️ Note</h4>
+                        <p style="color: #742a2a; margin: 0; line-height: 1.6;">
+                            If you get unstable readings, that’s normal. We’ll apply Lesson 8 techniques (thresholds and averaging)
+                            in the project section.
+                        </p>
+                    </div>
+                    
+                    <div class="relative">
+                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
+                            📋 Copy
+                        </button>
+                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// HC-SR04 distance reading example
+const int trigPin = 9;
+const int echoPin = 10;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+float getDistanceCm() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long durationUs = pulseIn(echoPin, HIGH, 30000);
+  if (durationUs == 0) return -1;
+  return durationUs * 0.0343f / 2.0f;
+}
+
+void loop() {
+  float d = getDistanceCm();
+  if (d < 0) {
+    Serial.println("No echo (out of range)");
+  } else {
+    Serial.print("Distance: ");
+    Serial.print(d);
+    Serial.println(" cm");
+  }
+  delay(100);
+}`}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Digital Input Devices -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">🔘 Section 3: Digital Input Devices</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Buttons and Switches</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Buttons and switches are the simplest digital input devices. They provide a direct 
-                        way for users to interact with your Arduino projects.
+                        Buttons and switches let the user control your program. In the Lesson 9 project, the button will be used
+                        to toggle modes (like enabling/disabling an alarm).
                     </p>
                     
                     <div style="background: #fff5f5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f56565; margin-bottom: 1.5rem;">
-                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 Button Wiring Options</h4>
+                        <h4 style="color: #742a2a; font-weight: bold; margin-bottom: 1rem;">🔌 Button Wiring</h4>
                         
                         <div style="background: #fed7d7; padding: 1rem; border-radius: 6px;">
                             <h5 style="color: #742a2a; font-weight: bold; margin-bottom: 0.5rem;">External Push Button Wiring:</h5>
@@ -154,42 +226,12 @@ import Layout from '../../../layouts/Layout.astro';
                             </ul>
                         </div>
                     </div>
-                    
-                    <div class="relative">
-                        <button onclick="copyCode(this)" class="absolute top-2 right-2 bg-blue-600 hover:bg-blue-700 text-white text-xs px-2 py-1 rounded transition-colors duration-200">
-                            📋 Copy
-                        </button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Basic Button Reading Example
-const int buttonPin = 2;    // Button connected to pin 2
-const int ledPin = 13;      // Built-in LED
-int buttonState = 0;        // Variable to store button state
-
-void setup() {
-  pinMode(ledPin, OUTPUT);
-  pinMode(buttonPin, INPUT_PULLUP);
-  Serial.begin(9600);
-  Serial.println("Button Test - Press button to toggle LED");
-}
-
-void loop() {
-  buttonState = digitalRead(buttonPin);
-  
-  if (buttonState == LOW) {
-    digitalWrite(ledPin, HIGH);   // Turn LED on
-    Serial.println("Button pressed - LED ON");
-  } else {
-    digitalWrite(ledPin, LOW);    // Turn LED off
-    Serial.println("Button released - LED OFF");
-  }
-  delay(50);  // Small delay for stability
-}`}</code></pre>
-                    </div>
                 </div>
             </div>
 
-            <!-- Section 3: Analog Input Devices -->
+            <!-- Section 4: Analog Input Devices -->
             <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-blue-800 mb-6">📊 Section 3: Analog Input Devices</h2>
+                <h2 class="text-2xl font-bold text-blue-800 mb-6">📊 Section 4: Analog Input Devices</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Potentiometers</h3>
@@ -267,12 +309,12 @@ void loop() {
                 <div style="margin-bottom: 1.5rem;">
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Requirements</h3>
                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li>Implement button input with proper debouncing</li>
-                        <li>Read potentiometer values and convert to percentages</li>
-                        <li>Simulate light sensor readings</li>
+                        <li>Read HC-SR04 distance and display it in cm</li>
+                        <li>Use the potentiometer as a live setpoint (minimum safe distance)</li>
+                        <li>Use the button to toggle an "alarm enabled" mode (debounced)</li>
                         <li>Apply the Lesson 8 pattern (read → decide → act) using thresholds and levels</li>
+                        <li>Optional: average the last N distance readings to smooth noise</li>
                         <li>Create a user-friendly Serial Monitor dashboard</li>
-                        <li>Add interactive commands for settings</li>
                     </ol>
                 </div>
             </div>
