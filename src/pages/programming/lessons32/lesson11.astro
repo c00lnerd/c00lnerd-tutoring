@@ -2,16 +2,15 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 11: miniAuto Assembly and Construction - C00lnerd Tutoring">
+<Layout title="Lesson 11: Robot Arm Stage 1 (Base + Elbow) - C00lnerd Tutoring">
     <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
         
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 11: miniAuto Assembly and Construction</h1>
-            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Building Your Complete Arduino Robot Car</p>
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 11: Robot Arm Stage 1 (Base + Elbow)</h1>
+            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Start a recurring build thread with SG90 servos</p>
             <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
-                <p style="margin: 0 0 0.5rem 0; font-weight: 600;">📖 Official Assembly Guide:</p>
-                <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/index.html" target="_blank" style="color: #fbbf24; text-decoration: underline; font-weight: 500;">Hiwonder miniAuto Wiki Documentation →</a>
+                <p style="margin: 0; font-weight: 600;">🦾 This semester’s main hands-on project: build a robot arm one stage at a time</p>
             </div>
         </div>
 
@@ -21,21 +20,21 @@ import Layout from '../../../layouts/Layout.astro';
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                 <div>
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Assembly Goals:</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Stage 1 Goals:</h3>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Assemble complete miniAuto robot car</li>
-                        <li>• Connect all sensors and actuators</li>
-                        <li>• Test individual components</li>
-                        <li>• Troubleshoot common issues</li>
+                        <li>• Control two SG90 servos as a base + elbow</li>
+                        <li>• Use a consistent pin map that we’ll reuse in future lessons</li>
+                        <li>• Create a safe “joint tester” program (manual + sweep test)</li>
+                        <li>• Prepare for mounting the servos into 3D printed parts</li>
                     </ul>
                 </div>
                 <div>
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Skills Developed:</h3>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Mechanical assembly</li>
-                        <li>• Electrical wiring</li>
-                        <li>• System integration</li>
-                        <li>• Problem-solving</li>
+                        <li>• Servo wiring and power planning</li>
+                        <li>• Input-to-output control (read → decide → act)</li>
+                        <li>• Testing, calibration, and safe limits</li>
+                        <li>• Building larger projects in stages</li>
                     </ul>
                 </div>
             </div>
@@ -50,22 +49,21 @@ import Layout from '../../../layouts/Layout.astro';
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Electronic Components:</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                         <li>• Arduino Uno microcontroller</li>
-                        <li>• Motor driver board</li>
-                        <li>• Ultrasonic sensor (HC-SR04)</li>
-                        <li>• IMU sensor (gyroscope/accelerometer)</li>
+                        <li>• 2x SG90 micro servos (base + elbow)</li>
+                        <li>• Breadboard (or expansion board) + jumper wires</li>
+                        <li>• Push button (A2 to GND, INPUT_PULLUP)</li>
+                        <li>• Potentiometer (A0) for angle control</li>
+                        <li>• Buzzer (optional) for mode-change feedback</li>
                         <li>• Jumper wires and connectors</li>
-                        <li>• Battery pack and holder</li>
                     </ul>
                 </div>
                 <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px;">
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Mechanical Parts:</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Chassis frame (acrylic or metal)</li>
-                        <li>• 4x Mecanum wheels</li>
-                        <li>• 4x DC motors with encoders</li>
-                        <li>• Screws, bolts, and spacers</li>
-                        <li>• Motor mounting brackets</li>
-                        <li>• Sensor mounting hardware</li>
+                        <li>• (Optional) 3D printed base mount</li>
+                        <li>• (Optional) 3D printed elbow bracket</li>
+                        <li>• Small screws (servo horn screws + mounting hardware)</li>
+                        <li>• Zip ties or tape for temporary mounting (prototype stage)</li>
                     </ul>
                 </div>
             </div>
@@ -74,96 +72,48 @@ import Layout from '../../../layouts/Layout.astro';
                 <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔧 Required Tools:</h4>
                 <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                     <li>• Phillips head screwdriver</li>
-                    <li>• Hex keys (Allen wrenches) - various sizes</li>
                     <li>• Small pliers</li>
                     <li>• Wire strippers (if needed)</li>
-                    <li>• Anti-static wrist strap (recommended)</li>
                 </ul>
             </div>
         </div>
 
-        <!-- Official Documentation -->
+        <!-- Robot Arm Build Thread -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📚 Official Documentation</h2>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧵 Robot Arm Build Thread</h2>
             
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
-                    <div style="background: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; margin-right: 1rem;">
-                        <span style="font-size: 1.5rem;">🔗</span>
-                    </div>
-                    <div>
-                        <h3 style="color: white; font-size: 1.2rem; font-weight: bold; margin: 0;">Hiwonder miniAuto Wiki</h3>
-                        <p style="color: rgba(255,255,255,0.9); margin: 0; font-size: 0.9rem;">Complete assembly and programming guide</p>
-                    </div>
-                </div>
-                <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/index.html" target="_blank" style="color: #fbbf24; text-decoration: underline; font-weight: 500; font-size: 1.1rem;">
-                    Visit Official Documentation →
-                </a>
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Standard Pin Map (keep this consistent)</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.8;">
+                    <li><strong>Button:</strong> A2 (to GND, INPUT_PULLUP)</li>
+                    <li><strong>Potentiometer:</strong> A0</li>
+                    <li><strong>Buzzer (optional):</strong> pin 8</li>
+                    <li><strong>Base servo signal:</strong> pin 9</li>
+                    <li><strong>Elbow servo signal:</strong> pin 10</li>
+                </ul>
             </div>
 
-            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">What you'll find in the official docs:</h4>
+            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Progress Checklist</h4>
                 <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                    <li>📋 Detailed assembly instructions with photos</li>
-                    <li>🔌 Complete wiring diagrams</li>
-                    <li>💻 Ready-to-use Arduino code samples</li>
-                    <li>🔧 Troubleshooting guide for common issues</li>
-                    <li>🚀 Advanced project examples</li>
+                    <li>☐ Base servo responds reliably (manual control)</li>
+                    <li>☐ Elbow servo responds reliably (manual control)</li>
+                    <li>☐ Both servos can run a safe sweep test without jittering</li>
+                    <li>☐ Safe limits are enforced (example: 20°–160°)</li>
+                    <li>☐ (Optional) Buzzer cue plays when you change modes</li>
                 </ul>
             </div>
         </div>
 
-        <!-- Section 2: Assembly Process -->
+        <!-- Wiring and Connections -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔧 Section 2: Assembly Process</h2>
-            
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Step 1: Chassis Preparation</h3>
-                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-                    <ol style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
-                        <li>Unpack all components and verify against parts list</li>
-                        <li>Identify the main chassis frame and mounting holes</li>
-                        <li>Remove any protective film from acrylic parts</li>
-                        <li>Organize screws and hardware by size</li>
-                    </ol>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Step 2: Motor Installation</h3>
-                <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-                    <ol style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
-                        <li>Attach motor mounting brackets to chassis</li>
-                        <li>Secure DC motors to mounting brackets</li>
-                        <li>Ensure motors are properly aligned</li>
-                        <li>Attach Mecanum wheels to motor shafts</li>
-                        <li>Verify wheels rotate freely without obstruction</li>
-                    </ol>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Step 3: Electronics Mounting</h3>
-                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
-                    <ol style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.5rem;">
-                        <li>Mount Arduino Uno to designated mounting points</li>
-                        <li>Install motor driver board near Arduino</li>
-                        <li>Mount ultrasonic sensor at front of chassis</li>
-                        <li>Install IMU sensor in stable location</li>
-                        <li>Secure battery pack in designated compartment</li>
-                    </ol>
-                </div>
-            </div>
-        </div>
-
-        <!-- Section 3: Wiring and Connections -->
-        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔌 Section 3: Wiring and Connections</h2>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔌 Wiring and Connections</h2>
             
             <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #dc2626;">
                 <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Safety First!</h4>
                 <p style="color: #4a5568; margin: 0; line-height: 1.6;">
-                    Always disconnect power before making any connections. Double-check polarity before connecting batteries or power supplies.
+                    Always disconnect power before making any connections. SG90 servos can draw bursts of current. If a servo jitters or resets your Arduino,
+                    consider powering the servos from a separate 5V source (and connect grounds).
                 </p>
             </div>
 
@@ -171,53 +121,40 @@ import Layout from '../../../layouts/Layout.astro';
                 <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Power Connections</h3>
                 <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Connect battery pack to motor driver power input</li>
-                        <li>• Connect Arduino power from motor driver 5V output</li>
-                        <li>• Ensure all ground connections are secure</li>
+                        <li>• Start with a single servo powered from Arduino 5V (test)</li>
+                        <li>• If the Arduino resets or the servo jitters, use an external 5V supply for servos</li>
+                        <li>• Always connect all grounds together (Arduino GND ↔ servo power supply GND)</li>
                         <li>• Verify voltage levels before powering on</li>
                     </ul>
                 </div>
             </div>
 
             <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Motor Connections</h3>
-                <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px;">
-                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Connect motor wires to driver outputs (A1, A2, B1, B2)</li>
-                        <li>• Connect PWM control pins to Arduino digital pins</li>
-                        <li>• Connect direction control pins to Arduino digital pins</li>
-                        <li>• Test each motor individually before final assembly</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Sensor Connections</h3>
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Signal Connections</h3>
                 <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Connect ultrasonic sensor Trig and Echo pins</li>
-                        <li>• Connect IMU sensor via I2C (SDA, SCL)</li>
-                        <li>• Ensure sensor power connections (VCC, GND)</li>
-                        <li>• Route wires to avoid interference with moving parts</li>
+                        <li>• Base servo signal → pin 9</li>
+                        <li>• Elbow servo signal → pin 10</li>
+                        <li>• Button → A2 to GND (INPUT_PULLUP)</li>
+                        <li>• Potentiometer wiper → A0 (other pins to 5V and GND)</li>
+                        <li>• (Optional) Buzzer → pin 8 to GND</li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Section 4: Testing and Troubleshooting -->
+        <!-- Testing and Troubleshooting -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧪 Section 4: Testing and Troubleshooting</h2>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧪 Testing and Troubleshooting</h2>
             
             <div style="margin-bottom: 1.5rem;">
                 <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Initial Testing Checklist</h3>
                 <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>✅ Visual inspection of all connections</li>
-                        <li>✅ Power-on test (LEDs and indicators)</li>
-                        <li>✅ Individual motor function test</li>
-                        <li>✅ Sensor reading verification</li>
-                        <li>✅ Communication test (Arduino to sensors)</li>
-                        <li>✅ Mechanical movement test</li>
+                        <li>✅ Visual inspection of all servo wires (signal/power/ground)</li>
+                        <li>✅ Test each servo individually with the Lesson 10 “basic servo control” sketch</li>
+                        <li>✅ Confirm button and potentiometer read correctly</li>
+                        <li>✅ Add safe limits before attaching any printed parts</li>
                     </ul>
                 </div>
             </div>
@@ -226,20 +163,20 @@ import Layout from '../../../layouts/Layout.astro';
                 <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Common Issues and Solutions</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Motors not turning</h4>
-                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check power connections, verify motor driver wiring, test with simple code</p>
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Servo jitters</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Use a separate 5V supply for servos (shared ground), and avoid long loose jumper wires</p>
                     </div>
                     <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Sensors not responding</h4>
-                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Verify power and signal connections, check pin assignments in code</p>
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Arduino resets when servo moves</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">The servo is drawing too much current from Arduino 5V—use external 5V for servos</p>
                     </div>
                     <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Robot moves erratically</h4>
-                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check wheel alignment, verify motor directions, calibrate sensors</p>
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Servo moves in the wrong direction</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Reverse the angle mapping in code or re-mount the servo horn after centering at 90°</p>
                     </div>
                     <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Power issues</h4>
-                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check battery charge, verify voltage levels, inspect power connections</p>
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Servo doesn’t move at all</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check the signal pin number, ensure servo ground is connected, and verify power polarity</p>
                     </div>
                 </div>
             </div>
@@ -250,18 +187,16 @@ import Layout from '../../../layouts/Layout.astro';
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📝 Assessment & Next Steps</h2>
             
             <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Assembly Verification</h3>
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Stage 1 Verification</h3>
                 <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Before proceeding to programming, ensure your miniAuto is properly assembled:
+                        Before moving to the next stage, make sure you have a reliable base + elbow setup:
                     </p>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>🔧 All screws are tightened securely</li>
-                        <li>🔌 All electrical connections are correct</li>
-                        <li>⚡ Power system functions properly</li>
-                        <li>🎯 Components are properly aligned</li>
-                        <li>🔄 Wheels rotate freely</li>
-                        <li>📡 Sensors are mounted securely</li>
+                        <li>� Button + potentiometer inputs work reliably</li>
+                        <li>🦾 Both servos respond correctly and smoothly</li>
+                        <li>⚡ Power is stable (no resets during movement)</li>
+                        <li>�️ Safe limits are enabled before you attach printed parts</li>
                     </ul>
                 </div>
             </div>
@@ -269,7 +204,7 @@ import Layout from '../../../layouts/Layout.astro';
             <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
                 <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🎯 Preparation for Week 12</h4>
                 <p style="color: #4a5568; line-height: 1.6; margin: 0;">
-                    With your miniAuto fully assembled, you're ready to begin programming! In Week 12, we'll learn how to control the Mecanum wheels for omnidirectional movement, implement sensor reading, and create your first autonomous behaviors.
+                    Next, we’ll expand the arm by adding a <strong>shoulder joint</strong> and introduce “preset poses” (home, ready, reach) so the arm can move through repeatable sequences.
                 </p>
             </div>
 

@@ -28,7 +28,7 @@ import Layout from '../../../layouts/Layout.astro';
                     <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">Hardware you’ll reuse</h4>
                     <p style="color: #065f46; margin: 0; line-height: 1.6;">
                         We’ll keep the same input wiring conventions:
-                        <strong>button → pin 2 (INPUT_PULLUP)</strong> and <strong>potentiometer → A0</strong>.
+                        <strong>button → A2 (INPUT_PULLUP)</strong> and <strong>potentiometer → A0</strong>.
                     </p>
                 </div>
             </div>
@@ -128,7 +128,7 @@ import Layout from '../../../layouts/Layout.astro';
                     </div>
                     <div style="background: #dbeafe; padding: 1rem; border-radius: 6px;">
                         <p style="color: #1e40af; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
-                            <strong>Connections:</strong> Buzzer positive → Pin 8, Buzzer negative → GND, Button → Pin 2 & GND (with INPUT_PULLUP)
+                            <strong>Connections:</strong> Buzzer positive → Pin 8, Buzzer negative → GND, Button → A2 & GND (with INPUT_PULLUP)
                         </p>
                     </div>
                 </div>
@@ -143,7 +143,7 @@ import Layout from '../../../layouts/Layout.astro';
                         <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                         <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Buzzer Control Example
 const int buzzerPin = 8;    // Buzzer connected to pin 8
-const int buttonPin = 2;    // Button for control
+const int buttonPin = A2;    // Button for control
 
 bool buttonPressed = false;
 bool lastButtonState = HIGH;
@@ -362,7 +362,7 @@ void loop() {
 
 Servo myServo;
 const int servoPin = 9;
-const int buttonPin = 2;
+const int buttonPin = A2;
 
 int currentPosition = 90;   // Start at center position
 bool sweepMode = false;     // Sweep mode flag
@@ -449,7 +449,7 @@ void performSweep() {
                     </div>
                     <div style="background: #fae8ff; padding: 1rem; border-radius: 6px;">
                         <p style="color: #a21caf; font-size: 0.9rem; margin: 0; text-align: center; font-weight: 500;">
-                            <strong>Synchronization Setup:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → Pin 2 & GND, Potentiometer → A0 (for real-time control)
+                            <strong>Synchronization Setup:</strong> Buzzer → Pin 8 & GND, Servo → Pin 9, 5V & GND, Button → A2 & GND, Potentiometer → A0 (for real-time control)
                         </p>
                     </div>
                 </div>
@@ -468,7 +468,7 @@ void performSweep() {
 Servo myServo;
 const int servoPin = 9;
 const int buzzerPin = 8;
-const int buttonPin = 2;
+const int buttonPin = A2;
 const int potPin = A0;
 
 bool systemActive = false;
@@ -557,7 +557,7 @@ void performAudioMotionSync() {
 Servo myServo;
 const int servoPin = 9;
 const int buzzerPin = 8;
-const int buttonPin = 2;
+const int buttonPin = A2;
 
 // Pattern definitions
 struct Pattern {
@@ -671,15 +671,15 @@ void executePattern(int patternNum) {
                 <h2 class="text-2xl font-bold text-green-800 mb-6">🛠️ Hands-On Activity: Interactive Output Control System</h2>
                 
                 <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: SG90 Servo “Joint Tester” (Robot Arm Stage 1)</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Project: SG90 Servo “Joint Tester” (Robot Arm Prep)</h3>
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        This is the first step toward building a simple robot arm using <strong>SG90 micro servos</strong>.
+                        This is a prerequisite step toward building a simple robot arm using <strong>SG90 micro servos</strong>.
                         Before you attach 3D printed parts, you want a reliable way to test a servo’s range of motion, direction, and safe limits.
                         You’ll reuse the Lesson 9 inputs (button + potentiometer) to control a single servo “joint”,
                         and add buzzer feedback so you can hear state changes.
                     </p>
                     <p style="color: #4a5568; line-height: 1.6; margin: 0;">
-                        If you have access to a printer, you can start with a simple <strong>base mount</strong> and <strong>elbow bracket</strong> so the servo motion actually moves a joint.
+                        In the next lesson, you’ll use what you build here to start the recurring robot arm project.
                     </p>
                 </div>
 
@@ -687,7 +687,7 @@ void executePattern(int patternNum) {
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Activity Requirements</h3>
                     <ol class="list-decimal list-inside space-y-2 text-gray-700">
                         <li>Use the potentiometer (A0) to set a target servo angle (0°–180°)</li>
-                        <li>Use the button (pin 2) to toggle between at least two modes (example: “manual” vs “sweep test”)</li>
+                        <li>Use the button (A2) to toggle between at least two modes (example: “manual” vs “sweep test”)</li>
                         <li>Provide Serial Monitor output that shows the mode and current angle</li>
                         <li>Add a buzzer sound cue when the mode changes (so you get instant feedback)</li>
                         <li>Include a “safe range” option (example: clamp to 20°–160°) to protect 3D printed arm parts</li>
@@ -701,7 +701,7 @@ void executePattern(int patternNum) {
                         Robot arms are best built in stages. Once you can reliably control one SG90, you can grow the build one joint at a time:
                     </p>
                     <ul style="margin: 0.75rem 0 0 1.25rem; color: #065f46; line-height: 1.6;">
-                        <li><strong>Stage 1 (this lesson):</strong> SG90 basics + base mount + elbow bracket</li>
+                        <li><strong>Stage 1 (Lesson 11):</strong> base + elbow (two servos) with a consistent pin plan</li>
                         <li><strong>Stage 2:</strong> add a <strong>shoulder</strong> joint and introduce “preset poses” (home, ready, reach)</li>
                         <li><strong>Stage 3:</strong> add a <strong>gripper</strong> and practice coordinated multi-servo motion</li>
                     </ul>
