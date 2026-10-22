@@ -1,0 +1,447 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout title="Lesson 9.5: Arrays and Data Structures - C00lnerd Tutoring">
+    <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 9.5: Arrays and Data Structures</h1>
+            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Organizing collections of values so your programs can handle patterns, melodies, and poses</p>
+            <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
+                <p style="margin: 0; font-weight: 600;">🧩 This supplemental lesson prepares you for Lesson 10, where melodies and motion patterns are stored as arrays and structs.</p>
+            </div>
+        </div>
+
+        <!-- Why This Lesson -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🤔 Why This Lesson Exists</h2>
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                In Lesson 10, we play melodies and run motion patterns. A melody is <strong>not one number</strong> — it is a
+                <em>list</em> of notes played in order. A robot arm pose is not one number either — it is a
+                <em>group</em> of angles that belong together (base, elbow, shoulder, gripper).
+            </p>
+            <p style="color: #4a5568; line-height: 1.7; margin: 0;">
+                C++ gives us two tools for this: <strong>arrays</strong> (lists of the same type of value) and
+                <strong>structs</strong> (groups of related values that belong to one "thing"). This lesson shows you both
+                with small examples you can run on the same hardware you already have wired up.
+            </p>
+        </div>
+
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Learning Objectives</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">By the end of this lesson, you will:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Declare and use arrays to store lists of values</li>
+                        <li>• Loop through arrays with <code>for</code> loops</li>
+                        <li>• Use parallel arrays for related data (note + duration)</li>
+                        <li>• Group related fields with <code>struct</code></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Key Concepts:</h3>
+                    <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
+                        <li>• Zero-based indexing (<code>myArray[0]</code> is the first item)</li>
+                        <li>• <code>sizeof()</code> to find array length safely</li>
+                        <li>• Arrays of structs for patterns and poses</li>
+                        <li>• How this connects to Lesson 10's melodies and the robot arm</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: The Problem Arrays Solve -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📝 Section 1: The Problem Arrays Solve</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Imagine storing a 5-note melody using only single variables:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Without arrays - painful and repetitive!
+int note1 = 262;
+int note2 = 294;
+int note3 = 330;
+int note4 = 349;
+int note5 = 392;
+
+// To play them you would copy/paste tone() five times...
+// What if the melody had 50 notes?`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin: 1rem 0;">
+                An <strong>array</strong> stores many values under one name. Each value gets an <strong>index</strong>
+                (its position number), starting at <code>0</code>:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// With an array - one name, many values
+int notes[] = {262, 294, 330, 349, 392};
+
+// notes[0] is 262 (first item)
+// notes[4] is 392 (fifth item - index counts from 0!)`}</code></pre>
+            </div>
+
+            <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #f59e0b;">
+                <p style="color: #92400e; margin: 0; line-height: 1.6;">
+                    ⚠️ <strong>Indexing gotcha:</strong> an array of 5 items has indexes <code>0</code> through <code>4</code>.
+                    Asking for <code>notes[5]</code> reads memory outside the array — a classic bug source.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 2: Looping Through Arrays -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔁 Section 2: Looping Through Arrays</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Arrays shine when combined with a <code>for</code> loop — the loop counter <code>i</code> becomes the index.
+                Use <code>sizeof(array) / sizeof(array[0])</code> to get the number of items automatically:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Array Basics - read and print every item
+int notes[] = {262, 294, 330, 349, 392};
+
+void setup() {
+  Serial.begin(9600);
+  
+  int count = sizeof(notes) / sizeof(notes[0]);  // = 5
+  
+  for (int i = 0; i < count; i++) {
+    Serial.print("notes[");
+    Serial.print(i);
+    Serial.print("] = ");
+    Serial.println(notes[i]);
+  }
+}
+
+void loop() {
+  // nothing needed here
+}`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1rem;">
+                <strong>Why <code>sizeof</code>?</strong> If you later add a 6th note, the loop still works — you never have to
+                update a hard-coded "5" somewhere else in the code. This is a habit worth building now.
+            </p>
+        </div>
+
+        <!-- Section 3: Parallel Arrays -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎵 Section 3: Parallel Arrays (Notes + Durations)</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                A melody needs <em>two</em> facts per note: the <strong>frequency</strong> and the <strong>duration</strong>.
+                The simplest approach is two arrays kept in the same order — <code>melody[i]</code> pairs with
+                <code>noteDurations[i]</code>. This is exactly what Lesson 10's melody code does
+                (buzzer on <strong>pin 8</strong>):
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Parallel Arrays Mini-Melody (buzzer on pin 8)
+const int buzzerPin = 8;
+
+int melody[]        = {262, 330, 392, 523};  // C4, E4, G4, C5
+int noteDurations[] = {4,   4,   4,   2};    // 4 = quarter note, 2 = half note
+
+void setup() {
+  int count = sizeof(melody) / sizeof(melody[0]);
+  
+  for (int i = 0; i < count; i++) {
+    int duration = 1000 / noteDurations[i];
+    tone(buzzerPin, melody[i], duration);
+    delay(duration * 1.3);  // small gap between notes
+    noTone(buzzerPin);
+  }
+}
+
+void loop() {
+  // Played once in setup()
+}`}</code></pre>
+            </div>
+
+            <div style="background: #eff6ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #3b82f6;">
+                <p style="color: #1e40af; margin: 0; line-height: 1.6;">
+                    💡 Parallel arrays work, but they have a weakness: the pairing lives only in your head. If the two lists
+                    get out of order, the song is wrong. Structs (next section) fix that by keeping each note's data together.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section 4: Structs -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📦 Section 4: Structs — Grouping Related Data</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                A <code>struct</code> bundles several fields into one named type. Think of one "note" as a package containing
+                a frequency <em>and</em> a duration. For our robot arm, a "pose" will package several servo angles.
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Struct Basics - one package holding related fields
+struct Note {
+  int frequency;   // Hz
+  int duration;    // milliseconds
+};
+
+// Create two Note "packages"
+Note noteA = {262, 500};   // C4 for half a second
+Note noteB = {392, 250};   // G4 for a quarter second
+
+void setup() {
+  Serial.begin(9600);
+  
+  // Access fields with the dot operator
+  Serial.print("noteA frequency: ");
+  Serial.println(noteA.frequency);
+  Serial.print("noteB duration: ");
+  Serial.println(noteB.duration);
+}
+
+void loop() {
+}`}</code></pre>
+            </div>
+
+            <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin: 1.5rem 0 1rem 0;">Arrays of Structs — the Best of Both</h3>
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Combine them: an <strong>array of structs</strong> gives you a list where every item is a complete package.
+                This is the exact pattern Lesson 10 uses for its audio-motion sequences:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Array of Structs - a list of complete packages
+struct Step {
+  int servoPos;    // degrees (for pin 9 servo)
+  int frequency;   // Hz (for pin 8 buzzer)
+  int duration;    // ms
+};
+
+Step pattern[] = {
+  {0,   262, 400},   // step 0: left + low note
+  {90,  330, 400},   // step 1: center + mid note
+  {180, 392, 400},   // step 2: right + high note
+};
+
+void setup() {
+  Serial.begin(9600);
+  
+  int count = sizeof(pattern) / sizeof(pattern[0]);
+  for (int i = 0; i < count; i++) {
+    Serial.print("Step ");
+    Serial.print(i);
+    Serial.print(": servo=");
+    Serial.print(pattern[i].servoPos);
+    Serial.print(" deg, freq=");
+    Serial.print(pattern[i].frequency);
+    Serial.println(" Hz");
+  }
+}
+
+void loop() {
+}`}</code></pre>
+            </div>
+        </div>
+
+        <!-- Hands-On Activity -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🛠️ Hands-On: Preset Pose Sequencer</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Use your standard wiring (<strong>servo on pin 9</strong>, <strong>buzzer on pin 8</strong>,
+                <strong>button on A2</strong>). Each button press advances to the next pose in an array of structs —
+                this is the same machinery that will drive "preset poses" on the robot arm:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Preset Pose Sequencer
+// Servo -> pin 9, Buzzer -> pin 8, Button -> A2 (to GND, INPUT_PULLUP)
+#include <Servo.h>
+
+Servo joint;
+const int servoPin = 9;
+const int buzzerPin = 8;
+const int buttonPin = A2;
+
+// Each pose = one package of related values
+struct Pose {
+  int angle;
+  int beepFreq;
+};
+
+Pose poses[] = {
+  {30,  262},    // C4
+  {60,  294},    // D4
+  {90,  330},    // E4
+  {120, 392},    // G4
+  {150, 523}     // C5
+};
+
+int poseIndex = 0;
+int poseCount = sizeof(poses) / sizeof(poses[0]);
+int lastButton = HIGH;
+
+void setup() {
+  joint.attach(servoPin);
+  pinMode(buzzerPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  Serial.begin(9600);
+  
+  // Start at first pose
+  joint.write(poses[0].angle);
+  Serial.println("Press button to step through poses");
+}
+
+void loop() {
+  // read -> decide -> act
+  int button = digitalRead(buttonPin);
+  
+  if (lastButton == HIGH && button == LOW) {
+    poseIndex = poseIndex + 1;
+    if (poseIndex >= poseCount) {
+      poseIndex = 0;  // wrap around to the start
+    }
+    
+    joint.write(poses[poseIndex].angle);
+    tone(buzzerPin, poses[poseIndex].beepFreq, 150);
+    
+    Serial.print("Pose ");
+    Serial.print(poseIndex);
+    Serial.print(" -> angle ");
+    Serial.println(poses[poseIndex].angle);
+  }
+  
+  lastButton = button;
+}`}</code></pre>
+            </div>
+
+            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">Try these extensions:</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #065f46; line-height: 1.8;">
+                    <li>• Add a <code>holdTime</code> field to <code>Pose</code> and delay that long at each pose</li>
+                    <li>• Use the potentiometer (A0) to choose which pose index to jump to</li>
+                    <li>• Make a second array of poses and let the button toggle between arrays</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Quick Check -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📝 Quick Check</h2>
+            <ol style="color: #4a5568; line-height: 1.9; padding-left: 1.5rem; margin: 0;">
+                <li>If an array is declared as <code>int data[] = {5, 10, 15, 20};</code>, what is <code>data[2]</code>?</li>
+                <li>Why does <code>sizeof(notes) / sizeof(notes[0])</code> give the number of items?</li>
+                <li>What is the weakness of parallel arrays that a <code>struct</code> fixes?</li>
+                <li>Write a <code>struct</code> called <code>ArmPose</code> with fields for a base angle and an elbow angle.</li>
+            </ol>
+        </div>
+
+        <!-- Where This Goes Next -->
+        <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border-left: 4px solid #059669;">
+            <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">Where this goes next</h4>
+            <p style="color: #065f46; margin: 0; line-height: 1.6;">
+                Lesson 10 uses parallel arrays for melodies (<code>melody[]</code> + <code>noteDurations[]</code>) and an
+                array of structs (<code>struct Pattern</code>) for coordinated sound + servo patterns. Later, the robot arm's
+                "preset poses" (home, ready, reach) will be arrays of structs exactly like the activity above — but with
+                one angle per joint.
+            </p>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <div>
+                <a href="/programming/lessons32/lesson9" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous: Lesson 9
+                </a>
+            </div>
+            <div>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Course Overview
+                </a>
+            </div>
+            <div>
+                <a href="/programming/lessons32/lesson10" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Lesson 10 →
+                </a>
+            </div>
+        </div>
+    </div>
+</Layout>
+
+<script>
+window.copyCode = function(button) {
+    try {
+        const codeElement = button.parentElement.querySelector('code');
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        
+        const codeText = codeElement.textContent || codeElement.innerText;
+        
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+};
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+</script>
