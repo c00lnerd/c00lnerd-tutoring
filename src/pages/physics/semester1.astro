@@ -220,6 +220,7 @@ const weeks = [
 		module: 'Module 3',
 		topics: 'Analytical vector addition and applying vectors to physical situations.',
 		lab: 'Experiment 3.2: Vector Addition.',
+		tool: { label: 'Vector Addition Tool', url: '/simulations/interactive/vector-addition.html' },
 	},
 	{
 		week: 8,
@@ -695,6 +696,9 @@ const weeks = [
 					</div>
 					<p><strong>Topics:</strong> {item.topics}</p>
 					<p><strong>Lab / activity:</strong> {item.lab}</p>
+					{item.tool && (
+						<p><strong>Tool:</strong> <a href={item.tool.url} class="tool-link">{item.tool.label}</a></p>
+					)}
 				</section>
 			))}
 		</div>
@@ -886,6 +890,16 @@ const weeks = [
 			margin: 0.4rem 0 0 0;
 			line-height: 1.7;
 			color: #374151;
+		}
+
+		.tool-link {
+			color: #2563eb;
+			font-weight: 600;
+			text-decoration: none;
+		}
+
+		.tool-link:hover {
+			text-decoration: underline;
 		}
 
 		.nav-row {
