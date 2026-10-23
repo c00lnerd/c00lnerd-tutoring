@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vector Addition Tool</title>
+<style>
+  :root { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  body { margin:0; background:#f5f7fb; color:#172033; }
+  .wrap { max-width:1100px; margin:32px auto; padding:0 18px; }
+  h1 { margin-bottom:6px; }
+  .sub { color:#586174; margin-top:0; }
+  .panel { background:white; border-radius:14px; padding:22px; box-shadow:0 4px 18px rgba(0,0,0,.08); margin-bottom:20px; }
+  .controls { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; align-items:center; margin-bottom:18px; }
+  .controls label { font-weight:600; }
+  .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .vector-rows { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
+  .vector-row { display:flex; align-items:center; gap:8px; background:#f0f4ff; border:1px solid #c8d4f5; border-radius:10px; padding:10px 14px; }
+  .vector-row.disabled { opacity:0.35; }
+  .vector-tag { font-weight:700; color:#2457d6; min-width:24px; }
+  input { width:80px; height:44px; box-sizing:border-box; text-align:center; font-size:1rem; border-radius:8px; border:1px solid #c8cfda; background:#fff; }
+  .input-label { font-size:0.8rem; color:#586174; text-align:center; }
+  .input-group { display:flex; flex-direction:column; align-items:center; gap:2px; }
+  .buttons { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:20px 0 8px; }
+  button { border:0; border-radius:9px; padding:11px 18px; font-size:1rem; cursor:pointer; }
+  .primary { background:#2457d6; color:white; }
+  .secondary { background:#e8edf7; color:#172033; }
+  canvas { display:block; margin:0 auto; background:#fff; border:1px solid #dde3ee; border-radius:10px; max-width:100%; }
+  .legend { display:flex; gap:18px; justify-content:center; margin-top:10px; font-size:0.9rem; color:#586174; }
+  .swatch { display:inline-block; width:14px; height:14px; border-radius:3px; margin-right:5px; vertical-align:-2px; }
+  .steps { margin-top:22px; }
+  .steps h2 { font-size:1.15rem; }
+  .step { padding:8px 10px; margin:6px 0; background:#f7f9fc; border-radius:8px; font-family:ui-monospace, SFMono-Regular, Menlo, monospace; font-size:0.95rem; }
+  .result-card { padding:14px 16px; margin:10px 0; background:#fdecec; border:1px solid #f3c1c1; border-radius:10px; }
+  .result-card strong { color:#b91c1c; }
+  .note { text-align:center; color:#586174; margin:18px 0 0; font-size:0.95rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Vector Addition Tool</h1>
+  <p class="sub">Enter up to 4 vectors in polar form, choose your angle convention, and watch them add tip-to-tail. The tool converts each vector to components, sums them, and reports the resultant in both Cartesian and polar form.</p>
+
+  <div class="panel">
+    <div class="controls">
+      <label for="angleMode">Angle convention:</label>
+      <select id="angleMode" onchange="calculate()">
+        <option value="math" selected>Mathematical (° counterclockwise from +x axis)</option>
+        <option value="geo">Geographic / compass bearing (° clockwise from North)</option>
+      </select>
+      <label for="vectorCount">Vectors:</label>
+      <select id="vectorCount" onchange="updateVectorRows()">
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+    </div>
+
+    <div class="vector-rows" id="vectorRows"></div>
+
+    <div class="buttons">
+      <button class="primary" onclick="calculate()">Add Vectors</button>
+      <button class="secondary" onclick="fillExample()">Example</button>
+      <button class="secondary" onclick="clearAll()">Clear</button>
+    </div>
+
+    <canvas id="graph" width="860" height="560"></canvas>
+    <div class="legend">
+      <span><span class="swatch" style="background:#2457d6;"></span>Given vectors (tip-to-tail)</span>
+      <span><span class="swatch" style="background:#dc2626;"></span>Resultant R</span>
+    </div>
+
+    <div id="results"></div>
+    <div id="steps" class="steps"></div>
+
+    <p class="note" id="modeHint"></p>
+  </div>
+</div>
+
+<script>
+const COLORS = { vector: '#2457d6', resultant: '#dc2626', axis: '#9aa4b5', grid: '#e8edf5' };
+const hints = {
+  math: 'Mathematical convention: the angle is measured counterclockwise from the +x (East) axis. Components: x = r·cos(θ), y = r·sin(θ).',
+  geo: 'Geographic convention: the bearing is measured clockwise from North (+y axis). Components: x = r·sin(b), y = r·cos(b). A bearing of 0° is North, 90° is East, 180° is South.'
+};
+
+let vectors = [];
+
+function fmt(x) {
+  if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
+  return Number(x.toFixed(3)).toString();
+}
+
+function norm360(deg) { return ((deg % 360) + 360) % 360; }
+
+// Convert entered polar (r, angle) to components based on convention
+function toComponents(r, angle, mode) {
+  if (mode === 'math') {
+    const rad = angle * Math.PI / 180;
+    return { x: r * Math.cos(rad), y: r * Math.sin(rad), mathAngle: angle };
+  }
+  // geographic bearing: clockwise from North (+y)
+  const rad = angle * Math.PI / 180;
+  return { x: r * Math.sin(rad), y: r * Math.cos(rad), mathAngle: 90 - angle };
+}
+
+function buildVectorRows() {
+  const wrap = document.getElementById('vectorRows');
+  wrap.innerHTML = '';
+  vectors = [];
+  for (let i = 0; i < 4; i++) {
+    vectors.push({ r: 0, angle: 0 });
+    const row = document.createElement('div');
+    row.className = 'vector-row';
+    row.id = `vrow-${i}`;
+    row.innerHTML = `
+      <span class="vector-tag">V${i + 1}</span>
+      <div class="input-group">
+        <input type="number" step="any" id="r-${i}" value="0" aria-label="Vector ${i + 1} magnitude" oninput="calculate()">
+        <span class="input-label">magnitude r</span>
+      </div>
+      <div class="input-group">
+        <input type="number" step="any" id="a-${i}" value="0" aria-label="Vector ${i + 1} angle" oninput="calculate()">
+        <span class="input-label">angle (°)</span>
+      </div>`;
+    wrap.appendChild(row);
+  }
+  updateVectorRows();
+}
+
+function updateVectorRows() {
+  const n = Number(document.getElementById('vectorCount').value);
+  for (let i = 0; i < 4; i++) {
+    document.getElementById(`vrow-${i}`).classList.toggle('disabled', i >= n);
+  }
+  calculate();
+}
+
+function readInputs() {
+  const n = Number(document.getElementById('vectorCount').value);
+  const mode = document.getElementById('angleMode').value;
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const r = Number(document.getElementById(`r-${i}`).value) || 0;
+    const a = Number(document.getElementById(`a-${i}`).value) || 0;
+    out.push({ name: `V${i + 1}`, r, a, ...toComponents(r, a, mode) });
+  }
+  return { list: out, mode };
+}
+
+// ---------- Canvas drawing ----------
+
+function drawArrow(ctx, x1, y1, x2, y2, color, label, labelOffset) {
+  const headLen = 12;
+  const ang = Math.atan2(y2 - y1, x2 - x1);
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(ang - Math.PI / 6), y2 - headLen * Math.sin(ang - Math.PI / 6));
+  ctx.lineTo(x2 - headLen * Math.cos(ang + Math.PI / 6), y2 - headLen * Math.sin(ang + Math.PI / 6));
+  ctx.closePath();
+  ctx.fill();
+  if (label) {
+    const mx = (x1 + x2) / 2 + (labelOffset ? labelOffset.x : 0);
+    const my = (y1 + y2) / 2 + (labelOffset ? labelOffset.y : 0);
+    ctx.font = 'bold 15px system-ui, sans-serif';
+    ctx.fillText(label, mx, my);
+  }
+}
+
+function drawGraph(list, res) {
+  const canvas = document.getElementById('graph');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Cumulative tip-to-tail points (include origin and every vertex)
+  const pts = [{ x: 0, y: 0 }];
+  let cx = 0, cy = 0;
+  list.forEach(v => { cx += v.x; cy += v.y; pts.push({ x: cx, y: cy }); });
+
+  // Fit to canvas with padding
+  let minX = 0, maxX = 0, minY = 0, maxY = 0;
+  pts.forEach(p => {
+    minX = Math.min(minX, p.x); maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y); maxY = Math.max(maxY, p.y);
+  });
+  const pad = 1.2;
+  minX -= pad; maxX += pad; minY -= pad; maxY += pad;
+  if (maxX - minX < 1) { minX -= 1; maxX += 1; }
+  if (maxY - minY < 1) { minY -= 1; maxY += 1; }
+  const scale = Math.min(W / (maxX - minX), H / (maxY - minY));
+  const ox = W / 2 - ((minX + maxX) / 2) * scale;
+  const oy = H / 2 + ((minY + maxY) / 2) * scale;
+  const px = v => ox + v.x * scale;
+  const py = v => oy - v.y * scale;
+
+  // Grid
+  ctx.strokeStyle = COLORS.grid;
+  ctx.lineWidth = 1;
+  const gridStep = Math.pow(10, Math.floor(Math.log10(Math.max(maxX - minX, maxY - minY) / 6)));
+  for (let gx = Math.ceil(minX / gridStep) * gridStep; gx <= maxX; gx += gridStep) {
+    ctx.beginPath(); ctx.moveTo(px({x: gx, y: minY}), py({x: gx, y: minY}));
+    ctx.lineTo(px({x: gx, y: maxY}), py({x: gx, y: maxY})); ctx.stroke();
+  }
+  for (let gy = Math.ceil(minY / gridStep) * gridStep; gy <= maxY; gy += gridStep) {
+    ctx.beginPath(); ctx.moveTo(px({x: minX, y: gy}), py({x: minX, y: gy}));
+    ctx.lineTo(px({x: maxX, y: gy}), py({x: maxX, y: gy})); ctx.stroke();
+  }
+
+  // Axes through world origin
+  const O = { x: 0, y: 0 };
+  ctx.strokeStyle = COLORS.axis;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(0, py(O)); ctx.lineTo(W, py(O)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px(O), 0); ctx.lineTo(px(O), H); ctx.stroke();
+  ctx.fillStyle = COLORS.axis;
+  ctx.font = '13px system-ui, sans-serif';
+  ctx.fillText('+x (East)', W - 70, py(O) - 6);
+  ctx.fillText('+y (North)', px(O) + 6, 16);
+
+  // Vectors tip-to-tail (blue)
+  let sx = px(O), sy = py(O);
+  for (let i = 0; i < list.length; i++) {
+    const v = list[i];
+    const ex = sx + v.x * scale, ey = sy - v.y * scale;
+    if (v.r !== 0) {
+      drawArrow(ctx, sx, sy, ex, ey, COLORS.vector, v.name, { x: 6, y: -6 });
+    }
+    sx = ex; sy = ey;
+  }
+
+  // Resultant (red)
+  const hasAny = list.some(v => v.r !== 0);
+  if (hasAny) {
+    drawArrow(ctx, px(O), py(O), sx, sy, COLORS.resultant, 'R', { x: 6, y: 14 });
+    ctx.fillStyle = COLORS.resultant;
+    ctx.beginPath(); ctx.arc(sx, sy, 4, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+// ---------- Main calculation ----------
+
+function calculate() {
+  const { list, mode } = readInputs();
+  const res = {
+    x: list.reduce((s, v) => s + v.x, 0),
+    y: list.reduce((s, v) => s + v.y, 0)
+  };
+  const mag = Math.hypot(res.x, res.y);
+  const mathAngle = norm360(Math.atan2(res.y, res.x) * 180 / Math.PI);
+  const bearing = norm360(Math.atan2(res.x, res.y) * 180 / Math.PI);
+
+  drawGraph(list, res);
+  document.getElementById('modeHint').textContent = hints[mode];
+
+  // Steps
+  const steps = ['<h2>Calculation steps</h2>'];
+  list.forEach(v => {
+    if (v.r === 0 && v.a === 0) return;
+    if (mode === 'math') {
+      steps.push(`<div class="step">${v.name}: r = ${fmt(v.r)}, θ = ${fmt(v.a)}° → x = ${fmt(v.r)}·cos(${fmt(v.a)}°) = ${fmt(v.x)},&nbsp; y = ${fmt(v.r)}·sin(${fmt(v.a)}°) = ${fmt(v.y)}</div>`);
+    } else {
+      steps.push(`<div class="step">${v.name}: r = ${fmt(v.r)}, bearing = ${fmt(v.a)}° → x = ${fmt(v.r)}·sin(${fmt(v.a)}°) = ${fmt(v.x)},&nbsp; y = ${fmt(v.r)}·cos(${fmt(v.a)}°) = ${fmt(v.y)}&nbsp; (math angle θ = 90° − ${fmt(v.a)}° = ${fmt(norm360(v.mathAngle))}°)</div>`);
+    }
+  });
+  steps.push(`<div class="step">Rx = ${list.map(v => fmt(v.x)).join(' + ').replace(/\+ -/g, '− ')} = ${fmt(res.x)}</div>`);
+  steps.push(`<div class="step">Ry = ${list.map(v => fmt(v.y)).join(' + ').replace(/\+ -/g, '− ')} = ${fmt(res.y)}</div>`);
+  steps.push(`<div class="step">|R| = √(Rx² + Ry²) = √(${fmt(res.x)}² + ${fmt(res.y)}²) = ${fmt(mag)}</div>`);
+  steps.push(`<div class="step">θ = atan2(Ry, Rx) = atan2(${fmt(res.y)}, ${fmt(res.x)}) = ${fmt(mathAngle)}° (mathematical convention)</div>`);
+  if (mode === 'geo') {
+    steps.push(`<div class="step">bearing = atan2(Rx, Ry) = ${fmt(bearing)}° (geographic convention)</div>`);
+  }
+  document.getElementById('steps').innerHTML = steps.join('');
+
+  // Result card
+  document.getElementById('results').innerHTML = [
+    '<h2 style="font-size:1.15rem; margin-top:20px;">Resultant R</h2>',
+    `<div class="result-card"><strong>Cartesian:</strong> <span style="font-family:ui-monospace,monospace;">R = (${fmt(res.x)}, ${fmt(res.y)})</span></div>`,
+    `<div class="result-card"><strong>Polar (mathematical):</strong> <span style="font-family:ui-monospace,monospace;">|R| = ${fmt(mag)}, θ = ${fmt(mathAngle)}°</span></div>`,
+    `<div class="result-card"><strong>Polar (geographic bearing):</strong> <span style="font-family:ui-monospace,monospace;">|R| = ${fmt(mag)}, bearing = ${fmt(bearing)}°</span></div>`
+  ].join('');
+}
+
+function fillExample() {
+  document.getElementById('vectorCount').value = '3';
+  updateVectorRows();
+  document.getElementById('r-0').value = 5;  document.getElementById('a-0').value = 30;
+  document.getElementById('r-1').value = 4;  document.getElementById('a-1').value = 120;
+  document.getElementById('r-2').value = 3;  document.getElementById('a-2').value = 250;
+  calculate();
+}
+
+function clearAll() {
+  for (let i = 0; i < 4; i++) {
+    document.getElementById(`r-${i}`).value = 0;
+    document.getElementById(`a-${i}`).value = 0;
+  }
+  calculate();
+}
+
+buildVectorRows();
+fillExample();
+</script>
+</body>
+</html>
