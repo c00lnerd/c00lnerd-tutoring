@@ -134,6 +134,43 @@ const module3Pacing = [
 	},
 ];
 
+const module4Pacing = [
+	{
+		week: 'Week 8',
+		title: 'Motion in Two Dimensions I',
+		studentWork: [
+			'Read Module 4 pages 105-109 on describing motion in two dimensions, including navigation examples, and complete On Your Own questions 4.1 and 4.2.',
+			'Continue through Projectile Motion in Two Dimensions on pages 109-112, then work Example 4.3 and On Your Own questions 4.3 and 4.4 (through page 115).',
+			'Read The Range Equation on pages 115-120, complete On Your Own questions 4.5-4.7, then continue through Experiment 4.1 on page 121 (stop before Experiment 4.2).',
+		],
+		mastery: [
+			'Describe position and motion in two dimensions using directions and angles.',
+			'Break projectile motion into independent horizontal and vertical components.',
+			'Apply the range equation to predict the horizontal distance of a projectile.',
+		],
+		fridayOverview: 'Review how two-dimensional motion splits into independent horizontal and vertical components, model the range equation with worked projectile examples, and correct common sign and angle mistakes.',
+		experiment: 'Experiment 4.1: Rubber band projectile flight (module pages 121-124).',
+		assessment: 'Check On Your Own answers 4.1-4.7, review range-equation setups, and assign a short projectile-motion practice check.',
+	},
+	{
+		week: 'Week 9',
+		title: 'Motion in Two Dimensions II',
+		studentWork: [
+			'Complete Experiment 4.2 on page 124: measuring horizontal speed without a stopwatch.',
+			'Finish the module through page 127, including non-ideal projectile situations and the effect of air resistance.',
+			'Do the Review Questions on page 138 and the Practice Problems on pages 139-140, then study for the Module 4 test (optional extra practice in Appendix B, page 567).',
+		],
+		mastery: [
+			'Measure horizontal speed experimentally without a stopwatch.',
+			'Explain how real projectile motion differs from the idealized model, including air resistance and non-level landing surfaces.',
+			'Solve mixed two-dimensional motion problems using components and the range equation.',
+		],
+		fridayOverview: 'Walk through the Experiment 4.2 method of finding horizontal speed from projectile motion, discuss where the ideal model breaks down, and run a cumulative Module 4 review.',
+		experiment: 'Experiment 4.2: Measuring horizontal speed without a stopwatch (module pages 124-127).',
+		assessment: 'Administer the Module 4 test and confirm the student has supplies for Module 5 (Newton\'s Laws).',
+	},
+];
+
 const weeks = [
 	{
 		week: 1,
@@ -553,6 +590,60 @@ const weeks = [
 
 			<div class="module-week-grid">
 				{module3Pacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Module 4: Motion in Two Dimensions</h2>
+					<p class="module-copy">
+						This pacing block applies two-dimensional vectors to projectile motion and navigation,
+						with Experiments 4.1 and 4.2 done during Friday meetings and the Module 4 test at the
+						end of Week 9.
+					</p>
+				</div>
+			</div>
+
+			<div class="module-week-grid">
+				{module4Pacing.map((item) => (
 					<article class="module-week-card">
 						<div class="module-week-heading">
 							<p class="week-tag">{item.week}</p>
