@@ -14,6 +14,10 @@
   .controls { display:flex; flex-wrap:wrap; gap:16px; justify-content:center; align-items:center; margin-bottom:18px; }
   .controls label { font-weight:600; }
   .controls select { padding:8px 12px; border-radius:8px; border:1px solid #c8cfda; font-size:1rem; }
+  .mode-toggle { display:inline-flex; border:1px solid #c8cfda; border-radius:9px; overflow:hidden; }
+  .mode-toggle button { border:0; border-radius:0; padding:10px 16px; font-size:0.95rem; cursor:pointer; background:#e8edf7; color:#172033; font-weight:600; }
+  .mode-toggle button + button { border-left:1px solid #c8cfda; }
+  .mode-toggle button.active { background:#2457d6; color:#fff; }
   .vector-rows { display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
   .vector-row { display:flex; align-items:center; gap:8px; background:#f0f4ff; border:1px solid #c8d4f5; border-radius:10px; padding:10px 14px; }
   .vector-row.disabled { opacity:0.35; }
@@ -43,11 +47,11 @@
 
   <div class="panel">
     <div class="controls">
-      <label for="angleMode">Angle convention:</label>
-      <select id="angleMode" onchange="calculate()">
-        <option value="math" selected>Mathematical (° counterclockwise from +x axis)</option>
-        <option value="geo">Geographic / compass bearing (° clockwise from North)</option>
-      </select>
+      <span style="font-weight:600;">Angle convention:</span>
+      <div class="mode-toggle" role="group" aria-label="Angle convention">
+        <button type="button" id="modeMath" class="active" onclick="setMode('math')">Algebraic (° CCW from +x)</button>
+        <button type="button" id="modeGeo" onclick="setMode('geo')">Geographic bearing (° CW from North)</button>
+      </div>
       <label for="vectorCount">Vectors:</label>
       <select id="vectorCount" onchange="updateVectorRows()">
         <option value="2" selected>2</option>
@@ -85,6 +89,14 @@ const hints = {
 };
 
 let vectors = [];
+let angleMode = 'math';
+
+function setMode(mode) {
+  angleMode = mode;
+  document.getElementById('modeMath').classList.toggle('active', mode === 'math');
+  document.getElementById('modeGeo').classList.toggle('active', mode === 'geo');
+  calculate();
+}
 
 function fmt(x) {
   if (Math.abs(x - Math.round(x)) < 1e-9) return String(Math.round(x));
@@ -138,7 +150,7 @@ function updateVectorRows() {
 
 function readInputs() {
   const n = Number(document.getElementById('vectorCount').value);
-  const mode = document.getElementById('angleMode').value;
+  const mode = angleMode;
   const out = [];
   for (let i = 0; i < n; i++) {
     const r = Number(document.getElementById(`r-${i}`).value) || 0;
