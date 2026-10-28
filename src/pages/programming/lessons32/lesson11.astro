@@ -422,6 +422,161 @@ const int numPoses = sizeof(poses) / sizeof(poses[0]);
             </p>
         </div>
 
+        <!-- Complete sketch -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧩 Section 7: The Complete Sketch</h2>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Everything from this lesson in one program. Upload it, open Serial Monitor at 9600 baud, and try
+                <code>B60</code>, <code>E120</code>, <code>POSE 2</code>, and <code>HOME</code>. Pressing the A2 button cycles through the pose list — even while a servo is still moving.
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`// ============================================================
+// Lesson 11: Smart Servo Control
+// Two SG90 servos (base pin 9, elbow pin 10) with:
+//   - non-blocking millis() motion timing
+//   - smooth 1-degree stepping toward target angles
+//   - Serial Monitor commands: B<deg>, E<deg>, HOME, POSE <n>
+//   - preset poses stored in a struct array
+//   - A2 button cycles poses (with debounce + buzzer chirp)
+// ============================================================
+
+#include <Servo.h>
+
+Servo baseServo;
+Servo elbowServo;
+
+// ---- Current angles and target angles ----
+int baseAngle   = 90;   // where the servo is now
+int elbowAngle  = 90;
+int baseTarget  = 90;   // where we want it to go
+int elbowTarget = 90;
+
+// ---- Non-blocking motion timing ----
+unsigned long lastStepTime = 0;
+const int stepInterval = 15;   // ms between 1-degree steps
+
+// ---- Preset poses (struct array from Lesson 9.5) ----
+struct Pose {
+    const char* name;
+    int base;
+    int elbow;
+};
+
+Pose poses[] = {
+    {"HOME",  90, 90},   // pose 0
+    {"READY", 90, 45},   // pose 1
+    {"REACH", 45, 20}    // pose 2
+};
+const int numPoses = sizeof(poses) / sizeof(poses[0]);
+int poseIndex = 0;
+
+// ---- Button on A2 (INPUT_PULLUP) ----
+const int buttonPin = A2;
+int lastButtonState = HIGH;
+unsigned long lastPressTime = 0;
+
+// ---- Optional buzzer on pin 8 ----
+const int buzzerPin = 8;
+
+// ---- Step one servo one degree toward its target ----
+int moveToward(int current, int target) {
+    if (current < target) return current + 1;
+    if (current > target) return current - 1;
+    return current;
+}
+
+// ---- Load a pose's angles into the targets ----
+void setPose(int i) {
+    if (i >= 0 && i < numPoses) {
+        poseIndex   = i;
+        baseTarget  = poses[i].base;
+        elbowTarget = poses[i].elbow;
+        Serial.print("Pose ");
+        Serial.print(i);
+        Serial.print(": ");
+        Serial.println(poses[i].name);
+    } else {
+        Serial.println("No such pose");
+    }
+}
+
+// ---- Read and act on one Serial Monitor command ----
+void handleSerial() {
+    if (Serial.available() == 0) return;   // nothing typed? do nothing
+
+    String cmd = Serial.readStringUntil('\\n');
+    cmd.trim();         // remove spaces and the newline
+    cmd.toUpperCase();  // "b90" and "B90" both work
+
+    if (cmd.startsWith("POSE")) {
+        setPose(cmd.substring(5).toInt());     // "POSE 2" -> 2
+    } else if (cmd.startsWith("B")) {
+        baseTarget = constrain(cmd.substring(1).toInt(), 20, 160);
+        Serial.print("Base target: ");
+        Serial.println(baseTarget);
+    } else if (cmd.startsWith("E")) {
+        elbowTarget = constrain(cmd.substring(1).toInt(), 20, 160);
+        Serial.print("Elbow target: ");
+        Serial.println(elbowTarget);
+    } else if (cmd == "HOME") {
+        setPose(0);                            // pose 0 IS home
+    } else {
+        Serial.print("Unknown command: ");
+        Serial.println(cmd);
+    }
+}
+
+// ---- Button press -> next pose (with 50ms debounce) ----
+void handleButton() {
+    int state = digitalRead(buttonPin);
+    if (state == LOW && lastButtonState == HIGH
+        && millis() - lastPressTime > 50) {
+        lastPressTime = millis();
+        setPose((poseIndex + 1) % numPoses);
+        tone(buzzerPin, 1000, 60);   // chirp - delete if no buzzer
+    }
+    lastButtonState = state;
+}
+
+void setup() {
+    Serial.begin(9600);
+    baseServo.attach(9);
+    elbowServo.attach(10);
+    pinMode(buttonPin, INPUT_PULLUP);
+    pinMode(buzzerPin, OUTPUT);
+    baseServo.write(baseAngle);
+    elbowServo.write(elbowAngle);
+    Serial.println("Smart Servo Control ready.");
+    Serial.println("Commands: B<deg>  E<deg>  HOME  POSE <0-2>");
+}
+
+void loop() {
+    // 1. Timed motion step (non-blocking)
+    if (millis() - lastStepTime >= stepInterval) {
+        lastStepTime = millis();
+        baseAngle  = moveToward(baseAngle,  baseTarget);
+        elbowAngle = moveToward(elbowAngle, elbowTarget);
+        baseServo.write(baseAngle);
+        elbowServo.write(elbowAngle);
+    }
+
+    // 2. Inputs - they only change the TARGETS
+    handleSerial();
+    handleButton();
+}`}</code></pre>
+            </div>
+
+            <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #059669;">
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🔍 Notice the structure</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    <code>loop()</code> does three quick things every pass: a timed motion step, a serial check, a button check. None of them block — that's why you can type <code>HOME</code> mid-move and it responds instantly. Every input only writes a <em>target</em>; the timed step does the actual moving.
+                </p>
+            </div>
+        </div>
+
         <!-- Wiring and Connections -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔌 Wiring and Connections</h2>
