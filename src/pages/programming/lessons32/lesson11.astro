@@ -85,6 +85,178 @@ import Layout from '../../../layouts/Layout.astro';
                     <li><strong>Elbow servo signal:</strong> pin 10</li>
                 </ul>
             </div>
+
+            <!-- Wiring diagram -->
+            <div style="margin-top: 1.5rem; background: #fafafa; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Wiring Diagrams</h4>
+
+                <figure style="margin: 0 0 1.5rem 0;">
+                    <img src="/images/lesson11-servo-wiring.png" alt="Fritzing breadboard diagram: Arduino Uno wired to two SG90 servos (pins 9 and 10), a potentiometer on A0, a button on A2, and an optional buzzer on pin 8" style="width: 100%; max-width: 640px; display: block; margin: 0 auto; border-radius: 8px; border: 1px solid #e2e8f0; background: white;"/>
+                    <figcaption style="text-align: center; color: #64748b; font-size: 0.9rem; margin-top: 0.5rem;">
+                        Breadboard layout: servos on pins 9/10, pot on A0, button on A2, optional buzzer on pin 8
+                    </figcaption>
+                </figure>
+
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 0.5rem; text-align: center;">Same circuit, drawn as a pin map:</p>
+                <svg viewBox="0 0 920 660" xmlns="http://www.w3.org/2000/svg" style="width: 100%; height: auto; font-family: Arial, sans-serif;">
+                    <!-- Title -->
+                    <text x="460" y="30" text-anchor="middle" font-size="18" font-weight="bold" fill="#2d3748">Smart Servo Control — Wiring Map</text>
+
+                    <!-- Arduino board -->
+                    <rect x="40" y="50" width="220" height="560" rx="12" fill="#0d8a8a" stroke="#0a6b6b" stroke-width="3"/>
+                    <text x="150" y="85" text-anchor="middle" font-size="20" font-weight="bold" fill="white">ARDUINO</text>
+                    <text x="150" y="105" text-anchor="middle" font-size="13" fill="#b2f5ea">UNO R3</text>
+
+                    <!-- Pin group headers -->
+                    <text x="60" y="150" font-size="12" font-weight="bold" fill="#b2f5ea">DIGITAL I/O</text>
+                    <text x="60" y="285" font-size="12" font-weight="bold" fill="#ffe08a">POWER</text>
+                    <text x="60" y="410" font-size="12" font-weight="bold" fill="#b2f5ea">ANALOG IN</text>
+
+                    <!-- Pin pads + labels -->
+                    <text x="228" y="168" text-anchor="end" font-size="13" fill="white">D8</text>
+                    <rect x="240" y="157" width="20" height="16" fill="#e5e7eb"/>
+                    <text x="228" y="198" text-anchor="end" font-size="13" fill="white">D9 ~</text>
+                    <rect x="240" y="187" width="20" height="16" fill="#e5e7eb"/>
+                    <text x="228" y="228" text-anchor="end" font-size="13" fill="white">D10 ~</text>
+                    <rect x="240" y="217" width="20" height="16" fill="#e5e7eb"/>
+                    <text x="228" y="303" text-anchor="end" font-size="13" fill="white">5V</text>
+                    <rect x="240" y="292" width="20" height="16" fill="#fca5a5"/>
+                    <text x="228" y="333" text-anchor="end" font-size="13" fill="white">GND</text>
+                    <rect x="240" y="322" width="20" height="16" fill="#9ca3af"/>
+                    <text x="228" y="428" text-anchor="end" font-size="13" fill="white">A0</text>
+                    <rect x="240" y="417" width="20" height="16" fill="#e5e7eb"/>
+                    <text x="228" y="458" text-anchor="end" font-size="13" fill="white">A2</text>
+                    <rect x="240" y="447" width="20" height="16" fill="#e5e7eb"/>
+
+                    <!-- Arduino 5V pin -> power symbol -->
+                    <line x1="260" y1="300" x2="295" y2="300" stroke="#dc2626" stroke-width="3"/>
+                    <circle cx="301" cy="300" r="4" fill="#dc2626"/>
+                    <text x="310" y="304" font-size="12" font-weight="bold" fill="#dc2626">5V</text>
+                    <!-- Arduino GND pin -> ground symbol -->
+                    <line x1="260" y1="330" x2="295" y2="330" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="295" y1="322" x2="295" y2="338" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="301" y1="325" x2="301" y2="335" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="307" y1="328" x2="307" y2="332" stroke="#1f2937" stroke-width="3"/>
+
+                    <!-- ==================== COMPONENTS ==================== -->
+
+                    <!-- Buzzer (optional, dashed) -->
+                    <rect x="610" y="60" width="190" height="80" rx="10" fill="#ffffff" stroke="#a855f7" stroke-width="2" stroke-dasharray="6,4"/>
+                    <circle cx="690" cy="95" r="22" fill="none" stroke="#a855f7" stroke-width="2.5"/>
+                    <text x="690" y="101" text-anchor="middle" font-size="16" font-weight="bold" fill="#a855f7">+</text>
+                    <text x="705" y="132" text-anchor="middle" font-size="11" fill="#6b21a8">Piezo buzzer (optional)</text>
+
+                    <!-- Base servo -->
+                    <rect x="610" y="170" width="190" height="100" rx="10" fill="#eff6ff" stroke="#eab308" stroke-width="2.5"/>
+                    <rect x="640" y="195" width="130" height="50" rx="6" fill="#3b82f6"/>
+                    <text x="705" y="225" text-anchor="middle" font-size="13" font-weight="bold" fill="white">SG90 BASE</text>
+                    <circle cx="705" cy="185" r="8" fill="none" stroke="#eab308" stroke-width="2.5"/>
+                    <line x1="705" y1="185" x2="735" y2="178" stroke="#eab308" stroke-width="3"/>
+
+                    <!-- Elbow servo -->
+                    <rect x="610" y="300" width="190" height="100" rx="10" fill="#eff6ff" stroke="#f97316" stroke-width="2.5"/>
+                    <rect x="640" y="325" width="130" height="50" rx="6" fill="#f97316"/>
+                    <text x="705" y="355" text-anchor="middle" font-size="13" font-weight="bold" fill="white">SG90 ELBOW</text>
+                    <circle cx="705" cy="315" r="8" fill="none" stroke="#f97316" stroke-width="2.5"/>
+                    <line x1="705" y1="315" x2="735" y2="308" stroke="#f97316" stroke-width="3"/>
+
+                    <!-- Potentiometer -->
+                    <rect x="610" y="430" width="190" height="90" rx="10" fill="#f0fdfa" stroke="#14b8a6" stroke-width="2.5"/>
+                    <circle cx="690" cy="465" r="26" fill="none" stroke="#14b8a6" stroke-width="2.5"/>
+                    <line x1="690" y1="465" x2="705" y2="445" stroke="#14b8a6" stroke-width="3"/>
+                    <circle cx="690" cy="465" r="4" fill="#14b8a6"/>
+                    <text x="705" y="512" text-anchor="middle" font-size="11" fill="#0f766e">10k&#x3A9; potentiometer</text>
+
+                    <!-- Push button -->
+                    <rect x="610" y="550" width="190" height="80" rx="10" fill="#f0f9ff" stroke="#3b82f6" stroke-width="2.5"/>
+                    <rect x="670" y="575" width="40" height="30" rx="4" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
+                    <rect x="682" y="568" width="16" height="8" fill="#3b82f6"/>
+                    <text x="705" y="622" text-anchor="middle" font-size="11" fill="#1d4ed8">pushbutton (INPUT_PULLUP)</text>
+
+                    <!-- ==================== SIGNAL WIRES ==================== -->
+
+                    <!-- D8 -> buzzer + (purple) -->
+                    <polyline points="260,165 400,165 400,100 610,100" fill="none" stroke="#a855f7" stroke-width="3"/>
+                    <circle cx="610" cy="100" r="4" fill="#a855f7"/>
+
+                    <!-- D9 -> base servo SIG (yellow) -->
+                    <polyline points="260,195 450,195 450,220 610,220" fill="none" stroke="#eab308" stroke-width="3"/>
+                    <circle cx="610" cy="220" r="4" fill="#eab308"/>
+
+                    <!-- D10 -> elbow servo SIG (orange) -->
+                    <polyline points="260,225 370,225 370,350 610,350" fill="none" stroke="#f97316" stroke-width="3"/>
+                    <circle cx="610" cy="350" r="4" fill="#f97316"/>
+
+                    <!-- A0 -> pot wiper (teal) -->
+                    <polyline points="260,425 500,425 500,475 610,475" fill="none" stroke="#14b8a6" stroke-width="3"/>
+                    <circle cx="610" cy="475" r="4" fill="#14b8a6"/>
+
+                    <!-- A2 -> button (blue) -->
+                    <polyline points="260,455 320,455 320,590 610,590" fill="none" stroke="#3b82f6" stroke-width="3"/>
+                    <circle cx="610" cy="590" r="4" fill="#3b82f6"/>
+
+                    <!-- ==================== POWER TERMINALS ==================== -->
+                    <!-- Terminal labels inside boxes -->
+                    <text x="620" y="103" font-size="11" font-weight="bold" fill="#6b21a8">+</text>
+                    <text x="793" y="103" text-anchor="end" font-size="11" font-weight="bold" fill="#6b21a8">&#x2212;</text>
+                    <text x="620" y="223" font-size="11" font-weight="bold" fill="#a16207">SIG</text>
+                    <text x="793" y="198" text-anchor="end" font-size="11" font-weight="bold" fill="#dc2626">5V</text>
+                    <text x="793" y="248" text-anchor="end" font-size="11" font-weight="bold" fill="#1f2937">GND</text>
+                    <text x="620" y="353" font-size="11" font-weight="bold" fill="#c2410c">SIG</text>
+                    <text x="793" y="328" text-anchor="end" font-size="11" font-weight="bold" fill="#dc2626">5V</text>
+                    <text x="793" y="378" text-anchor="end" font-size="11" font-weight="bold" fill="#1f2937">GND</text>
+                    <text x="620" y="478" font-size="11" font-weight="bold" fill="#0f766e">WIPER</text>
+                    <text x="793" y="458" text-anchor="end" font-size="11" font-weight="bold" fill="#dc2626">pin 1 = 5V</text>
+                    <text x="793" y="503" text-anchor="end" font-size="11" font-weight="bold" fill="#1f2937">pin 3 = GND</text>
+                    <text x="620" y="593" font-size="11" font-weight="bold" fill="#1d4ed8">leg</text>
+                    <text x="793" y="593" text-anchor="end" font-size="11" font-weight="bold" fill="#1f2937">leg = GND</text>
+
+                    <!-- Buzzer minus -> GND symbol -->
+                    <line x1="800" y1="100" x2="825" y2="100" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="825" y1="92" x2="825" y2="108" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="831" y1="95" x2="831" y2="105" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="837" y1="98" x2="837" y2="102" stroke="#1f2937" stroke-width="3"/>
+
+                    <!-- Base servo 5V -> 5V symbol -->
+                    <line x1="800" y1="195" x2="825" y2="195" stroke="#dc2626" stroke-width="3"/>
+                    <circle cx="831" cy="195" r="4" fill="#dc2626"/>
+                    <text x="840" y="199" font-size="12" font-weight="bold" fill="#dc2626">5V</text>
+                    <!-- Base servo GND -> ground symbol -->
+                    <line x1="800" y1="245" x2="825" y2="245" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="825" y1="237" x2="825" y2="253" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="831" y1="240" x2="831" y2="250" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="837" y1="243" x2="837" y2="247" stroke="#1f2937" stroke-width="3"/>
+
+                    <!-- Elbow servo 5V -> 5V symbol -->
+                    <line x1="800" y1="325" x2="825" y2="325" stroke="#dc2626" stroke-width="3"/>
+                    <circle cx="831" cy="325" r="4" fill="#dc2626"/>
+                    <text x="840" y="329" font-size="12" font-weight="bold" fill="#dc2626">5V</text>
+                    <!-- Elbow servo GND -> ground symbol -->
+                    <line x1="800" y1="375" x2="825" y2="375" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="825" y1="367" x2="825" y2="383" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="831" y1="370" x2="831" y2="380" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="837" y1="373" x2="837" y2="377" stroke="#1f2937" stroke-width="3"/>
+
+                    <!-- Pot pin1 -> 5V symbol -->
+                    <line x1="800" y1="455" x2="825" y2="455" stroke="#dc2626" stroke-width="3"/>
+                    <circle cx="831" cy="455" r="4" fill="#dc2626"/>
+                    <text x="840" y="459" font-size="12" font-weight="bold" fill="#dc2626">5V</text>
+                    <!-- Pot pin3 -> ground symbol -->
+                    <line x1="800" y1="500" x2="825" y2="500" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="825" y1="492" x2="825" y2="508" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="831" y1="495" x2="831" y2="505" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="837" y1="498" x2="837" y2="502" stroke="#1f2937" stroke-width="3"/>
+
+                    <!-- Button leg -> ground symbol -->
+                    <line x1="800" y1="590" x2="825" y2="590" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="825" y1="582" x2="825" y2="598" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="831" y1="585" x2="831" y2="595" stroke="#1f2937" stroke-width="3"/>
+                    <line x1="837" y1="588" x2="837" y2="592" stroke="#1f2937" stroke-width="3"/>
+                </svg>
+                <p style="color: #4a5568; line-height: 1.6; margin-top: 1rem; font-size: 0.95rem;">
+                    <strong>Reading the diagram:</strong> every red <strong>5V</strong> dot is the same power rail — connect them all together (a breadboard power rail is perfect for this). Every <strong>&#x23DA; ground symbol</strong> is the same ground rail — all grounds must connect together. With two servos running, feed that 5V rail from an <strong>external 5V supply</strong> if things get jittery, and always keep the supply's GND tied to the Arduino's GND.
+                </p>
+            </div>
         </div>
 
         <!-- delay vs millis -->
