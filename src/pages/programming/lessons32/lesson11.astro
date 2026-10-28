@@ -718,7 +718,7 @@ void loop() {
     </div>
 
     <script>
-function copyCode(button) {
+window.copyCode = function(button) {
     try {
         const codeElement = button.parentElement ? button.parentElement.querySelector('code') : null;
         if (!codeElement) {
@@ -738,7 +738,7 @@ function copyCode(button) {
     } catch (err) {
         showCopyFeedback(button, false);
     }
-}
+};
 
 function fallbackCopy(text, button) {
     try {
