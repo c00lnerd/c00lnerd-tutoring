@@ -2,15 +2,15 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 11 Quiz: Robot Arm Stage 1 (Base + Elbow) - C00lnerd Tutoring">
+<Layout title="Lesson 11 Quiz: Smart Servo Control - C00lnerd Tutoring">
     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
         
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Lesson 11 Quiz: Robot Arm Stage 1 (Base + Elbow)</h1>
-                <p class="text-xl text-gray-600">Test your understanding of SG90 servos, pin planning, power, and safe motion</p>
+                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Lesson 11 Quiz: Smart Servo Control</h1>
+                <p class="text-xl text-gray-600">Test your understanding of non-blocking timing, smooth servo motion, and serial commands</p>
                 <div class="mt-4 p-4 bg-purple-100 rounded-lg">
-                    <p class="text-purple-800 font-medium">🦾 10 questions covering servos, wiring, power, and safe joint control</p>
+                    <p class="text-purple-800 font-medium">⏱️ 10 questions covering millis() timing, coordinated motion, serial commands, and servo wiring</p>
                 </div>
             </div>
 
@@ -35,24 +35,24 @@ import Layout from '../../../layouts/Layout.astro';
             <form id="quizForm" autocomplete="off" class="space-y-8">
                 <!-- Question 1 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Component Identification</h3>
-                    <p class="text-gray-700 mb-4">Which component receives the control code and generates the control signals for the robot arm?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: The Problem with delay()</h3>
+                    <p class="text-gray-700 mb-4">Why does <code>delay()</code> cause problems in a two-servo robot program?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="A" class="mr-3">
-                            <span>A) SG90 servo motor</span>
+                            <span>A) It uses too much program memory</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="B" class="mr-3">
-                            <span>B) Arduino Uno microcontroller</span>
+                            <span>B) It freezes the entire chip, so buttons, serial input, and the other servo all have to wait</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="C" class="mr-3">
-                            <span>C) Potentiometer (A0)</span>
+                            <span>C) It makes the servo signal too fast</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="D" class="mr-3">
-                            <span>D) Push button (A2)</span>
+                            <span>D) It can only be used once per program</span>
                         </label>
                     </div>
                 </div>
@@ -83,24 +83,24 @@ import Layout from '../../../layouts/Layout.astro';
 
                 <!-- Question 3 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Pin Planning</h3>
-                    <p class="text-gray-700 mb-4">In our standard robot arm pin map, what pin is used for the button input?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: The millis() Clock</h3>
+                    <p class="text-gray-700 mb-4">What does <code>millis()</code> return?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="A" class="mr-3">
-                            <span>A) A0</span>
+                            <span>A) The current value on the pin you pass it</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="B" class="mr-3">
-                            <span>B) A2</span>
+                            <span>B) The number of seconds since the board was powered on</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="C" class="mr-3">
-                            <span>C) Pin 9</span>
+                            <span>C) The number of milliseconds since the program started</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="D" class="mr-3">
-                            <span>D) Pin 13</span>
+                            <span>D) The amount of free RAM on the chip</span>
                         </label>
                     </div>
                 </div>
@@ -179,64 +179,64 @@ import Layout from '../../../layouts/Layout.astro';
 
                 <!-- Question 7 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Safe Limits</h3>
-                    <p class="text-gray-700 mb-4">Why do we clamp servo motion to a safe range (like 20°–160°) before attaching printed parts?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Smooth Motion</h3>
+                    <p class="text-gray-700 mb-4">In our smooth-motion code, how does each servo reach its target angle?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="A" class="mr-3">
-                            <span>A) It makes the servo run faster</span>
+                            <span>A) It jumps straight to the target in one write</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="B" class="mr-3">
-                            <span>B) To reduce the chance of binding or breaking parts at the mechanical extremes</span>
+                            <span>B) The Servo library eases it automatically</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="C" class="mr-3">
-                            <span>C) Because servos can only move 90°</span>
+                            <span>C) The target is written directly to the servo every loop</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="D" class="mr-3">
-                            <span>D) Because the buzzer won’t work otherwise</span>
+                            <span>D) It steps one degree closer on every timed interval</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 8 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Two-Servo Planning</h3>
-                    <p class="text-gray-700 mb-4">In our Stage 1 plan, which pins are used for the base and elbow servo signals?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Serial Commands</h3>
+                    <p class="text-gray-700 mb-4">In our serial command language, what does typing <code>E45</code> into the Serial Monitor do?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="A" class="mr-3">
-                            <span>A) A2 and A0</span>
+                            <span>A) Sets the elbow servo target to 45°</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="B" class="mr-3">
-                            <span>B) Pin 9 and pin 10</span>
+                            <span>B) Moves the servo on pin 4 to 5°</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="C" class="mr-3">
-                            <span>C) Pin 8 and pin 9</span>
+                            <span>C) Prints an error 45 times</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="D" class="mr-3">
-                            <span>D) A4 and A5</span>
+                            <span>D) Sets the servo speed to 45 degrees per second</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 9: Short Answer -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Assembly Documentation</h3>
-                    <p class="text-gray-700 mb-4">Describe how you would test each servo before attaching 3D printed parts. What signals or behaviors would tell you something is wired incorrectly?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Targets vs. Movement</h3>
+                    <p class="text-gray-700 mb-4">In our program, serial commands and buttons only change the <em>target</em> angles — a separate timed section actually writes to the servos. Why is splitting "decide the target" from "move the servo" a good design?</p>
                     <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
                               placeholder="Write your answer here..."></textarea>
                 </div>
 
                 <!-- Question 10: Short Answer -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Quality Control</h3>
-                    <p class="text-gray-700 mb-4">List three safety checks you would do before running a sweep test on a two-servo base + elbow arm. Explain why each check matters.</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Adding a Pose</h3>
+                    <p class="text-gray-700 mb-4">Describe how you would add a new preset pose called "WAVE" (base 130°, elbow 70°) to the poses array, and what command a user would type to run it.</p>
                     <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
                               placeholder="Write your answer here..."></textarea>
                 </div>
@@ -271,8 +271,8 @@ import Layout from '../../../layouts/Layout.astro';
                     </a>
                 </div>
                 <div>
-                    <a href="/programming/lessons32/week12" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Week 12 Lesson ?
+                    <a href="/programming/lessons32/lesson12" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Lesson 12 →
                     </a>
                 </div>
             </div>
@@ -422,26 +422,26 @@ window.onload = function() { generateCaptcha(); };
         // Quiz data with correct answers
         const quizData = {
             correctAnswers: {
-                q1: 'B', // Arduino Uno microcontroller
+                q1: 'B', // delay() freezes the whole chip
                 q2: 'B', // Signal, 5V, GND
-                q3: 'B', // A2
+                q3: 'C', // Milliseconds since program started
                 q4: 'B', // Button to GND
                 q5: 'B', // Current bursts / voltage dip
                 q6: 'B', // Shared ground
-                q7: 'B', // Safe mechanical limits
-                q8: 'B'  // Pins 9 and 10
+                q7: 'D', // Steps one degree per timed interval
+                q8: 'A'  // Sets elbow target to 45°
             },
             questionText: {
-                q1: "Which component receives the control code and generates the control signals for the robot arm?",
+                q1: "Why does delay() cause problems in a two-servo robot program?",
                 q2: "A typical SG90 servo has three wires. Which is the correct set?",
-                q3: "In our standard robot arm pin map, what pin is used for the button input?",
+                q3: "What does millis() return?",
                 q4: "When using INPUT_PULLUP for the button on A2, where should the button connect?",
                 q5: "What is the best explanation for why an Arduino might reset when a servo moves?",
                 q6: "If you power servos from an external 5V supply, what must you also connect?",
-                q7: "Why do we clamp servo motion to a safe range (like 20°–160°) before attaching printed parts?",
-                q8: "In our Stage 1 plan, which pins are used for the base and elbow servo signals?",
-                q9: "Describe how you would test each servo before attaching 3D printed parts. What signals or behaviors would tell you something is wired incorrectly?",
-                q10: "List three safety checks you would do before running a sweep test on a two-servo base + elbow arm. Explain why each check matters."
+                q7: "In our smooth-motion code, how does each servo reach its target angle?",
+                q8: "In our serial command language, what does typing E45 into the Serial Monitor do?",
+                q9: "In our program, serial commands and buttons only change the target angles — a separate timed section actually writes to the servos. Why is splitting 'decide the target' from 'move the servo' a good design?",
+                q10: "Describe how you would add a new preset pose called 'WAVE' (base 130°, elbow 70°) to the poses array, and what command a user would type to run it."
             }
         };
 
@@ -498,7 +498,7 @@ window.onload = function() { generateCaptcha(); };
             const percentage = Math.round((score / totalQuestions) * 100);
             
             // Build detailed message
-            let message = `LESSON 11 QUIZ RESULTS - Robot Arm Stage 1 (Base + Elbow)\n\n`;
+            let message = `LESSON 11 QUIZ RESULTS - Smart Servo Control\n\n`;
             message += `Student: ${studentName}\n`;
             message += `Email: ${studentEmail}\n`;
             message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
@@ -522,23 +522,23 @@ window.onload = function() { generateCaptcha(); };
             message += `PERFORMANCE ANALYSIS:\n`;
             message += `====================\n`;
             if (percentage >= 90) {
-                message += `?? EXCELLENT! Outstanding understanding of miniAuto assembly and construction techniques.\n`;
-                message += `Student demonstrates mastery of component identification, assembly procedures, and quality control.\n`;
+                message += `?? EXCELLENT! Outstanding understanding of non-blocking timing and servo control.\n`;
+                message += `Student demonstrates mastery of millis() patterns, smooth motion, and serial commands.\n`;
             } else if (percentage >= 80) {
-                message += `?? VERY GOOD! Strong grasp of assembly fundamentals and construction best practices.\n`;
+                message += `?? VERY GOOD! Strong grasp of smart servo control fundamentals.\n`;
                 message += `Student shows solid understanding with minor areas for review.\n`;
             } else if (percentage >= 70) {
-                message += `?? GOOD! Basic understanding of assembly with room for improvement.\n`;
-                message += `Recommend additional practice with component identification and assembly procedures.\n`;
+                message += `?? GOOD! Basic understanding of timing and servo control with room for improvement.\n`;
+                message += `Recommend additional practice with the millis() pattern and serial parsing.\n`;
             } else if (percentage >= 60) {
                 message += `?? NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
-                message += `Focus on assembly order, safety procedures, and quality control checks.\n`;
+                message += `Focus on non-blocking timing, target vs. movement separation, and wiring basics.\n`;
             } else {
-                message += `?? REQUIRES ATTENTION! Limited understanding of assembly concepts.\n`;
-                message += `Recommend reviewing lesson materials and hands-on assembly practice.\n`;
+                message += `?? REQUIRES ATTENTION! Limited understanding of servo control concepts.\n`;
+                message += `Recommend reviewing lesson materials and re-running the smart servo controller sketch.\n`;
             }
             
-            message += `\nNext Steps: Prepare to add a shoulder joint and introduce preset poses (home, ready, reach).\n`;
+            message += `\nNext Steps: Lesson 12 begins the miniAuto car. Keep the smart servo sketch — it becomes the robot arm's control software when the printed parts arrive.\n`;
             message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
             
             // Display results to student
@@ -553,7 +553,7 @@ window.onload = function() { generateCaptcha(); };
                     <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${totalQuestions} (${percentage}%)</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #7c3aed; font-weight: bold;">
-                        ?? Week 11: miniAuto Assembly and Construction
+                        ?? Week 11: Smart Servo Control
                     </div>
                 </div>
                 <div style="text-align: left;">
@@ -600,7 +600,7 @@ window.onload = function() { generateCaptcha(); };
                 from_email: 'chuck@c00lnerd.com',
                 
                 message: message,
-                subject: `Lesson 11 Robot Arm Stage 1 Quiz - ${studentName} (${percentage}%)`
+                subject: `Lesson 11 Smart Servo Control Quiz - ${studentName} (${percentage}%)`
             }).then(function(response) {
                 console.log('Quiz results sent successfully!', response.status, response.text);
                 alert('Quiz results sent successfully!');
@@ -617,7 +617,7 @@ window.onload = function() { generateCaptcha(); };
                         studentName: studentName,
                         studentEmail: studentEmail,
                         week: 'Week 11',
-                        topic: 'miniAuto Assembly & Construction',
+                        topic: 'Smart Servo Control (millis + Serial Commands)',
                         score: score,
                         totalPoints: totalQuestions,
                         percentage: percentage,
@@ -642,7 +642,7 @@ window.onload = function() { generateCaptcha(); };
                         studentName: studentName,
                         studentEmail: studentEmail,
                         week: 'Week 11',
-                        topic: 'miniAuto Assembly & Construction',
+                        topic: 'Smart Servo Control (millis + Serial Commands)',
                         score: score,
                         totalPoints: totalQuestions,
                         percentage: percentage,

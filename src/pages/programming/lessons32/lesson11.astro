@@ -2,15 +2,15 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 11: Robot Arm Stage 1 (Base + Elbow) - C00lnerd Tutoring">
+<Layout title="Lesson 11: Smart Servo Control - C00lnerd Tutoring">
     <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
         
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 11: Robot Arm Stage 1 (Base + Elbow)</h1>
-            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Start a recurring build thread with SG90 servos</p>
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 11: Smart Servo Control</h1>
+            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Smooth non-blocking motion and serial commands on two SG90 servos</p>
             <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px; margin-top: 1.5rem;">
-                <p style="margin: 0; font-weight: 600;">🦾 This semester’s main hands-on project: build a robot arm one stage at a time</p>
+                <p style="margin: 0; font-weight: 600;">🦾 Everything you build today is exactly what the robot arm will run on — no printed parts needed yet</p>
             </div>
         </div>
 
@@ -20,21 +20,21 @@ import Layout from '../../../layouts/Layout.astro';
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                 <div>
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Stage 1 Goals:</h3>
+                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Lesson Goals:</h3>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Control two SG90 servos as a base + elbow</li>
-                        <li>• Use a consistent pin map that we’ll reuse in future lessons</li>
-                        <li>• Create a safe “joint tester” program (manual + sweep test)</li>
-                        <li>• Prepare for mounting the servos into 3D printed parts</li>
+                        <li>• Replace <code>delay()</code> with non-blocking <code>millis()</code> timing</li>
+                        <li>• Ramp two servos smoothly to target angles at the same time</li>
+                        <li>• Build a Serial Monitor command interface (<code>B90</code>, <code>E45</code>, <code>HOME</code>, <code>POSE n</code>)</li>
+                        <li>• Store preset poses using the <code>struct</code> arrays from Lesson 9.5</li>
                     </ul>
                 </div>
                 <div>
                     <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Skills Developed:</h3>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• Servo wiring and power planning</li>
-                        <li>• Input-to-output control (read → decide → act)</li>
-                        <li>• Testing, calibration, and safe limits</li>
-                        <li>• Building larger projects in stages</li>
+                        <li>• Timing patterns used in every real robot program</li>
+                        <li>• Serial input parsing and simple text commands</li>
+                        <li>• Coordinated motion and safe angle limits</li>
+                        <li>• Software that transfers straight onto the robot arm later</li>
                     </ul>
                 </div>
             </div>
@@ -49,41 +49,34 @@ import Layout from '../../../layouts/Layout.astro';
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Electronic Components:</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                         <li>• Arduino Uno microcontroller</li>
-                        <li>• 2x SG90 micro servos (base + elbow)</li>
+                        <li>• 2x SG90 micro servos (call them "base" and "elbow" — they stay loose on your desk)</li>
                         <li>• Breadboard (or expansion board) + jumper wires</li>
                         <li>• Push button (A2 to GND, INPUT_PULLUP)</li>
                         <li>• Potentiometer (A0) for angle control</li>
-                        <li>• Buzzer (optional) for mode-change feedback</li>
-                        <li>• Jumper wires and connectors</li>
+                        <li>• Buzzer (optional) for command feedback</li>
+                        <li>• USB cable (also used for the Serial Monitor commands)</li>
                     </ul>
                 </div>
                 <div style="background: #fff7ed; padding: 1.5rem; border-radius: 8px;">
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Mechanical Parts:</h4>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>• (Optional) 3D printed base mount</li>
-                        <li>• (Optional) 3D printed elbow bracket</li>
-                        <li>• Small screws (servo horn screws + mounting hardware)</li>
-                        <li>• Zip ties or tape for temporary mounting (prototype stage)</li>
+                        <li>• <strong>None required this week!</strong> The servos can sit loose on the table</li>
+                        <li>• (Optional) Tape or poster tack to keep servo bodies from wandering</li>
+                        <li>• (Optional) Paperclip or pointer taped to a servo horn to make motion easier to see</li>
                     </ul>
+                    <p style="color: #4a5568; margin-top: 1rem; line-height: 1.6; font-size: 0.95rem;">
+                        The 3D printed arm parts are still being designed. When they arrive, this exact program becomes the arm's control software — that's why we label the servos "base" and "elbow" now.
+                    </p>
                 </div>
-            </div>
-
-            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;">
-                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🔧 Required Tools:</h4>
-                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                    <li>• Phillips head screwdriver</li>
-                    <li>• Small pliers</li>
-                    <li>• Wire strippers (if needed)</li>
-                </ul>
             </div>
         </div>
 
-        <!-- Robot Arm Build Thread -->
+        <!-- Pin Map -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧵 Robot Arm Build Thread</h2>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📌 Section 2: Standard Pin Map</h2>
             
-            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Standard Pin Map (keep this consistent)</h4>
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Same pin map as always — this is the map the robot arm will use too</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.8;">
                     <li><strong>Button:</strong> A2 (to GND, INPUT_PULLUP)</li>
                     <li><strong>Potentiometer:</strong> A0</li>
@@ -92,17 +85,169 @@ import Layout from '../../../layouts/Layout.astro';
                     <li><strong>Elbow servo signal:</strong> pin 10</li>
                 </ul>
             </div>
+        </div>
 
-            <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
-                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Progress Checklist</h4>
-                <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                    <li>☐ Base servo responds reliably (manual control)</li>
-                    <li>☐ Elbow servo responds reliably (manual control)</li>
-                    <li>☐ Both servos can run a safe sweep test without jittering</li>
-                    <li>☐ Safe limits are enforced (example: 20°–160°)</li>
-                    <li>☐ (Optional) Buzzer cue plays when you change modes</li>
+        <!-- delay vs millis -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">⏱️ Section 3: Why <code>delay()</code> Breaks Robot Programs</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Up to now, every servo move you wrote probably used <code>delay()</code> to pause between steps. That works for a single servo — but <code>delay()</code> literally <strong>freezes the entire chip</strong>. While it waits, the button can't be read, the second servo can't move, and serial commands are ignored. A robot arm that must move two joints smoothly can't afford to freeze.
+            </p>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                The fix is the <strong>non-blocking timing pattern</strong>: instead of sleeping, we check a clock. <code>millis()</code> returns how many milliseconds have passed since the program started. We remember the last time we did work, and only do the next step when enough time has elapsed:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`unsigned long lastStepTime = 0;
+const int stepInterval = 15;   // ms between motion steps
+
+void loop() {
+    if (millis() - lastStepTime >= stepInterval) {
+        lastStepTime = millis();
+        // do ONE small step of work here
+    }
+    // the rest of loop() keeps running — buttons,
+    // serial, second servo all stay responsive
+}`}</code></pre>
+            </div>
+
+            <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">💡 The Microwave Analogy</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    <code>delay(2000)</code> is like standing in front of the microwave watching it count down — you can't do anything else. <code>millis()</code> is like glancing at the clock while you do other things, and checking the microwave when it's time. Same 2 seconds, but your Arduino stays useful the whole time.
+                </p>
+            </div>
+        </div>
+
+        <!-- Smooth motion -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🤏 Section 4: Smooth, Coordinated Motion</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                A jerky robot jumps straight to its target angle. A smooth robot <strong>steps toward the target one degree at a time</strong>. We keep two numbers per servo: its current angle and its target angle. On every timed step, each servo moves one degree closer — and because both servos step in the same tick, they move together even when their distances differ.
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`int baseAngle   = 90;   // where the servo is now
+int elbowAngle  = 90;
+int baseTarget  = 90;   // where we want it to go
+int elbowTarget = 90;
+
+int moveToward(int current, int target) {
+    if (current < target) return current + 1;
+    if (current > target) return current - 1;
+    return current;   // already there
+}
+
+void loop() {
+    if (millis() - lastStepTime >= stepInterval) {
+        lastStepTime = millis();
+        baseAngle  = moveToward(baseAngle,  baseTarget);
+        elbowAngle = moveToward(elbowAngle, elbowTarget);
+        baseServo.write(baseAngle);
+        elbowServo.write(elbowAngle);
+    }
+    // ... inputs and serial commands handled below,
+    // they only change the TARGETS
+}`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1rem;">
+                Notice the separation: <strong>inputs change targets, the timed step moves servos</strong>. That's the core architecture of nearly every robot program you'll ever write.
+            </p>
+        </div>
+
+        <!-- Serial commands -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📟 Section 5: Serial Command Interface</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Now for the fun part: typing commands into Serial Monitor to drive the servos. Our mini language:
+            </p>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
+                    <li><code>B120</code> → set base target to 120°</li>
+                    <li><code>E45</code> → set elbow target to 45°</li>
+                    <li><code>HOME</code> → both servos return to 90°</li>
+                    <li><code>POSE 2</code> → run preset pose #2 (next section)</li>
                 </ul>
             </div>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`void handleSerial() {
+    if (Serial.available() == 0) return;   // nothing typed? do nothing
+
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();        // remove spaces and the newline
+    cmd.toUpperCase(); // "b90" and "B90" both work
+
+    if (cmd.startsWith("B")) {
+        baseTarget = constrain(cmd.substring(1).toInt(), 20, 160);
+        Serial.println("Base target: " + String(baseTarget));
+    } else if (cmd.startsWith("E")) {
+        elbowTarget = constrain(cmd.substring(1).toInt(), 20, 160);
+        Serial.println("Elbow target: " + String(elbowTarget));
+    } else if (cmd == "HOME") {
+        baseTarget = 90;
+        elbowTarget = 90;
+        Serial.println("Going home");
+    } else {
+        Serial.println("Unknown command: " + cmd);
+    }
+}`}</code></pre>
+            </div>
+
+            <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #dc2626;">
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Serial Monitor Settings</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    Set the Serial Monitor to <strong>9600 baud</strong> (matching <code>Serial.begin(9600)</code>) and line ending to <strong>"Newline"</strong> or <strong>"Both NL &amp; CR"</strong> — <code>readStringUntil('\n')</code> needs that newline to know your command is finished.
+                </p>
+            </div>
+        </div>
+
+        <!-- Preset poses -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Section 6: Preset Poses with Structs</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                In <a href="/programming/lessons32/lesson9-5" style="color: #667eea; font-weight: 600;">Lesson 9.5</a> you learned that a <code>struct</code> groups related values, and an array of structs stores a whole table of them. A robot pose is exactly that — a name plus an angle for each joint:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`struct Pose {
+    const char* name;
+    int base;
+    int elbow;
+};
+
+Pose poses[] = {
+    {"HOME",  90, 90},
+    {"READY", 90, 45},
+    {"REACH", 45, 20}
+};
+const int numPoses = sizeof(poses) / sizeof(poses[0]);
+
+// inside handleSerial():
+} else if (cmd.startsWith("POSE")) {
+    int i = cmd.substring(5).toInt();      // "POSE 2" -> 2
+    if (i >= 0 && i < numPoses) {
+        baseTarget  = poses[i].base;
+        elbowTarget = poses[i].elbow;
+        Serial.println("Pose: " + String(poses[i].name));
+    }
+}`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1rem;">
+                <strong>Extension challenge:</strong> make the A2 button step through the pose list — each press advances to the next pose and plays a buzzer chirp. (Hint: <code>poseIndex = (poseIndex + 1) % numPoses;</code>)
+            </p>
         </div>
 
         <!-- Wiring and Connections -->
@@ -153,8 +298,9 @@ import Layout from '../../../layouts/Layout.astro';
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
                         <li>✅ Visual inspection of all servo wires (signal/power/ground)</li>
                         <li>✅ Test each servo individually with the Lesson 10 “basic servo control” sketch</li>
-                        <li>✅ Confirm button and potentiometer read correctly</li>
-                        <li>✅ Add safe limits before attaching any printed parts</li>
+                        <li>✅ Serial Monitor set to 9600 baud with Newline line-ending</li>
+                        <li>✅ Try commands in order: <code>B60</code>, <code>E120</code>, <code>HOME</code>, <code>POSE 1</code></li>
+                        <li>✅ Confirm the button still responds while a servo is mid-move (that proves your timing is non-blocking)</li>
                     </ul>
                 </div>
             </div>
@@ -178,6 +324,14 @@ import Layout from '../../../layouts/Layout.astro';
                         <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Servo doesn’t move at all</h4>
                         <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check the signal pin number, ensure servo ground is connected, and verify power polarity</p>
                     </div>
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Serial commands are ignored</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Check the baud rate (9600), set the line ending to Newline, and confirm the command starts with B, E, HOME, or POSE</p>
+                    </div>
+                    <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                        <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Problem: Button stops working while servo moves</h4>
+                        <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">A <code>delay()</code> sneaked back into the loop — every wait must use the millis() pattern instead</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -187,24 +341,25 @@ import Layout from '../../../layouts/Layout.astro';
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📝 Assessment & Next Steps</h2>
             
             <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Stage 1 Verification</h3>
+                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Lesson 11 Verification</h3>
                 <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px;">
                     <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Before moving to the next stage, make sure you have a reliable base + elbow setup:
+                        Before moving on, make sure your smart servo controller works:
                     </p>
                     <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                        <li>� Button + potentiometer inputs work reliably</li>
-                        <li>🦾 Both servos respond correctly and smoothly</li>
+                        <li>✅ Both servos ramp smoothly to targets (no jumps, no delay() anywhere)</li>
+                        <li>📟 Serial commands B, E, HOME, and POSE all work from Serial Monitor</li>
+                        <li>🔘 Button stays responsive while servos are mid-move</li>
                         <li>⚡ Power is stable (no resets during movement)</li>
-                        <li>�️ Safe limits are enabled before you attach printed parts</li>
+                        <li>🛡️ Angles are clamped to safe limits (20°–160°)</li>
                     </ul>
                 </div>
             </div>
 
             <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🎯 Preparation for Week 12</h4>
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">🎯 Where This Leads</h4>
                 <p style="color: #4a5568; line-height: 1.6; margin: 0;">
-                    Next, we’ll expand the arm by adding a <strong>shoulder joint</strong> and introduce “preset poses” (home, ready, reach) so the arm can move through repeatable sequences.
+                    Next week we switch gears to the <strong>miniAuto car</strong> — but keep this sketch. The <code>millis()</code> timing pattern shows up everywhere in robotics, and when the 3D printed arm parts are ready, this program becomes the arm's control software almost unchanged: the poses you typed today become the poses the arm strikes.
                 </p>
             </div>
 
@@ -234,4 +389,63 @@ import Layout from '../../../layouts/Layout.astro';
             </div>
         </div>
     </div>
+
+    <script>
+function copyCode(button) {
+    try {
+        const codeElement = button.parentElement ? button.parentElement.querySelector('code') : null;
+        if (!codeElement) {
+            showCopyFeedback(button, false);
+            return;
+        }
+        const codeText = codeElement.textContent || codeElement.innerText;
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(codeText).then(() => {
+                showCopyFeedback(button, true);
+            }).catch(() => {
+                fallbackCopy(codeText, button);
+            });
+        } else {
+            fallbackCopy(codeText, button);
+        }
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function fallbackCopy(text, button) {
+    try {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'absolute';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        textarea.setAttribute('readonly', '');
+        document.body.appendChild(textarea);
+        textarea.select();
+        textarea.setSelectionRange(0, 99999);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showCopyFeedback(button, successful);
+    } catch (err) {
+        showCopyFeedback(button, false);
+    }
+}
+
+function showCopyFeedback(button, success) {
+    const originalText = button.textContent;
+    const originalBg = button.style.backgroundColor;
+    if (success) {
+        button.textContent = '✅ Copied!';
+        button.style.backgroundColor = '#10b981';
+    } else {
+        button.textContent = '❌ Failed';
+        button.style.backgroundColor = '#dc2626';
+    }
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = originalBg || '#2563eb';
+    }, 2000);
+}
+    </script>
 </Layout>
