@@ -77,7 +77,7 @@ import Layout from '../../../layouts/Layout.astro';
                 <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
                     <li><strong>Joystick VRx:</strong> A0 (left/right → base servo)</li>
                     <li><strong>Joystick VRy:</strong> A1 (up/down → shoulder servo)</li>
-                    <li><strong>Joystick SW:</strong> A3 (to GND when pressed, INPUT_PULLUP)</li>
+                    <li><strong>Joystick SW:</strong> D2 (to GND when pressed, INPUT_PULLUP)</li>
                     <li><strong>Joystick +5V / GND:</strong> power rail / ground rail</li>
                     <li><strong>Button:</strong> A2 (unchanged from Lesson 11)</li>
                     <li><strong>Buzzer (optional):</strong> pin 8</li>
@@ -254,7 +254,7 @@ Servo shoulderServo;
 // ---- Pins ----
 const int joyX  = A0;
 const int joyY  = A1;
-const int joySW = A3;    // stick click button (INPUT_PULLUP)
+const int joySW = 2;     // stick click button on D2 (INPUT_PULLUP)
 
 // ---- Servo angles ----
 int baseAngle     = 90;

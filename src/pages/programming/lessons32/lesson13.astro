@@ -85,7 +85,7 @@ import Layout from '../../../layouts/Layout.astro';
                     <li><strong>OLED SDA:</strong> A4 (I2C data)</li>
                     <li><strong>OLED SCL:</strong> A5 (I2C clock)</li>
                     <li><strong>OLED VCC / GND:</strong> power rail / ground rail (works on 3.3–5V)</li>
-                    <li><strong>Joystick VRx / VRy / SW:</strong> A0 / A1 / A3 (unchanged)</li>
+                    <li><strong>Joystick VRx / VRy / SW:</strong> A0 / A1 / D2 (unchanged)</li>
                     <li><strong>Button:</strong> A2, <strong>Buzzer (optional):</strong> pin 8</li>
                     <li><strong>Base servo:</strong> pin 9, <strong>Shoulder servo:</strong> pin 10</li>
                 </ul>
@@ -248,7 +248,7 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 // ---- Pins ----
 const int joyX  = A0;
 const int joyY  = A1;
-const int joySW = A3;
+const int joySW = 2;
 
 // ---- Servo state ----
 int baseAngle     = 90;
