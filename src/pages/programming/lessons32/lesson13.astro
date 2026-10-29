@@ -2,274 +2,372 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 13: miniAuto Secondary Development - C00lnerd Tutoring">
+<Layout title="Lesson 13: Display Devices - C00lnerd Tutoring">
     <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
+        
         <!-- Header -->
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 13: miniAuto Secondary Development</h1>
-            <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Library Files, RGB Control, and Music Programming</p>
-            <div class="mt-4 p-4 bg-purple-100 rounded-lg">
-                <p class="text-purple-800 font-medium">🔧 Advanced programming with custom libraries and hardware control</p>
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 13: Display Devices</h1>
+            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Put your robot arm's status on a real screen — no laptop required</p>
+            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; display: inline-block;">
+                <p style="margin: 0; font-weight: 600;">📺 Serial Monitor was a window into the chip. Now the chip talks back on its own screen.</p>
             </div>
         </div>
 
         <!-- Learning Objectives -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Learning Objectives</h2>
+            
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
                 <div>
-                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Programming Skills:</h3>
-                    <ul style="list-style: none; padding: 0; margin: 0;">
-                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
-                            Understand and use custom Arduino libraries
-                        </li>
-                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
-                            Control RGB LEDs with button input
-                        </li>
-                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
-                            Program musical sequences with buzzers
-                        </li>
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">By the end of this lesson, you will:</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>Wire a 16×2 character LCD with an I2C backpack using only 4 wires</li>
+                        <li>Print text and numbers with the <code>LiquidCrystal_I2C</code> library</li>
+                        <li>Show live servo angles and the arm's control mode on the screen</li>
+                        <li>Refresh a display without flicker or <code>delay()</code></li>
                     </ul>
                 </div>
                 <div>
-                    <h3 style="font-size: 1.1rem; font-weight: 600; color: #374151; margin-bottom: 1rem;">Hardware Control:</h3>
-                    <ul style="list-style: none; padding: 0; margin: 0;">
-                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
-                            Ultrasonic sensor library functions
-                        </li>
-                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
-                            FastLED library for RGB control
-                        </li>
-                        <li style="margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
-                            <span style="color: #667eea; margin-right: 0.5rem;">•</span>
-                            Tone library for music generation
-                        </li>
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Concepts:</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>I2C bus — two shared wires, address instead of pins</li>
+                        <li>Cursor positioning and fixed-width formatting</li>
+                        <li>Timed screen updates with <code>millis()</code></li>
+                        <li>UI design on a tiny screen (16 characters per line)</li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <!-- Section 6.1: Secondary Development Library File Introduction -->
+        <!-- Section 1: Parts Inventory -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 class="text-2xl font-bold text-purple-800 mb-6">📚 Section 6.1: Secondary Development Library File Introduction</h2>
-                
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Arduino Libraries</h3>
-                <p class="text-gray-700 mb-4">
-                    During development, you can simplify programming by using various library files, including official Arduino libraries like Servo and Tone, as well as custom libraries such as Ultrasound and FastLED. This section focuses on explaining the custom libraries that will be used in miniAuto projects.
-                </p>
-
-                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
-                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🔗 Ultrasound Library Functions</h4>
-                    <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
-                        The "Ultrasound" library manages the glowing ultrasonic module, allowing you to set RGB LED colors and retrieve distance measurements using I2C communication.
-                    </p>
-                    <ul style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                        <li><strong>Ultrasound::Color(r1, g1, b1, r2, g2, b2)</strong> - Controls RGB LED colors on left and right sides</li>
-                        <li><strong>Ultrasound::GetDistance()</strong> - Returns measured distance from ultrasonic sensor</li>
-                        <li><strong>I2C Communication</strong> - Uses wireWriteDataArray and wireReadDataArray functions</li>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📦 Section 1: Parts Inventory</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">New this lesson</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>1 × 16×2 character LCD <strong>with I2C backpack</strong> soldered on (look for the small chip and 4-pin header on the back)</li>
+                        <li>4 × female-to-male jumper wires</li>
                     </ul>
                 </div>
-
-                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 1.5rem;">
-                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 1rem;">⚙️ Library Usage Example</h4>
-                    <p style="color: #92400e; margin-bottom: 1rem; line-height: 1.6;">
-                        Here's how to create an ultrasound object and use its functions:
-                    </p>
-                    <div style="background: #fffbeb; padding: 1rem; border-radius: 6px; font-family: monospace; color: #92400e;">
-                        <code>
-                            Ultrasound ul;  // Create ultrasound object<br>
-                            ul.Color(0,0,255,0,0,255);  // Set both LEDs to blue<br>
-                            int distance = ul.GetDistance();  // Get distance reading
-                        </code>
-                    </div>
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Carried over from Lesson 12</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>Arduino Uno + USB cable</li>
+                        <li>Joystick module + 2 SG90 servos</li>
+                        <li>Breadboard and jumper wires</li>
+                        <li>The whole working joystick control sketch</li>
+                    </ul>
                 </div>
+            </div>
+
+            <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">💡 Why I2C?</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    A bare 16×2 LCD needs <strong>six</strong> Arduino pins just for data and control. The little I2C backpack chip on the back talks over a shared two-wire bus instead — we spend zero digital pins, and the joystick and servos keep every pin they already had.
+                </p>
             </div>
         </div>
 
-        <!-- Section 6.2: RGB Control -->
+        <!-- Pin Map -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 class="text-2xl font-bold text-purple-800 mb-6">🌈 Section 6.2: RGB Control</h2>
-                
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Button-Controlled RGB LED</h3>
-                <p class="text-gray-700 mb-4">
-                    In this lesson, you'll learn how to read the status of the onboard buttons on the Arduino expansion board to control the color of the RGB LED. The three colors—red, green, and blue—can be individually controlled to produce various colorful display effects.
-                </p>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📌 Section 2: Pin Map &amp; Wiring</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                The backpack has just four pins: <strong>GND</strong>, <strong>VCC</strong>, <strong>SDA</strong> (data), and <strong>SCL</strong> (clock). On the Uno, the I2C bus lives on the last two analog pins:
+            </p>
 
-                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
-                    <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🎮 Program Behavior</h4>
-                    <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                        <li><strong>Default State:</strong> RGB LED lights up red</li>
-                        <li><strong>Button Pressed (KEY1):</strong> LED changes to white</li>
-                        <li><strong>Button Released:</strong> LED returns to red</li>
-                        <li><strong>FastLED Library:</strong> Used for precise color control</li>
-                    </ul>
-                </div>
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Complete robot-arm pin map</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
+                    <li><strong>LCD SDA:</strong> A4 (I2C data)</li>
+                    <li><strong>LCD SCL:</strong> A5 (I2C clock)</li>
+                    <li><strong>LCD VCC / GND:</strong> power rail / ground rail</li>
+                    <li><strong>Joystick VRx / VRy / SW:</strong> A0 / A1 / A3 (unchanged)</li>
+                    <li><strong>Button:</strong> A2, <strong>Buzzer (optional):</strong> pin 8</li>
+                    <li><strong>Base servo:</strong> pin 9, <strong>Shoulder servo:</strong> pin 10</li>
+                </ul>
+            </div>
 
-                <div style="position: relative;">
-                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`// RGB Control with Button Input
-#include "FastLED.h"
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1.5rem;">
+                There's also a tiny <strong>contrast potentiometer</strong> (blue box with a screw) on the backpack, and usually a backlight jumper. If you see a blank screen later, that screw is the first thing to turn.
+            </p>
+        </div>
 
-const static uint8_t ledPin = 2;    // RGB LED pin
-const static uint8_t keyPin = 3;    // Button pin
-static CRGB rgbs[1];                // RGB LED object
-bool keyState;                      // Button state detection
+        <!-- Hello Display -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">👋 Section 3: Hello, Display</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                First install the library: <strong>Sketch → Include Library → Manage Libraries</strong>, search <code>LiquidCrystal_I2C</code>, and install it (the <em>Frank de Brabander</em> / <em>marcoschwartz</em> version). Then prove the wiring with the classic first test:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+// Most backpacks answer at 0x27; if your screen stays
+// blank, try 0x3F instead.
+LiquidCrystal_I2C lcd(0x27, 16, 2);   // address, columns, rows
 
 void setup() {
-  Serial.begin(9600);               // Initialize serial communication
-  pinMode(keyPin, INPUT);           // Configure button as input
-  FastLED.addLeds<WS2812, ledPin, GRB>(rgbs, 1);  // Initialize RGB LED
-  Rgb_Show(255, 0, 0);              // Set initial color to red
+    lcd.init();          // wake the backpack up
+    lcd.backlight();     // turn the light on
+    lcd.setCursor(0, 0); // column 0, row 0 (top line)
+    lcd.print("Hello, arm!");
+    lcd.setCursor(0, 1); // second line
+    lcd.print("Base: ?  Mode: ?");
 }
 
 void loop() {
-  keyState = analogRead(keyPin);    // Read button state
-  if(keyState) 
-    Rgb_Show(255, 0, 0);            // Button released: red
-  else 
-    Rgb_Show(255, 255, 255);        // Button pressed: white
-  delay(100);
-}
+    // nothing yet — text stays until overwritten
+}`}</code></pre>
+            </div>
 
-// RGB Control Function
-void Rgb_Show(uint8_t rValue, uint8_t gValue, uint8_t bValue) {
-  rgbs[0].r = rValue;               // Set red value
-  rgbs[0].g = gValue;               // Set green value  
-  rgbs[0].b = bValue;               // Set blue value
-  FastLED.show();                   // Display the color
-}`}</code>
-</pre>
-                </div>
+            <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #dc2626;">
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Blank screen checklist</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.8;">
+                    <li><strong>Squares but no text?</strong> Wrong address — change <code>0x27</code> to <code>0x3F</code> in the constructor.</li>
+                    <li><strong>Nothing at all?</strong> Twist the little blue contrast screw until faint blocks appear.</li>
+                    <li><strong>Still nothing?</strong> Swap SDA/SCL — they're the most commonly reversed pair.</li>
+                </ul>
             </div>
         </div>
 
-        <!-- Section 6.3: Play Music -->
+        <!-- Live data -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 class="text-2xl font-bold text-purple-800 mb-6">🎵 Section 6.3: Play Music</h2>
-                
-            <div style="margin-bottom: 1.5rem;">
-                <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Button-Controlled Buzzer Music</h3>
-                <p class="text-gray-700 mb-4">
-                    In this lesson, you'll learn how to use the onboard buttons on the Arduino expansion board to control the buzzer and play music. The onboard buzzer is a 5V passive buzzer capable of producing different tones by varying the frequency of the output PWM signal.
-                </p>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📊 Section 4: Live Data Without Flicker</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Two rookie mistakes make LCDs painful. First, calling <code>lcd.print()</code> every <code>loop()</code> — the screen redraws thousands of times a second and shimmers. Fix: update on the same <code>millis()</code> timer pattern you already know, every 250 ms:
+            </p>
 
-                <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 1.5rem;">
-                    <h4 style="color: #065f46; font-weight: bold; margin-bottom: 1rem;">🎵 Music Behavior</h4>
-                    <ul style="color: #065f46; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                        <li><strong>Power On:</strong> Robot is ready, buzzer is silent</li>
-                        <li><strong>KEY1 Button Pressed:</strong> Buzzer plays Super Mario melody (98 notes)</li>
-                        <li><strong>Melody Features:</strong> Uses note arrays and timing for realistic music</li>
-                        <li><strong>Tone Library:</strong> Controls frequency and duration of each note</li>
-                    </ul>
-                </div>
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`unsigned long lastDisplayUpdate = 0;
+const int displayInterval = 250;   // refresh 4x per second
 
-                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-bottom: 1.5rem;">
-                    <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem;">🎬 Demo Video</h4>
-                    <div style="text-align: center;">
-                        <img src="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_images/6.3.gif" alt="Buzzer Music Demo" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        <p style="color: #0c4a6e; margin-top: 0.5rem; font-size: 0.9rem;">Press KEY1 to play Super Mario theme song</p>
-                    </div>
-                </div>
+void updateDisplay() {
+    lcd.setCursor(0, 0);
+    lcd.print("B:");
+    pad3(baseAngle);          // always 3 chars wide
+    lcd.print("  S:");
+    pad3(shoulderAngle);
+    lcd.print("   ");         // wipe any leftover characters
 
-                <div style="position: relative;">
-                    <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                    <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;">
-<code>{`/**
- * @file buzzer_test.ino
- * @brief 音乐播放(Play music)
- * @author Anonymity(Anonymity@hiwonder.com)
- * @version V1.0
- * @date 2024-04-23
- *
- * @copyright Copyright (c) 2024
- *
- */
+    lcd.setCursor(0, 1);
+    lcd.print("Mode: MANUAL   ");
+}
 
-// Musical note frequencies (Hz) - Standard Arduino definitions
-#define NOTE_C4   262
-#define NOTE_D4   294
-#define NOTE_DS4  311
-#define NOTE_E3   165
-#define NOTE_E4   330
-#define NOTE_F4   349
-#define NOTE_FS4  370
-#define NOTE_G3   196
-#define NOTE_G4   392
-#define NOTE_GS3  208
-#define NOTE_A3   220
-#define NOTE_AS3  233
-#define NOTE_B3   247
-#define NOTE_C5   523
+// Print a number padded to 3 columns so 45 doesn't
+// leave a ghost digit where 145 used to sit
+void pad3(int n) {
+    if (n < 100) lcd.print(" ");
+    if (n < 10)  lcd.print(" ");
+    lcd.print(n);
+}`}</code></pre>
+            </div>
 
-/* 超级玛丽(Super Mary) */
-static int song[98] = {
-  NOTE_E4, NOTE_E4, NOTE_E4, NOTE_C4, NOTE_E4, NOTE_G4, NOTE_G3,
-  NOTE_C4, NOTE_G3, NOTE_E3, NOTE_A3, NOTE_B3, NOTE_AS3, NOTE_A3, NOTE_G3, NOTE_E4, NOTE_G4, NOTE_A3, NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_B3,
-  NOTE_C4, NOTE_G3, NOTE_E3, NOTE_A3, NOTE_B3, NOTE_AS3, NOTE_A3, NOTE_G3, NOTE_E4, NOTE_G4, NOTE_A3, NOTE_F4, NOTE_G4, NOTE_E4, NOTE_C4, NOTE_D4, NOTE_B3,
-  NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_DS4, NOTE_E4, NOTE_GS3, NOTE_A3, NOTE_C4, NOTE_A3, NOTE_C4, NOTE_D4, NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_DS4, NOTE_E4, NOTE_C5, NOTE_C5, NOTE_C5,
-  NOTE_G4, NOTE_FS4, NOTE_E4, NOTE_DS4, NOTE_E4, NOTE_GS3, NOTE_A3, NOTE_C4, NOTE_A3, NOTE_C4, NOTE_D4, NOTE_DS4, NOTE_D4, NOTE_C4,
-  NOTE_C4, NOTE_C4, NOTE_C4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_C4, NOTE_A3, NOTE_G3, NOTE_C4, NOTE_C4, NOTE_C4, NOTE_C4, NOTE_D4, NOTE_E4,
-  NOTE_C4, NOTE_C4, NOTE_C4, NOTE_C4, NOTE_D4, NOTE_E4, NOTE_C4, NOTE_A3, NOTE_G3
-};
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1.5rem;">
+                Second mistake: <code>lcd.clear()</code> every update — that wipes the whole screen each time, which is what actually causes visible flicker. We never clear; we <strong>overwrite fixed-width fields</strong>. The old characters simply get replaced.
+            </p>
+        </div>
 
-/* 节拍(rhythm) */
-static int noteDurations[98] = {
-  8,4,4,8,4,2,2,
-  3,3,3,4,4,8,4,8,8,8,4,8,4,3,8,8,3,
-  3,3,3,4,4,8,4,8,8,8,4,8,4,3,8,8,2,
-  8,8,8,4,4,8,8,4,8,8,3,8,8,8,4,4,4,8,2,
-  8,8,8,4,4,8,8,4,8,8,3,3,3,1,
-  8,4,4,8,4,8,4,8,2,8,4,4,8,4,1,
-  8,4,4,8,4,8,4,8,2
-};
+        <!-- Complete sketch -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧩 Section 5: The Complete Sketch</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Lesson 12's joystick control, now reporting on the LCD. Watch for <strong>three</strong> independent <code>millis()</code> timers running at once — motion every 15 ms, display every 250 ms — proof that non-blocking code really does let one chip juggle several jobs:
+            </p>
 
-const static uint8_t buzzerPin = 3;    ///< 按键状态检测(detect button status)
-const static uint8_t keyPin = A3;
-bool keyState;                         ///< 按键状态检测(detect button status)
-bool taskStart = 0;
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`// ============================================================
+// Lesson 13: Display Devices
+// Joystick-driven arm with live status on a 16x2 I2C LCD.
+//   X -> base (pin 9)   Y -> shoulder (pin 10)
+//   SW click -> home   LCD -> angles + mode
+// ============================================================
+
+#include <Servo.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+Servo baseServo;
+Servo shoulderServo;
+LiquidCrystal_I2C lcd(0x27, 16, 2);   // try 0x3F if blank
+
+// ---- Pins ----
+const int joyX  = A0;
+const int joyY  = A1;
+const int joySW = A3;
+
+// ---- Servo state ----
+int baseAngle     = 90;
+int shoulderAngle = 90;
+const int MIN_ANGLE = 20;
+const int MAX_ANGLE = 160;
+const char modeText[] = "MANUAL";   // future: AUTO, etc.
+
+// ---- Joystick calibration ----
+int centerX = 512;
+int centerY = 512;
+const int deadZone = 25;
+
+// ---- Two independent timers ----
+unsigned long lastStepTime    = 0;
+unsigned long lastDisplayTime = 0;
+const int stepInterval    = 15;    // servo update every 15 ms
+const int displayInterval = 250;   // screen update every 250 ms
+const int maxStep = 4;
+
+int lastSWState = HIGH;
+
+int signOf(int v) {
+    return (v > 0) - (v < 0);
+}
+
+int stepFor(int deflection) {
+    int d = abs(deflection);
+    if (d < deadZone) return 0;
+    return map(d, deadZone, 512, 1, maxStep);
+}
+
+void calibrateJoystick() {
+    long sumX = 0, sumY = 0;
+    for (int i = 0; i < 50; i++) {
+        sumX += analogRead(joyX);
+        sumY += analogRead(joyY);
+        delay(10);
+    }
+    centerX = sumX / 50;
+    centerY = sumY / 50;
+}
+
+// Print a 3-digit-padded angle (avoids ghost digits)
+void pad3(int n) {
+    if (n < 100) lcd.print(" ");
+    if (n < 10)  lcd.print(" ");
+    lcd.print(n);
+}
+
+void updateDisplay() {
+    // Line 1:  B: 90  S: 45
+    lcd.setCursor(0, 0);
+    lcd.print("B:");
+    pad3(baseAngle);
+    lcd.print((char)223);   // degree symbol on HD44780
+    lcd.print(" S:");
+    pad3(shoulderAngle);
+    lcd.print((char)223);
+
+    // Line 2:  Mode: MANUAL
+    lcd.setCursor(0, 1);
+    lcd.print("Mode: ");
+    lcd.print(modeText);
+    lcd.print("        ");  // wipe leftover chars
+}
 
 void setup() {
-  pinMode(keyPin, INPUT);
-  Serial.begin(9600);
-  // 设置串行端口读取数据的超时时间(Set the timeout for serial port data reading)
-  Serial.setTimeout(500);
+    baseServo.attach(9);
+    shoulderServo.attach(10);
+    pinMode(joySW, INPUT_PULLUP);
+    baseServo.write(baseAngle);
+    shoulderServo.write(shoulderAngle);
+
+    lcd.init();
+    lcd.backlight();
+    lcd.setCursor(0, 0);
+    lcd.print("Calibrating...");
+    lcd.setCursor(0, 1);
+    lcd.print("Hands off stick");
+
+    calibrateJoystick();
+    updateDisplay();
 }
 
 void loop() {
-  keyState = analogRead(keyPin);  //检测按键状态(detect button status)
-  if (!keyState) taskStart = 1;
-  if (taskStart)
-  {
-    tune_task();    // 播放音乐(Play music)
-    taskStart = 0;
-  }
-}
+    // Job 1: timed servo motion (every 15 ms)
+    if (millis() - lastStepTime >= stepInterval) {
+        lastStepTime = millis();
+        int dx = analogRead(joyX) - centerX;
+        int dy = analogRead(joyY) - centerY;
+        baseAngle     = constrain(baseAngle     + signOf(dx) * stepFor(dx), MIN_ANGLE, MAX_ANGLE);
+        shoulderAngle = constrain(shoulderAngle + signOf(dy) * stepFor(dy), MIN_ANGLE, MAX_ANGLE);
+        baseServo.write(baseAngle);
+        shoulderServo.write(shoulderAngle);
+    }
 
-void tune_task(void) {
-  for (int thisNote = 0; thisNote < 98; thisNote++)
-  {
-    int noteDuration = 1000/noteDurations[thisNote];// 计算每个节拍的时间，以一个节拍一秒为例，四分之一拍就是1000/4毫秒，八分之一拍就是1000/8毫秒(Calculate the time for each beat, assuming one beat per second, a quarter note is 1000/4 milliseconds, and an eighth note is 1000/8 milliseconds)
-    tone(buzzerPin, song[thisNote], noteDuration);
-    int pauseBetweenNotes = noteDuration * 1.10; //每个音符间的停顿间隔，以该音符的130%为佳(The pause interval between each note, 130% of the duration of this note is recommended)
-    delay(pauseBetweenNotes);
-    noTone(buzzerPin);
-  }
-}`}</code>
-</pre>
+    // Job 2: timed screen refresh (every 250 ms)
+    if (millis() - lastDisplayTime >= displayInterval) {
+        lastDisplayTime = millis();
+        updateDisplay();
+    }
+
+    // Job 3: button check (every pass — no timer needed)
+    int swState = digitalRead(joySW);
+    if (swState == LOW && lastSWState == HIGH) {
+        baseAngle = 90;
+        shoulderAngle = 90;
+    }
+    lastSWState = swState;
+}`}</code></pre>
+            </div>
+
+            <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #059669;">
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🔍 The architecture lesson</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    Each job in <code>loop()</code> is a small "if enough time passed, do a little work" guard. Motion stays smooth while the screen redraws, and button presses are caught instantly — something impossible with a big <code>delay()</code> anywhere in the loop. This pattern scales to every sensor you'll add later.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tuning & challenges -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔧 Section 6: Tuning and Next Steps</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Screen lags behind the arm</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">By design — the screen only refreshes 4×/second. Lower <code>displayInterval</code> to 100 for snappier updates, but don't go below ~50 or I2C traffic steals loop time.</p>
                 </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Ghost digits (90 → 920)</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">A shorter number didn't overwrite the old one. That's why <code>pad3()</code> exists — never <code>lcd.clear()</code>, always overwrite fixed-width.</p>
+                </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Random garbled characters</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Servo current spikes corrupt I2C. Power servos from a separate 5V supply (shared GND!) and keep SDA/SCL wires short.</p>
+                </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Display works then freezes</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">A <code>delay()</code> snuck back in somewhere, or <code>updateDisplay()</code> runs every loop instead of on its timer.</p>
+                </div>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 0.5rem;">🛠️ Put It Together — Challenges</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
+                    <li><strong>Add the elbow:</strong> a 16×2 only has 2 lines. Make the screen alternate: page 1 shows B/S, page 2 shows E/mode, switching every 2 seconds on a third timer.</li>
+                    <li><strong>Bar graph:</strong> fill row 2 with <code>#</code> characters proportional to joystick deflection — a live input meter.</li>
+                    <li><strong>Mode toggle:</strong> wire Lesson 11's A2 button to switch <code>modeText</code> between "MANUAL" and "HOME" and watch the display update.</li>
+                    <li><strong>Got a 20×4 display?</strong> It's the same library — change the constructor to <code>(0x27, 20, 4)</code> and put each value on its own line: Base / Shoulder / Elbow / Mode.</li>
+                </ul>
+            </div>
+
+            <div style="text-center; margin-top: 1.5rem;">
+                <a href="/programming/quizzes32/lesson13" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Take Lesson 13 Quiz →
+                </a>
             </div>
         </div>
 
         <!-- Navigation -->
-        <div class="flex justify-between items-center mt-8">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
             <div>
                 <a href="/programming/lessons32/lesson12" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
                     ← Previous: Lesson 12
@@ -281,25 +379,22 @@ void tune_task(void) {
                 </a>
             </div>
             <div>
-                <a href="/programming/lessons32/lesson14" style="background-color: #dc2626; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #b91c1c; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#b91c1c'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#dc2626'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                    Next: Lesson 14 - Obstacle Avoidance →
+                <a href="/programming/lessons32/lesson13-5" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Lesson 13.5 →
                 </a>
             </div>
         </div>
     </div>
-</Layout>
 
-<script>
+    <script>
 window.copyCode = function(button) {
     try {
-        const codeElement = button.parentElement.querySelector('code');
+        const codeElement = button.parentElement ? button.parentElement.querySelector('code') : null;
         if (!codeElement) {
             showCopyFeedback(button, false);
             return;
         }
-        
         const codeText = codeElement.textContent || codeElement.innerText;
-        
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText).then(() => {
                 showCopyFeedback(button, true);
@@ -323,13 +418,10 @@ function fallbackCopy(text, button) {
         textarea.style.top = '0';
         textarea.setAttribute('readonly', '');
         document.body.appendChild(textarea);
-        
         textarea.select();
         textarea.setSelectionRange(0, 99999);
-        
         const successful = document.execCommand('copy');
         document.body.removeChild(textarea);
-        
         showCopyFeedback(button, successful);
     } catch (err) {
         showCopyFeedback(button, false);
@@ -339,7 +431,6 @@ function fallbackCopy(text, button) {
 function showCopyFeedback(button, success) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
-    
     if (success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#10b981';
@@ -347,10 +438,10 @@ function showCopyFeedback(button, success) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
-    
     setTimeout(() => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);
 }
-</script>
+    </script>
+</Layout>

@@ -2,503 +2,409 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Week 12 Quiz: miniAuto Movement Programming - C00lnerd Tutoring">
+<Layout title="Lesson 12 Quiz: Joystick Control - C00lnerd Tutoring">
     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 12 Quiz</h1>
-            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">miniAuto Movement Programming</p>
-        </div>
-
-        <!-- Student Information Form -->
-        <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-            <h3 class="text-xl font-bold text-cyan-800 mb-4">Student Information</h3>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <label for="quiz32StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name:</label>
-                    <input type="text" id="quiz32StudentName" autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent" placeholder="Enter your full name" required>
-                </div>
-                <div>
-                    <label for="quiz32StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address:</label>
-                    <input type="email" id="quiz32StudentEmail" autocomplete="off" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent" placeholder="Enter your email" required>
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Lesson 12 Quiz: Joystick Control</h1>
+                <p class="text-xl text-gray-600">Test your understanding of analog input, calibration, dead zones, and proportional speed</p>
+                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                    <p class="text-purple-800 font-medium">🕹️ 10 questions covering analogRead(), center calibration, dead zones, and rate control</p>
                 </div>
             </div>
 
-            <form id="quizForm">
+            <!-- Student Information -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">Student Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="quiz12StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="quiz12StudentName" name="studentName" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label for="quiz12StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="quiz12StudentEmail" name="studentEmail" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <form id="quizForm" autocomplete="off" class="space-y-8">
                 <!-- Question 1 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Mecanum Wheels</h3>
-                    <p class="text-gray-700 mb-4">What makes Mecanum wheels different from regular wheels?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: What's Inside a Joystick?</h3>
+                    <p class="text-gray-700 mb-4">A two-axis joystick module is electrically equivalent to which components?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="A" class="mr-3">
-                            <span>A) They are larger and heavier</span>
+                            <span>A) Two buttons and a resistor</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="B" class="mr-3">
-                            <span>B) They have rollers at 45� angles enabling omnidirectional movement</span>
+                            <span>B) Two potentiometers (one per axis) plus a pushbutton</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="C" class="mr-3">
-                            <span>C) They only rotate in one direction</span>
+                            <span>C) Two small motors and a hall sensor</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="D" class="mr-3">
-                            <span>D) They require special motors to operate</span>
+                            <span>D) An accelerometer and a gyroscope</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 2 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: Motor Control Pins</h3>
-                    <p class="text-gray-700 mb-4">How many motors does the miniAuto have and what types of pins control them?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: Analog Range</h3>
+                    <p class="text-gray-700 mb-4">When the joystick is resting at center, <code>analogRead()</code> on one axis returns approximately:</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="A" class="mr-3">
-                            <span>A) 2 motors controlled by analog pins only</span>
+                            <span>A) 0</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="B" class="mr-3">
-                            <span>B) 4 motors controlled by PWM pins and direction pins</span>
+                            <span>B) 512</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="C" class="mr-3">
-                            <span>C) 6 motors controlled by digital pins only</span>
+                            <span>C) 1023</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="D" class="mr-3">
-                            <span>D) 3 motors controlled by servo pins</span>
+                            <span>D) 255</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 3 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Sideways Movement</h3>
-                    <p class="text-gray-700 mb-4">What wheel pattern creates sideways movement to the left?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: Pin Map</h3>
+                    <p class="text-gray-700 mb-4">In our robot-arm pin map, where do the joystick's VRx and VRy outputs connect?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="A" class="mr-3">
-                            <span>A) All wheels rotate forward</span>
+                            <span>A) VRx to pin 9, VRy to pin 10</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="B" class="mr-3">
-                            <span>B) Front left and rear right backward, front right and rear left forward</span>
+                            <span>B) VRx to A0, VRy to A1</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="C" class="mr-3">
-                            <span>C) Left wheels forward, right wheels backward</span>
+                            <span>C) VRx to 5V, VRy to GND</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="D" class="mr-3">
-                            <span>D) All wheels rotate backward</span>
+                            <span>D) Both to the same analog pin</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 4 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Rotation Movement</h3>
-                    <p class="text-gray-700 mb-4">How do you make the miniAuto rotate clockwise in place?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Why Calibrate?</h3>
+                    <p class="text-gray-700 mb-4">Why does our sketch measure the joystick's center in <code>setup()</code> instead of hardcoding 512?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="A" class="mr-3">
-                            <span>A) All wheels rotate in the same direction</span>
+                            <span>A) Because the Servo library requires calibration</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="B" class="mr-3">
-                            <span>B) Left wheels forward, right wheels backward</span>
+                            <span>B) Because real joysticks rarely rest at exactly 512 — each module's true center varies</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="C" class="mr-3">
-                            <span>C) Right wheels backward, left wheels forward</span>
+                            <span>C) Because analogRead() is slower on the first call</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="D" class="mr-3">
-                            <span>D) Only the front wheels move</span>
+                            <span>D) To charge the joystick's internal capacitor</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 5 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: PWM vs Direction Pins</h3>
-                    <p class="text-gray-700 mb-4">What's the difference between PWM pins and direction pins in motor control?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: The Dead Zone</h3>
+                    <p class="text-gray-700 mb-4">What problem does the dead zone solve?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="A" class="mr-3">
-                            <span>A) PWM controls speed, direction pins control forward/backward</span>
+                            <span>A) It prevents the servos from moving too fast</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="B" class="mr-3">
-                            <span>B) PWM controls direction, direction pins control speed</span>
+                            <span>B) It saves battery power when idle</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="C" class="mr-3">
-                            <span>C) Both control the same thing</span>
+                            <span>C) Tiny jitters near center get ignored, so the servos don't creep or buzz on their own</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="D" class="mr-3">
-                            <span>D) PWM is for servos, direction pins are for DC motors</span>
+                            <span>D) It stops the joystick button from registering</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 6 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Arduino Functions</h3>
-                    <p class="text-gray-700 mb-4">Which Arduino function is used to control motor speed?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: The Stick Button</h3>
+                    <p class="text-gray-700 mb-4">The joystick's SW pin uses <code>INPUT_PULLUP</code> and connects to GND when pressed. What does <code>digitalRead(joySW)</code> return when the stick is clicked?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="A" class="mr-3">
-                            <span>A) digitalWrite()</span>
+                            <span>A) HIGH</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="B" class="mr-3">
-                            <span>B) analogWrite()</span>
+                            <span>B) LOW</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="C" class="mr-3">
-                            <span>C) digitalRead()</span>
+                            <span>C) 512</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="D" class="mr-3">
-                            <span>D) analogRead()</span>
+                            <span>D) It alternates HIGH/LOW each loop</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 7 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Movement Sequences</h3>
-                    <p class="text-gray-700 mb-4">In the movement demonstration program, what happens between each movement command?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Proportional Speed</h3>
+                    <p class="text-gray-700 mb-4">In our code, how does pushing the stick farther make the servo move faster?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="A" class="mr-3">
-                            <span>A) The robot immediately starts the next movement</span>
+                            <span>A) The step interval gets longer</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="B" class="mr-3">
-                            <span>B) The robot stops motors and delays before the next movement</span>
+                            <span>B) A bigger delay() is called each loop</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="C" class="mr-3">
-                            <span>C) The robot waits for user input</span>
+                            <span>C) The servo gets a higher voltage</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="D" class="mr-3">
-                            <span>D) The robot resets to starting position</span>
+                            <span>D) The degrees-per-step value is mapped from how far the stick is from center</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 8 -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Motor Safety</h3>
-                    <p class="text-gray-700 mb-4">What is the purpose of the stopMotors() function?</p>
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: signOf()</h3>
+                    <p class="text-gray-700 mb-4">What does our <code>signOf(deflection)</code> function return?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="A" class="mr-3">
-                            <span>A) To increase motor speed</span>
+                            <span>A) The deflection value itself</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="B" class="mr-3">
-                            <span>B) To set all motor PWM values to 0 for safety</span>
+                            <span>B) +1, -1, or 0 — just the direction to step</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="C" class="mr-3">
-                            <span>C) To change motor direction</span>
+                            <span>C) true or false</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="D" class="mr-3">
-                            <span>D) To reset the Arduino</span>
+                            <span>D) The angle to write to the servo</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 9: Short Answer -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Movement Pattern Design</h3>
-                    <p class="text-gray-700 mb-4">Describe how you would program the miniAuto to move in a square pattern. Include the specific movement functions and timing you would use.</p>
-                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" 
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Fixed Interval, Variable Step</h3>
+                    <p class="text-gray-700 mb-4">Our sketch keeps <code>stepInterval</code> fixed at 15 ms and changes the step <em>size</em> instead. Why is this better than keeping the step at 1° and changing the delay between steps? Hint: think about what else the loop() is doing every iteration.</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
                               placeholder="Write your answer here..."></textarea>
                 </div>
 
                 <!-- Question 10: Short Answer -->
-                <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Troubleshooting Movement</h3>
-                    <p class="text-gray-700 mb-4">If your miniAuto is not moving correctly (e.g., going in circles instead of straight), what are three possible causes and how would you fix them?</p>
-                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500" 
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Mode Toggle</h3>
+                    <p class="text-gray-700 mb-4">Right now clicking the stick sends both servos home. Describe how you would change SW into a mode toggle between "manual joystick control" and "serial command control" — what state variable would you add, and where in loop() would you check it?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
                               placeholder="Write your answer here..."></textarea>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="text-center">
                     <button type="submit" id="submitBtn" 
-                            style="background-color: #0891b2; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                            style="background-color: #7c3aed; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
                         Submit Quiz
                     </button>
                 </div>
             </form>
+        </div>
 
-            <!-- Results Section (Hidden Initially) -->
-            <div id="resultsSection" class="bg-white rounded-lg shadow-lg p-8 mb-8 hidden">
-                <h3 class="text-xl font-bold text-green-600 mb-4">Quiz Results</h3>
+        <!-- Quiz Results Display -->
+        <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-center mb-6 text-purple-800">🎯 Your Quiz Results</h2>
                 <div id="resultsContent"></div>
-                <div class="mt-6 text-center">
-                    <button onclick="printResults()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg mr-4">
-                        Print Results
-                    </button>
-                    <button onclick="resetQuiz()" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">
-                        Retake Quiz
-                    </button>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
                 </div>
             </div>
+        </div>
 
+        <div class="max-w-4xl mx-auto px-4 py-8">
             <!-- Navigation -->
             <div class="flex justify-between items-center mt-8">
                 <div>
-                    <a href="/programming/lessons32/week12" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ? Back to Lesson
+                    <a href="/programming/lessons32/lesson12" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Lesson 12
                     </a>
                 </div>
                 <div>
-                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Course Overview
-                    </a>
-                </div>
-                <div>
-                    <a href="/programming/lessons32/week13" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Week 13 ?
+                    <a href="/programming/lessons32/lesson13" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Lesson 13 →
                     </a>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- EmailJS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
-window.onload = function() { generateCaptcha(); };
-    // CAPTCHA variables
-    let captchaAnswer = 0;
-    
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2;
-        }
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }</script>
-
+    <!-- EmailJS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
     <script is:inline>
-window.onload = function() { generateCaptcha(); };
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
+        // Quiz data with correct answers
+        const quizData = {
+            correctAnswers: {
+                q1: 'B', // Two potentiometers plus a pushbutton
+                q2: 'B', // About 512
+                q3: 'B', // VRx to A0, VRy to A1
+                q4: 'B', // Real joysticks don't rest at exactly 512
+                q5: 'C', // Dead zone stops jitter/creep
+                q6: 'B', // LOW when pressed
+                q7: 'D', // Step size maps to deflection
+                q8: 'B'  // +1, -1, or 0 direction
+            },
+            questionText: {
+                q1: "A two-axis joystick module is electrically equivalent to which components?",
+                q2: "When the joystick is resting at center, analogRead() on one axis returns approximately:",
+                q3: "In our robot-arm pin map, where do the joystick's VRx and VRy outputs connect?",
+                q4: "Why does our sketch measure the joystick's center in setup() instead of hardcoding 512?",
+                q5: "What problem does the dead zone solve?",
+                q6: "What does digitalRead(joySW) return when the stick is clicked?",
+                q7: "How does pushing the stick farther make the servo move faster?",
+                q8: "What does our signOf(deflection) function return?",
+                q9: "Our sketch keeps stepInterval fixed at 15 ms and changes the step size instead. Why is this better than keeping the step at 1 degree and changing the delay between steps?",
+                q10: "Describe how you would change SW into a mode toggle between 'manual joystick control' and 'serial command control' — what state variable would you add, and where in loop() would you check it?"
             }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }
-        // Quiz answers
-        const correctAnswers = {
-            q1: 'B', // Mecanum wheels have rollers at 45� angles
-            q2: 'B', // 4 motors controlled by PWM and direction pins
-            q3: 'B', // Front left and rear right backward, front right and rear left forward
-            q4: 'B', // Left wheels forward, right wheels backward
-            q5: 'A', // PWM controls speed, direction pins control forward/backward
-            q6: 'B', // analogWrite()
-            q7: 'B', // Robot stops motors and delays
-            q8: 'B'  // Set all motor PWM values to 0 for safety
-        };
-
-        const explanations = {
-            q1: 'Mecanum wheels have rollers positioned at 45� angles that allow the robot to move in any direction without changing orientation.',
-            q2: 'The miniAuto has 4 motors (one for each wheel) controlled by PWM pins for speed and direction pins for forward/backward control.',
-            q3: 'For left movement, front left and rear right wheels go backward while front right and rear left wheels go forward, creating the sideways motion.',
-            q4: 'For clockwise rotation, the left wheels move forward while the right wheels move backward, causing the robot to spin in place.',
-            q5: 'PWM (Pulse Width Modulation) controls motor speed (0-255), while direction pins control whether motors rotate forward or backward.',
-            q6: 'analogWrite() is used to send PWM signals to control motor speed, while digitalWrite() only sends HIGH or LOW signals.',
-            q7: 'The demonstration program calls stopMotors() and delay() between movements to ensure clean transitions and prevent overlapping commands.',
-            q8: 'The stopMotors() function sets all PWM values to 0, ensuring all motors stop completely for safety and control.'
         };
 
         document.getElementById('quizForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const studentName = document.getElementById('quiz32StudentName').value;
-            const studentEmail = document.getElementById('quiz32StudentEmail').value;
+            const studentName = document.getElementById('quiz12StudentName').value;
+            const studentEmail = document.getElementById('quiz12StudentEmail').value;
             
             if (!studentName || !studentEmail) {
                 alert('Please fill in your name and email address.');
                 return;
             }
 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+            
+            const formData = new FormData(this);
+            const results = [];
             let score = 0;
-            let totalQuestions = 8; // Multiple choice questions
-            let results = [];
-
-            // Check multiple choice answers
+            const totalQuestions = 8; // Multiple choice questions only for scoring
+            
+            // Check multiple choice answers (q1-q8)
             for (let i = 1; i <= 8; i++) {
-                const questionName = 'q' + i;
-                const selectedAnswer = document.querySelector(`input[name="${questionName}"]:checked`);
+                const questionKey = `q${i}`;
+                const userAnswer = formData.get(questionKey);
+                const correctAnswer = quizData.correctAnswers[questionKey];
+                const isCorrect = userAnswer === correctAnswer;
                 
-                if (selectedAnswer) {
-                    const isCorrect = selectedAnswer.value === correctAnswers[questionName];
-                    if (isCorrect) score++;
-                    
-                    results.push({
-                        question: i,
-                        selected: selectedAnswer.value,
-                        correct: correctAnswers[questionName],
-                        isCorrect: isCorrect,
-                        explanation: explanations[questionName]
-                    });
-                } else {
-                    results.push({
-                        question: i,
-                        selected: 'No answer',
-                        correct: correctAnswers[questionName],
-                        isCorrect: false,
-                        explanation: explanations[questionName]
-                    });
-                }
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: quizData.questionText[questionKey],
+                    userAnswer: userAnswer || 'No answer provided',
+                    correctAnswer: correctAnswer,
+                    isCorrect: isCorrect
+                });
             }
-
-            // Get short answer responses
-            const q9Answer = document.querySelector('textarea[name="q9"]').value;
-            const q10Answer = document.querySelector('textarea[name="q10"]').value;
-
-            // Calculate percentage
+            
+            // Add short answer questions
+            results.push({
+                question: quizData.questionText.q9,
+                studentAnswer: formData.get('q9') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            results.push({
+                question: quizData.questionText.q10,
+                studentAnswer: formData.get('q10') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
             const percentage = Math.round((score / totalQuestions) * 100);
             
-            // Display results
-            displayResults(score, totalQuestions, percentage, results, q9Answer, q10Answer);
+            // Build detailed message
+            let message = `LESSON 12 QUIZ RESULTS - Joystick Control\n\n`;
+            message += `Student: ${studentName}\n`;
+            message += `Email: ${studentEmail}\n`;
+            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
             
-            // Send email to instructor
-            sendQuizResults(studentName, studentEmail, score, totalQuestions, percentage, results, q9Answer, q10Answer);
-        });
-
-        function displayResults(score, total, percentage, results, q9Answer, q10Answer) {
-            // Determine grade
+            message += `DETAILED RESULTS:\n`;
+            message += `==================\n\n`;
+            
+            results.forEach((result, index) => {
+                if (result.isShortAnswer) {
+                    message += `${result.question}:\n`;
+                    message += `Answer: ${result.studentAnswer}\n\n`;
+                } else {
+                    const status = result.isCorrect ? 'CORRECT' : 'INCORRECT';
+                    message += `Q${index + 1}: ${result.question}\n`;
+                    message += `Student Answer: ${result.userAnswer}\n`;
+                    message += `Correct Answer: ${result.correctAnswer}\n`;
+                    message += `Status: ${status}\n\n`;
+                }
+            });
+            
+            message += `PERFORMANCE ANALYSIS:\n`;
+            message += `====================\n`;
+            if (percentage >= 90) {
+                message += `EXCELLENT! Outstanding understanding of analog input and proportional control.\n`;
+                message += `Student demonstrates mastery of calibration, dead zones, and rate control.\n`;
+            } else if (percentage >= 80) {
+                message += `VERY GOOD! Strong grasp of joystick control fundamentals.\n`;
+                message += `Student shows solid understanding with minor areas for review.\n`;
+            } else if (percentage >= 70) {
+                message += `GOOD! Basic understanding of analog input with room for improvement.\n`;
+                message += `Recommend additional practice with calibration and the dead zone.\n`;
+            } else if (percentage >= 60) {
+                message += `NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
+                message += `Focus on analogRead ranges, center offset, and step-size scaling.\n`;
+            } else {
+                message += `REQUIRES ATTENTION! Limited understanding of joystick concepts.\n`;
+                message += `Recommend reviewing lesson materials and re-running the raw-reader sketch.\n`;
+            }
+            
+            message += `\nNext Steps: Lesson 13 puts this data on a real display. Keep the joystick sketch — the LCD status screen plugs right into it.\n`;
+            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+            
+            // Display results to student
             let grade = 'F';
             if (percentage >= 90) grade = 'A';
             else if (percentage >= 80) grade = 'B';
@@ -507,152 +413,92 @@ window.onload = function() { generateCaptcha(); };
             
             const resultsHTML = `
                 <div style="text-align: center; margin-bottom: 1rem;">
-                    <div style="font-size: 2rem; font-weight: bold; color: #0891b2;">${score}/${total} (${percentage}%)</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #0891b2;">Grade: ${grade}</div>
-                    <div style="margin-top: 1rem; padding: 1rem; background: #cffafe; border-radius: 6px; color: #0891b2; font-weight: bold;">
-                        ?? Week 12: miniAuto Movement Programming
+                    <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${totalQuestions} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #7c3aed; font-weight: bold;">
+                        🕹️ Week 12: Joystick Control
                     </div>
                 </div>
                 <div style="text-align: left;">
-                    ${results.map((result, index) => {
-                        return `
-                            <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '?' : '?'}<br>
-                                <strong>Your answer:</strong> ${result.selected}<br>
-                                <strong>Correct answer:</strong> ${result.correct}
-                            </div>
-                        `;
+                    ${results.map((r, index) => {
+                        if (r.isShortAnswer) {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                                    <strong>${r.question}:</strong><br>
+                                    <strong>Your answer:</strong> ${r.studentAnswer}
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '✅' : '❌'}<br>
+                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
+                                    <strong>Correct answer:</strong> ${r.correctAnswer}
+                                </div>
+                            `;
+                        }
                     }).join('')}
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
-                        <strong>Question 9 - Movement Pattern Design:</strong><br>
-                        <strong>Your answer:</strong> ${q9Answer || 'No response provided'}
-                    </div>
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
-                        <strong>Question 10 - Troubleshooting Movement:</strong><br>
-                        <strong>Your answer:</strong> ${q10Answer || 'No response provided'}
-                    </div>
                 </div>
             `;
             
             document.getElementById('resultsContent').innerHTML = resultsHTML;
-            document.getElementById('resultsSection').classList.remove('hidden');
-            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-        }
-
-        function sendQuizResults(studentName, studentEmail, score, total, percentage, results, q9Answer, q10Answer) {
-
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+            
+            // Send email using EmailJS
             // Check if EmailJS is available
-            if (typeof window.emailjs === 'undefined') {
-                alert('Email service is not available. Please refresh the page and try again.');
+            if (typeof (window as any).emailjs === 'undefined') {
+                console.log('Email service unavailable; relying on Google Sheets logging.');
                 return;
             }
             
             // Initialize EmailJS right before sending
-            window.emailjs.init('ct_s19oZHppLy9BlW');
+            (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
-            let emailContent = `Week 12 Quiz Results - miniAuto Movement Programming\n\n`;
-            emailContent += `Student: ${studentName}\n`;
-            emailContent += `Email: ${studentEmail}\n`;
-            emailContent += `Score: ${score}/${total} (${percentage}%)\n`;
-            emailContent += `Date: ${new Date().toLocaleString()}\n\n`;
-            
-            emailContent += `MULTIPLE CHOICE RESULTS:\n`;
-            results.forEach(result => {
-                emailContent += `Question ${result.question}: ${result.isCorrect ? 'CORRECT' : 'INCORRECT'}\n`;
-                emailContent += `  Student answer: ${result.selected}\n`;
-                emailContent += `  Correct answer: ${result.correct}\n\n`;
-            });
-            
-            emailContent += `SHORT ANSWER RESPONSES:\n\n`;
-            emailContent += `Question 9 - Movement Pattern Design:\n`;
-            emailContent += `${q9Answer || 'No response provided'}\n\n`;
-            
-            emailContent += `Question 10 - Troubleshooting Movement:\n`;
-            emailContent += `${q10Answer || 'No response provided'}\n\n`;
-            
-            emailContent += `PERFORMANCE ANALYSIS:\n`;
-            if (percentage >= 90) {
-                emailContent += `Excellent work! ${studentName} demonstrates strong understanding of miniAuto movement programming and Mecanum wheel control.`;
-            } else if (percentage >= 80) {
-                emailContent += `Good performance! ${studentName} shows solid grasp of motor control concepts with room for minor improvements.`;
-            } else if (percentage >= 70) {
-                emailContent += `Satisfactory work. ${studentName} understands basic movement concepts but may need additional practice with omnidirectional programming.`;
-            } else {
-                emailContent += `${studentName} may need additional support with miniAuto movement programming and motor control principles.`;
-            }
-
-            console.log('Sending quiz results via EmailJS...');
-            emailjs.send('service_kaw1xkh', 'template_io02xtm', {
-                to_email: 'chuck@c00lnerd.com',
-                from_name: 'C00lnerd Quiz System',
-                from_email: 'chuck@c00lnerd.com',
-                
-                message: emailContent,
-                subject: `Week 12 Programming Quiz - ${studentName}`
-            }).then(function(response) {
-                console.log('Quiz results sent successfully!', response.status, response.text);
-                alert('Quiz submitted successfully! Your results have been sent to your instructor.');
-            }, function(error) {
-                console.log('Failed to send quiz results...', error);
-                alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
-            });
-
-            // Log to Google Sheets
-            console.log('Logging quiz results to Google Sheets...');
-            const totalQuestions = 10;
-            
-            // Extract individual answers from results array
-            const answersObj = {};
-            results.forEach((result, index) => {
-                answersObj[`q${index + 1}`] = result.selected;
-            });
-            answersObj.q9 = q9Answer;
-            answersObj.q10 = q10Answer;
-            
-            // Calculate grade
-            let grade = 'F';
-            if (percentage >= 90) grade = 'A';
-            else if (percentage >= 80) grade = 'B';
-            else if (percentage >= 70) grade = 'C';
-            else if (percentage >= 60) grade = 'D';
-            
-            const sheetsData = {
+            const sheetsPayload = JSON.stringify({
                 studentName: studentName,
                 studentEmail: studentEmail,
                 week: 'Week 12',
-                topic: 'miniAuto Movement Programming',
+                topic: 'Joystick Control (Analog Input + Rate Control)',
                 score: score,
                 totalPoints: totalQuestions,
                 percentage: percentage,
                 grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
                 timestamp: new Date().toISOString()
+            });
+
+            const logToSheets = function() {
+                console.log('Logging quiz results to Google Sheets...');
+                return fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: sheetsPayload
+                })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
             };
 
-            fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(sheetsData)
-            })
-            .then(() => {
-                console.log('Quiz results logged to Google Sheets successfully!');
-            })
-            .catch(error => {
-                console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error);
+            (window as any).emailjs.send('service_kaw1xkh', 'template_io02xtm', {
+                to_email: 'chuck@c00lnerd.com',
+                from_name: 'C00lnerd Quiz System',
+                from_email: 'chuck@c00lnerd.com',
+                
+                message: message,
+                subject: `Lesson 12 Joystick Control Quiz - ${studentName} (${percentage}%)`
+            }).then(function(response) {
+                console.log('Quiz results sent successfully!', response.status, response.text);
+                alert('Quiz results sent successfully!');
+                logToSheets();
+            }, function(error) {
+                console.log('Failed to send quiz results...', error);
+                logToSheets();
+                alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
             });
-        }
-
-        function printResults() {
-            window.print();
-        }
-
-        function resetQuiz() {
-            document.getElementById('quizForm').reset();
-            document.getElementById('resultsSection').classList.add('hidden');
-            window.scrollTo(0, 0);
-        }
+        });
     </script>
 </Layout>
-

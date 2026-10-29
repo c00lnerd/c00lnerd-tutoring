@@ -2,1258 +2,419 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Lesson 12: Basic miniAuto Programming - C00lnerd Tutoring">
+<Layout title="Lesson 12: Joystick Control - C00lnerd Tutoring">
     <div style="max-width: 1000px; margin: 0 auto; padding: 2rem;">
         
-            <!-- Header -->
-            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
-                <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 12: Basic miniAuto Programming</h1>
-                <p style="font-size: 1.2rem; margin: 0; opacity: 0.9;">Programming your assembled miniAuto for basic movements and behaviors</p>
-                <div class="mt-4 p-4 bg-cyan-100 rounded-lg">
-                    <p class="text-cyan-800 font-medium">🤖 From assembly to programming - bringing your robot to life</p>
-                </div>
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 3rem; border-radius: 15px; margin-bottom: 2rem; text-align: center;">
+            <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 12: Joystick Control</h1>
+            <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Two-axis analog input driving the robot arm's base and shoulder servos</p>
+            <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; display: inline-block;">
+                <p style="margin: 0; font-weight: 600;">🕹️ Push the stick a little for slow motion — push it far for fast motion</p>
             </div>
+        </div>
 
-            <!-- Learning Objectives -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">📚 Learning Objectives</h2>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
-                    <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">By the end of this lesson, you will:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Program basic miniAuto movement functions
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Control omnidirectional movement patterns
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Implement speed and direction control
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Create autonomous movement sequences
-                            </li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">Key Concepts:</h3>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Mecanum wheel kinematics and control
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Motor driver PWM and direction control
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Velocity vectors and angle calculations
-                            </li>
-                            <li style="margin-bottom: 0.5rem;">
-                                <span class="text-cyan-600 mr-2">•</span>
-                                Autonomous behavior programming
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 1: miniAuto Movement Basics -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🤖 Section 1: miniAuto Movement Basics</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Understanding Mecanum Wheels</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        The miniAuto uses Mecanum wheels that allow omnidirectional movement. Each wheel has rollers 
-                        at 45° angles that enable the robot to move forward, backward, sideways, and rotate without changing orientation.
-                    </p>
-                    
-                    <div style="background: #edf2f7; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
-                        <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Motor Control Pins:</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; color: #4a5568; line-height: 1.8;">
-                            <li><strong>Front Left Motor:</strong> PWM Pin 5, Direction Pin 4</li>
-                            <li><strong>Front Right Motor:</strong> PWM Pin 6, Direction Pin 7</li>
-                            <li><strong>Rear Left Motor:</strong> PWM Pin 9, Direction Pin 8</li>
-                            <li><strong>Rear Right Motor:</strong> PWM Pin 10, Direction Pin 11</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 2: Complete miniAuto Control Program -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🤖 Complete miniAuto Movement Control Program</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Full Working Program</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        This complete program includes all movement functions and demonstrates the full capabilities of your miniAuto robot:
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Complete miniAuto Movement Control Program
-// Lesson 12: Basic miniAuto Programming
-
-// Motor pin definitions (using official Hiwonder pinout)
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11}; // Motor PWM pins
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13}; // Motor direction pins
-const static uint8_t pwm_min = 50; // Minimum PWM for motor movement
-
-// LED pin for status indication
-const int statusLED = 2;
-
-void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(500);
-  
-  // Initialize motor pins
-  Motor_Init();
-  
-  // Initialize status LED
-  pinMode(statusLED, OUTPUT);
-  digitalWrite(statusLED, HIGH); // Turn on LED to show ready
-  
-  Serial.println("=== miniAuto Movement Control System ===");
-  Serial.println("Robot initialized and ready for movement!");
-  Serial.println("Starting comprehensive movement demonstration...");
-  
-  // Flash LED to indicate start
-  for(int i = 0; i < 3; i++) {
-    digitalWrite(statusLED, LOW);
-    delay(200);
-    digitalWrite(statusLED, HIGH);
-    delay(200);
-  }
-  
-  delay(2000); // Wait 2 seconds before starting
-}
-
-void loop() {
-  // Comprehensive movement demonstration sequence
-  demonstrateAllMovements();
-  
-  // Wait 5 seconds before repeating
-  Serial.println("\\nWaiting 5 seconds before next demonstration...");
-  delay(5000);
-}
-
-void demonstrateAllMovements() {
-  Serial.println("\\n--- Starting Movement Demonstration ---");
-  
-  // 1. Forward Movement
-  Serial.println("1. Moving Forward");
-  digitalWrite(statusLED, HIGH);
-  Velocity_Controller(0, 80, 0, false); // Forward at 80% speed
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // 2. Backward Movement
-  Serial.println("2. Moving Backward");
-  Velocity_Controller(180, 80, 0, false); // Backward at 80% speed
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // 3. Left Strafe
-  Serial.println("3. Strafing Left");
-  Velocity_Controller(270, 80, 0, false); // Left strafe
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // 4. Right Strafe
-  Serial.println("4. Strafing Right");
-  Velocity_Controller(90, 80, 0, false); // Right strafe
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // 5. Clockwise Rotation
-  Serial.println("5. Rotating Clockwise");
-  digitalWrite(statusLED, LOW); // Different LED state for rotation
-  Velocity_Controller(0, 0, -60, false); // Clockwise rotation
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // 6. Counter-Clockwise Rotation
-  Serial.println("6. Rotating Counter-Clockwise");
-  Velocity_Controller(0, 0, 60, false); // Counter-clockwise rotation
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // 7. Diagonal Movements
-  Serial.println("7. Diagonal Forward-Right");
-  digitalWrite(statusLED, HIGH);
-  Velocity_Controller(45, 70, 0, false); // 45-degree angle
-  delay(1500);
-  stopRobot();
-  delay(1000);
-  
-  Serial.println("8. Diagonal Backward-Left");
-  Velocity_Controller(225, 70, 0, false); // 225-degree angle
-  delay(1500);
-  stopRobot();
-  delay(1000);
-  
-  // 8. Advanced: Drift Movement
-  Serial.println("9. Drift Movement (Right + Rotation)");
-  flashLED(3); // Special indication for advanced move
-  Velocity_Controller(90, 60, 40, true); // Right movement with rotation and drift
-  delay(2500);
-  stopRobot();
-  delay(1000);
-  
-  // 9. Figure-8 Pattern (Advanced)
-  Serial.println("10. Figure-8 Pattern");
-  performFigure8();
-  
-  Serial.println("--- Movement Demonstration Complete ---");
-  digitalWrite(statusLED, HIGH);
-}
-
-void performFigure8() {
-  // Create a figure-8 pattern using curved movements
-  Serial.println("   Starting Figure-8 pattern...");
-  
-  // First loop of the 8
-  for(int i = 0; i < 8; i++) {
-    Velocity_Controller(0, 50, 30, false); // Forward with left turn
-    delay(300);
-  }
-  
-  // Transition
-  Velocity_Controller(0, 40, 0, false);
-  delay(200);
-  
-  // Second loop of the 8 (opposite direction)
-  for(int i = 0; i < 8; i++) {
-    Velocity_Controller(0, 50, -30, false); // Forward with right turn
-    delay(300);
-  }
-  
-  stopRobot();
-  Serial.println("   Figure-8 pattern complete!");
-  delay(1000);
-}
-
-void Motor_Init(void) {
-  // Initialize all motor direction pins as outputs
-  for(uint8_t i = 0; i < 4; i++) {
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-  // Stop all motors initially
-  Velocity_Controller(0, 0, 0, false);
-}
-
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
-  // Advanced velocity controller using Hiwonder's algorithm
-  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
-  float speed = 1;
-  angle += 90; // Adjust for coordinate system
-  float rad = angle * PI / 180;
-  
-  // Adjust speed based on rotation
-  if (rot == 0) speed = 1;
-  else speed = 0.5;
-  
-  velocity /= sqrt(2);
-  
-  // Calculate individual motor velocities
-  if (drift) {
-    // Drift mode - special algorithm for drifting movements
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
-  } else {
-    // Normal mode
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
-  }
-  
-  // Apply velocities to motors
-  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
-}
-
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
-  // Set individual motor speeds and directions
-  int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1}; // Default forward directions
-  
-  for(uint8_t i = 0; i < 4; ++i) {
-    // Handle direction based on motor value sign
-    if(motors[i] < 0) direction[i] = !direction[i];
-    
-    // Set PWM value
-    if(motors[i] == 0) pwm_set[i] = 0;
-    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    // Apply to hardware
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
-  }
-}
-
-void stopRobot() {
-  // Stop all motors immediately
-  Velocity_Controller(0, 0, 0, false);
-  Serial.println("   Robot stopped.");
-}
-
-void flashLED(int times) {
-  // Flash status LED specified number of times
-  for(int i = 0; i < times; i++) {
-    digitalWrite(statusLED, LOW);
-    delay(150);
-    digitalWrite(statusLED, HIGH);
-    delay(150);
-  }
-}`}</code></pre>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Section 4: Hiwonder Motor Testing Programs -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🔧 Section 4: Advanced Motor Testing Programs</h2>
-                <p style="color: #4a5568; line-height: 1.6; margin-bottom: 2rem;">
-                    The following programs are based on the official Hiwonder miniAuto documentation and provide comprehensive motor testing capabilities using the manufacturer's advanced control functions.
-                </p>
-
-                <!-- 5.2: Move Forward & Turn -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.2 Forward Movement & Turning Test</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Tests basic forward movement and in-place rotation using the Hiwonder velocity controller system.
-                        The robot moves forward for 1 second, turns left for 1 second, then turns right for 1 second.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.2 Forward Movement & Turning Test
-#include <Arduino.h>
-
-const static uint8_t pwm_min = 50;
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11}; // Motor PWM pins
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13}; // Motor direction pins
-
-void Motor_Init(void);
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(500);
-  Motor_Init();
-  
-  Velocity_Controller(0, 100, 0, 0);  // Move forward
-  delay(1000);
-  Velocity_Controller(0, 0, 100, 0);  // Turn left in place
-  delay(1000);
-  Velocity_Controller(0, 0, -100, 0); // Turn right in place
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0);    // Stop
-}
-
-void loop() {
-  // Empty - single test sequence
-}
-
-void Motor_Init(void) {
-  for(uint8_t i = 0; i < 4; i++) {
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-  Velocity_Controller(0, 0, 0, 0);
-}
-
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
-  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
-  float speed = 1;
-  angle += 90;
-  float rad = angle * PI / 180;
-  
-  if (rot == 0) speed = 1;
-  else speed = 0.5;
-  
-  velocity /= sqrt(2);
-  
-  if (drift) {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
-  } else {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
-  }
-  
-  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
-}
-
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
-  int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1}; // Forward direction defaults
-  
-  for(uint8_t i = 0; i < 4; ++i) {
-    if(motors[i] < 0) direction[i] = !direction[i];
-    
-    if(motors[i] == 0) pwm_set[i] = 0;
-    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
-  }
-}`}</code></pre>
-                    </div>
-                    
-                    <!-- Video Demo Section -->
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-top: 1.5rem;">
-                        <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">
-                            🎥 Expected Behavior Demo
-                        </h4>
-                        <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
-                            When you upload and run this code, your miniAuto should perform the following sequence:
-                        </p>
-                        <ol style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                            <li><strong>Forward Movement (1 second):</strong> Robot moves straight forward</li>
-                            <li><strong>Left Turn (1 second):</strong> Robot rotates counter-clockwise in place</li>
-                            <li><strong>Right Turn (1 second):</strong> Robot rotates clockwise in place</li>
-                            <li><strong>Stop:</strong> All motors stop, robot remains stationary</li>
-                        </ol>
-                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem; margin-bottom: 1rem;">
-                                <strong>💡 Troubleshooting:</strong> If the robot moves in unexpected directions, check your wiring connections and ensure the Bluetooth module is removed during upload.
-                            </p>
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem;">
-                                <strong>🎬 Watch Official Demo:</strong> <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_static/media/chapter_5/section_2/media/1.gif" target="_blank" style="color: #0ea5e9; text-decoration: underline;">View Hiwonder GIF demonstration</a> of this movement sequence.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5.3: Four-Direction Movement -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.3 Four-Direction Movement Test</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Tests all four basic movement directions: forward, backward, left strafe, and right strafe.
-                        Each movement lasts 1 second, demonstrating the full omnidirectional capabilities of mecanum wheels.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.3 Four-Direction Movement Test
-#include <Arduino.h>
-
-const static uint8_t pwm_min = 50;
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11}; // Motor PWM pins
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13}; // Motor direction pins
-
-void Motor_Init(void);
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(500);
-  Motor_Init();
-  
-  Serial.println("Starting 4-direction movement test...");
-  
-  // Forward movement
-  Serial.println("Moving Forward");
-  Velocity_Controller(0, 100, 0, 0);
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(500);
-  
-  // Backward movement  
-  Serial.println("Moving Backward");
-  Velocity_Controller(180, 100, 0, 0);
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(500);
-  
-  // Left strafe
-  Serial.println("Moving Left");
-  Velocity_Controller(270, 100, 0, 0);
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(500);
-  
-  // Right strafe
-  Serial.println("Moving Right");
-  Velocity_Controller(90, 100, 0, 0);
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  
-  Serial.println("4-direction test complete!");
-}
-
-void loop() {
-  // Empty - single test sequence
-}
-
-void Motor_Init(void) {
-  for(uint8_t i = 0; i < 4; i++) {
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-  Velocity_Controller(0, 0, 0, 0);
-}
-
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
-  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
-  float speed = 1;
-  angle += 90;
-  float rad = angle * PI / 180;
-  
-  if (rot == 0) speed = 1;
-  else speed = 0.5;
-  
-  velocity /= sqrt(2);
-  
-  if (drift) {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
-  } else {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
-  }
-  
-  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
-}
-
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
-  int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1}; // Forward direction defaults
-  
-  for(uint8_t i = 0; i < 4; ++i) {
-    if(motors[i] < 0) direction[i] = !direction[i];
-    
-    if(motors[i] == 0) pwm_set[i] = 0;
-    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
-  }
-}`}</code></pre>
-                    </div>
-                    
-                    <!-- Video Demo Section -->
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-top: 1.5rem;">
-                        <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">
-                            🎥 Expected Behavior Demo
-                        </h4>
-                        <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
-                            When you upload and run this code, your miniAuto should demonstrate omnidirectional movement:
-                        </p>
-                        <ol style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                            <li><strong>Forward Movement (1 second):</strong> Robot moves straight forward</li>
-                            <li><strong>Backward Movement (1 second):</strong> Robot moves straight backward</li>
-                            <li><strong>Left Strafe (1 second):</strong> Robot slides sideways to the left without rotating</li>
-                            <li><strong>Right Strafe (1 second):</strong> Robot slides sideways to the right without rotating</li>
-                        </ol>
-                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem; margin-bottom: 1rem;">
-                                <strong>🔍 Key Observation:</strong> Notice how the robot maintains its orientation while moving in all four directions - this is the power of mecanum wheels!
-                            </p>
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem;">
-                                <strong>🎬 Watch Official Demo:</strong> <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_static/media/chapter_5/section_3/media/1.gif" target="_blank" style="color: #0ea5e9; text-decoration: underline;">View Hiwonder GIF demonstration</a> of four-direction movement.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5.4: Oblique Movement -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.4 Diagonal Movement Test</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Tests diagonal movements by controlling specific wheel combinations. Demonstrates advanced mecanum wheel
-                        kinematics: forward-left, backward-right, forward-right, and backward-left movements.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.4 Diagonal Movement Test
-#include <Arduino.h>
-
-const static uint8_t pwm_min = 50;
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11}; // Motor PWM pins
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13}; // Motor direction pins
-
-void Motor_Init(void);
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(500);
-  Motor_Init();
-  
-  Serial.println("Starting diagonal movement test...");
-  
-  // Forward-Left diagonal
-  Serial.println("Moving Forward-Left");
-  Velocity_Controller(315, 100, 0, 0); // 45° angle for diagonal
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(500);
-  
-  // Backward-Right diagonal
-  Serial.println("Moving Backward-Right");
-  Velocity_Controller(135, 100, 0, 0); // 135° angle
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(500);
-  
-  // Forward-Right diagonal
-  Serial.println("Moving Forward-Right");
-  Velocity_Controller(45, 100, 0, 0); // 45° angle
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(500);
-  
-  // Backward-Left diagonal
-  Serial.println("Moving Backward-Left");
-  Velocity_Controller(225, 100, 0, 0); // 225° angle
-  delay(1000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  
-  Serial.println("Diagonal movement test complete!");
-}
-
-void loop() {
-  // Empty - single test sequence
-}
-
-void Motor_Init(void) {
-  for(uint8_t i = 0; i < 4; i++) {
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-  Velocity_Controller(0, 0, 0, 0);
-}
-
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
-  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
-  float speed = 1;
-  angle += 90;
-  float rad = angle * PI / 180;
-  
-  if (rot == 0) speed = 1;
-  else speed = 0.5;
-  
-  velocity /= sqrt(2);
-  
-  if (drift) {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
-  } else {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
-  }
-  
-  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
-}
-
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
-  int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1}; // Forward direction defaults
-  
-  for(uint8_t i = 0; i < 4; ++i) {
-    if(motors[i] < 0) direction[i] = !direction[i];
-    
-    if(motors[i] == 0) pwm_set[i] = 0;
-    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
-  }
-}`}</code></pre>
-                    </div>
-                    
-                    <!-- Video Demo Section -->
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-top: 1.5rem;">
-                        <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">
-                            🎥 Expected Behavior Demo
-                        </h4>
-                        <p style="color: #0c4a6e; margin-bottom: 1rem; line-line: 1.6;">
-                            When you upload and run this code, your miniAuto should demonstrate advanced diagonal movements:
-                        </p>
-                        <ol style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                            <li><strong>Forward-Left Diagonal (1 second):</strong> Robot moves at 45° angle forward and left</li>
-                            <li><strong>Backward-Right Diagonal (1 second):</strong> Robot moves at 45° angle backward and right</li>
-                            <li><strong>Forward-Right Diagonal (1 second):</strong> Robot moves at 45° angle forward and right</li>
-                            <li><strong>Backward-Left Diagonal (1 second):</strong> Robot moves at 45° angle backward and left</li>
-                        </ol>
-                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem; margin-bottom: 1rem;">
-                                <strong>⚡ Advanced Feature:</strong> These diagonal movements showcase the sophisticated kinematics possible with mecanum wheels - impossible with regular wheels!
-                            </p>
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem;">
-                                <strong>🎬 Watch Official Demo:</strong> <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_static/media/chapter_5/section_4/media/1.gif" target="_blank" style="color: #0ea5e9; text-decoration: underline;">View Hiwonder GIF demonstration</a> of diagonal movements.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 5.5: Drifting Movement -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">5.5 Drifting Movement Test</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Tests advanced drifting capabilities where the robot moves sideways while rotating. This demonstrates
-                        the drift parameter in the velocity controller, creating car-like drifting motion.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// 5.5 Drifting Movement Test
-#include <Arduino.h>
-
-const static uint8_t pwm_min = 50;
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11}; // Motor PWM pins
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13}; // Motor direction pins
-
-void Motor_Init(void);
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift);
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3);
-
-void setup() {
-  Serial.begin(9600);
-  Serial.setTimeout(500);
-  Motor_Init();
-  
-  Serial.println("Starting drift movement test...");
-  
-  // Clockwise drift
-  Serial.println("Drifting Clockwise");
-  Velocity_Controller(90, 80, 50, true); // Right movement with rotation and drift enabled
-  delay(2000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(1000);
-  
-  // Counter-clockwise drift
-  Serial.println("Drifting Counter-Clockwise");
-  Velocity_Controller(270, 80, -50, true); // Left movement with opposite rotation and drift
-  delay(2000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  delay(1000);
-  
-  // Forward drift with rotation
-  Serial.println("Forward Drift with Rotation");
-  Velocity_Controller(0, 60, 40, true); // Forward with rotation and drift
-  delay(2000);
-  Velocity_Controller(0, 0, 0, 0); // Stop
-  
-  Serial.println("Drift test complete!");
-}
-
-void loop() {
-  // Empty - single test sequence
-}
-
-void Motor_Init(void) {
-  for(uint8_t i = 0; i < 4; i++) {
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-  Velocity_Controller(0, 0, 0, 0);
-}
-
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
-  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
-  float speed = 1;
-  angle += 90;
-  float rad = angle * PI / 180;
-  
-  if (rot == 0) speed = 1;
-  else speed = 0.5;
-  
-  velocity /= sqrt(2);
-  
-  if (drift) {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
-  } else {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
-  }
-  
-  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
-}
-
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
-  int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1}; // Forward direction defaults
-  
-  for(uint8_t i = 0; i < 4; ++i) {
-    if(motors[i] < 0) direction[i] = !direction[i];
-    
-    if(motors[i] == 0) pwm_set[i] = 0;
-    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
-  }
-}`}</code></pre>
-                    </div>
-                    
-                    <!-- Video Demo Section -->
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9; margin-top: 1.5rem;">
-                        <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 1rem; display: flex; align-items: center;">
-                            🎥 Expected Behavior Demo
-                        </h4>
-                        <p style="color: #0c4a6e; margin-bottom: 1rem; line-height: 1.6;">
-                            When you upload and run this code, your miniAuto should demonstrate spectacular drifting movements:
-                        </p>
-                        <ol style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                            <li><strong>Clockwise Drift (2 seconds):</strong> Robot moves right while rotating clockwise - like a car drifting around a corner</li>
-                            <li><strong>Counter-Clockwise Drift (2 seconds):</strong> Robot moves left while rotating counter-clockwise</li>
-                            <li><strong>Forward Drift with Rotation (2 seconds):</strong> Robot moves forward while spinning - creating a spiral motion</li>
-                        </ol>
-                        <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; margin-top: 1rem;">
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem; margin-bottom: 1rem;">
-                                <strong>🏎️ Cool Factor:</strong> This is the most impressive test - your robot will look like it's performing automotive-style drifts! Perfect for demonstrations.
-                            </p>
-                            <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem;">
-                                <strong>🎬 Watch Official Demo:</strong> <a href="https://wiki.hiwonder.com/projects/miniAuto/en/latest/_static/media/chapter_5/section_5/media/1.gif" target="_blank" style="color: #0ea5e9; text-decoration: underline;">View Hiwonder GIF demonstration</a> of drifting movements.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-top: 2rem;">
-                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">📋 Testing Notes:</h4>
-                    <ul style="color: #92400e; margin: 0; padding-left: 1.5rem;">
-                        <li>Remove Bluetooth module before uploading to avoid serial port conflicts</li>
-                        <li>Speed range is -100 to 100 for all parameters</li>
-                        <li>Positive rotation values = counter-clockwise, negative = clockwise</li>
-                        <li>Drift mode changes the motor control algorithm for special effects</li>
-                        <li>Test on a clear, flat surface with adequate space</li>
+        <!-- Learning Objectives -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🎯 Learning Objectives</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">By the end of this lesson, you will:</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>Wire a two-axis joystick module and read it with <code>analogRead()</code></li>
+                        <li>Measure your joystick's real resting center and build a dead zone around it</li>
+                        <li>Make servo speed proportional to how far the stick is pushed</li>
+                        <li>Drive two servos at once with non-blocking <code>millis()</code> timing</li>
                     </ul>
                 </div>
-            </div>
-
-            <!-- Hands-On Activity -->
-            <div class="bg-gradient-to-r from-teal-50 to-cyan-50 rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">🛠️ Hands-On Activity: Standalone Movement Demos</h2>
-                
-                <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #f59e0b; margin-bottom: 2rem;">
-                    <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">💡 Why Separate Files?</h4>
-                    <p style="color: #92400e; margin: 0; line-height: 1.6;">
-                        Each demo is a separate program you can upload and run independently. Upload the code, disconnect the USB cable, 
-                        and watch your robot perform the movement pattern without being tethered to your computer!
-                    </p>
-                </div>
-
-                <!-- Demo 1: Basic Movement Test -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 1: Basic Movement Test</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Tests all basic movements: forward, backward, left, right, and rotations. Perfect for verifying your robot works correctly.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 1: Basic Movement Test
-// Upload this code, disconnect USB, and watch your robot move!
-
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
-const static uint8_t pwm_min = 50;
-
-void setup() {
-  Motor_Init();
-  delay(3000); // Wait 3 seconds after power on
-}
-
-void loop() {
-  // Forward movement
-  Velocity_Controller(0, 80, 0, false);
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // Backward movement
-  Velocity_Controller(180, 80, 0, false);
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // Left strafe
-  Velocity_Controller(270, 80, 0, false);
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // Right strafe
-  Velocity_Controller(90, 80, 0, false);
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // Clockwise rotation
-  Velocity_Controller(0, 0, -60, false);
-  delay(2000);
-  stopRobot();
-  delay(1000);
-  
-  // Counter-clockwise rotation
-  Velocity_Controller(0, 0, 60, false);
-  delay(2000);
-  stopRobot();
-  delay(5000); // Wait 5 seconds before repeating
-}
-
-// Motor control functions (include in all demos)
-void Motor_Init(void) {
-  for(uint8_t i = 0; i < 4; i++) {
-    pinMode(motordirectionPin[i], OUTPUT);
-  }
-  Velocity_Controller(0, 0, 0, false);
-}
-
-void Velocity_Controller(uint16_t angle, uint8_t velocity, int8_t rot, bool drift) {
-  int8_t velocity_0, velocity_1, velocity_2, velocity_3;
-  float speed = 1;
-  angle += 90;
-  float rad = angle * PI / 180;
-  
-  if (rot == 0) speed = 1;
-  else speed = 0.5;
-  
-  velocity /= sqrt(2);
-  
-  if (drift) {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed * 2;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed * 2;
-  } else {
-    velocity_0 = (velocity * sin(rad) - velocity * cos(rad)) * speed + rot * speed;
-    velocity_1 = (velocity * sin(rad) + velocity * cos(rad)) * speed - rot * speed;
-    velocity_2 = (velocity * sin(rad) - velocity * cos(rad)) * speed - rot * speed;
-    velocity_3 = (velocity * sin(rad) + velocity * cos(rad)) * speed + rot * speed;
-  }
-  
-  Motors_Set(velocity_0, velocity_1, velocity_2, velocity_3);
-}
-
-void Motors_Set(int8_t Motor_0, int8_t Motor_1, int8_t Motor_2, int8_t Motor_3) {
-  int8_t pwm_set[4];
-  int8_t motors[4] = {Motor_0, Motor_1, Motor_2, Motor_3};
-  bool direction[4] = {1, 0, 0, 1};
-  
-  for(uint8_t i = 0; i < 4; ++i) {
-    if(motors[i] < 0) direction[i] = !direction[i];
-    
-    if(motors[i] == 0) pwm_set[i] = 0;
-    else pwm_set[i] = map(abs(motors[i]), 0, 100, pwm_min, 255);
-    
-    digitalWrite(motordirectionPin[i], direction[i]);
-    analogWrite(motorpwmPin[i], pwm_set[i]);
-  }
-}
-
-void stopRobot() {
-  Velocity_Controller(0, 0, 0, false);
-}`}</code></pre>
-                    </div>
-                </div>
-
-                <!-- Demo 2: Square Pattern -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 2: Square Pattern</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Makes your robot draw a perfect square using forward movement and 90-degree turns. 
-                        <strong>Note:</strong> Turn timing has been calibrated for accurate 90° rotations.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 2: Square Pattern
-// Upload, disconnect, and watch your robot draw a square!
-
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
-const static uint8_t pwm_min = 50;
-
-void setup() {
-  Motor_Init();
-  delay(3000); // Wait 3 seconds after power on
-}
-
-void loop() {
-  // Draw a square (4 sides with 4 turns)
-  for(int i = 0; i < 4; i++) {
-    // Move forward for one side
-    Velocity_Controller(0, 70, 0, false);
-    delay(2500);
-    
-    // Stop briefly
-    stopRobot();
-    delay(500);
-    
-    // Turn right 90 degrees
-    Velocity_Controller(0, 0, -50, false);
-    delay(1100);
-    
-    // Stop briefly
-    stopRobot();
-    delay(500);
-  }
-  
-  // Wait 10 seconds before drawing another square
-  delay(10000);
-}
-
-// Include motor control functions here (same as Demo 1)
-// [Motor_Init, Velocity_Controller, Motors_Set, stopRobot functions]`}</code></pre>
-                    </div>
-                    
-                    <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; border-left: 4px solid #f59e0b; margin-top: 1rem;">
-                        <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">🔧 Calibration Tip:</h4>
-                        <p style="color: #92400e; margin: 0; font-size: 0.9rem; line-height: 1.5;">
-                            The <code>delay(1100)</code> value has been tested on ceramic tile floors for accurate 90° turns:
-                            <br>• <strong>Smooth surfaces (tile, hardwood):</strong> Use <code>delay(1100)</code>
-                            <br>• <strong>Carpet or rough surfaces:</strong> May need <code>delay(1200-1300)</code>
-                            <br>• <strong>Turns too much?</strong> Reduce to <code>delay(1000)</code>
-                            <br>• <strong>Turns too little?</strong> Increase to <code>delay(1200)</code>
-                            <br>• <strong>Battery level affects rotation speed</strong> - fresh batteries may need less time
-                        </p>
-                    </div>
-                    
-                    <div style="background: #e0f2fe; padding: 1rem; border-radius: 6px; border-left: 4px solid #0ea5e9; margin-top: 1rem;">
-                        <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 0.5rem;">🚀 Advanced: Sensor-Based Navigation</h4>
-                        <p style="color: #0c4a6e; margin: 0; font-size: 0.9rem; line-height: 1.5;">
-                            For more accurate navigation, robots can use sensors instead of timing:
-                            <br>• <strong>IMU/Gyroscope:</strong> Measures actual rotation angles (±1° accuracy)
-                            <br>• <strong>Magnetometer/Compass:</strong> Provides absolute directional heading
-                            <br>• <strong>Encoders:</strong> Count wheel rotations for precise distance measurement
-                            <br>• <strong>Future lesson:</strong> We'll explore adding these sensors to miniAuto!
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Demo 3: Circle Pattern -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 3: Circle Pattern</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Creates smooth circular motion by combining forward movement with continuous rotation.
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 3: Circle Pattern
-// Upload, disconnect, and watch your robot draw circles!
-
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
-const static uint8_t pwm_min = 50;
-
-void setup() {
-  Motor_Init();
-  delay(3000); // Wait 3 seconds after power on
-}
-
-void loop() {
-  // Draw a circle using forward movement + rotation
-  for(int i = 0; i < 25; i++) {
-    Velocity_Controller(0, 60, 30, false); // Forward with left turn
-    delay(400);
-  }
-  
-  // Stop and wait
-  stopRobot();
-  delay(3000);
-  
-  // Draw circle in opposite direction
-  for(int i = 0; i < 25; i++) {
-    Velocity_Controller(0, 60, -30, false); // Forward with right turn
-    delay(400);
-  }
-  
-  // Stop and wait before repeating
-  stopRobot();
-  delay(5000);
-}
-
-// Include motor control functions here (same as Demo 1)
-// [Motor_Init, Velocity_Controller, Motors_Set, stopRobot functions]`}</code></pre>
-                    </div>
-                </div>
-
-                <!-- Demo 4: Drift Showcase -->
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Demo 4: Drift Showcase</h3>
-                    <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1rem;">
-                        Shows off the advanced drift capabilities - the most impressive demo for audiences!
-                    </p>
-                    
-                    <div style="position: relative;">
-                        <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                        <pre style="background: #1a202c; color: #e2e8f0; padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'Courier New', monospace; margin: 1rem 0;"><code>{`// Demo 4: Drift Showcase
-// Upload, disconnect, and watch impressive drift movements!
-
-const static uint8_t motorpwmPin[4] = {10, 9, 6, 11};
-const static uint8_t motordirectionPin[4] = {12, 8, 7, 13};
-const static uint8_t pwm_min = 50;
-
-void setup() {
-  Motor_Init();
-  delay(3000); // Wait 3 seconds after power on
-}
-
-void loop() {
-  // Right drift
-  Velocity_Controller(90, 70, 50, true);
-  delay(2500);
-  stopRobot();
-  delay(1000);
-  
-  // Left drift
-  Velocity_Controller(270, 70, -50, true);
-  delay(2500);
-  stopRobot();
-  delay(1000);
-  
-  // Forward spiral drift
-  Velocity_Controller(0, 60, 60, true);
-  delay(3000);
-  stopRobot();
-  delay(1000);
-  
-  // Backward spiral drift
-  Velocity_Controller(180, 60, -60, true);
-  delay(3000);
-  stopRobot();
-  delay(5000); // Wait before repeating
-}
-
-// Include motor control functions here (same as Demo 1)
-// [Motor_Init, Velocity_Controller, Motors_Set, stopRobot functions]`}</code></pre>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">How to Use These Demos</h3>
-                    <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9;">
-                        <ol style="color: #0c4a6e; margin: 0; padding-left: 1.5rem; line-height: 1.8;">
-                            <li><strong>Choose a demo</strong> - Copy one of the complete programs above</li>
-                            <li><strong>Upload to miniAuto</strong> - Paste into Arduino IDE and upload</li>
-                            <li><strong>Disconnect USB cable</strong> - No need to stay connected!</li>
-                            <li><strong>Power on and watch</strong> - Robot runs the demo automatically</li>
-                            <li><strong>Try different demos</strong> - Upload a new one to see different patterns</li>
-                            <li><strong>Modify and experiment</strong> - Change speeds, delays, and patterns</li>
-                        </ol>
-                    </div>
-                </div>
-
-                <div style="background: #dcfce7; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #16a34a; margin-bottom: 1.5rem;">
-                    <h4 style="color: #15803d; font-weight: bold; margin-bottom: 0.5rem;">✅ Benefits of Standalone Demos:</h4>
-                    <ul style="color: #15803d; margin: 0; padding-left: 1.5rem; line-height: 1.6;">
-                        <li><strong>No USB tether</strong> - Robot moves freely without cable constraints</li>
-                        <li><strong>Perfect for demonstrations</strong> - Show friends and family without a laptop</li>
-                        <li><strong>Easy to modify</strong> - Each demo is self-contained and simple to understand</li>
-                        <li><strong>Safe testing</strong> - Each pattern is predictable and repeatable</li>
+                <div>
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Concepts:</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>Analog input calibration and center offset</li>
+                        <li>Dead zones (ignoring small, noisy inputs)</li>
+                        <li>Rate control — deflection maps to step size</li>
+                        <li>Incremental servo movement with timed updates</li>
                     </ul>
-                </div>
-
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Extension Challenges</h3>
-                    <ol class="list-decimal list-inside space-y-2 text-gray-700">
-                        <li><strong>Create new patterns:</strong> Triangle, pentagon, or figure-8 movements</li>
-                        <li><strong>Add LED indicators:</strong> Different colors for different movement types</li>
-                        <li><strong>Speed variations:</strong> Gradually change speed during patterns</li>
-                        <li><strong>Obstacle course:</strong> Program a sequence to navigate around objects</li>
-                        <li><strong>Combine patterns:</strong> Chain multiple demos together in one program</li>
-                    </ol>
-                </div>
-            </div>
-
-            <!-- Assessment & Homework -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
-                <h2 class="text-2xl font-bold text-cyan-800 mb-6">📝 Assessment & Homework</h2>
-                
-                <div style="margin-bottom: 1.5rem;">
-                    <h3 style="color: #2d3748; font-size: 1.3rem; font-weight: bold; margin-bottom: 1rem;">Quick Check Questions</h3>
-                    <ol class="list-decimal list-inside space-y-3 text-gray-700">
-                        <li>What makes Mecanum wheels different from regular wheels?</li>
-                        <li>How many motors does the miniAuto have and what pins control them?</li>
-                        <li>What wheel pattern creates sideways movement to the left?</li>
-                        <li>How do you make the robot rotate in place?</li>
-                        <li>What's the difference between PWM and direction pins?</li>
-                    </ol>
-                </div>
-
-                <div class="text-center">
-                    <a href="/programming/quizzes32/Lesson12" style="background-color: #0891b2; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #0e7490; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#0e7490'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#0891b2'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Take Lesson 12 Quiz →
-                    </a>
-                </div>
-            </div>
-
-            <!-- Navigation -->
-            <div class="flex justify-between items-center mt-8">
-                <div>
-                    <a href="/programming/lessons32/Lesson11" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        ← Previous: Lesson 11
-                    </a>
-                </div>
-                <div>
-                    <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Course Overview
-                    </a>
-                </div>
-                <div>
-                    <a href="/programming/lessons32/Lesson13" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
-                        Next: Lesson 13 →
-                    </a>
                 </div>
             </div>
         </div>
-    </main>
-</Layout>
 
-<script>
+        <!-- Section 1: Parts Inventory -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📦 Section 1: Parts Inventory</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">New this lesson</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>1 × two-axis joystick module (KY-023 style, with pushbutton)</li>
+                        <li>5 × male-to-female jumper wires for the joystick header</li>
+                    </ul>
+                </div>
+                <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                    <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Carried over from Lesson 11</h4>
+                    <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
+                        <li>Arduino Uno + USB cable</li>
+                        <li>2 × SG90 servos (base + shoulder)</li>
+                        <li>Breadboard and jumper wires</li>
+                        <li>Optional: piezo buzzer, pushbutton</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pin Map -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📌 Section 2: Pin Map &amp; Wiring</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                The joystick module has five pins: <strong>GND</strong>, <strong>+5V</strong>, <strong>VRx</strong> (X-axis voltage), <strong>VRy</strong> (Y-axis voltage), and <strong>SW</strong> (the click button inside the stick).
+            </p>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Same robot-arm pin map, with the joystick added</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
+                    <li><strong>Joystick VRx:</strong> A0 (left/right → base servo)</li>
+                    <li><strong>Joystick VRy:</strong> A1 (up/down → shoulder servo)</li>
+                    <li><strong>Joystick SW:</strong> A3 (to GND when pressed, INPUT_PULLUP)</li>
+                    <li><strong>Joystick +5V / GND:</strong> power rail / ground rail</li>
+                    <li><strong>Button:</strong> A2 (unchanged from Lesson 11)</li>
+                    <li><strong>Buzzer (optional):</strong> pin 8</li>
+                    <li><strong>Base servo signal:</strong> pin 9</li>
+                    <li><strong>Shoulder servo signal:</strong> pin 10</li>
+                </ul>
+            </div>
+
+            <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #dc2626;">
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Power reminder</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    The joystick itself uses almost no current — it can share the Arduino 5V rail safely. The <strong>servos</strong> are still the power-hungry part: if they jitter, feed them from an external 5V supply and keep all grounds tied together.
+                </p>
+            </div>
+        </div>
+
+        <!-- How it works -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🕹️ Section 3: How the Joystick Works</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                A two-axis joystick is really <strong>two potentiometers in one package</strong>, plus a pushbutton when you press the stick straight down. You already know how to read a potentiometer — <code>analogRead()</code> returns a value from <strong>0 to 1023</strong>:
+            </p>
+
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
+                    <li>Stick pushed fully one way → reading near <strong>0</strong></li>
+                    <li>Stick resting in the middle → reading near <strong>512</strong></li>
+                    <li>Stick pushed fully the other way → reading near <strong>1023</strong></li>
+                </ul>
+                <p style="color: #4a5568; margin: 1rem 0 0 0; line-height: 1.6;">
+                    "Near 512" is doing a lot of work in that sentence — real joysticks rarely rest at exactly 512, and the value jitters by a few counts even when nobody is touching the stick. Sections 4 and 5 deal with that.
+                </p>
+            </div>
+        </div>
+
+        <!-- Raw reads -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📟 Section 4: Reading Raw Values</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                First, prove the wiring works. This tiny sketch prints both axes to Serial Monitor — no servos needed yet:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`// Joystick raw value reader
+const int joyX = A0;
+const int joyY = A1;
+
+void setup() {
+    Serial.begin(9600);
+}
+
+void loop() {
+    int x = analogRead(joyX);
+    int y = analogRead(joyY);
+
+    Serial.print("X: ");
+    Serial.print(x);
+    Serial.print("   Y: ");
+    Serial.println(y);
+
+    delay(150);   // slow the stream down so humans can read it
+}`}</code></pre>
+            </div>
+
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border: 1px solid #e2e8f0;">
+                <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 0.5rem;">🔬 Try it</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    Upload it, open Serial Monitor, and <strong>don't touch the stick</strong>. Write down the resting X and Y values — that's your joystick's real center. Now push full-left, full-right, full-up, full-down and note which axis changes and in which direction. Every module is a little different.
+                </p>
+            </div>
+        </div>
+
+        <!-- Center + dead zone -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📍 Section 5: Calibration and the Dead Zone</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Two problems to solve before driving servos. First, your stick's center might be 503 or 521 — not 512. So we <strong>calibrate in setup()</strong>: average a bunch of readings while the stick rests, and remember that as the true center:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`int centerX = 512;
+int centerY = 512;
+const int deadZone = 25;    // ignore wiggles smaller than this
+
+void calibrateJoystick() {
+    long sumX = 0, sumY = 0;
+    Serial.println("Calibrating - hands off the stick!");
+    for (int i = 0; i < 50; i++) {
+        sumX += analogRead(joyX);
+        sumY += analogRead(joyY);
+        delay(10);
+    }
+    centerX = sumX / 50;    // true resting center
+    centerY = sumY / 50;
+}`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1.5rem; margin-bottom: 1rem;">
+                Second, even a resting stick wobbles by ±10 counts or so. The <strong>dead zone</strong> says: if the stick is within 25 counts of center, treat it as centered. Without it, your servos would creep and jitter on their own.
+            </p>
+
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0;">
+                <pre style="margin: 0; color: #4a5568; font-size: 0.9rem; line-height: 1.7; font-family: 'Courier New', monospace;"><code>{`deflection = reading - center
+
+|deflection| <  deadZone   →   stick counts as centered (do nothing)
+|deflection| >= deadZone   →   real input (move, and move faster if far)`}</code></pre>
+            </div>
+        </div>
+
+        <!-- Variable speed -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🐢🐇 Section 6: Speed Follows the Stick</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                In Lesson 11, every timed step moved exactly 1°. For joystick control that feels wrong — a small push should creep, a big push should zip. The trick: <strong>keep the timing fixed, and scale the step size with deflection</strong>:
+            </p>
+
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+                <pre style="margin: 0; color: #4a5568; font-size: 0.9rem; line-height: 1.7; font-family: 'Courier New', monospace;"><code>{`small deflection (just past dead zone)  →  1° per step  →  slow creep
+large deflection (stick slammed over)  →  4° per step  →  fast move`}</code></pre>
+            </div>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`const int maxStep = 4;   // degrees per step at full deflection
+
+int signOf(int v) {
+    return (v > 0) - (v < 0);   // +1, -1, or 0
+}
+
+// How many degrees to move this step, given the stick deflection
+int stepFor(int deflection) {
+    int d = abs(deflection);
+    if (d < deadZone) return 0;                    // inside dead zone: hold still
+    return map(d, deadZone, 512, 1, maxStep);      // scale 1..4 degrees
+}`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-top: 1.5rem;">
+                <code>signOf(deflection)</code> picks the direction, <code>stepFor(deflection)</code> picks how much. Multiply them and you get a signed step — the rest is the same timed-update pattern from Lesson 11.
+            </p>
+        </div>
+
+        <!-- Complete sketch -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧩 Section 7: The Complete Sketch</h2>
+            
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Everything together: the joystick drives <strong>X → base</strong> and <strong>Y → shoulder</strong>, clicking the stick sends both servos home to 90°, and all motion uses the non-blocking timed step:
+            </p>
+
+            <div style="position: relative;">
+                <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`// ============================================================
+// Lesson 12: Joystick Control
+// Two-axis joystick driving two SG90 servos:
+//   X axis -> base rotation (pin 9)
+//   Y axis -> shoulder      (pin 10)
+//   SW (stick click) -> both servos return home to 90
+// Features: startup calibration, dead zone, speed that scales
+// with deflection, non-blocking millis() motion.
+// ============================================================
+
+#include <Servo.h>
+
+Servo baseServo;
+Servo shoulderServo;
+
+// ---- Pins ----
+const int joyX  = A0;
+const int joyY  = A1;
+const int joySW = A3;    // stick click button (INPUT_PULLUP)
+
+// ---- Servo angles ----
+int baseAngle     = 90;
+int shoulderAngle = 90;
+const int MIN_ANGLE = 20;
+const int MAX_ANGLE = 160;
+
+// ---- Joystick calibration ----
+int centerX = 512;
+int centerY = 512;
+const int deadZone = 25;
+
+// ---- Motion timing ----
+unsigned long lastStepTime = 0;
+const int stepInterval = 15;   // ms between motion steps
+const int maxStep = 4;         // degrees per step at full deflection
+
+// ---- Stick button state ----
+int lastSWState = HIGH;
+
+int signOf(int v) {
+    return (v > 0) - (v < 0);            // +1, -1, or 0
+}
+
+// How many degrees to move this step, given stick deflection
+int stepFor(int deflection) {
+    int d = abs(deflection);
+    if (d < deadZone) return 0;                  // ignore tiny wiggles
+    return map(d, deadZone, 512, 1, maxStep);    // 1..4 degrees
+}
+
+// Measure the true resting center at startup
+void calibrateJoystick() {
+    long sumX = 0, sumY = 0;
+    Serial.println("Calibrating - hands off the stick!");
+    for (int i = 0; i < 50; i++) {
+        sumX += analogRead(joyX);
+        sumY += analogRead(joyY);
+        delay(10);
+    }
+    centerX = sumX / 50;
+    centerY = sumY / 50;
+    Serial.print("Center X: "); Serial.print(centerX);
+    Serial.print("   Center Y: "); Serial.println(centerY);
+}
+
+void setup() {
+    Serial.begin(9600);
+    baseServo.attach(9);
+    shoulderServo.attach(10);
+    pinMode(joySW, INPUT_PULLUP);
+    baseServo.write(baseAngle);
+    shoulderServo.write(shoulderAngle);
+    calibrateJoystick();
+    Serial.println("Joystick control ready. Click stick = HOME.");
+}
+
+void loop() {
+    // 1. Timed motion step (non-blocking)
+    if (millis() - lastStepTime >= stepInterval) {
+        lastStepTime = millis();
+
+        int dx = analogRead(joyX) - centerX;   // deflection from center
+        int dy = analogRead(joyY) - centerY;
+
+        baseAngle     = constrain(baseAngle     + signOf(dx) * stepFor(dx), MIN_ANGLE, MAX_ANGLE);
+        shoulderAngle = constrain(shoulderAngle + signOf(dy) * stepFor(dy), MIN_ANGLE, MAX_ANGLE);
+
+        baseServo.write(baseAngle);
+        shoulderServo.write(shoulderAngle);
+    }
+
+    // 2. Stick click -> return home
+    int swState = digitalRead(joySW);
+    if (swState == LOW && lastSWState == HIGH) {
+        baseAngle = 90;
+        shoulderAngle = 90;
+        Serial.println("HOME");
+    }
+    lastSWState = swState;
+}`}</code></pre>
+            </div>
+
+            <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #059669;">
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🔍 Notice the difference from Lesson 11</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    Last lesson, inputs set a <em>target</em> and the servos walked toward it. Here the stick <em>is</em> the motion command — no targets, just "keep stepping this direction at this speed while the stick is held." Both are the same timed-step engine; only the input changes.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tuning & troubleshooting -->
+        <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🔧 Section 8: Tuning and Troubleshooting</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Servo moves the wrong way</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Your joystick may be mounted rotated relative to the arm. Flip the sign: use <code>-dx</code> or <code>-dy</code> in the angle update.</p>
+                </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Servo drifts on its own</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">The dead zone is too small or calibration ran while the stick was touched. Raise <code>deadZone</code> to 35 and reset the board.</p>
+                </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Too twitchy / too sluggish</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Tune feel with <code>maxStep</code> (how fast full deflection is) and <code>stepInterval</code> (how often steps happen). Try maxStep 3 and interval 20.</p>
+                </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Servo buzzes at the limits</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">You're pushing against <code>MIN_ANGLE</code>/<code>MAX_ANGLE</code> or the mechanical stop. Widen the code limits only if the hardware allows it.</p>
+                </div>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9;">
+                <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 0.5rem;">🛠️ Put It Together — Challenges</h4>
+                <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
+                    <li><strong>Swap the axes:</strong> make Y drive the base and X drive the shoulder. Which feels more natural to a pilot?</li>
+                    <li><strong>Add the elbow:</strong> bring back Lesson 11's poses on the A2 button — joystick for manual control, button cycles preset poses.</li>
+                    <li><strong>Reserve the click:</strong> right now SW goes home. Future robot-arm jobs for it: gripper open/close, or a mode toggle between manual and automatic.</li>
+                    <li><strong>Show your work:</strong> Serial-print base and shoulder angles once a second — you'll want them on a real display in Lesson 13.</li>
+                </ul>
+            </div>
+
+            <div style="text-center; margin-top: 1.5rem;">
+                <a href="/programming/quizzes32/lesson12" style="background-color: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #6d28d9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#6d28d9'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#7c3aed'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Take Lesson 12 Quiz →
+                </a>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <div>
+                <a href="/programming/lessons32/lesson11" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    ← Previous: Lesson 11
+                </a>
+            </div>
+            <div>
+                <a href="/programming/" style="background-color: #059669; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #047857; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#047857'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#059669'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Course Overview
+                </a>
+            </div>
+            <div>
+                <a href="/programming/lessons32/lesson13" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                    Next: Lesson 13 →
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
 window.copyCode = function(button) {
     try {
-        const codeElement = button.parentElement.querySelector('code');
+        const codeElement = button.parentElement ? button.parentElement.querySelector('code') : null;
         if (!codeElement) {
             showCopyFeedback(button, false);
             return;
         }
-        
         const codeText = codeElement.textContent || codeElement.innerText;
-        
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(codeText).then(() => {
                 showCopyFeedback(button, true);
@@ -1277,13 +438,10 @@ function fallbackCopy(text, button) {
         textarea.style.top = '0';
         textarea.setAttribute('readonly', '');
         document.body.appendChild(textarea);
-        
         textarea.select();
         textarea.setSelectionRange(0, 99999);
-        
         const successful = document.execCommand('copy');
         document.body.removeChild(textarea);
-        
         showCopyFeedback(button, successful);
     } catch (err) {
         showCopyFeedback(button, false);
@@ -1293,7 +451,6 @@ function fallbackCopy(text, button) {
 function showCopyFeedback(button, success) {
     const originalText = button.textContent;
     const originalBg = button.style.backgroundColor;
-    
     if (success) {
         button.textContent = '✅ Copied!';
         button.style.backgroundColor = '#10b981';
@@ -1301,10 +458,10 @@ function showCopyFeedback(button, success) {
         button.textContent = '❌ Failed';
         button.style.backgroundColor = '#dc2626';
     }
-    
     setTimeout(() => {
         button.textContent = originalText;
         button.style.backgroundColor = originalBg || '#2563eb';
     }, 2000);
 }
-</script>
+    </script>
+</Layout>
