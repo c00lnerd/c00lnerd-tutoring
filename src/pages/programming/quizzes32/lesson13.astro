@@ -8,9 +8,9 @@ import Layout from '../../../layouts/Layout.astro';
             <!-- Header -->
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
                 <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Lesson 13 Quiz: Display Devices</h1>
-                <p class="text-xl text-gray-600">Test your understanding of I2C wiring, LCD libraries, and non-blocking screen updates</p>
+                <p class="text-xl text-gray-600">Test your understanding of OLED wiring, the framebuffer pattern, and non-blocking screen updates</p>
                 <div class="mt-4 p-4 bg-purple-100 rounded-lg">
-                    <p class="text-purple-800 font-medium">📺 10 questions covering I2C, LiquidCrystal_I2C, cursor control, and timed refresh</p>
+                    <p class="text-purple-800 font-medium">📺 10 questions covering I2C, SSD1306, pixel addressing, and timed refresh</p>
                 </div>
             </div>
 
@@ -35,24 +35,24 @@ import Layout from '../../../layouts/Layout.astro';
             <form id="quizForm" autocomplete="off" class="space-y-8">
                 <!-- Question 1 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: Why I2C?</h3>
-                    <p class="text-gray-700 mb-4">What is the main reason we use an LCD with an I2C backpack instead of wiring the bare 16×2 display?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: OLED vs LCD</h3>
+                    <p class="text-gray-700 mb-4">What makes our OLED fundamentally different from a character LCD?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="A" class="mr-3">
-                            <span>A) I2C makes the screen brighter</span>
+                            <span>A) Every pixel is its own tiny light — no backlight, and you can draw anywhere</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="B" class="mr-3">
-                            <span>B) The bare display needs six data/control pins; the backpack needs only two shared bus wires</span>
+                            <span>B) It needs a backlight and a contrast potentiometer</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="C" class="mr-3">
-                            <span>C) I2C displays can show color graphics</span>
+                            <span>C) It can only display 2 lines of 16 characters</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q1" value="D" class="mr-3">
-                            <span>D) The backpack stores images for the LCD</span>
+                            <span>D) It communicates over the Serial monitor</span>
                         </label>
                     </div>
                 </div>
@@ -60,23 +60,23 @@ import Layout from '../../../layouts/Layout.astro';
                 <!-- Question 2 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: I2C Wiring</h3>
-                    <p class="text-gray-700 mb-4">On the Arduino Uno, which pins carry the I2C bus — and what do SDA and SCL mean?</p>
+                    <p class="text-gray-700 mb-4">On the Arduino Uno, which pins carry the I2C bus the OLED uses?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="A" class="mr-3">
-                            <span>A) A4 = SDA (data), A5 = SCL (clock)</span>
+                            <span>A) A4 = SCL, A5 = SDA</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="B" class="mr-3">
-                            <span>B) A4 = SCL (clock), A5 = SDA (data)</span>
+                            <span>B) Pin 0 = SDA, pin 1 = SCL</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="C" class="mr-3">
-                            <span>C) Pin 0 = SDA, pin 1 = SCL</span>
+                            <span>C) A4 = SDA (data), A5 = SCL (clock)</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q2" value="D" class="mr-3">
-                            <span>D) Any two analog pins you choose in code</span>
+                            <span>D) Any two analog pins you pick in code</span>
                         </label>
                     </div>
                 </div>
@@ -84,119 +84,119 @@ import Layout from '../../../layouts/Layout.astro';
                 <!-- Question 3 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: The Address</h3>
-                    <p class="text-gray-700 mb-4">In <code>LiquidCrystal_I2C lcd(0x27, 16, 2)</code>, what is <code>0x27</code>?</p>
+                    <p class="text-gray-700 mb-4">In <code>display.begin(SSD1306_SWITCHCAPVCC, 0x3C)</code>, what is <code>0x3C</code>?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="A" class="mr-3">
-                            <span>A) The pin number the display is connected to</span>
+                            <span>A) The pin number the OLED connects to</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="B" class="mr-3">
-                            <span>B) The display's firmware version</span>
+                            <span>B) The OLED's address on the shared I2C bus — if it's wrong, begin() fails and nothing shows</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="C" class="mr-3">
-                            <span>C) The device's address on the shared I2C bus — how the Arduino picks which chip to talk to</span>
+                            <span>C) The number of pixels in the display</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q3" value="D" class="mr-3">
-                            <span>D) The number of characters the screen can hold</span>
+                            <span>D) The baud rate for screen updates</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 4 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Blank Screen</h3>
-                    <p class="text-gray-700 mb-4">Your display shows glowing squares but no text. What is the most likely fix?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Black Screen</h3>
+                    <p class="text-gray-700 mb-4">The OLED stays completely black and Serial prints "not found". Most likely fix?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="A" class="mr-3">
-                            <span>A) Reinstall the Servo library</span>
+                            <span>A) Adjust the contrast screw</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="B" class="mr-3">
-                            <span>B) Change the address from 0x27 to 0x3F (or adjust the contrast screw)</span>
+                            <span>B) Increase the displayInterval</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="C" class="mr-3">
-                            <span>C) Connect VCC to 3.3V instead of 5V</span>
+                            <span>C) Try address 0x3D instead of 0x3C, or check that SDA/SCL aren't swapped</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q4" value="D" class="mr-3">
-                            <span>D) Increase Serial baud rate</span>
+                            <span>D) Call lcd.backlight()</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 5 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: setCursor()</h3>
-                    <p class="text-gray-700 mb-4">What does <code>lcd.setCursor(0, 1)</code> do before a <code>lcd.print()</code>?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: Pixel Coordinates</h3>
+                    <p class="text-gray-700 mb-4">On the OLED, what does <code>display.setCursor(64, 16)</code> mean?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="A" class="mr-3">
-                            <span>A) Moves the write position to column 0 of row 1 (the second line)</span>
+                            <span>A) Column 64, row 16 of a character grid</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="B" class="mr-3">
-                            <span>B) Clears line 1 of the display</span>
+                            <span>B) Move the drawing position to pixel x=64, y=16 — halfway across, 16 pixels down</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="C" class="mr-3">
-                            <span>C) Sets the cursor blink speed to 1 second</span>
+                            <span>C) Set the cursor blink speed to 64 ms</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q5" value="D" class="mr-3">
-                            <span>D) Scrolls the display down one row</span>
+                            <span>D) Scroll the display down 16 lines</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 6 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Ghost Digits</h3>
-                    <p class="text-gray-700 mb-4">The screen shows "B: 920" when the base angle is really 92 — because it used to show 120. What caused it, and what's our fix?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: The Framebuffer</h3>
+                    <p class="text-gray-700 mb-4">Why don't our <code>print()</code> calls show up until <code>display.display()</code> runs?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="A" class="mr-3">
-                            <span>A) The LCD is broken; replace it</span>
+                            <span>A) The OLED is too slow to draw text in real time</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="B" class="mr-3">
-                            <span>B) Call lcd.clear() before every print</span>
+                            <span>B) print() writes into a RAM buffer; display() ships the whole finished frame over I2C at once</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="C" class="mr-3">
-                            <span>C) The shorter number didn't overwrite the old trailing digit — pad3() prints a fixed-width field instead</span>
+                            <span>C) The display ignores commands until powered for 1 second</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q6" value="D" class="mr-3">
-                            <span>D) The servo wrote to the display by accident</span>
+                            <span>D) It's a bug in the Adafruit library</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 7 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Why Not lcd.clear()?</h3>
-                    <p class="text-gray-700 mb-4">Why do we avoid calling <code>lcd.clear()</code> on every screen update?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: Why No Flicker?</h3>
+                    <p class="text-gray-700 mb-4">We call <code>clearDisplay()</code> every refresh, yet the screen never flickers or blanks. Why?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="A" class="mr-3">
-                            <span>A) It erases the library's memory</span>
+                            <span>A) clearDisplay() only erases the hidden RAM buffer — the visible screen just swaps old frame for new frame</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="B" class="mr-3">
-                            <span>B) Wiping the whole screen each refresh causes visible flicker — overwriting fields doesn't</span>
+                            <span>B) OLEDs are too fast for humans to notice</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="C" class="mr-3">
-                            <span>C) It draws too much current for USB power</span>
+                            <span>C) The backlight keeps the image while it redraws</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q7" value="D" class="mr-3">
-                            <span>D) It conflicts with the joystick's dead zone</span>
+                            <span>D) clearDisplay() doesn't actually do anything</span>
                         </label>
                     </div>
                 </div>
@@ -204,39 +204,39 @@ import Layout from '../../../layouts/Layout.astro';
                 <!-- Question 8 -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
                     <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Three Jobs, One Loop</h3>
-                    <p class="text-gray-700 mb-4">Our complete sketch updates servos every 15 ms and the screen every 250 ms, all inside one <code>loop()</code>. How is this possible without threads?</p>
+                    <p class="text-gray-700 mb-4">Our sketch updates servos every 15 ms, the screen every 250 ms, and checks the button every pass — all in one <code>loop()</code>. How?</p>
                     <div class="space-y-2">
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="A" class="mr-3">
-                            <span>A) The LCD has its own processor that runs loop() too</span>
+                            <span>A) The OLED runs its own copy of loop()</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="B" class="mr-3">
-                            <span>B) Each job is guarded by its own millis() timer — every pass, each one checks "has my interval elapsed?" and does a little work if so</span>
+                            <span>B) The Servo library schedules everything automatically</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="C" class="mr-3">
-                            <span>C) The Servo library schedules loop() for us</span>
+                            <span>C) Each timed job checks its own millis() interval guard — a little work each time its timer fires, so nothing blocks</span>
                         </label>
                         <label class="flex items-center">
                             <input type="radio" name="q8" value="D" class="mr-3">
-                            <span>D) delay(15) and delay(250) alternate automatically</span>
+                            <span>D) delay(15) and delay(250) take turns</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Question 9: Short Answer -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Display Interval Trade-off</h3>
-                    <p class="text-gray-700 mb-4">We refresh the LCD every 250 ms instead of every loop iteration. Explain why a lower value isn't always better — what happens to I2C traffic and loop responsiveness if <code>displayInterval</code> drops too far (say 5 ms)?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Refresh Rate Trade-off</h3>
+                    <p class="text-gray-700 mb-4">We refresh the OLED every 250 ms instead of every loop pass. Each <code>display()</code> call pushes a full 1 KB frame over I2C. Explain what would happen to your loop timing — and the servos — if <code>displayInterval</code> dropped to 5 ms.</p>
                     <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
                               placeholder="Write your answer here..."></textarea>
                 </div>
 
                 <!-- Question 10: Short Answer -->
                 <div class="bg-white rounded-lg shadow-lg p-8">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Paging a Small Screen</h3>
-                    <p class="text-gray-700 mb-4">A 16×2 LCD can't show base, shoulder, elbow, and mode all at once. Describe a "paging" approach: how would you use a third millis() timer to alternate between two screens of information, and what state variable would you need?</p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Graphics Upgrade</h3>
+                    <p class="text-gray-700 mb-4">The OLED can draw shapes, not just text. Describe how you'd use <code>fillRect()</code> to draw a joystick deflection bar — what would you measure (dx? raw reading? step size?), and where on the 128×64 screen would you put it without covering the angle readouts?</p>
                     <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
                               placeholder="Write your answer here..."></textarea>
                 </div>
@@ -285,26 +285,26 @@ import Layout from '../../../layouts/Layout.astro';
         // Quiz data with correct answers
         const quizData = {
             correctAnswers: {
-                q1: 'B', // Backpack needs only 2 shared wires
-                q2: 'A', // A4 = SDA, A5 = SCL
-                q3: 'C', // Device address on the I2C bus
-                q4: 'B', // Wrong address (0x3F) or contrast
-                q5: 'A', // Column 0, row 1
-                q6: 'C', // Fixed-width overwrite (pad3)
-                q7: 'B', // clear() causes flicker
-                q8: 'B'  // Independent millis() timers
+                q1: 'A', // Pixels emit their own light
+                q2: 'C', // A4 = SDA, A5 = SCL
+                q3: 'B', // I2C bus address
+                q4: 'C', // Try 0x3D or check SDA/SCL
+                q5: 'B', // Pixel x=64, y=16
+                q6: 'B', // RAM buffer pushed by display()
+                q7: 'A', // clearDisplay only wipes buffer
+                q8: 'C'  // Independent millis() timers
             },
             questionText: {
-                q1: "What is the main reason we use an LCD with an I2C backpack instead of wiring the bare 16x2 display?",
-                q2: "On the Arduino Uno, which pins carry the I2C bus — and what do SDA and SCL mean?",
-                q3: "In LiquidCrystal_I2C lcd(0x27, 16, 2), what is 0x27?",
-                q4: "Your display shows glowing squares but no text. What is the most likely fix?",
-                q5: "What does lcd.setCursor(0, 1) do before a lcd.print()?",
-                q6: "The screen shows 'B: 920' when the base angle is really 92. What caused it, and what's our fix?",
-                q7: "Why do we avoid calling lcd.clear() on every screen update?",
-                q8: "Our sketch updates servos every 15 ms and the screen every 250 ms inside one loop(). How is this possible without threads?",
-                q9: "We refresh the LCD every 250 ms instead of every loop iteration. Explain why a lower value isn't always better — what happens if displayInterval drops to 5 ms?",
-                q10: "Describe a 'paging' approach for showing base, shoulder, elbow, and mode on a 16x2 LCD — what timer and state variable would you need?"
+                q1: "What makes our OLED fundamentally different from a character LCD?",
+                q2: "On the Arduino Uno, which pins carry the I2C bus the OLED uses?",
+                q3: "In display.begin(SSD1306_SWITCHCAPVCC, 0x3C), what is 0x3C?",
+                q4: "The OLED stays completely black and Serial prints 'not found'. Most likely fix?",
+                q5: "On the OLED, what does display.setCursor(64, 16) mean?",
+                q6: "Why don't our print() calls show up until display.display() runs?",
+                q7: "We call clearDisplay() every refresh, yet the screen never flickers. Why?",
+                q8: "How do servos (15 ms), screen (250 ms), and button checks all share one loop()?",
+                q9: "We refresh the OLED every 250 ms instead of every loop pass. What happens to loop timing and the servos if displayInterval drops to 5 ms?",
+                q10: "Describe how you'd use fillRect() to draw a joystick deflection bar — what would you measure, and where on the 128x64 screen would you put it?"
             }
         };
 
@@ -361,7 +361,7 @@ import Layout from '../../../layouts/Layout.astro';
             const percentage = Math.round((score / totalQuestions) * 100);
             
             // Build detailed message
-            let message = `LESSON 13 QUIZ RESULTS - Display Devices\n\n`;
+            let message = `LESSON 13 QUIZ RESULTS - Display Devices (OLED)\n\n`;
             message += `Student: ${studentName}\n`;
             message += `Email: ${studentEmail}\n`;
             message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
@@ -385,23 +385,23 @@ import Layout from '../../../layouts/Layout.astro';
             message += `PERFORMANCE ANALYSIS:\n`;
             message += `====================\n`;
             if (percentage >= 90) {
-                message += `EXCELLENT! Outstanding understanding of I2C displays and non-blocking UI.\n`;
-                message += `Student demonstrates mastery of wiring, addresses, and flicker-free updates.\n`;
+                message += `EXCELLENT! Outstanding understanding of OLED displays and the framebuffer pattern.\n`;
+                message += `Student demonstrates mastery of I2C wiring, pixel addressing, and timed refresh.\n`;
             } else if (percentage >= 80) {
                 message += `VERY GOOD! Strong grasp of display fundamentals.\n`;
                 message += `Student shows solid understanding with minor areas for review.\n`;
             } else if (percentage >= 70) {
-                message += `GOOD! Basic understanding of LCD control with room for improvement.\n`;
-                message += `Recommend additional practice with cursor positioning and timed refresh.\n`;
+                message += `GOOD! Basic understanding of OLED control with room for improvement.\n`;
+                message += `Recommend additional practice with pixel coordinates and the buffer concept.\n`;
             } else if (percentage >= 60) {
                 message += `NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
-                message += `Focus on I2C wiring, addresses, and why we overwrite instead of clear.\n`;
+                message += `Focus on I2C wiring, the display() push, and pixel vs character addressing.\n`;
             } else {
                 message += `REQUIRES ATTENTION! Limited understanding of display concepts.\n`;
                 message += `Recommend reviewing lesson materials and re-running the Hello Display sketch.\n`;
             }
             
-            message += `\nNext Steps: Lesson 13.5 continues the build. The LCD status screen is now the arm's permanent dashboard.\n`;
+            message += `\nNext Steps: Lesson 13.5 continues the build. The OLED status screen is now the arm's permanent dashboard.\n`;
             message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
             
             // Display results to student
@@ -416,7 +416,7 @@ import Layout from '../../../layouts/Layout.astro';
                     <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${totalQuestions} (${percentage}%)</div>
                     <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
                     <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #7c3aed; font-weight: bold;">
-                        📺 Week 13: Display Devices
+                        📺 Week 13: Display Devices (OLED)
                     </div>
                 </div>
                 <div style="text-align: left;">
@@ -461,7 +461,7 @@ import Layout from '../../../layouts/Layout.astro';
                 studentName: studentName,
                 studentEmail: studentEmail,
                 week: 'Week 13',
-                topic: 'Display Devices (I2C LCD + Timed Refresh)',
+                topic: 'Display Devices (SSD1306 OLED + Framebuffer)',
                 score: score,
                 totalPoints: totalQuestions,
                 percentage: percentage,
@@ -489,7 +489,7 @@ import Layout from '../../../layouts/Layout.astro';
                 from_email: 'chuck@c00lnerd.com',
                 
                 message: message,
-                subject: `Lesson 13 Display Devices Quiz - ${studentName} (${percentage}%)`
+                subject: `Lesson 13 Display Devices (OLED) Quiz - ${studentName} (${percentage}%)`
             }).then(function(response) {
                 console.log('Quiz results sent successfully!', response.status, response.text);
                 alert('Quiz results sent successfully!');

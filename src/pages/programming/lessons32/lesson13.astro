@@ -10,7 +10,7 @@ import Layout from '../../../layouts/Layout.astro';
             <h1 style="font-size: 2.5rem; font-weight: bold; margin: 0 0 1rem 0;">Lesson 13: Display Devices</h1>
             <p style="font-size: 1.2rem; margin: 0 0 1rem 0; opacity: 0.9;">Put your robot arm's status on a real screen — no laptop required</p>
             <div style="background: rgba(255,255,255,0.2); padding: 1rem; border-radius: 10px; display: inline-block;">
-                <p style="margin: 0; font-weight: 600;">📺 Serial Monitor was a window into the chip. Now the chip talks back on its own screen.</p>
+                <p style="margin: 0; font-weight: 600;">📺 128×64 pixels of pure status screen — angles, mode, and live joystick data</p>
             </div>
         </div>
 
@@ -22,19 +22,19 @@ import Layout from '../../../layouts/Layout.astro';
                 <div>
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">By the end of this lesson, you will:</h4>
                     <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
-                        <li>Wire a 16×2 character LCD with an I2C backpack using only 4 wires</li>
-                        <li>Print text and numbers with the <code>LiquidCrystal_I2C</code> library</li>
-                        <li>Show live servo angles and the arm's control mode on the screen</li>
-                        <li>Refresh a display without flicker or <code>delay()</code></li>
+                        <li>Wire a GME12864-13 OLED (SSD1306) using only 4 wires</li>
+                        <li>Print text at pixel positions with <code>Adafruit_SSD1306</code></li>
+                        <li>Show live servo angles, mode, and stick deflection on screen</li>
+                        <li>Refresh a display using the draw-to-buffer / push-frame pattern</li>
                     </ul>
                 </div>
                 <div>
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Key Concepts:</h4>
                     <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
-                        <li>I2C bus — two shared wires, address instead of pins</li>
-                        <li>Cursor positioning and fixed-width formatting</li>
+                        <li>OLED vs LCD — pixels emit their own light</li>
+                        <li>I2C bus — two shared wires, an address instead of pins</li>
+                        <li>Framebuffer drawing — <code>display()</code> pushes the frame</li>
                         <li>Timed screen updates with <code>millis()</code></li>
-                        <li>UI design on a tiny screen (16 characters per line)</li>
                     </ul>
                 </div>
             </div>
@@ -48,7 +48,7 @@ import Layout from '../../../layouts/Layout.astro';
                 <div style="background: #e6fffa; padding: 1.5rem; border-radius: 8px;">
                     <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">New this lesson</h4>
                     <ul style="color: #4a5568; line-height: 1.8; margin: 0; padding-left: 1.25rem;">
-                        <li>1 × 16×2 character LCD <strong>with I2C backpack</strong> soldered on (look for the small chip and 4-pin header on the back)</li>
+                        <li>1 × <strong>GME12864-13</strong> — 0.96″ OLED, 128×64 px, SSD1306 driver, I2C (yellow top band, blue bottom)</li>
                         <li>4 × female-to-male jumper wires</li>
                     </ul>
                 </div>
@@ -64,9 +64,9 @@ import Layout from '../../../layouts/Layout.astro';
             </div>
 
             <div style="background: #fef3c7; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #f59e0b;">
-                <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">💡 Why I2C?</h4>
+                <h4 style="color: #92400e; font-weight: bold; margin-bottom: 0.5rem;">💡 OLED vs LCD</h4>
                 <p style="color: #4a5568; margin: 0; line-height: 1.6;">
-                    A bare 16×2 LCD needs <strong>six</strong> Arduino pins just for data and control. The little I2C backpack chip on the back talks over a shared two-wire bus instead — we spend zero digital pins, and the joystick and servos keep every pin they already had.
+                    A character LCD has a backlight and stamps letters into fixed boxes. This OLED has <strong>no backlight at all</strong> — each of its 8,192 pixels is its own tiny light. That means two upgrades: you can draw <em>anywhere</em> on the screen (including graphics!), and black pixels are truly off.
                 </p>
             </div>
         </div>
@@ -76,24 +76,27 @@ import Layout from '../../../layouts/Layout.astro';
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📌 Section 2: Pin Map &amp; Wiring</h2>
             
             <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
-                The backpack has just four pins: <strong>GND</strong>, <strong>VCC</strong>, <strong>SDA</strong> (data), and <strong>SCL</strong> (clock). On the Uno, the I2C bus lives on the last two analog pins:
+                The GME12864-13 has just four pins: <strong>GND</strong>, <strong>VCC</strong>, <strong>SCL</strong> (clock), and <strong>SDA</strong> (data). On the Uno, the I2C bus lives on the last two analog pins — the same bus any I2C device can share:
             </p>
 
             <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px;">
                 <h4 style="color: #2d3748; font-weight: bold; margin-bottom: 1rem;">Complete robot-arm pin map</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
-                    <li><strong>LCD SDA:</strong> A4 (I2C data)</li>
-                    <li><strong>LCD SCL:</strong> A5 (I2C clock)</li>
-                    <li><strong>LCD VCC / GND:</strong> power rail / ground rail</li>
+                    <li><strong>OLED SDA:</strong> A4 (I2C data)</li>
+                    <li><strong>OLED SCL:</strong> A5 (I2C clock)</li>
+                    <li><strong>OLED VCC / GND:</strong> power rail / ground rail (works on 3.3–5V)</li>
                     <li><strong>Joystick VRx / VRy / SW:</strong> A0 / A1 / A3 (unchanged)</li>
                     <li><strong>Button:</strong> A2, <strong>Buzzer (optional):</strong> pin 8</li>
                     <li><strong>Base servo:</strong> pin 9, <strong>Shoulder servo:</strong> pin 10</li>
                 </ul>
             </div>
 
-            <p style="color: #4a5568; line-height: 1.7; margin-top: 1.5rem;">
-                There's also a tiny <strong>contrast potentiometer</strong> (blue box with a screw) on the backpack, and usually a backlight jumper. If you see a blank screen later, that screw is the first thing to turn.
-            </p>
+            <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #dc2626;">
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Check the silkscreen!</h4>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    Not all OLED boards print the pins in the same order — most go <code>GND, VCC, SCL, SDA</code>, but some swap the first two or last two. <strong>Read the labels on YOUR board</strong> before wiring, not the cable colors.
+                </p>
+            </div>
         </div>
 
         <!-- Hello Display -->
@@ -101,79 +104,115 @@ import Layout from '../../../layouts/Layout.astro';
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">👋 Section 3: Hello, Display</h2>
             
             <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
-                First install the library: <strong>Sketch → Include Library → Manage Libraries</strong>, search <code>LiquidCrystal_I2C</code>, and install it (the <em>Frank de Brabander</em> / <em>marcoschwartz</em> version). Then prove the wiring with the classic first test:
+                Install two libraries: <strong>Sketch → Include Library → Manage Libraries</strong>, then install <code>Adafruit SSD1306</code> <em>and</em> <code>Adafruit GFX Library</code>. Now the classic first test:
             </p>
 
             <div style="position: relative;">
                 <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                 <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
-// Most backpacks answer at 0x27; if your screen stays
-// blank, try 0x3F instead.
-LiquidCrystal_I2C lcd(0x27, 16, 2);   // address, columns, rows
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_ADDR 0x3C   // most SSD1306 OLEDs; try 0x3D if blank
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 void setup() {
-    lcd.init();          // wake the backpack up
-    lcd.backlight();     // turn the light on
-    lcd.setCursor(0, 0); // column 0, row 0 (top line)
-    lcd.print("Hello, arm!");
-    lcd.setCursor(0, 1); // second line
-    lcd.print("Base: ?  Mode: ?");
+    Serial.begin(9600);
+    if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
+        Serial.println("OLED not found - check wiring and address!");
+        while (true);   // stop here - nothing else will work
+    }
+
+    display.clearDisplay();            // wipe the drawing buffer
+    display.setTextColor(SSD1306_WHITE);
+    display.setTextSize(2);            // 2x = ~12x16 px per char
+    display.setCursor(0, 0);           // PIXEL position, not column/row!
+    display.println("Hello,");
+    display.println("arm!");
+    display.setTextSize(1);            // ~6x8 px per char
+    display.println();
+    display.println("Base: ? Mode: ?");
+    display.display();                 // push the buffer to the screen
 }
 
 void loop() {
-    // nothing yet — text stays until overwritten
+    // nothing yet - the frame stays until the next display()
 }`}</code></pre>
             </div>
 
             <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #dc2626;">
-                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Blank screen checklist</h4>
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Black screen checklist</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.8;">
-                    <li><strong>Squares but no text?</strong> Wrong address — change <code>0x27</code> to <code>0x3F</code> in the constructor.</li>
-                    <li><strong>Nothing at all?</strong> Twist the little blue contrast screw until faint blocks appear.</li>
-                    <li><strong>Still nothing?</strong> Swap SDA/SCL — they're the most commonly reversed pair.</li>
+                    <li><strong>Serial says "not found"?</strong> Wrong address — change <code>0x3C</code> to <code>0x3D</code>.</li>
+                    <li><strong>Still nothing?</strong> Check pin order on the board's silkscreen — SCL/SDA are the most commonly swapped pair.</li>
+                    <li><strong>No contrast to adjust!</strong> Unlike LCDs there's no pot — if pixels light at all, it works.</li>
                 </ul>
             </div>
         </div>
 
-        <!-- Live data -->
+        <!-- Buffer concept -->
         <div style="background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">📊 Section 4: Live Data Without Flicker</h2>
+            <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🖼️ Section 4: The Framebuffer Pattern</h2>
             
             <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
-                Two rookie mistakes make LCDs painful. First, calling <code>lcd.print()</code> every <code>loop()</code> — the screen redraws thousands of times a second and shimmers. Fix: update on the same <code>millis()</code> timer pattern you already know, every 250 ms:
+                Here's the mind-bending part that makes OLEDs pleasant to code: <strong>nothing you draw appears until you call <code>display.display()</code></strong>. Every <code>print</code>, <code>fillRect</code>, and <code>drawCircle</code> writes into a hidden 1 KB buffer in the Arduino's RAM. Then one call ships the whole finished frame down the I2C wire.
+            </p>
+
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem;">
+                <pre style="margin: 0; color: #4a5568; font-size: 0.9rem; line-height: 1.7; font-family: 'Courier New', monospace;"><code>{`every refresh:
+    clearDisplay()   ->  wipe the RAM buffer (screen unchanged!)
+    draw everything  ->  text, numbers, shapes - still hidden
+    display()        ->  whole frame appears at once, no flicker`}</code></pre>
+            </div>
+
+            <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
+                Compare with the character LCD world: there, <code>clear()</code> wiped the visible screen and caused flicker, so you had to overwrite fixed-width fields. On the OLED, "clearing" is free — it only erases <em>RAM</em>. The screen just jumps from old frame to new frame. And since pixels are addressed in <em>pixel coordinates</em>, <code>setCursor(64, 16)</code> means halfway across, 16 pixels down — not column 64, row 16.
             </p>
 
             <div style="position: relative;">
                 <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
-                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`unsigned long lastDisplayUpdate = 0;
+                <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`unsigned long lastDisplayTime = 0;
 const int displayInterval = 250;   // refresh 4x per second
 
-void updateDisplay() {
-    lcd.setCursor(0, 0);
-    lcd.print("B:");
-    pad3(baseAngle);          // always 3 chars wide
-    lcd.print("  S:");
-    pad3(shoulderAngle);
-    lcd.print("   ");         // wipe any leftover characters
-
-    lcd.setCursor(0, 1);
-    lcd.print("Mode: MANUAL   ");
+// Print an angle right-aligned in a 3-char field
+void printAngle(int n) {
+    if (n < 100) display.print(" ");
+    display.print(n);
 }
 
-// Print a number padded to 3 columns so 45 doesn't
-// leave a ghost digit where 145 used to sit
-void pad3(int n) {
-    if (n < 100) lcd.print(" ");
-    if (n < 10)  lcd.print(" ");
-    lcd.print(n);
+void updateDisplay() {
+    display.clearDisplay();                    // clear buffer only
+    display.setTextColor(SSD1306_WHITE);
+
+    // Title bar (lands in the yellow band)
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+    display.print("ARM STATUS   ");
+    display.print(modeText);                   // "MANUAL"
+
+    // Big angle readouts
+    display.setTextSize(2);
+    display.setCursor(0, 16);
+    display.print("B:");
+    printAngle(baseAngle);
+    display.setCursor(64, 16);
+    display.print("S:");
+    printAngle(shoulderAngle);
+
+    // Live stick deflection - debugging info
+    display.setTextSize(1);
+    display.setCursor(0, 48);
+    display.print("dX:");
+    display.print(lastDX);
+    display.print("  dY:");
+    display.print(lastDY);
+
+    display.display();                         // push the frame
 }`}</code></pre>
             </div>
-
-            <p style="color: #4a5568; line-height: 1.7; margin-top: 1.5rem;">
-                Second mistake: <code>lcd.clear()</code> every update — that wipes the whole screen each time, which is what actually causes visible flicker. We never clear; we <strong>overwrite fixed-width fields</strong>. The old characters simply get replaced.
-            </p>
         </div>
 
         <!-- Complete sketch -->
@@ -181,25 +220,30 @@ void pad3(int n) {
             <h2 style="color: #667eea; font-size: 1.8rem; font-weight: bold; margin-bottom: 1.5rem;">🧩 Section 5: The Complete Sketch</h2>
             
             <p style="color: #4a5568; line-height: 1.7; margin-bottom: 1rem;">
-                Lesson 12's joystick control, now reporting on the LCD. Watch for <strong>three</strong> independent <code>millis()</code> timers running at once — motion every 15 ms, display every 250 ms — proof that non-blocking code really does let one chip juggle several jobs:
+                Lesson 12's joystick control, now reporting on the OLED. Count the timers again — <strong>motion every 15 ms, screen every 250 ms, button checked every pass</strong>. One chip, three jobs, zero <code>delay()</code>:
             </p>
 
             <div style="position: relative;">
                 <button onclick="copyCode(this)" style="position: absolute; top: 8px; right: 8px; background-color: #2563eb; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; z-index: 10;">📋 Copy</button>
                 <pre style="background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 10px; overflow-x: auto; font-size: 0.9rem; line-height: 1.6;"><code>{`// ============================================================
-// Lesson 13: Display Devices
-// Joystick-driven arm with live status on a 16x2 I2C LCD.
+// Lesson 13: Display Devices (GME12864-13 OLED)
+// Joystick-driven arm with live status on a 128x64 SSD1306.
 //   X -> base (pin 9)   Y -> shoulder (pin 10)
-//   SW click -> home   LCD -> angles + mode
+//   SW click -> home   OLED -> angles + mode + deflection
 // ============================================================
 
 #include <Servo.h>
 #include <Wire.h>
-#include <LiquidCrystal_I2C.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
 
 Servo baseServo;
 Servo shoulderServo;
-LiquidCrystal_I2C lcd(0x27, 16, 2);   // try 0x3F if blank
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_ADDR 0x3C
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1);
 
 // ---- Pins ----
 const int joyX  = A0;
@@ -217,8 +261,10 @@ const char modeText[] = "MANUAL";   // future: AUTO, etc.
 int centerX = 512;
 int centerY = 512;
 const int deadZone = 25;
+int lastDX = 0;                     // shown on the display
+int lastDY = 0;
 
-// ---- Two independent timers ----
+// ---- Independent timers ----
 unsigned long lastStepTime    = 0;
 unsigned long lastDisplayTime = 0;
 const int stepInterval    = 15;    // servo update every 15 ms
@@ -248,43 +294,57 @@ void calibrateJoystick() {
     centerY = sumY / 50;
 }
 
-// Print a 3-digit-padded angle (avoids ghost digits)
-void pad3(int n) {
-    if (n < 100) lcd.print(" ");
-    if (n < 10)  lcd.print(" ");
-    lcd.print(n);
+void printAngle(int n) {           // right-align in 3 chars
+    if (n < 100) display.print(" ");
+    display.print(n);
 }
 
 void updateDisplay() {
-    // Line 1:  B: 90  S: 45
-    lcd.setCursor(0, 0);
-    lcd.print("B:");
-    pad3(baseAngle);
-    lcd.print((char)223);   // degree symbol on HD44780
-    lcd.print(" S:");
-    pad3(shoulderAngle);
-    lcd.print((char)223);
+    display.clearDisplay();
+    display.setTextColor(SSD1306_WHITE);
 
-    // Line 2:  Mode: MANUAL
-    lcd.setCursor(0, 1);
-    lcd.print("Mode: ");
-    lcd.print(modeText);
-    lcd.print("        ");  // wipe leftover chars
+    display.setTextSize(1);
+    display.setCursor(0, 0);
+    display.print("ARM STATUS   ");
+    display.print(modeText);
+
+    display.setTextSize(2);
+    display.setCursor(0, 16);
+    display.print("B:");
+    printAngle(baseAngle);
+    display.setCursor(64, 16);
+    display.print("S:");
+    printAngle(shoulderAngle);
+
+    display.setTextSize(1);
+    display.setCursor(0, 48);
+    display.print("dX:");
+    display.print(lastDX);
+    display.print("  dY:");
+    display.print(lastDY);
+
+    display.display();
 }
 
 void setup() {
+    Serial.begin(9600);
     baseServo.attach(9);
     shoulderServo.attach(10);
     pinMode(joySW, INPUT_PULLUP);
     baseServo.write(baseAngle);
     shoulderServo.write(shoulderAngle);
 
-    lcd.init();
-    lcd.backlight();
-    lcd.setCursor(0, 0);
-    lcd.print("Calibrating...");
-    lcd.setCursor(0, 1);
-    lcd.print("Hands off stick");
+    if (!display.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
+        Serial.println("OLED not found - check wiring/address");
+        while (true);
+    }
+    display.clearDisplay();
+    display.setTextColor(SSD1306_WHITE);
+    display.setTextSize(1);
+    display.setCursor(0, 20);
+    display.println("Calibrating...");
+    display.println("Hands off stick!");
+    display.display();
 
     calibrateJoystick();
     updateDisplay();
@@ -294,10 +354,10 @@ void loop() {
     // Job 1: timed servo motion (every 15 ms)
     if (millis() - lastStepTime >= stepInterval) {
         lastStepTime = millis();
-        int dx = analogRead(joyX) - centerX;
-        int dy = analogRead(joyY) - centerY;
-        baseAngle     = constrain(baseAngle     + signOf(dx) * stepFor(dx), MIN_ANGLE, MAX_ANGLE);
-        shoulderAngle = constrain(shoulderAngle + signOf(dy) * stepFor(dy), MIN_ANGLE, MAX_ANGLE);
+        lastDX = analogRead(joyX) - centerX;
+        lastDY = analogRead(joyY) - centerY;
+        baseAngle     = constrain(baseAngle     + signOf(lastDX) * stepFor(lastDX), MIN_ANGLE, MAX_ANGLE);
+        shoulderAngle = constrain(shoulderAngle + signOf(lastDY) * stepFor(lastDY), MIN_ANGLE, MAX_ANGLE);
         baseServo.write(baseAngle);
         shoulderServo.write(shoulderAngle);
     }
@@ -308,7 +368,7 @@ void loop() {
         updateDisplay();
     }
 
-    // Job 3: button check (every pass — no timer needed)
+    // Job 3: button check (every pass - no timer needed)
     int swState = digitalRead(joySW);
     if (swState == LOW && lastSWState == HIGH) {
         baseAngle = 90;
@@ -319,9 +379,9 @@ void loop() {
             </div>
 
             <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #059669;">
-                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🔍 The architecture lesson</h4>
+                <h4 style="color: #065f46; font-weight: bold; margin-bottom: 0.5rem;">🔍 Notice the layout math</h4>
                 <p style="color: #4a5568; margin: 0; line-height: 1.6;">
-                    Each job in <code>loop()</code> is a small "if enough time passed, do a little work" guard. Motion stays smooth while the screen redraws, and button presses are caught instantly — something impossible with a big <code>delay()</code> anywhere in the loop. This pattern scales to every sensor you'll add later.
+                    The top ~16 pixels are the yellow band — that's why the title sits at y=0. Size-2 text is ~16 px tall, so angles sit at y=16. The debug line sits at y=48, comfortably in the blue zone. Pixel displays mean you design with a ruler, not rows.
                 </p>
             </div>
         </div>
@@ -332,30 +392,30 @@ void loop() {
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
                 <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Text runs off the edge</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">At size 2 each character is ~12 px wide — only ~10 fit per line. Sketch the layout on paper first: x = columns of pixels, not character cells.</p>
+                </div>
+                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
                     <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Screen lags behind the arm</h4>
-                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">By design — the screen only refreshes 4×/second. Lower <code>displayInterval</code> to 100 for snappier updates, but don't go below ~50 or I2C traffic steals loop time.</p>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">By design — 4 updates/sec. You can lower <code>displayInterval</code> to 100 safely; a full I2C frame just isn't free, so don't go every-loop.</p>
                 </div>
                 <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Ghost digits (90 → 920)</h4>
-                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">A shorter number didn't overwrite the old one. That's why <code>pad3()</code> exists — never <code>lcd.clear()</code>, always overwrite fixed-width.</p>
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Display garbled when servos move</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Servo current spikes corrupt I2C. Separate 5V supply for servos (shared GND!), keep SDA/SCL wires short.</p>
                 </div>
                 <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Random garbled characters</h4>
-                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">Servo current spikes corrupt I2C. Power servos from a separate 5V supply (shared GND!) and keep SDA/SCL wires short.</p>
-                </div>
-                <div style="background: #fef2f2; padding: 1rem; border-radius: 8px;">
-                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Display works then freezes</h4>
-                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">A <code>delay()</code> snuck back in somewhere, or <code>updateDisplay()</code> runs every loop instead of on its timer.</p>
+                    <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">Sketch won't fit / crashes</h4>
+                    <p style="color: #4a5568; margin: 0; font-size: 0.9rem;">The 1 KB framebuffer eats half the Uno's RAM. Avoid big String concatenation — use <code>print()</code> pieces like we do.</p>
                 </div>
             </div>
 
             <div style="background: #f0f9ff; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #0ea5e9;">
                 <h4 style="color: #0c4a6e; font-weight: bold; margin-bottom: 0.5rem;">🛠️ Put It Together — Challenges</h4>
                 <ul style="margin: 0; padding-left: 1.25rem; color: #4a5568; line-height: 1.9;">
-                    <li><strong>Add the elbow:</strong> a 16×2 only has 2 lines. Make the screen alternate: page 1 shows B/S, page 2 shows E/mode, switching every 2 seconds on a third timer.</li>
-                    <li><strong>Bar graph:</strong> fill row 2 with <code>#</code> characters proportional to joystick deflection — a live input meter.</li>
-                    <li><strong>Mode toggle:</strong> wire Lesson 11's A2 button to switch <code>modeText</code> between "MANUAL" and "HOME" and watch the display update.</li>
-                    <li><strong>Got a 20×4 display?</strong> It's the same library — change the constructor to <code>(0x27, 20, 4)</code> and put each value on its own line: Base / Shoulder / Elbow / Mode.</li>
+                    <li><strong>Joystick meter:</strong> draw a bar with <code>fillRect()</code> whose length follows <code>abs(lastDX)</code> — a live deflection gauge.</li>
+                    <li><strong>Draw the arm:</strong> use <code>drawLine()</code> to sketch a simple two-segment arm matching the real angles. Trig required — that's the fun part.</li>
+                    <li><strong>Add the elbow:</strong> 64 px tall fits four size-1 rows or two size-2 rows plus a footer — you don't need paging, just a new layout.</li>
+                    <li><strong>Mode blink:</strong> make <code>modeText</code> flash every 500 ms when a "HOMING" mode is active — one more state variable, one more timer.</li>
                 </ul>
             </div>
 
