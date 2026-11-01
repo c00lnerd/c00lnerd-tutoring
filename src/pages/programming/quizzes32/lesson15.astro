@@ -2,390 +2,452 @@
 import Layout from '../../../layouts/Layout.astro';
 ---
 
-<Layout title="Week 15 Quiz: Advanced miniAuto Features">
+<Layout title="Lesson 15 Quiz: The Gripper - C00lnerd Tutoring">
     <div style="max-width: 800px; margin: 0 auto; padding: 2rem;">
-        <!-- Header -->
-        <div style="background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
-            <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Week 15 Quiz</h1>
-            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Advanced miniAuto Features</p>
+        
+            <!-- Header -->
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 10px; margin-bottom: 2rem; text-align: center;">
+                <h1 style="font-size: 2rem; font-weight: bold; margin: 0;">Lesson 15 Quiz: The Gripper</h1>
+                <p class="text-xl text-gray-600">Test your understanding of the fourth servo, the 3-mode state machine, and per-joint limits</p>
+                <div class="mt-4 p-4 bg-purple-100 rounded-lg">
+                    <p class="text-purple-800 font-medium">🤏 10 questions covering the gripper, mode cycling, and pick-and-place thinking</p>
+                </div>
+            </div>
+
+            <!-- Student Information -->
+            <div class="bg-white rounded-lg shadow-lg p-8 mb-8">
+                <h2 class="text-2xl font-bold text-purple-800 mb-6">Student Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="quiz15StudentName" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                        <input type="text" id="quiz15StudentName" name="studentName" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                    <div>
+                        <label for="quiz15StudentEmail" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                        <input type="email" id="quiz15StudentEmail" name="studentEmail" required 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Questions -->
+            <form id="quizForm" autocomplete="off" class="space-y-8">
+                <!-- Question 1 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 1: One Servo, Two Fingers</h3>
+                    <p class="text-gray-700 mb-4">Our two-finger gripper needs only one servo channel. Why?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="A" class="mr-3">
+                            <span>A) One finger is passive and never moves</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="B" class="mr-3">
+                            <span>B) A gear/linkage couples both fingers to the same horn — the hardware collapses them into one degree of freedom</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="C" class="mr-3">
+                            <span>C) SG90s can output two independent signals</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q1" value="D" class="mr-3">
+                            <span>D) The second finger is software-mirrored</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 2: The Mode Machine Grows</h3>
+                    <p class="text-gray-700 mb-4">Why did <code>bool elbowMode</code> have to become <code>int armMode</code>?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="A" class="mr-3">
+                            <span>A) Ints are faster on the Uno</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="B" class="mr-3">
+                            <span>B) A boolean only holds two states; three control pairs need a variable that can count 0, 1, 2</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="C" class="mr-3">
+                            <span>C) The Servo library requires int state variables</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q2" value="D" class="mr-3">
+                            <span>D) The OLED can't print booleans</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 3: The Wraparound</h3>
+                    <p class="text-gray-700 mb-4">What does <code>armMode = (armMode + 1) % NUM_MODES;</code> do when armMode is already 2?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="A" class="mr-3">
+                            <span>A) Sets armMode to 3, which the if-chain ignores</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="B" class="mr-3">
+                            <span>B) Triggers a compile error</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="C" class="mr-3">
+                            <span>C) Wraps back to 0 — the modulo (remainder) of 3 divided by 3 is 0</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q3" value="D" class="mr-3">
+                            <span>D) Stays at 2 until the stick is centered</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 4 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 4: Per-Joint Limits</h3>
+                    <p class="text-gray-700 mb-4">Why does the gripper get <code>GRIP_OPEN</code>/<code>GRIP_CLOSED</code> instead of sharing the arm's 20–160° range?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="A" class="mr-3">
+                            <span>A) The Servo library requires different constants per servo</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="B" class="mr-3">
+                            <span>B) It's just a style preference</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="C" class="mr-3">
+                            <span>C) Grippers can only reach 90°</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q4" value="D" class="mr-3">
+                            <span>D) The gripper's linkage has its own mechanical travel — driving it past its stops stalls the servo against the mechanism</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 5 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 5: Homing That Actually Homes</h3>
+                    <p class="text-gray-700 mb-4">In Lesson 14, homing just set the angle variables — the servo moved on its next armed write. What changed in Lesson 15's <code>homeAll()</code>?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="A" class="mr-3">
+                            <span>A) It calls delay() so the servos have time</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="B" class="mr-3">
+                            <span>B) It writes all four servos immediately — otherwise a disarmed joint would hold its old angle after "home"</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="C" class="mr-3">
+                            <span>C) It detaches and reattaches the servos</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q5" value="D" class="mr-3">
+                            <span>D) It recalibrates the joystick first</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 6 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 6: Power at Four Servos</h3>
+                    <p class="text-gray-700 mb-4">The supply spec from Lesson 14 was chosen with this lesson in mind. What's the real concern now?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="A" class="mr-3">
+                            <span>A) Four servos need four separate supplies</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="B" class="mr-3">
+                            <span>B) The gripper needs 12V while the arm uses 5V</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="C" class="mr-3">
+                            <span>C) Nothing changes — USB still works</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q6" value="D" class="mr-3">
+                            <span>D) Several SG90s can spike past 2.5A together — especially a gripper stalled on an object — so we need the regulated 5V / 3A+ supply and shared ground</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 7 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 7: The Name Table</h3>
+                    <p class="text-gray-700 mb-4">What does <code>modeName[armMode]</code> buy us over an if/else chain?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="A" class="mr-3">
+                            <span>A) Nothing — it's just shorter to type</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="B" class="mr-3">
+                            <span>B) A ternary can't hold three options, and an if/else chain becomes a bug farm as modes grow — the array lookup scales cleanly</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="C" class="mr-3">
+                            <span>C) Arrays use less RAM than if statements</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q7" value="D" class="mr-3">
+                            <span>D) The OLED library requires it</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 8 -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 8: Mode Awareness</h3>
+                    <p class="text-gray-700 mb-4">You push the stick and the gripper opens when you meant to lift the shoulder. What's the fix AND the prevention?</p>
+                    <div class="space-y-2">
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="A" class="mr-3">
+                            <span>A) Rewire the servos; the wires are swapped</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="B" class="mr-3">
+                            <span>B) Press A2 to cycle back to BASE+SHLDR — and get in the habit of reading the mode on line 1 of the OLED BEFORE pushing the stick</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="C" class="mr-3">
+                            <span>C) Re-upload the sketch; a variable got corrupted</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="q8" value="D" class="mr-3">
+                            <span>D) Flip the joystick over; it's upside-down</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Question 9: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 9: Pick-and-Place Sequence</h3>
+                    <p class="text-gray-700 mb-4">Describe the complete sequence of stick moves and A2 mode presses to: drive over an object, open the gripper, lower the arm, close on the object, lift, rotate to a new spot, and set it down. Where can things go wrong?</p>
+                    <textarea name="q9" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Question 10: Short Answer -->
+                <div class="bg-white rounded-lg shadow-lg p-8">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Question 10: Gripper on Click vs Stick</h3>
+                    <p class="text-gray-700 mb-4">The lesson's challenge suggests making SW click toggle open/closed instead of putting the gripper on the Y-axis. Trade off the two schemes: which gives finer control, which is faster mid-task, and what happens to homing in each design?</p>
+                    <textarea name="q10" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500" 
+                              placeholder="Write your answer here..."></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center">
+                    <button type="submit" id="submitBtn" 
+                            style="background-color: #7c3aed; color: white; padding: 12px 32px; border-radius: 8px; font-weight: 500; border: none; cursor: pointer; transition: background-color 0.2s;">
+                        Submit Quiz
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <!-- Student Information -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #8b5cf6; margin-bottom: 1rem;">Student Information</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <!-- Quiz Results Display -->
+        <div id="quizResults" style="display: none;" class="max-w-4xl mx-auto px-4 py-8">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <h2 class="text-2xl font-bold text-center mb-6 text-purple-800">🎯 Your Quiz Results</h2>
+                <div id="resultsContent"></div>
+                <div class="text-center mt-6">
+                    <p class="text-gray-600">These results have been automatically sent to your instructor.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            <!-- Navigation -->
+            <div class="flex justify-between items-center mt-8">
                 <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Name:</label>
-                    <input type="text" id="quiz15StudentName" style="width: 100%; padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                    <a href="/programming/lessons32/lesson15" style="background-color: #6b7280; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #4b5563; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#4b5563'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#6b7280'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        ← Back to Lesson 15
+                    </a>
                 </div>
                 <div>
-                    <label style="display: block; margin-bottom: 0.5rem; font-weight: bold;">Email:</label>
-                    <input type="email" id="quiz15StudentEmail" style="width: 100%; padding: 0.5rem; border: 2px solid #e2e8f0; border-radius: 6px;">
+                    <a href="/programming/lessons32/lesson16" style="background-color: #2563eb; color: white; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 600; border: 2px solid #1d4ed8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: all 0.2s; display: inline-block;" onmouseover="this.style.backgroundColor='#1d4ed8'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 15px -3px rgba(0, 0, 0, 0.1)'" onmouseout="this.style.backgroundColor='#2563eb'; this.style.transform='translateY(0px)'; this.style.boxShadow='0 4px 6px -1px rgba(0, 0, 0, 0.1)'">
+                        Next: Lesson 16 →
+                    </a>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- Quiz Questions -->
-        <div style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #8b5cf6; margin-bottom: 2rem;">Quiz Questions</h2>
-
-            <!-- Question 1 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">1. What is the primary advantage of computer vision over simple proximity sensors?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q1" value="A" style="margin-right: 0.5rem;"> A) Lower power consumption
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q1" value="B" style="margin-right: 0.5rem;"> B) Ability to understand and interpret visual information
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q1" value="C" style="margin-right: 0.5rem;"> C) Faster processing speed
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q1" value="D" style="margin-right: 0.5rem;"> D) Lower cost
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 2 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">2. In adaptive behavior learning, what happens when a direction has a high success rate?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q2" value="A" style="margin-right: 0.5rem;"> A) It is avoided in future decisions
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q2" value="B" style="margin-right: 0.5rem;"> B) It is more likely to be chosen in similar situations
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q2" value="C" style="margin-right: 0.5rem;"> C) It is reset to zero
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q2" value="D" style="margin-right: 0.5rem;"> D) It has no effect on future decisions
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 3 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">3. What is sensor fusion in robotics?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q3" value="A" style="margin-right: 0.5rem;"> A) Using only one sensor at a time
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q3" value="B" style="margin-right: 0.5rem;"> B) Combining data from multiple sensors for better decision-making
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q3" value="C" style="margin-right: 0.5rem;"> C) Replacing old sensors with new ones
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q3" value="D" style="margin-right: 0.5rem;"> D) Turning off sensors to save power
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 4 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">4. In predictive navigation, what does a negative distance trend indicate?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q4" value="A" style="margin-right: 0.5rem;"> A) The robot is moving away from obstacles
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q4" value="B" style="margin-right: 0.5rem;"> B) An obstacle is approaching or getting closer
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q4" value="C" style="margin-right: 0.5rem;"> C) The sensors are malfunctioning
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q4" value="D" style="margin-right: 0.5rem;"> D) The robot should speed up
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 5 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">5. What is the purpose of confidence weighting in sensor fusion?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q5" value="A" style="margin-right: 0.5rem;"> A) To make all sensors equally important
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q5" value="B" style="margin-right: 0.5rem;"> B) To prioritize more reliable sensor data in decision-making
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q5" value="C" style="margin-right: 0.5rem;"> C) To slow down the robot
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q5" value="D" style="margin-right: 0.5rem;"> D) To increase power consumption
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 6 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">6. In pattern recognition, what does confidence level represent?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q6" value="A" style="margin-right: 0.5rem;"> A) How fast the robot should move
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q6" value="B" style="margin-right: 0.5rem;"> B) How certain the system is about a learned action
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q6" value="C" style="margin-right: 0.5rem;"> C) The battery level
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q6" value="D" style="margin-right: 0.5rem;"> D) The number of sensors active
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 7 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">7. What happens in the COLLECTING_DATA state of an intelligent mission?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q7" value="A" style="margin-right: 0.5rem;"> A) The robot searches for new targets
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q7" value="B" style="margin-right: 0.5rem;"> B) The robot gathers information at the current target location
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q7" value="C" style="margin-right: 0.5rem;"> C) The robot returns to home base
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q7" value="D" style="margin-right: 0.5rem;"> D) The robot shuts down
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 8 -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">8. Which OpenCV function is commonly used for edge detection in computer vision?</h3>
-                <div style="margin-left: 1rem;">
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q8" value="A" style="margin-right: 0.5rem;"> A) Canny
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q8" value="B" style="margin-right: 0.5rem;"> B) Blur
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q8" value="C" style="margin-right: 0.5rem;"> C) Resize
-                    </label>
-                    <label style="display: block; margin-bottom: 0.5rem; cursor: pointer;">
-                        <input type="radio" name="q8" value="D" style="margin-right: 0.5rem;"> D) Rotate
-                    </label>
-                </div>
-            </div>
-
-            <!-- Question 9 (Short Answer) -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">9. Describe how machine learning could improve a robot's navigation over time. Give a specific example of what the robot might learn and how it would apply that knowledge.</h3>
-                <textarea id="q9" style="width: 100%; height: 100px; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;" placeholder="Type your answer here..."></textarea>
-            </div>
-
-            <!-- Question 10 (Short Answer) -->
-            <div style="margin-bottom: 2rem; padding: 1.5rem; background: #f0f9ff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <h3 style="color: #495057; margin-bottom: 1rem;">10. Design an intelligent mission for a miniAuto robot that combines computer vision, sensor fusion, and adaptive learning. Describe the mission objective, required sensors, and how the robot would improve its performance over multiple attempts.</h3>
-                <textarea id="q10" style="width: 100%; height: 120px; padding: 0.75rem; border: 2px solid #e2e8f0; border-radius: 6px; font-family: inherit;" placeholder="Type your answer here..."></textarea>
-            </div>
-        </div>
-
-        <!-- Submit Button -->
-        <div style="text-align: center; margin-bottom: 2rem;">
-            <button id="submitBtn" style="background: #8b5cf6; color: white; padding: 1rem 2rem; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: all 0.2s ease;">
-                Submit Quiz
-            </button>
-        </div>
-
-        <!-- Results Section -->
-        <div id="resultsSection" class="hidden" style="background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 2rem;">
-            <h2 style="color: #8b5cf6; margin-bottom: 1rem;">Quiz Results</h2>
-            <div id="resultsContent"></div>
-        </div>
-
-        <!-- Navigation -->
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-            <a href="/programming/lessons32/week15" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #6c757d; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                ? Back to Lesson
-            </a>
-            
-            <a href="/programming/semester1" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                ?? Semester Overview
-            </a>
-            
-            <a href="/programming/lessons32/week16" style="display: inline-flex; align-items: center; padding: 0.75rem 1.5rem; background: #8b5cf6; color: white; text-decoration: none; border-radius: 6px; font-weight: 500;">
-                Next: Week 16 ?
-            </a>
-        </div>
-    </div>
-
+    <!-- EmailJS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
     <script is:inline>
-window.onload = function() { generateCaptcha(); };
-    // CAPTCHA variables
-    let captchaAnswer = 0;
-    
-    function generateCaptcha() {
-        const num1 = Math.floor(Math.random() * 10) + 1;
-        const num2 = Math.floor(Math.random() * 10) + 1;
-        captchaAnswer = num1 + num2;
-        const questionElement = document.getElementById('captcha-question');
-        if (questionElement) {
-            questionElement.textContent = num1 + " + " + num2;
-        }
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
+        // Quiz data with correct answers
+        const quizData = {
+            correctAnswers: {
+                q1: 'B', // Linkage = one degree of freedom
+                q2: 'B', // bool holds only 2 states
+                q3: 'C', // modulo wraps 2+1 -> 0
+                q4: 'D', // gripper has its own mechanical travel
+                q5: 'B', // write all four immediately
+                q6: 'D', // stalled gripper spikes current
+                q7: 'B', // array scales, if-chain doesn't
+                q8: 'B'  // cycle mode + read OLED first
+            },
+            questionText: {
+                q1: "Our two-finger gripper needs only one servo channel. Why?",
+                q2: "Why did bool elbowMode have to become int armMode?",
+                q3: "What does armMode = (armMode + 1) % NUM_MODES; do when armMode is already 2?",
+                q4: "Why does the gripper get GRIP_OPEN/GRIP_CLOSED instead of sharing the arm's 20-160 range?",
+                q5: "In Lesson 14 homing just set variables. What changed in Lesson 15's homeAll()?",
+                q6: "The supply spec from Lesson 14 was chosen with this lesson in mind. What's the real concern now?",
+                q7: "What does modeName[armMode] buy us over an if/else chain?",
+                q8: "You push the stick and the gripper opens when you meant to lift the shoulder. What's the fix AND the prevention?",
+                q9: "Describe the complete sequence of stick moves and A2 mode presses to pick up and set down an object. Where can things go wrong?",
+                q10: "Trade off gripper-on-click vs gripper-on-Y-axis: finer control, speed mid-task, and what happens to homing in each design?"
             }
+        };
+
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }
-        document.getElementById('submitBtn').addEventListener('click', function() {
-            const studentName = document.getElementById('quiz15StudentName').value.trim();
-            const studentEmail = document.getElementById('quiz15StudentEmail').value.trim();
+            const studentName = document.getElementById('quiz15StudentName').value;
+            const studentEmail = document.getElementById('quiz15StudentEmail').value;
             
             if (!studentName || !studentEmail) {
-                alert('Please fill in your name and email before submitting.');
+                alert('Please fill in your name and email address.');
                 return;
             }
 
-            // Collect answers
-            const answers = {
-                q1: document.querySelector('input[name="q1"]:checked')?.value || '',
-                q2: document.querySelector('input[name="q2"]:checked')?.value || '',
-                q3: document.querySelector('input[name="q3"]:checked')?.value || '',
-                q4: document.querySelector('input[name="q4"]:checked')?.value || '',
-                q5: document.querySelector('input[name="q5"]:checked')?.value || '',
-                q6: document.querySelector('input[name="q6"]:checked')?.value || '',
-                q7: document.querySelector('input[name="q7"]:checked')?.value || '',
-                q8: document.querySelector('input[name="q8"]:checked')?.value || '',
-                q9: document.getElementById('q9').value.trim(),
-                q10: document.getElementById('q10').value.trim()
-            };
-
-            // Correct answers
-            const correctAnswers = {
-                q1: 'B',
-                q2: 'B', 
-                q3: 'B',
-                q4: 'B',
-                q5: 'B',
-                q6: 'B',
-                q7: 'B',
-                q8: 'A'
-            };
-
-            // Grade the quiz
-            let score = 0;
-            const results = [];
-            
-            for (let i = 1; i <= 8; i++) {
-                const question = `q${i}`;
-                const isCorrect = answers[question] === correctAnswers[question];
-                if (isCorrect) score++;
-                
-                results.push({
-                    question: i,
-                    selected: answers[question] || 'No answer',
-                    correct: correctAnswers[question],
-                    isCorrect: isCorrect
-                });
-            }
-
-            const percentage = Math.round((score / 8) * 100);
-            
-            // Display results
-            displayResults(score, 8, percentage, results, answers.q9, answers.q10);
-            
-            // Prepare email content
-            const message = `WEEK 15 QUIZ RESULTS - ADVANCED MINIAUTO FEATURES
-
-Student: ${studentName}
-Email: ${studentEmail}
-Score: ${score}/8 (${percentage}%)
-
-MULTIPLE CHOICE ANSWERS:
-${results.map(r => `Question ${r.question}: ${r.selected} ${r.isCorrect ? '?' : '? (Correct: ' + r.correct + ')'}`).join('\n')}
-
-SHORT ANSWER RESPONSES:
-
-Question 9 - Machine Learning Navigation:
-${answers.q9 || 'No response provided'}
-
-Question 10 - Intelligent Mission Design:
-${answers.q10 || 'No response provided'}
-
-PERFORMANCE ANALYSIS:
-${percentage >= 90 ? 'Excellent! Outstanding mastery of advanced miniAuto features and AI concepts.' :
-  percentage >= 80 ? 'Good work! Strong understanding of computer vision and machine learning principles.' :
-  percentage >= 70 ? 'Fair performance. Review sensor fusion and intelligent mission planning concepts.' :
-  'Needs improvement. Please review advanced robotics concepts and practice with AI programming.'}
-
-Please review the short answer responses and provide feedback to the student.`;
-
-            // Send email using EmailJS
-            const submitBtn = this;
+            const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
             
+            const formData = new FormData(this);
+            const results = [];
+            let score = 0;
+            const totalQuestions = 8; // Multiple choice questions only for scoring
+            
+            // Check multiple choice answers (q1-q8)
+            for (let i = 1; i <= 8; i++) {
+                const questionKey = `q${i}`;
+                const userAnswer = formData.get(questionKey);
+                const correctAnswer = quizData.correctAnswers[questionKey];
+                const isCorrect = userAnswer === correctAnswer;
+                
+                if (isCorrect) score++;
+                
+                results.push({
+                    question: quizData.questionText[questionKey],
+                    userAnswer: userAnswer || 'No answer provided',
+                    correctAnswer: correctAnswer,
+                    isCorrect: isCorrect
+                });
+            }
+            
+            // Add short answer questions
+            results.push({
+                question: quizData.questionText.q9,
+                studentAnswer: formData.get('q9') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            results.push({
+                question: quizData.questionText.q10,
+                studentAnswer: formData.get('q10') || 'No answer provided',
+                isShortAnswer: true
+            });
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            
+            // Build detailed message
+            let message = `LESSON 15 QUIZ RESULTS - The Gripper\n\n`;
+            message += `Student: ${studentName}\n`;
+            message += `Email: ${studentEmail}\n`;
+            message += `Score: ${score}/${totalQuestions} (${percentage}%)\n\n`;
+            
+            message += `DETAILED RESULTS:\n`;
+            message += `==================\n\n`;
+            
+            results.forEach((result, index) => {
+                if (result.isShortAnswer) {
+                    message += `${result.question}:\n`;
+                    message += `Answer: ${result.studentAnswer}\n\n`;
+                } else {
+                    const status = result.isCorrect ? 'CORRECT' : 'INCORRECT';
+                    message += `Q${index + 1}: ${result.question}\n`;
+                    message += `Student Answer: ${result.userAnswer}\n`;
+                    message += `Correct Answer: ${result.correctAnswer}\n`;
+                    message += `Status: ${status}\n\n`;
+                }
+            });
+            
+            message += `PERFORMANCE ANALYSIS:\n`;
+            message += `====================\n`;
+            if (percentage >= 90) {
+                message += `EXCELLENT! Outstanding understanding of state machines and end-effector control.\n`;
+                message += `Student demonstrates mastery of mode cycling, per-joint limits, and servo power.\n`;
+            } else if (percentage >= 80) {
+                message += `VERY GOOD! Strong grasp of the gripper integration.\n`;
+                message += `Student shows solid understanding with minor areas for review.\n`;
+            } else if (percentage >= 70) {
+                message += `GOOD! Basic understanding of the 3-mode machine with room for improvement.\n`;
+                message += `Recommend additional practice with modulo cycling and joint limits.\n`;
+            } else if (percentage >= 60) {
+                message += `NEEDS IMPROVEMENT. Some understanding but requires more practice.\n`;
+                message += `Focus on why mode exists (4 joints, 2 axes) and why the gripper has its own range.\n`;
+            } else {
+                message += `REQUIRES ATTENTION! Limited understanding of multi-mode control.\n`;
+                message += `Recommend reviewing lesson materials and practicing the mode cycle.\n`;
+            }
+            
+            message += `\nNext Steps: The arm is complete — four joints, fully piloted. Lesson 16 builds on this machine.\n`;
+            message += `\nSubmitted: ${new Date().toLocaleString()}\n`;
+            
+            // Display results to student
+            let grade = 'F';
+            if (percentage >= 90) grade = 'A';
+            else if (percentage >= 80) grade = 'B';
+            else if (percentage >= 70) grade = 'C';
+            else if (percentage >= 60) grade = 'D';
+            
+            const resultsHTML = `
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; font-weight: bold; color: #7c3aed;">${score}/${totalQuestions} (${percentage}%)</div>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #7c3aed;">Grade: ${grade}</div>
+                    <div style="margin-top: 1rem; padding: 1rem; background: #ede9fe; border-radius: 6px; color: #7c3aed; font-weight: bold;">
+                        🤏 Week 15: The Gripper
+                    </div>
+                </div>
+                <div style="text-align: left;">
+                    ${results.map((r, index) => {
+                        if (r.isShortAnswer) {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
+                                    <strong>${r.question}:</strong><br>
+                                    <strong>Your answer:</strong> ${r.studentAnswer}
+                                </div>
+                            `;
+                        } else {
+                            return `
+                                <div style="margin-bottom: 1rem; padding: 1rem; background: ${r.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
+                                    <strong>Question ${index + 1}:</strong> ${r.isCorrect ? '✅' : '❌'}<br>
+                                    <strong>Your answer:</strong> ${r.userAnswer}<br>
+                                    <strong>Correct answer:</strong> ${r.correctAnswer}
+                                </div>
+                            `;
+                        }
+                    }).join('')}
+                </div>
+            `;
+            
+            document.getElementById('resultsContent').innerHTML = resultsHTML;
+            document.getElementById('quizResults').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quizResults').scrollIntoView({ behavior: 'smooth' });
+            
+            // Send email using EmailJS
             // Check if EmailJS is available
             if (typeof (window as any).emailjs === 'undefined') {
                 console.log('Email service unavailable; relying on Google Sheets logging.');
@@ -395,177 +457,48 @@ Please review the short answer responses and provide feedback to the student.`;
             // Initialize EmailJS right before sending
             (window as any).emailjs.init('ct_s19oZHppLy9BlW');
             
+            const sheetsPayload = JSON.stringify({
+                studentName: studentName,
+                studentEmail: studentEmail,
+                week: 'Week 15',
+                topic: 'The Gripper (Servo #4 + 3-Mode State Machine)',
+                score: score,
+                totalPoints: totalQuestions,
+                percentage: percentage,
+                grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
+                timestamp: new Date().toISOString()
+            });
+
+            const logToSheets = function() {
+                console.log('Logging quiz results to Google Sheets...');
+                return fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: sheetsPayload
+                })
+                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
+                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
+            };
+
             (window as any).emailjs.send('service_kaw1xkh', 'template_io02xtm', {
                 to_email: 'chuck@c00lnerd.com',
                 from_name: 'C00lnerd Quiz System',
                 from_email: 'chuck@c00lnerd.com',
+                
                 message: message,
-                subject: `Week 15 Advanced miniAuto Quiz - ${studentName} (${percentage}%)`
+                subject: `Lesson 15 Gripper Quiz - ${studentName} (${percentage}%)`
             }).then(function(response) {
                 console.log('Quiz results sent successfully!', response.status, response.text);
                 alert('Quiz results sent successfully!');
-                
-                // Log to Google Sheets
-                console.log('Logging quiz results to Google Sheets...');
-                fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        studentName: studentName,
-                        studentEmail: studentEmail,
-                        week: 'Week 15',
-                        topic: 'Advanced miniAuto Programming',
-                        score: score,
-                        totalPoints: 8,
-                        percentage: percentage,
-                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
-                        timestamp: new Date().toISOString()
-                    })
-                })
-                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
-                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
-                
+                logToSheets();
             }, function(error) {
                 console.log('Failed to send quiz results...', error);
-                // Log to Google Sheets
-                console.log('Logging quiz results to Google Sheets...');
-                fetch('https://script.google.com/macros/s/AKfycbxJORcOZtpcCKh-ZRK6mAFsv-TXvroqJUjB22unDmTiRySX3Mylt8rX-FeMCgd_T47qPA/exec', {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        studentName: studentName,
-                        studentEmail: studentEmail,
-                        week: 'Week 15',
-                        topic: 'Advanced miniAuto Programming',
-                        score: score,
-                        totalPoints: 8,
-                        percentage: percentage,
-                        grade: percentage >= 90 ? 'A' : percentage >= 80 ? 'B' : percentage >= 70 ? 'C' : percentage >= 60 ? 'D' : 'F',
-                        timestamp: new Date().toISOString()
-                    })
-                })
-                .then(() => console.log('Quiz results logged to Google Sheets successfully!'))
-                .catch(error => console.log('Note: CORS error expected in localhost - Google Sheets logging will work in production:', error));
-                
+                logToSheets();
                 alert('Quiz submitted successfully! Email is temporarily unavailable, but your results were saved to the grade log.');
             });
         });
-
-        function displayResults(score, total, percentage, results, q9Answer, q10Answer) {
-            // Determine grade
-            let grade = 'F';
-            if (percentage >= 90) grade = 'A';
-            else if (percentage >= 80) grade = 'B';
-            else if (percentage >= 70) grade = 'C';
-            else if (percentage >= 60) grade = 'D';
-            
-            const resultsHTML = `
-                <div style="text-align: center; margin-bottom: 1rem;">
-                    <div style="font-size: 2rem; font-weight: bold; color: #8b5cf6;">${score}/${total} (${percentage}%)</div>
-                    <div style="font-size: 1.5rem; font-weight: bold; color: #8b5cf6;">Grade: ${grade}</div>
-                    <div style="margin-top: 1rem; padding: 1rem; background: #f3e8ff; border-radius: 6px; color: #8b5cf6; font-weight: bold;">
-                        ?? Week 15: Advanced miniAuto Features
-                    </div>
-                </div>
-                <div style="text-align: left;">
-                    ${results.map((result, index) => {
-                        return `
-                            <div style="margin-bottom: 1rem; padding: 1rem; background: ${result.isCorrect ? '#e8f5e8' : '#ffeaea'}; border-radius: 6px;">
-                                <strong>Question ${index + 1}:</strong> ${result.isCorrect ? '?' : '?'}<br>
-                                <strong>Your answer:</strong> ${result.selected}<br>
-                                <strong>Correct answer:</strong> ${result.correct}
-                            </div>
-                        `;
-                    }).join('')}
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
-                        <strong>Question 9 - Machine Learning Navigation:</strong><br>
-                        <strong>Your answer:</strong> ${q9Answer || 'No answer provided'}
-                    </div>
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: #f0f9ff; border-radius: 6px;">
-                        <strong>Question 10 - Intelligent Mission Design:</strong><br>
-                        <strong>Your answer:</strong> ${q10Answer || 'No answer provided'}
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('resultsContent').innerHTML = resultsHTML;
-            document.getElementById('resultsSection').classList.remove('hidden');
-            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
-        }
     </script>
-
-    <!-- EmailJS -->
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js">
-window.onload = function() { generateCaptcha(); };
-    }
-    
-    function validateCaptcha() {
-        const userAnswer = parseInt(document.getElementById('captcha').value);
-        const errorDiv = document.getElementById('captcha-error');
-        
-        if (userAnswer !== captchaAnswer) {
-            if (errorDiv) errorDiv.style.display = 'block';
-            generateCaptcha(); // Generate new question
-            document.getElementById('captcha').value = '';
-            return false;
-        }
-        
-        if (errorDiv) errorDiv.style.display = 'none';
-        return true;
-    }
-    
-    // Security validation function
-    function validateSecurity() {
-        // Check honeypot field (should be empty)
-        const honeypot = document.getElementById('website');
-        if (honeypot && honeypot.value) {
-            console.log('Spam bot detected via honeypot');
-            alert('Security check failed. Please try again.');
-            return false;
-        }
-        
-        // Rate limiting check
-        const lastSubmission = localStorage.getItem('lastQuizStart');
-        const now = Date.now();
-        if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) { // 30 second cooldown
-            alert('Please wait 30 seconds between quiz attempts.');
-            return false;
-        }
-        localStorage.setItem('lastQuizStart', now.toString());
-        
-        // Validate CAPTCHA
-        if (!validateCaptcha()) {
-            return false;
-        }
-        
-        // Email validation and domain filtering
-        const emailInput = document.getElementById('email');
-        if (emailInput && emailInput.value) {
-            const email = emailInput.value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
-                return false;
-            }
-            
-            // Block common spam domains
-            const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
-            const domain = email.split('@')[1].toLowerCase();
-            if (spamDomains.includes(domain)) {
-                alert('Please use a permanent email address.');
-                return false;
-            }
-        }
-        
-        return true;
-    }</script>
 </Layout>
-
-
-
