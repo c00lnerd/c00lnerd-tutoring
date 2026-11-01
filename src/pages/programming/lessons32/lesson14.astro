@@ -86,9 +86,9 @@ import Layout from '../../../layouts/Layout.astro';
             </div>
 
             <div style="background: #fef2f2; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #dc2626;">
-                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Three servos = external power required</h4>
+                <h4 style="color: #dc2626; font-weight: bold; margin-bottom: 0.5rem;">⚠️ Three servos = regulated 5V / 3A+ supply required</h4>
                 <p style="color: #4a5568; margin: 0; line-height: 1.6;">
-                    Two SG90s could get away with the Uno's 5V pin under light load. Three cannot — stalled servo spikes will brown-out the Arduino (and corrupt I2C, garbling your OLED). Wire all servo power rails to a <strong>separate 5V supply</strong> (USB power bank or regulated 5V), and connect <strong>grounds together</strong>: external GND and Arduino GND must join at one point or the signals float.
+                    Two SG90s could get away with the Uno's 5V pin under light load. Three cannot — stalled servo spikes will brown-out the Arduino (and corrupt I2C, garbling your OLED). Wire all servo power rails to a <strong>regulated 5V supply rated around 3A or more</strong>. That headroom is not optional — the gripper's own servo joins us in Lesson 15, bringing the count to four, and each SG90 can pull ~650–800 mA when it stalls. A random USB power bank may sag or cut out under those spikes; a bench or wall supply rated 3A+ will not. And connect <strong>grounds together</strong>: external GND and Arduino GND must join at one point or the signals float.
                 </p>
             </div>
         </div>
