@@ -1,0 +1,417 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physics Module 5 Test">
+	<div class="container">
+		<div class="header">
+			<p class="eyebrow">Exploring Creation with Physics</p>
+			<h1>Physics Module 5 Test</h1>
+			<p class="subtitle">Newton's Laws</p>
+		</div>
+
+		<form id="module5Test" autocomplete="off">
+			<div class="card">
+				<h2>Student Information</h2>
+				<div class="form-row">
+					<label>
+						Full Name
+						<input type="text" id="studentName" required>
+					</label>
+					<label>
+						Email Address
+						<input type="email" id="studentEmail" required>
+					</label>
+				</div>
+				<input type="text" id="website" style="display: none;" tabindex="-1" autocomplete="off">
+			</div>
+
+			<div class="card captcha-card">
+				<label>
+					Security Check: What is <span id="captcha-question"></span>?
+					<input type="number" id="captcha" required>
+				</label>
+				<div id="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 1</h3>
+				<p>State Newton's three laws of motion in your own words.</p>
+				<textarea id="q1" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 2</h3>
+				<p>A bicyclist is traveling at high speed and is not watching where he is going. His front tire catches in a sewer grating, causing the bike to stop almost instantly. This makes the rider fall off of the bike. Which way will the biker fall and why?</p>
+				<textarea id="q2" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 3</h3>
+				<p>Two objects have different weights. The first is twice as heavy as the second. If they are each placed on the same surface, which will experience the greatest friction? How much greater will the frictional force be?</p>
+				<input type="text" id="q3" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 4</h3>
+				<p>You find a measurement of 34 kg written in a laboratory notebook. What physical characteristic is this a measurement of?</p>
+				<input type="text" id="q4" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 5</h3>
+				<p>From experience, we all know that you must push an object harder to get it moving than you do to keep it moving once it has already started. Using arguments at an atomic level, explain why this is the case.</p>
+				<textarea id="q5" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 6</h3>
+				<p>A physicist is using tools that measure length in cm, mass in mg, and time in minutes. If the physicist measures a force and does not convert any units, what will the force unit be?</p>
+				<input type="text" id="q6" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 7</h3>
+				<p>A parent asks a physics student to move a couch. The physics student, having just read about Newton's Third Law, has just learned that for every force applied, there is an equal and opposite force. He therefore reasons that when he pushes the couch, an equal and opposite force will cancel out his force, making it impossible to move the couch. What is wrong with the student's reasoning?</p>
+				<textarea id="q7" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 8</h3>
+				<p>A pole-vaulter vaults over a 10-foot high bar and lands on a large cushion. When the pole-vaulter hits the cushion, he exerts a force on it. What is the evidence of this force? What is the equal and opposite force demanded by Newton's Third Law, and what is the evidence of that force?</p>
+				<textarea id="q8" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 9</h3>
+				<p>Assuming that there is no friction, how much force is necessary to accelerate a 152 gram object at 1.21 m/sec&sup2;?</p>
+				<input type="text" id="q9" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 10</h3>
+				<p>An object has a mass of 34 slugs. What is its weight?</p>
+				<input type="text" id="q10" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 11</h3>
+				<p>A rocket ship weighs 24,561 Newtons on earth. How much will it weight on Jupiter? (The acceleration due to gravity on Jupiter is 23.2 m/sec&sup2;.)</p>
+				<input type="text" id="q11" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 12</h3>
+				<p>If a rock has a mass of 44 slugs on Venus, how much will it weigh on earth? (The acceleration due to gravity on Venus is 28 ft/sec&sup2;.)</p>
+				<input type="text" id="q12" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 13</h3>
+				<p>A person is pushing on a 567-pound statue. What frictional force must he overcome to get the statue moving? (&mu;<sub>s</sub> = 0.32, &mu;<sub>k</sub> = 0.20)</p>
+				<input type="text" id="q13" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 14</h3>
+				<p>A tractor pulls a 721-kg crate with a force of 3,123 Newtons. If the coefficients of friction are &mu;<sub>s</sub> = 0.42 and &mu;<sub>k</sub> = 0.30, how fast will the crate accelerate, provided that it is already moving? (Show your work.)</p>
+				<textarea id="q14" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 15</h3>
+				<p>A mover pushes a 1,451-pound piano across a cement driveway (&mu;<sub>s</sub> = 0.42, &mu;<sub>k</sub> = 0.24). Assuming that the mover has already gotten the piano moving, how much force must the mover push with in order to keep the piano moving at a constant velocity?</p>
+				<input type="text" id="q15" class="answer-input" required>
+			</div>
+
+			<button type="submit" class="submit-button">Submit Test</button>
+		</form>
+
+		<div id="results" style="display: none;" class="card">
+			<h2>Test Submitted</h2>
+			<p id="email-status">Your answers have been sent to your instructor.</p>
+			<button type="button" class="submit-button" onclick="window.location.reload()">Take Again</button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+
+	<script is:inline>
+		let captchaAnswer = 0;
+
+		function generateCaptcha() {
+			const num1 = Math.floor(Math.random() * 10) + 1;
+			const num2 = Math.floor(Math.random() * 10) + 1;
+			captchaAnswer = num1 + num2;
+			document.getElementById('captcha-question').textContent = `${num1} + ${num2}`;
+		}
+
+		function validateCaptcha() {
+			const userAnswer = parseInt(document.getElementById('captcha').value);
+			const errorDiv = document.getElementById('captcha-error');
+			if (userAnswer !== captchaAnswer) {
+				errorDiv.style.display = 'block';
+				generateCaptcha();
+				document.getElementById('captcha').value = '';
+				return false;
+			}
+			errorDiv.style.display = 'none';
+			return true;
+		}
+
+		function validateSecurity() {
+			const honeypot = document.getElementById('website');
+			if (honeypot && honeypot.value) {
+				console.log('Spam bot detected via honeypot');
+				alert('Security check failed. Please try again.');
+				return false;
+			}
+
+			const lastSubmission = localStorage.getItem('lastQuizStart');
+			const now = Date.now();
+			if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+				alert('Please wait 30 seconds between attempts.');
+				return false;
+			}
+			localStorage.setItem('lastQuizStart', now.toString());
+
+			if (!validateCaptcha()) {
+				return false;
+			}
+
+			const email = document.getElementById('studentEmail').value;
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				return false;
+			}
+
+			const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+			const domain = email.split('@')[1].toLowerCase();
+			if (spamDomains.includes(domain)) {
+				alert('Please use a permanent email address.');
+				return false;
+			}
+
+			return true;
+		}
+
+		window.onload = function() {
+			try {
+				emailjs.init('ct_s19oZHppLy9BlW');
+			} catch (e) {
+				console.error('EmailJS init failed:', e);
+			}
+			generateCaptcha();
+		};
+
+		document.getElementById('module5Test').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			if (!validateSecurity()) {
+				return;
+			}
+
+			const studentName = document.getElementById('studentName').value.trim();
+			const studentEmail = document.getElementById('studentEmail').value.trim();
+			const now = new Date().toLocaleString();
+
+			const answers = [
+				['Question 1', document.getElementById('q1').value.trim()],
+				['Question 2', document.getElementById('q2').value.trim()],
+				['Question 3', document.getElementById('q3').value.trim()],
+				['Question 4', document.getElementById('q4').value.trim()],
+				['Question 5', document.getElementById('q5').value.trim()],
+				['Question 6', document.getElementById('q6').value.trim()],
+				['Question 7', document.getElementById('q7').value.trim()],
+				['Question 8', document.getElementById('q8').value.trim()],
+				['Question 9', document.getElementById('q9').value.trim()],
+				['Question 10', document.getElementById('q10').value.trim()],
+				['Question 11', document.getElementById('q11').value.trim()],
+				['Question 12', document.getElementById('q12').value.trim()],
+				['Question 13', document.getElementById('q13').value.trim()],
+				['Question 14', document.getElementById('q14').value.trim()],
+				['Question 15', document.getElementById('q15').value.trim()]
+			];
+
+			let message = `PHYSICS MODULE 5 TEST SUBMISSION\n`;
+			message += `Submitted: ${now}\n\n`;
+			message += `Student: ${studentName}\n`;
+			message += `Student Email: ${studentEmail}\n\n`;
+			message += `ANSWERS:\n`;
+			answers.forEach((item) => {
+				message += `\n${item[0]}\n   ${item[1]}\n`;
+			});
+
+			const templateParams = {
+				to_email: 'chuck@c00lnerd.com',
+				from_name: 'C00lnerd Quiz System',
+				from_email: 'chuck@c00lnerd.com',
+				message: message,
+				subject: `Physics Module 5 Test - ${studentName}`
+			};
+
+			window.emailjs.send('service_kaw1xkh', 'template_io02xtm', templateParams)
+				.then(function(response) {
+					console.log('Email sent:', response.status, response.text);
+					document.getElementById('module5Test').style.display = 'none';
+					document.getElementById('results').style.display = 'block';
+					document.getElementById('email-status').textContent = 'Your test has been submitted and emailed to your instructor.';
+				}, function(error) {
+					console.error('Email error:', error);
+					if (error && error.text) console.error('Error details:', error.text);
+					alert('There was an error sending your test. Please check your internet connection and try again.');
+				});
+		});
+	</script>
+
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
+			font-family: Arial, sans-serif;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-weight: 700;
+			color: #2563eb;
+			font-size: 0.85rem;
+			margin: 0 0 0.5rem 0;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.2rem;
+			color: #111827;
+		}
+
+		.subtitle {
+			color: #4b5563;
+			font-size: 1.1rem;
+			margin: 0.5rem 0 0 0;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+			margin-bottom: 1.25rem;
+		}
+
+		.card h2,
+		.card h3 {
+			margin: 0 0 0.75rem 0;
+			color: #111827;
+		}
+
+		.card p {
+			color: #374151;
+			line-height: 1.6;
+			margin: 0 0 1rem 0;
+		}
+
+		.question-detail {
+			font-style: italic;
+			padding-left: 1rem;
+			border-left: 3px solid #d1d5db;
+		}
+
+		.radio-group {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.radio-option {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.5rem;
+			font-weight: 400;
+			color: #374151;
+			line-height: 1.5;
+		}
+
+		.radio-option input[type="radio"] {
+			margin-top: 0.3rem;
+		}
+
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+
+		@media (min-width: 600px) {
+			.form-row {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			color: #374151;
+			font-size: 0.95rem;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="number"],
+		textarea,
+		.answer-input {
+			width: 100%;
+			padding: 0.75rem;
+			margin-top: 0.35rem;
+			border: 1px solid #d1d5db;
+			border-radius: 6px;
+			font-size: 1rem;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
+
+		.answer-input {
+			max-width: 100%;
+		}
+
+		.captcha-card label {
+			display: block;
+		}
+
+		#captcha-error {
+			color: #dc2626;
+			margin-top: 0.5rem;
+			font-weight: 600;
+		}
+
+		.submit-button {
+			display: inline-block;
+			width: 100%;
+			padding: 1rem;
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: white;
+			background: #2563eb;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-top: 1rem;
+		}
+
+		.submit-button:hover {
+			background: #1d4ed8;
+		}
+
+		#results {
+			text-align: center;
+		}
+	</style>
+</Layout>
