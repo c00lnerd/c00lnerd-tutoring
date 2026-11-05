@@ -171,6 +171,44 @@ const module4Pacing = [
 	},
 ];
 
+const module5Pacing = [
+	{
+		week: 'Week 10',
+		title: "Newton's Laws I",
+		studentWork: [
+			'Begin Module 5 on page 141: read Newton\'s First Law and inertia, do Experiment 5.1 (pages 143-144), then complete On Your Own questions 5.1 and 5.2 on page 145.',
+			'Continue at Newton\'s Second Law on page 146 and stop after doing On Your Own questions 5.3 and 5.4 on page 148.',
+			'Finish the week at Mass and Weight on page 148, stopping after On Your Own questions 5.5 and 5.6 on page 152.',
+		],
+		mastery: [
+			'State Newton\'s First Law and connect inertia to an object\'s mass.',
+			'Apply Newton\'s Second Law, F = ma, to relate net force, mass, and acceleration.',
+			'Distinguish mass from weight and calculate weight using mass and g.',
+		],
+		fridayOverview: 'Demonstrate inertia with simple props, work F = ma problems emphasizing units, and contrast mass versus weight with worked conversions.',
+		experiment: 'Experiment 5.1: Inertia (module pages 143-144). Supply list: Appendix C, page 584.',
+		assessment: 'Check On Your Own answers 5.1-5.6, watch for unit errors in F = ma work, and assign a short mixed check on the first and second laws.',
+	},
+	{
+		week: 'Week 11',
+		title: "Newton's Laws II",
+		studentWork: [
+			'Begin at The Normal Force on page 152 and read through the introduction to friction, stopping before Experiment 5.2 on page 156.',
+			'Complete Experiment 5.2 on page 156, then read to An Equation for the Frictional Force, stopping on page 160.',
+			'Finish the module at An Equation for the Frictional Force on page 160 through page 167, including Newton\'s Third Law.',
+			'Do the Review Questions on page 174 and the Practice Problems on pages 175-176, then study for the Module 5 test (optional extra practice in Appendix B, page 568).',
+		],
+		mastery: [
+			'Explain the normal force and when it does and does not equal weight.',
+			'Distinguish static from kinetic friction and apply the frictional-force equation.',
+			'Identify action-reaction pairs and apply Newton\'s Third Law to real situations.',
+		],
+		fridayOverview: 'Review the experiment\'s friction data, derive the frictional-force equation from it, practice identifying action-reaction pairs, and run a cumulative Module 5 review.',
+		experiment: 'Experiment 5.2: The Frictional Force (module pages 156-160).',
+		assessment: 'Review the module\'s remaining On Your Own answers and friction-equation setups, then administer the Module 5 test and confirm the student has Module 6 supplies (Appendix C, page 584).',
+	},
+];
+
 const weeks = [
 	{
 		week: 1,
@@ -649,6 +687,64 @@ const weeks = [
 
 			<div class="module-week-grid">
 				{module4Pacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Module 5: Newton's Laws</h2>
+					<p class="module-copy">
+						Two weeks on the laws that govern every mechanics problem in the course:
+						inertia and F = ma in Week 10, then normal force, friction, and Newton's
+						Third Law in Week 11, ending with the Module 5 test.
+					</p>
+				</div>
+			</div>
+
+			<div style="text-align: center; margin: 0 0 1.25rem 0;">
+				<a href="/physics/module5_test.html" class="primary">Take Module 5 Test</a>
+			</div>
+
+			<div class="module-week-grid">
+				{module5Pacing.map((item) => (
 					<article class="module-week-card">
 						<div class="module-week-heading">
 							<p class="week-tag">{item.week}</p>
