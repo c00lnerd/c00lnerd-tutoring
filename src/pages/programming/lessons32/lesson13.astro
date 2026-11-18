@@ -151,6 +151,17 @@ void loop() {
                     <li><strong>No contrast to adjust!</strong> Unlike LCDs there's no pot — if pixels light at all, it works.</li>
                 </ul>
             </div>
+
+            <div style="background: #eff6ff; padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem; border-left: 4px solid #2563eb;">
+                <h4 style="color: #1d4ed8; font-weight: bold; margin-bottom: 0.5rem;">🔄 Screen mounted upside down?</h4>
+                <p style="color: #4a5568; margin: 0 0 0.75rem 0; line-height: 1.6;">
+                    If the OLED is physically mounted flipped (pins at the bottom), you don't need to rewire anything — flip it in software. Add one line in <code>setup()</code> right after <code>display.begin()</code> succeeds:
+                </p>
+                <pre style="margin: 0 0 0.75rem 0; background: #1e293b; color: #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.9rem; line-height: 1.6;"><code>{`display.setRotation(2);   // rotate everything 180 degrees`}</code></pre>
+                <p style="color: #4a5568; margin: 0; line-height: 1.6;">
+                    From then on every <code>setCursor</code>, <code>print</code>, and shape is drawn as if the screen were mounted right-side up — all the code in this lesson works unchanged. (<code>setRotation(0)</code> is the default; <code>1</code> and <code>3</code> rotate 90° sideways, which also swaps the width and height to 64×128.)
+                </p>
+            </div>
         </div>
 
         <!-- Buffer concept -->
