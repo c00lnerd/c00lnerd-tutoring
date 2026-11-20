@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velocity vs Acceleration Lab - C00lnerd Tutoring</title>
+<style>
+    * { box-sizing: border-box; }
+    body {
+        margin: 0;
+        background: #0d1117;
+        color: #e2e8f0;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 1rem;
+    }
+    h1 { font-size: 1.6rem; margin: 0.5rem 0; color: #fbbf24; }
+    .subtitle { color: #94a3b8; margin-bottom: 1rem; text-align: center; max-width: 700px; }
+    #canvas-wrap { position: relative; width: 100%; max-width: 900px; }
+    canvas {
+        width: 100%;
+        display: block;
+        border-radius: 10px;
+        border: 1px solid #334155;
+        background: #050508;
+    }
+    .controls {
+        width: 100%;
+        max-width: 900px;
+        margin-top: 0.75rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        align-items: center;
+        justify-content: center;
+    }
+    .controls button, .controls select {
+        background: #1e293b;
+        color: #e2e8f0;
+        border: 1px solid #475569;
+        border-radius: 6px;
+        padding: 0.45rem 0.8rem;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+    .controls button:hover { background: #334155; }
+    .controls button.active { background: #2563eb; border-color: #2563eb; }
+    .toggles {
+        width: 100%;
+        max-width: 900px;
+        margin-top: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        align-items: center;
+    }
+    .toggles label { display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
+    .toggles input[type="range"] { width: 110px; }
+    .explain {
+        max-width: 900px;
+        margin-top: 1.25rem;
+        background: #1e293b;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: #cbd5e1;
+    }
+    .explain h3 { margin: 0 0 0.5rem 0; color: #fbbf24; }
+    .explain ul { margin: 0.5rem 0; padding-left: 1.25rem; }
+    .explain .key {
+        background: #0f172a;
+        border: 1px solid #475569;
+        border-radius: 4px;
+        padding: 0 0.35rem;
+        font-family: monospace;
+    }
+    .yellow { color: #fde047; }
+    .orange { color: #fb923c; }
+</style>
+</head>
+<body>
+
+<h1>🚀 Velocity vs Acceleration Lab</h1>
+<p class="subtitle">Fly the ship. The <span class="yellow">yellow arrow</span> is <strong>velocity</strong> — where you're actually going.
+The <span class="orange">orange arrow</span> is <strong>acceleration</strong> — how your velocity is <em>changing</em>.</p>
+
+<div id="canvas-wrap">
+    <canvas id="canvas" width="900" height="640"></canvas>
+</div>
+
+<div class="controls">
+    <button data-mode="free" class="active">🕹️ Free Flight</button>
+    <button data-mode="speedup">⏩ Speed Up (a ∥ v)</button>
+    <button data-mode="slowdown">⏪ Slow Down (a ∥ −v)</button>
+    <button data-mode="curve">↗ Curve (a ⊥ v)</button>
+    <button data-mode="burn">🔥 Locked Burn + Steer</button>
+    <button id="btn-pause">⏸ Pause</button>
+    <button id="btn-reset">↺ Reset</button>
+</div>
+
+<div class="controls">
+    <button id="btn-left">◀ Rotate</button>
+    <button id="btn-thrust">🔥 Thrust</button>
+    <button id="btn-right">Rotate ▶</button>
+</div>
+
+<div class="toggles">
+    <label><input type="checkbox" id="chk-vectors" checked> Ship arrows</label>
+    <label><input type="checkbox" id="chk-inset" checked> Vector view box</label>
+    <label><input type="checkbox" id="chk-trail" checked> Trail</label>
+    <label><input type="checkbox" id="chk-ghost" checked> "No-acceleration" ghost path</label>
+    <label>Thrust power <input type="range" id="thrust-power" min="30" max="300" value="90"></label>
+</div>
+
+<div class="explain">
+    <h3>What to watch for</h3>
+    <ul>
+        <li><strong>Coasting:</strong> don't touch anything — the ship keeps the <em>same</em> velocity forever (Newton's 1st law). Yellow arrow frozen.</li>
+        <li><strong>a ∥ v:</strong> thrust while pointing the same way you're moving — the yellow arrow <em>grows</em>, path stays straight.</li>
+        <li><strong>a ∥ −v:</strong> pick "Slow Down" — the orange arrow fights the yellow one until speed hits zero, then wins and pushes backward.</li>
+        <li><strong>a ⊥ v:</strong> pick "Curve" — the orange arrow stays sideways to the yellow one, so the path bends like a ball thrown sideways.</li>
+        <li><strong>Locked Burn + Steer:</strong> engine stays on — rotate with <span class="key">←</span><span class="key">→</span> and watch constant acceleration carve curves.</li>
+    </ul>
+    <p><strong>Keys:</strong> <span class="key">←</span><span class="key">→</span> rotate &nbsp;
+    <span class="key">↑</span> thrust &nbsp; <span class="key">P</span> pause &nbsp; <span class="key">R</span> reset</p>
+    <p>Physics rule of thumb: <span class="orange">acceleration</span> is the <em>rate of change</em> of <span class="yellow">velocity</span>. Point them the same way → speed up. Opposite → slow down. Sideways → turn. None → coast forever.</p>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// ---------- state ----------
+let mode = 'free';
+let paused = false;
+let showVectors = true, showInset = true, showTrail = true, showGhost = true;
+let thrustPower = 90;           // px/s^2 while thrusting
+let keys = {};
+let thrustHeld = false, leftHeld = false, rightHeld = false;
+
+const ship = { x: 0, y: 0, vx: 0, vy: 0, heading: 0 };
+let autoA = null;               // constant world-space acceleration for presets {x,y}
+let trail = [];                 // {x,y} or null (wrap break)
+let simTime = 0;
+
+// ---------- stars ----------
+const stars = [];
+for (let i = 0; i < 180; i++) {
+    stars.push({ x: Math.random()*W, y: Math.random()*H,
+        r: Math.random()*1.3+0.3, p: Math.random()*Math.PI*2,
+        s: 0.5 + Math.random()*1.5 });
+}
+
+// ---------- scenarios ----------
+function setup(m) {
+    mode = m;
+    autoA = null;
+    trail = [];
+    if (m === 'free') {
+        ship.x = W/2; ship.y = H/2; ship.vx = 0; ship.vy = 0; ship.heading = 0;
+    } else if (m === 'speedup') {
+        ship.x = W*0.15; ship.y = H/2; ship.vx = 140; ship.vy = 0;
+        autoA = { x: 70, y: 0 };
+    } else if (m === 'slowdown') {
+        ship.x = W*0.2; ship.y = H/2; ship.vx = 170; ship.vy = 0;
+        autoA = { x: -60, y: 0 };
+    } else if (m === 'curve') {
+        ship.x = W*0.15; ship.y = H*0.28; ship.vx = 150; ship.vy = 0;
+        autoA = { x: 0, y: 85 };
+    } else if (m === 'burn') {
+        ship.x = W/2; ship.y = H/2; ship.vx = 0; ship.vy = 0; ship.heading = 0;
+    }
+    document.querySelectorAll('[data-mode]').forEach(b =>
+        b.classList.toggle('active', b.dataset.mode === m));
+}
+
+document.querySelectorAll('[data-mode]').forEach(b =>
+    b.addEventListener('click', () => setup(b.dataset.mode)));
+
+// ---------- input ----------
+window.addEventListener('keydown', e => {
+    keys[e.code] = true;
+    if (e.code === 'KeyP') togglePause();
+    if (e.code === 'KeyR') setup(mode);
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+});
+window.addEventListener('keyup', e => keys[e.code] = false);
+
+function bindHold(id, key) {
+    const el = document.getElementById(id);
+    const on  = e => { e.preventDefault(); keys[key] = true; };
+    const off = () => { keys[key] = false; };
+    el.addEventListener('pointerdown', on);
+    el.addEventListener('pointerup', off);
+    el.addEventListener('pointerleave', off);
+    el.addEventListener('pointercancel', off);
+}
+bindHold('btn-left', 'ArrowLeft');
+bindHold('btn-right', 'ArrowRight');
+bindHold('btn-thrust', 'ArrowUp');
+
+document.getElementById('btn-reset').addEventListener('click', () => setup(mode));
+document.getElementById('btn-pause').addEventListener('click', togglePause);
+function togglePause() {
+    paused = !paused;
+    document.getElementById('btn-pause').textContent = paused ? '▶ Resume' : '⏸ Pause';
+}
+document.getElementById('chk-vectors').addEventListener('change', e => showVectors = e.target.checked);
+document.getElementById('chk-inset').addEventListener('change', e => showInset = e.target.checked);
+document.getElementById('chk-trail').addEventListener('change', e => showTrail = e.target.checked);
+document.getElementById('chk-ghost').addEventListener('change', e => showGhost = e.target.checked);
+document.getElementById('thrust-power').addEventListener('input', e => thrustPower = +e.target.value);
+
+// ---------- physics ----------
+function accelNow() {
+    if (autoA) return autoA;
+    const thrusting = keys['ArrowUp'] || mode === 'burn';
+    if (!thrusting) return { x: 0, y: 0 };
+    return { x: Math.sin(ship.heading) * thrustPower,
+             y: -Math.cos(ship.heading) * thrustPower };
+}
+
+function update(dt) {
+    simTime += dt;
+    const rotSpeed = 4;
+    if (!autoA) {   // free & burn: player steers
+        if (keys['ArrowLeft'])  ship.heading -= rotSpeed * dt;
+        if (keys['ArrowRight']) ship.heading += rotSpeed * dt;
+    }
+
+    const a = accelNow();
+    ship.vx += a.x * dt;
+    ship.vy += a.y * dt;
+    ship.x += ship.vx * dt;
+    ship.y += ship.vy * dt;
+
+    // In preset modes the nose follows the motion
+    if (autoA && Math.hypot(ship.vx, ship.vy) > 1) {
+        ship.heading = Math.atan2(ship.vx, -ship.vy);
+    }
+
+    // screen wrap
+    let wrapped = false;
+    if (ship.x < -10) { ship.x = W + 10; wrapped = true; }
+    if (ship.x > W + 10) { ship.x = -10; wrapped = true; }
+    if (ship.y < -10) { ship.y = H + 10; wrapped = true; }
+    if (ship.y > H + 10) { ship.y = -10; wrapped = true; }
+    if (wrapped) trail.push(null);
+
+    trail.push({ x: ship.x, y: ship.y });
+    if (trail.length > 500) trail.shift();
+}
+
+// ---------- drawing helpers ----------
+function arrow(x1, y1, x2, y2, color, width, headLen) {
+    const ang = Math.atan2(y2 - y1, x2 - x1);
+    ctx.strokeStyle = color; ctx.fillStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(ang - 0.4), y2 - headLen * Math.sin(ang - 0.4));
+    ctx.lineTo(x2 - headLen * Math.cos(ang + 0.4), y2 - headLen * Math.sin(ang + 0.4));
+    ctx.closePath(); ctx.fill();
+}
+
+function drawShip(a) {
+    ctx.save();
+    ctx.translate(ship.x, ship.y);
+    ctx.rotate(ship.heading);
+    // flame while accelerating
+    if (Math.hypot(a.x, a.y) > 1) {
+        const flick = 12 + Math.random() * 6;
+        ctx.fillStyle = '#fb923c';
+        ctx.beginPath();
+        ctx.moveTo(-6, 14); ctx.lineTo(0, 14 + flick); ctx.lineTo(6, 14);
+        ctx.closePath(); ctx.fill();
+    }
+    // hull
+    ctx.fillStyle = '#22c55e';
+    ctx.strokeStyle = '#15803d';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, -16); ctx.lineTo(-11, 14); ctx.lineTo(0, 8); ctx.lineTo(11, 14);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+}
+
+function drawTrail() {
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    let pen = false;
+    for (let i = 0; i < trail.length; i++) {
+        const p = trail[i];
+        if (!p) { pen = false; continue; }
+        if (!pen) { ctx.moveTo(p.x, p.y); pen = true; }
+        else ctx.lineTo(p.x, p.y);
+    }
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+    ctx.stroke();
+}
+
+function drawGhost() {
+    const speed = Math.hypot(ship.vx, ship.vy);
+    if (speed < 5) return;
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = 'rgba(226, 232, 240, 0.3)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(ship.x, ship.y);
+    ctx.lineTo(ship.x + ship.vx * 1.4, ship.y + ship.vy * 1.4);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(226, 232, 240, 0.45)';
+    ctx.font = '12px Segoe UI';
+    ctx.fillText('constant velocity path', ship.x + ship.vx * 1.4 + 8, ship.y + ship.vy * 1.4);
+}
+
+function drawShipVectors(a) {
+    const speed = Math.hypot(ship.vx, ship.vy);
+    const aMag = Math.hypot(a.x, a.y);
+    if (speed > 2) {
+        const s = Math.min(speed * 0.45, 220) / speed;
+        arrow(ship.x, ship.y, ship.x + ship.vx * s, ship.y + ship.vy * s, '#fde047', 3, 9);
+    }
+    if (aMag > 1) {
+        const s = 0.55;
+        arrow(ship.x, ship.y, ship.x + a.x * s, ship.y + a.y * s, '#fb923c', 3, 9);
+    }
+}
+
+function drawInset(a) {
+    const bw = 200, bh = 170;
+    // floats near ship like the reference image, clamped on screen
+    let bx = ship.x - bw - 45, by = ship.y - 30;
+    bx = Math.max(8, Math.min(W - bw - 8, bx));
+    by = Math.max(8, Math.min(H - bh - 8, by));
+    const cx = bx + bw / 2, cy = by + bh / 2 - 8;
+
+    ctx.fillStyle = 'rgba(20, 22, 34, 0.82)';
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 6); ctx.fill(); ctx.stroke();
+
+    // faint crosshair
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.2)';
+    ctx.beginPath();
+    ctx.moveTo(bx + 10, cy); ctx.lineTo(bx + bw - 10, cy);
+    ctx.moveTo(cx, by + 10); ctx.lineTo(cx, by + bh - 40);
+    ctx.stroke();
+
+    const speed = Math.hypot(ship.vx, ship.vy);
+    const aMag = Math.hypot(a.x, a.y);
+    const maxLen = 62;
+
+    // velocity (yellow) - length ∝ speed, capped
+    const vLen = Math.min(speed / 300, 1) * maxLen;
+    if (speed > 2) {
+        arrow(cx, cy, cx + ship.vx / speed * vLen, cy + ship.vy / speed * vLen, '#fde047', 3, 10);
+    } else {
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
+    }
+    // acceleration (orange)
+    if (aMag > 1) {
+        const aLen = Math.min(aMag / 200, 1) * maxLen;
+        arrow(cx, cy, cx + a.x / aMag * aLen, cy + a.y / aMag * aLen, '#fb923c', 3, 10);
+    }
+
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillStyle = '#fb923c';
+    ctx.fillText('ACCELERATION', bx + 12, by + bh - 22);
+    ctx.fillStyle = '#fde047';
+    ctx.fillText('VELOCITY', bx + 12, by + bh - 6);
+}
+
+function statusText(a) {
+    const speed = Math.hypot(ship.vx, ship.vy);
+    const aMag = Math.hypot(a.x, a.y);
+    let label, color, angleDeg = null;
+    if (aMag < 1) {
+        label = speed > 2 ? 'COASTING — velocity is constant' : 'AT REST';
+        color = '#94a3b8';
+    } else if (speed > 2) {
+        const dot = (ship.vx * a.x + ship.vy * a.y) / (speed * aMag);
+        angleDeg = Math.round(Math.acos(Math.max(-1, Math.min(1, dot))) * 180 / Math.PI);
+        if (angleDeg < 30)       { label = 'SPEEDING UP — straight line'; color = '#4ade80'; }
+        else if (angleDeg > 150) { label = 'SLOWING DOWN'; color = '#fb923c'; }
+        else if (angleDeg > 60 && angleDeg < 120) { label = 'TURNING — path is curving'; color = '#22d3ee'; }
+        else                     { label = 'SPEED & DIRECTION CHANGING'; color = '#fde047'; }
+    } else {
+        label = 'STARTING FROM REST — accelerating';
+        color = '#4ade80';
+    }
+    return { label, color, speed, aMag, angleDeg };
+}
+
+function drawHUD(a) {
+    const st = statusText(a);
+    ctx.fillStyle = 'rgba(13, 17, 23, 0.75)';
+    ctx.fillRect(8, 8, 300, 92);
+    ctx.font = '14px Consolas, monospace';
+    ctx.fillStyle = '#fde047';
+    ctx.fillText(`|v| speed      : ${st.speed.toFixed(0)} px/s`, 18, 30);
+    ctx.fillStyle = '#fb923c';
+    ctx.fillText(`|a| accel      : ${st.aMag.toFixed(0)} px/s²`, 18, 50);
+    ctx.fillStyle = '#e2e8f0';
+    const angTxt = st.angleDeg === null ? '—' : st.angleDeg + '°';
+    ctx.fillText(`angle v to a   : ${angTxt}`, 18, 70);
+    ctx.fillStyle = st.color;
+    ctx.font = 'bold 13px Segoe UI';
+    ctx.fillText(st.label, 18, 92);
+}
+
+// ---------- main loop ----------
+let last = performance.now();
+function frame(now) {
+    const dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    if (!paused) update(dt);
+
+    // background
+    ctx.fillStyle = '#050508';
+    ctx.fillRect(0, 0, W, H);
+    for (const s of stars) {
+        const tw = 0.45 + 0.55 * Math.abs(Math.sin(simTime * s.s + s.p));
+        ctx.fillStyle = `rgba(226,232,240,${tw})`;
+        ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+
+    const a = paused ? { x: 0, y: 0 } : accelNow();
+    if (showTrail) drawTrail();
+    if (showGhost) drawGhost();
+    drawShip(a);
+    if (showVectors) drawShipVectors(a);
+    if (showInset) drawInset(a);
+    drawHUD(a);
+
+    if (paused) {
+        ctx.fillStyle = 'rgba(0,0,0,0.45)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = 'bold 42px Segoe UI';
+        ctx.textAlign = 'center';
+        ctx.fillText('PAUSED', W/2, H/2);
+        ctx.textAlign = 'left';
+    }
+
+    requestAnimationFrame(frame);
+}
+
+setup('free');
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
