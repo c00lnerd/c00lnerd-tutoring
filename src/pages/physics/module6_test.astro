@@ -1,0 +1,464 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Physics Module 6 Test">
+	<div class="container">
+		<div class="header">
+			<p class="eyebrow">Exploring Creation with Physics</p>
+			<h1>Physics Module 6 Test</h1>
+			<p class="subtitle">Applications of Newton's Second Law</p>
+		</div>
+
+		<form id="module6Test" autocomplete="off">
+			<div class="card">
+				<h2>Student Information</h2>
+				<div class="form-row">
+					<label>
+						Full Name
+						<input type="text" id="studentName" required>
+					</label>
+					<label>
+						Email Address
+						<input type="email" id="studentEmail" required>
+					</label>
+				</div>
+				<input type="text" id="website" style="display: none;" tabindex="-1" autocomplete="off">
+			</div>
+
+			<div class="card captcha-card">
+				<label>
+					Security Check: What is <span id="captcha-question"></span>?
+					<input type="number" id="captcha" required>
+				</label>
+				<div id="captcha-error" style="display: none;">Incorrect answer. Please try again.</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 1</h3>
+				<p>An object moves with constant velocity. Is it in a state of equilibrium? If so, what kind of equilibrium?</p>
+				<textarea id="q1" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 2</h3>
+				<p>Suppose you throw a Frisbee in the air towards your friend. It spins at a constant rate, but the speed with which it moves towards your friend is changing due to the wind. Is the Frisbee in any state of equilibrium? If so, what kind?</p>
+				<textarea id="q2" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 3</h3>
+				<p>What are the conditions required for an object to be in static rotational equilibrium?</p>
+				<textarea id="q3" class="answer-input" rows="3" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 4</h3>
+				<p>Two plumbers are working at a site. The first tries to unscrew a pipe with a wrench and cannot budge it. The second one is twice as strong as the first one. He also has a wrench that is twice as long. How much more torque can the second plumber exert compared to the first?</p>
+				<input type="text" id="q4" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 5</h3>
+				<p>A driver is trying to eat with one hand and steer with the other (not a good thing to do). If the driver is using only one hand, which of the two situations below will give the driver the most torque in turning the wheel? Assume that the magnitude of the force is the same in each case.</p>
+				<div class="radio-group">
+					<label class="radio-option">
+						<input type="radio" name="q5" value="a" required>
+						a. Pushing down on the very edge (rim) of the wheel
+					</label>
+					<label class="radio-option">
+						<input type="radio" name="q5" value="b" required>
+						b. Pushing along a spoke, closer to the center of the wheel
+					</label>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 6</h3>
+				<p>A 10 kg box hangs from the ceiling by two strings. Which of the following situations will result in the most tension in the two strings?</p>
+				<div class="radio-group">
+					<label class="radio-option">
+						<input type="radio" name="q6" value="a" required>
+						a. The box hung by two angled strings that meet at a point above the box
+					</label>
+					<label class="radio-option">
+						<input type="radio" name="q6" value="b" required>
+						b. The box hung by two vertical strings
+					</label>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 7</h3>
+				<p>Although Newton-meter is the standard unit for torque, there are other possible units. Which of the units below is a possible unit for torque?</p>
+				<div class="radio-group">
+					<label class="radio-option">
+						<input type="radio" name="q7" value="a" required>
+						a. slug-foot
+					</label>
+					<label class="radio-option">
+						<input type="radio" name="q7" value="b" required>
+						b. pound-inch
+					</label>
+					<label class="radio-option">
+						<input type="radio" name="q7" value="c" required>
+						c. kg-km
+					</label>
+					<label class="radio-option">
+						<input type="radio" name="q7" value="d" required>
+						d. Newton-kg
+					</label>
+				</div>
+			</div>
+
+			<div class="card">
+				<h3>Question 8</h3>
+				<p>A 53.4-Newton child sits in a swing. Each of the swing's two ropes makes an angle of &theta; = 55&deg; with the horizontal. What is the tension in the two ropes of the swing?</p>
+				<input type="text" id="q8" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 9</h3>
+				<p>A 9.0-kg model airplane is tied to the ceiling with two strings. One string makes an angle of &theta; = 45&deg; and the other makes an angle of &theta; = 35&deg; with the horizontal. What is the tension in each string?</p>
+				<input type="text" id="q9" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 10</h3>
+				<p>A mechanic unscrews a nut with a 15-cm wrench. If he grasps the wrench at the end and applies a 456-Newton force perpendicular to the wrench, how much torque is he applying to the nut?</p>
+				<input type="text" id="q10" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 11</h3>
+				<p>A driver grasps a steering wheel (radius = 31 cm) and applies 120.0 Newtons of force with each hand in an attempt to turn the wheel. How much total torque is being applied to the wheel?</p>
+				<input type="text" id="q11" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 12</h3>
+				<p>Two plumbers are trying to unscrew a pipe. The first can exert a force of 345 Newtons while the second is capable of exerting a force of 545 Newtons. If the first has a wrench that is 45 cm long and the second has a wrench that is 25 cm long, which will be most likely to succeed?</p>
+				<input type="text" id="q12" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 13</h3>
+				<p>Two children (35 kg and 41 kg) balance on a see-saw. The 35-kg child sits 1.54 m from the pivot on one side. Where must the 41-kg boy sit on the other side to achieve balance?</p>
+				<input type="text" id="q13" class="answer-input" required>
+			</div>
+
+			<div class="card">
+				<h3>Question 14</h3>
+				<p>A 45-kg block slides down an incline that is angled at 41 degrees. If the coefficient of kinetic friction between the block and the incline is 0.45, what is the block's acceleration? (Show your work.)</p>
+				<textarea id="q14" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<div class="card">
+				<h3>Question 15</h3>
+				<p>A child drags two boxes (112 kg and 95.1 kg) behind her bicycle, connected by a string. If she pulls the boxes with a force of 123 Newtons, what is the tension in the string that connects the boxes? Ignore friction in this problem. (Show your work.)</p>
+				<textarea id="q15" class="answer-input" rows="4" required></textarea>
+			</div>
+
+			<button type="submit" class="submit-button">Submit Test</button>
+		</form>
+
+		<div id="results" style="display: none;" class="card">
+			<h2>Test Submitted</h2>
+			<p id="email-status">Your answers have been sent to your instructor.</p>
+			<button type="button" class="submit-button" onclick="window.location.reload()">Take Again</button>
+		</div>
+	</div>
+
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js" is:inline></script>
+
+	<script is:inline>
+		let captchaAnswer = 0;
+
+		function generateCaptcha() {
+			const num1 = Math.floor(Math.random() * 10) + 1;
+			const num2 = Math.floor(Math.random() * 10) + 1;
+			captchaAnswer = num1 + num2;
+			document.getElementById('captcha-question').textContent = `${num1} + ${num2}`;
+		}
+
+		function validateCaptcha() {
+			const userAnswer = parseInt(document.getElementById('captcha').value);
+			const errorDiv = document.getElementById('captcha-error');
+			if (userAnswer !== captchaAnswer) {
+				errorDiv.style.display = 'block';
+				generateCaptcha();
+				document.getElementById('captcha').value = '';
+				return false;
+			}
+			errorDiv.style.display = 'none';
+			return true;
+		}
+
+		function validateSecurity() {
+			const honeypot = document.getElementById('website');
+			if (honeypot && honeypot.value) {
+				console.log('Spam bot detected via honeypot');
+				alert('Security check failed. Please try again.');
+				return false;
+			}
+
+			const lastSubmission = localStorage.getItem('lastQuizStart');
+			const now = Date.now();
+			if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+				alert('Please wait 30 seconds between attempts.');
+				return false;
+			}
+			localStorage.setItem('lastQuizStart', now.toString());
+
+			if (!validateCaptcha()) {
+				return false;
+			}
+
+			const email = document.getElementById('studentEmail').value;
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!emailRegex.test(email)) {
+				alert('Please enter a valid email address.');
+				return false;
+			}
+
+			const spamDomains = ['tempmail.org', '10minutemail.com', 'guerrillamail.com', 'mailinator.com', 'throwaway.email'];
+			const domain = email.split('@')[1].toLowerCase();
+			if (spamDomains.includes(domain)) {
+				alert('Please use a permanent email address.');
+				return false;
+			}
+
+			return true;
+		}
+
+		window.onload = function() {
+			try {
+				emailjs.init('ct_s19oZHppLy9BlW');
+			} catch (e) {
+				console.error('EmailJS init failed:', e);
+			}
+			generateCaptcha();
+		};
+
+		document.getElementById('module6Test').addEventListener('submit', function(e) {
+			e.preventDefault();
+
+			if (!validateSecurity()) {
+				return;
+			}
+
+			const studentName = document.getElementById('studentName').value.trim();
+			const studentEmail = document.getElementById('studentEmail').value.trim();
+			const now = new Date().toLocaleString();
+
+			const q5choice = document.querySelector('input[name="q5"]:checked');
+			const q5letter = q5choice ? q5choice.value : '';
+			const q5text = { a: 'a. Pushing down on the very edge (rim) of the wheel', b: 'b. Pushing along a spoke, closer to the center of the wheel' }[q5letter] || '';
+
+			const q6choice = document.querySelector('input[name="q6"]:checked');
+			const q6letter = q6choice ? q6choice.value : '';
+			const q6text = { a: 'a. The box hung by two angled strings that meet at a point above the box', b: 'b. The box hung by two vertical strings' }[q6letter] || '';
+
+			const q7choice = document.querySelector('input[name="q7"]:checked');
+			const q7letter = q7choice ? q7choice.value : '';
+			const q7text = { a: 'a. slug-foot', b: 'b. pound-inch', c: 'c. kg-km', d: 'd. Newton-kg' }[q7letter] || '';
+
+			const answers = [
+				['Question 1', document.getElementById('q1').value.trim()],
+				['Question 2', document.getElementById('q2').value.trim()],
+				['Question 3', document.getElementById('q3').value.trim()],
+				['Question 4', document.getElementById('q4').value.trim()],
+				['Question 5', q5text],
+				['Question 6', q6text],
+				['Question 7', q7text],
+				['Question 8', document.getElementById('q8').value.trim()],
+				['Question 9', document.getElementById('q9').value.trim()],
+				['Question 10', document.getElementById('q10').value.trim()],
+				['Question 11', document.getElementById('q11').value.trim()],
+				['Question 12', document.getElementById('q12').value.trim()],
+				['Question 13', document.getElementById('q13').value.trim()],
+				['Question 14', document.getElementById('q14').value.trim()],
+				['Question 15', document.getElementById('q15').value.trim()]
+			];
+
+			let message = `PHYSICS MODULE 6 TEST SUBMISSION\n`;
+			message += `Submitted: ${now}\n\n`;
+			message += `Student: ${studentName}\n`;
+			message += `Student Email: ${studentEmail}\n\n`;
+			message += `ANSWERS:\n`;
+			answers.forEach((item) => {
+				message += `\n${item[0]}\n   ${item[1]}\n`;
+			});
+
+			const templateParams = {
+				to_email: 'chuck@c00lnerd.com',
+				from_name: 'C00lnerd Quiz System',
+				from_email: 'chuck@c00lnerd.com',
+				message: message,
+				subject: `Physics Module 6 Test - ${studentName}`
+			};
+
+			window.emailjs.send('service_kaw1xkh', 'template_io02xtm', templateParams)
+				.then(function(response) {
+					console.log('Email sent:', response.status, response.text);
+					document.getElementById('module6Test').style.display = 'none';
+					document.getElementById('results').style.display = 'block';
+					document.getElementById('email-status').textContent = 'Your test has been submitted and emailed to your instructor.';
+				}, function(error) {
+					console.error('Email error:', error);
+					if (error && error.text) console.error('Error details:', error.text);
+					alert('There was an error sending your test. Please check your internet connection and try again.');
+				});
+		});
+	</script>
+
+	<style>
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 2rem 1rem;
+			font-family: Arial, sans-serif;
+		}
+
+		.header {
+			text-align: center;
+			margin-bottom: 2rem;
+		}
+
+		.eyebrow {
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			font-weight: 700;
+			color: #2563eb;
+			font-size: 0.85rem;
+			margin: 0 0 0.5rem 0;
+		}
+
+		h1 {
+			margin: 0;
+			font-size: 2.2rem;
+			color: #111827;
+		}
+
+		.subtitle {
+			color: #4b5563;
+			font-size: 1.1rem;
+			margin: 0.5rem 0 0 0;
+		}
+
+		.card {
+			background: white;
+			border-radius: 12px;
+			box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+			padding: 1.5rem;
+			margin-bottom: 1.25rem;
+		}
+
+		.card h2,
+		.card h3 {
+			margin: 0 0 0.75rem 0;
+			color: #111827;
+		}
+
+		.card p {
+			color: #374151;
+			line-height: 1.6;
+			margin: 0 0 1rem 0;
+		}
+
+		.question-detail {
+			font-style: italic;
+			padding-left: 1rem;
+			border-left: 3px solid #d1d5db;
+		}
+
+		.radio-group {
+			display: flex;
+			flex-direction: column;
+			gap: 0.5rem;
+		}
+
+		.radio-option {
+			display: flex;
+			align-items: flex-start;
+			gap: 0.5rem;
+			font-weight: 400;
+			color: #374151;
+			line-height: 1.5;
+		}
+
+		.radio-option input[type="radio"] {
+			margin-top: 0.3rem;
+		}
+
+		.form-row {
+			display: grid;
+			grid-template-columns: 1fr;
+			gap: 1rem;
+		}
+
+		@media (min-width: 600px) {
+			.form-row {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		label {
+			display: block;
+			font-weight: 600;
+			color: #374151;
+			font-size: 0.95rem;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="number"],
+		textarea,
+		.answer-input {
+			width: 100%;
+			padding: 0.75rem;
+			margin-top: 0.35rem;
+			border: 1px solid #d1d5db;
+			border-radius: 6px;
+			font-size: 1rem;
+			box-sizing: border-box;
+			font-family: Arial, sans-serif;
+		}
+
+		.answer-input {
+			max-width: 100%;
+		}
+
+		.captcha-card label {
+			display: block;
+		}
+
+		#captcha-error {
+			color: #dc2626;
+			margin-top: 0.5rem;
+			font-weight: 600;
+		}
+
+		.submit-button {
+			display: inline-block;
+			width: 100%;
+			padding: 1rem;
+			font-size: 1.1rem;
+			font-weight: 700;
+			color: white;
+			background: #2563eb;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-top: 1rem;
+		}
+
+		.submit-button:hover {
+			background: #1d4ed8;
+		}
+
+		#results {
+			text-align: center;
+		}
+	</style>
+</Layout>

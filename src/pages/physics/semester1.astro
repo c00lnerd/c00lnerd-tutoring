@@ -209,6 +209,45 @@ const module5Pacing = [
 	},
 ];
 
+const module6Pacing = [
+	{
+		week: 'Week 12',
+		title: "Applications of Newton's Second Law I",
+		studentWork: [
+			'Begin Module 6 on page 177: apply Newton\'s Second Law to connected objects and tension, stopping at Example 6.2 on page 182.',
+			'Resume at Example 6.2 on page 182 and stop after completing On Your Own questions 6.1-6.3 on pages 184-185.',
+			'Begin Translational Equilibrium and Measuring Weight on page 185, do Experiment 6.1 (Measuring Acceleration in an Elevator), and stop after On Your Own question 6.4 on page 188.',
+			'Begin Rotational Motion and Torque on page 188, do Experiment 6.2 (pages 189-190), and stop after On Your Own question 6.5 on page 193.',
+		],
+		mastery: [
+			'Apply Newton\'s Second Law to systems with tension, hanging objects, and multiple bodies.',
+			'Distinguish translational from rotational motion and identify the axis of rotation.',
+			'Calculate torque as force times lever arm and explain why only the perpendicular component counts.',
+		],
+		fridayOverview: 'Work tension problems with free-body diagrams, discuss the elevator scale readings from Experiment 6.1, and demonstrate torque with wrenches of different lengths.',
+		experiment: 'Experiment 6.1: Measuring Acceleration in an Elevator (pp. 185-187) and Experiment 6.2 (pp. 189-190). Supply list: Appendix C, page 584.',
+		assessment: 'Check On Your Own answers 6.1-6.5, watching free-body diagram setups and torque = force x lever arm calculations.',
+	},
+	{
+		week: 'Week 13',
+		title: "Applications of Newton's Second Law II",
+		studentWork: [
+			'Resume after On Your Own 6.5 on page 193 and read Rotational Equilibrium, stopping before Experiment 6.3 on page 198.',
+			'Do Experiment 6.3 (Measuring a Coefficient of Static Friction) on page 198 and stop at Example 6.5 on page 201.',
+			'Resume at Example 6.5 on page 201 and finish the module through page 205.',
+			'Do the Review Questions on page 214, then the Practice Problems on pages 215-216 (optional extra practice in Appendix B, pages 569-570), and study for the Module 6 test.',
+		],
+		mastery: [
+			'Apply rotational equilibrium: the sum of the torques on a non-rotating object equals zero.',
+			'Split an object\'s weight on an incline into parallel (w x sin of the angle) and perpendicular (w x cos of the angle) components.',
+			'Combine friction, incline components, and torque to predict whether systems move and how fast they accelerate.',
+		],
+		fridayOverview: 'Review the incline data from Experiment 6.3, practice splitting weight into parallel/perpendicular components, work a see-saw torque problem, and run a cumulative Module 6 review.',
+		experiment: 'Experiment 6.3: Measuring a Coefficient of Static Friction on an inclined surface (module pages 198-201).',
+		assessment: 'Review the remaining On Your Own answers and incline/torque setups, then administer the Module 6 test and confirm the student has Module 7 supplies (Appendix C, page 584).',
+	},
+];
+
 const weeks = [
 	{
 		week: 1,
@@ -745,6 +784,64 @@ const weeks = [
 
 			<div class="module-week-grid">
 				{module5Pacing.map((item) => (
+					<article class="module-week-card">
+						<div class="module-week-heading">
+							<p class="week-tag">{item.week}</p>
+							<h3>{item.title}</h3>
+						</div>
+
+						<div class="detail-block">
+							<h4>Student work before Friday</h4>
+							<ul>
+								{item.studentWork.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Key ideas to master</h4>
+							<ul>
+								{item.mastery.map((entry) => <li>{entry}</li>)}
+							</ul>
+						</div>
+
+						<div class="detail-block">
+							<h4>Friday overview</h4>
+							<p>{item.fridayOverview}</p>
+						</div>
+
+						<div class="detail-block experiment-block">
+							<h4>Friday experiment</h4>
+							<p>{item.experiment}</p>
+						</div>
+
+						<div class="detail-block">
+							<h4>Discussion / assessment</h4>
+							<p>{item.assessment}</p>
+						</div>
+					</article>
+				))}
+			</div>
+		</section>
+
+		<section class="module-detail">
+			<div class="module-detail-header">
+				<div>
+					<p class="module-kicker">Detailed Pacing</p>
+					<h2>Module 6: Applications of Newton's Second Law</h2>
+					<p class="module-copy">
+						Two weeks putting F = ma to work: tension, equilibrium, and torque in Week 12,
+						then rotational equilibrium and inclined-plane problems in Week 13, ending with
+						the Module 6 test.
+					</p>
+				</div>
+			</div>
+
+			<div style="text-align: center; margin: 0 0 1.25rem 0;">
+				<a href="/physics/module6_test.html" class="primary">Take Module 6 Test</a>
+			</div>
+
+			<div class="module-week-grid">
+				{module6Pacing.map((item) => (
 					<article class="module-week-card">
 						<div class="module-week-heading">
 							<p class="week-tag">{item.week}</p>
